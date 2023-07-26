@@ -210,6 +210,31 @@ public enum SIPSchemesEnum
     /// Content ID URI
     /// </summary>
     cid = 7,    // 7 Nov 22 PHR
+
+    /// <summary>
+    /// Instant message, for possible use with CPIM. See RFC 3862
+    /// </summary>
+    im = 8,     // 21 Jul 23 PHR
+
+    /// <summary>
+    /// Message Session Relay Protocol (MSRP). See RFC 4975.
+    /// </summary>
+    msrp,       // 21 Jul 23 PHR
+
+    /// <summary>
+    /// MSRP over TLS.
+    /// </summary>
+    msrps,      // 21 Jul 23 PHR
+
+    /// <summary>
+    /// Web Sockets transport
+    /// </summary>
+    ws,         // 21 Jul 23 PHR
+
+    /// <summary>
+    /// Web Sockets transport over TLS
+    /// </summary>
+    wss,        // 21 Jul 23 PHR
 }
 
 /// <summary>

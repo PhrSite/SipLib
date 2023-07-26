@@ -15,6 +15,9 @@
 //				  -- Fixed so that the match for the first byte in the
 //				     findArray is tested again when the findPos index is reset to 0.
 //				  -- Fixed code formatting and added some documentation comments.
+//              26 Jul 23 PHR
+//                -- Added the FindFirstBytePattern, FindLastBytePattern and
+//                   ExtractDelimitedByteArray functions
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -96,7 +99,130 @@ public class ByteBufferInfo
     public static bool HasString(byte[] buffer, int startPosition, int 
         endPosition, string find, string end)
     {
-        return GetStringPosition(buffer, startPosition, endPosition, find, end) 
-            != -1;
+        return GetStringPosition(buffer, startPosition, endPosition, find, end) != -1;
+    }
+
+    /// <summary>
+    /// Finds the first occurrence of byte array pattern within an array.
+    /// </summary>
+    /// <param name="SrcArray">Array to search in.</param>
+    /// <param name="StartIndex">Index to start looking at</param>
+    /// <param name="BytePattern">Array of bytes containing the pattern to search for.</param>
+    /// <returns>The index within the search array of the start of the pattern to search for. Returns 
+    /// -1 if the pattern is not found.
+    /// </returns>
+    public static int FindFirstBytePattern(byte[] SrcArray, int StartIndex, byte[] BytePattern)
+    {
+        int Idx = -1;
+        if (StartIndex + BytePattern.Length > SrcArray.Length)
+            return -1;      // The source array is too short
+
+        int SrcIdx = StartIndex;
+        int i;
+
+        bool Done = false;
+        bool Found = false;
+
+        while (Done == false)
+        {
+            Found = true;   // Assume success
+            for (i = 0; (i < BytePattern.Length && Found == true); i++)
+            {
+                if (SrcArray[SrcIdx] != BytePattern[i])
+                    Found = false;
+                SrcIdx += 1;
+            }
+
+            if (Found == true)
+            {
+                Idx = SrcIdx - BytePattern.Length;
+                Done = true;
+            }
+            else
+            {
+                if ((SrcArray.Length - SrcIdx) < BytePattern.Length)
+                    Done = true;
+            }
+        }
+
+        return Idx;
+    }
+
+    /// <summary>
+    /// Finds the last occurrence of byte array pattern within an array.
+    /// </summary>
+    /// <param name="SrcArray">Array to search in.</param>
+    /// <param name="LastSrcIndex">Last index in the source array to include in the search range</param>
+    /// <param name="BytePattern">Array of bytes containing the pattern to search for.</param>
+    /// <returns>The index within the search array of the start of the pattern to search for. Returns -1
+    /// if the pattern is not found.
+    /// </returns>
+    public static int FindLastBytePattern(byte[] SrcArray, int LastSrcIndex, byte[] BytePattern)
+    {
+        int Idx = -1;
+        if ((LastSrcIndex - 1) < BytePattern.Length)
+            return Idx;
+
+        bool Done = false;
+        bool Found = false;
+        int SrcIdx = LastSrcIndex;
+        int i;
+
+        while (Done == false)
+        {
+            Found = true;   // Assume success
+            for (i = BytePattern.Length - 1; (i > 0 && Found == true); i--)
+            {
+                if (SrcArray[SrcIdx] != BytePattern[i])
+                    Found = false;  // Mismatch found
+
+                SrcIdx -= 1;
+            } // end for i
+
+            if (Found == true)
+            {
+                Idx = SrcIdx;
+                Done = true;
+            }
+            else
+            {
+                if (SrcIdx < BytePattern.Length - 1)
+                    Done = true;
+            }
+
+        } // end while
+
+        return Idx;
+    }
+
+    /// <summary>
+    /// Extracts a byte array that is delimited by two byte array patterns
+    /// </summary>
+    /// <param name="SrcArray">The input source array</param>
+    /// <param name="StartIndex">The stating index in the source array</param>
+    /// <param name="FirstPattern">The first byte pattern</param>
+    /// <param name="SecondPattern">The second byte array</param>
+    /// <returns>Returns a new byte array if there is one between the FirstPattern and the
+    /// SecondPattern or null if the FirstPattern and the SecondPattern are not found</returns>
+    public static byte[] ExtractDelimitedByteArray(byte[] SrcArray, int StartIndex, byte[] FirstPattern,
+        byte[] SecondPattern)
+    {
+        byte[] DstArray = null;
+        int FirstIndex = FindFirstBytePattern(SrcArray, StartIndex, FirstPattern);
+        if (FirstIndex == -1)
+            return null;
+        int SecondIndex = FindFirstBytePattern(SrcArray, StartIndex, SecondPattern);
+        if (SecondIndex == -1)
+            return null;
+
+        int DstStartIndex = FirstIndex + FirstPattern.Length;
+        int DstLength = SecondIndex - DstStartIndex;
+        if (DstStartIndex + DstLength > SrcArray.Length)
+            return null;    // Error
+
+        DstArray = new byte[DstLength];
+        Array.ConstrainedCopy(SrcArray, DstStartIndex, DstArray, 0, DstLength);
+
+        return DstArray;
     }
 }

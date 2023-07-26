@@ -21,6 +21,8 @@
 //                -- Added code in ParseSIPURI to format the user part of the URI
 //                   for tel: URIs.
 //                -- Added documentation comments
+//              21 Jul 23 -- Fixed the handling of the // characters for the http,
+//                https, msrp, msrps, ws, wss schemes.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -29,11 +31,11 @@ using System.Text.RegularExpressions;
 namespace SipLib.Core;
 
 /// <summary>
-/// Implements the SIP URI concept from the SIP RFC3261.
+/// Implements the SIP URI concept from the SIP RFC3261. This class also handles URIs for
+/// http, https, ws, wss, msrp, msrps and im schemes.
 /// </summary>
 public class SIPURI
 {
-
     private const char SCHEME_ADDR_SEPARATOR = ':';
     private const char USER_HOST_SEPARATOR = '@';
     private const char PARAM_TAG_DELIMITER = ';';
@@ -59,7 +61,7 @@ public class SIPURI
     public string User;
 
     /// <summary>
-    /// Host portion of the URI
+    /// Host portion of the URI.
     /// </summary>
     public string Host;
 
@@ -85,6 +87,10 @@ public class SIPURI
         get
         {
             if (Scheme == SIPSchemesEnum.sips)
+                return SIPProtocolsEnum.tls;
+            else if (Scheme == SIPSchemesEnum.msrp)
+                return SIPProtocolsEnum.tcp;
+            else if (Scheme == SIPSchemesEnum.msrps)
                 return SIPProtocolsEnum.tls;
             else
             {
@@ -133,7 +139,8 @@ public class SIPURI
     }
 
     /// <summary>
-    /// Gets the host address portion of the URI.
+    /// Gets the host address portion of the URI. If the address is an IPv6 address, then it will
+    /// include the [ and ] delimiters.
     /// </summary>
     public string HostAddress
     {
@@ -259,7 +266,10 @@ public class SIPURI
         ParseParamsAndHeaders(paramsAndHeaders);
         Scheme = scheme;
 
-        if (protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips)
+        // if (protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips)
+        // 24 Jul 23 PHR
+        if (protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips && scheme != 
+            SIPSchemesEnum.msrp && scheme != SIPSchemesEnum.msrps)
             Parameters.Set(m_uriParamTransportKey, protocol.ToString());
     }
 
@@ -274,7 +284,10 @@ public class SIPURI
         Scheme = scheme;
         Host = sipEndPoint.GetIPEndPoint().ToString();
 
-        if (sipEndPoint.Protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips)
+        //if (sipEndPoint.Protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips)
+        // 24 Jul 24 PHR
+        if (sipEndPoint.Protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips && scheme !=
+            SIPSchemesEnum.msrp && scheme != SIPSchemesEnum.msrps)
             Parameters.Set(m_uriParamTransportKey, sipEndPoint.Protocol.ToString());
     }
 
@@ -348,14 +361,14 @@ public class SIPURI
                         if (ampPosn != -1 && paramHeaderPosn != -1)
                         {
                             sipURI.User = uriHostPortion.Substring(0, ampPosn);
-                            sipURI.Host = uriHostPortion.Substring(ampPosn + 1, paramHeaderPosn - 
+                            sipURI.Host = uriHostPortion.Substring(ampPosn + 1, paramHeaderPosn -
                                 ampPosn - 1);
                             string paramsAndHeaders = uriHostPortion.Substring(paramHeaderPosn);
 
                             sipURI.ParseParamsAndHeaders(paramsAndHeaders);
                         }
                         else if (ampPosn == -1 && paramHeaderPosn == 0)
-                            throw new SIPValidationException(SIPValidationFieldsEnum.URI, 
+                            throw new SIPValidationException(SIPValidationFieldsEnum.URI,
                                 "No Host portion in SIP URI");
                         else if (ampPosn == -1 && paramHeaderPosn != -1)
                         {
@@ -366,10 +379,17 @@ public class SIPURI
                         else if (ampPosn != -1)
                         {
                             sipURI.User = uriHostPortion.Substring(0, ampPosn);
-                            sipURI.Host = uriHostPortion.Substring(ampPosn + 1, uriHostPortion.Length - ampPosn - 1);
+                            // 21 Jul 23 PHR -- In case the scheme is http, msrp, ws, etc.
+                            sipURI.User = sipURI.User.Replace("//", "");
+                            sipURI.Host = uriHostPortion.Substring(ampPosn + 1, uriHostPortion.Length - 
+                                ampPosn - 1);
                         }
                         else
+                        {
                             sipURI.Host = uriHostPortion;
+                            // 21 Jul 23 PHR -- In case the scheme is http, msrp, ws, etc.
+                            sipURI.Host = sipURI.Host.Replace("//", "");
+                        }
 
                         if (sipURI.Host.IndexOfAny(m_invalidSIPHostChars) != -1)
                             throw new SIPValidationException(SIPValidationFieldsEnum.URI, 
@@ -377,7 +397,7 @@ public class SIPURI
                         else if (sipURI.Host.IndexOf(':') != sipURI.Host.LastIndexOf(':'))
                         {
                             // If the host contains multiple ':' characters then it must be an IPv6
-                            // address which require a start '[' and an end ']'.
+                            // address which requires a start '[' and an end ']'.
                             if (sipURI.Host.ToCharArray()[0] != '[')
                                 throw new SIPValidationException(SIPValidationFieldsEnum.URI, 
                                     "The SIP URI host portion contained an IPv6 address that was " + 
@@ -479,6 +499,11 @@ public class SIPURI
         try
         {
             string uriStr = Scheme.ToString() + SCHEME_ADDR_SEPARATOR;
+            // 21 Jul 23 PHR
+            if (Scheme == SIPSchemesEnum.http || Scheme == SIPSchemesEnum.https || Scheme ==
+                SIPSchemesEnum.msrp || Scheme == SIPSchemesEnum.msrps || Scheme == SIPSchemesEnum.ws ||
+                Scheme == SIPSchemesEnum.wss)
+                uriStr = uriStr + "//";
 
             uriStr = (User != null) ? uriStr + User + USER_HOST_SEPARATOR + Host : uriStr + Host;
 
@@ -488,8 +513,13 @@ public class SIPURI
             }
 
             // If the URI's protocol is not implied already set the transport parameter.
+            //if (Scheme != SIPSchemesEnum.sips && Protocol != SIPProtocolsEnum.udp && !Parameters.Has(
+            //    m_uriParamTransportKey))
+            // 22 Jul 23 PHR -- Don't want a transport parameter added if the this URI is for msrp or
+            // msrps
             if (Scheme != SIPSchemesEnum.sips && Protocol != SIPProtocolsEnum.udp && !Parameters.Has(
-                m_uriParamTransportKey))
+                m_uriParamTransportKey) && Scheme != SIPSchemesEnum.msrp && Scheme != 
+                SIPSchemesEnum.msrps && Scheme != SIPSchemesEnum.msrp)
                 uriStr += PARAM_TAG_DELIMITER + m_uriParamTransportKey + TAG_NAME_VALUE_SEPERATOR + 
                     Protocol.ToString();
 

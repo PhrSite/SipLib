@@ -27,7 +27,7 @@ namespace SipLibUnitTests
             Assert.True(Cih.Count == 1);
             SIPURI Uri = Cih[0].CallInfoField.URI;
             Assert.True(Uri.Scheme == SIPSchemesEnum.http, "The URI scheme is incorrect");
-            Assert.True(Uri.Host == "//www.example.com/alice/photo.jpg", "The host is incorrect");
+            Assert.True(Uri.Host == "www.example.com/alice/photo.jpg", "The host is incorrect");
             Assert.True(Cih[0].CallInfoField.Parameters.Has("purpose") == true, "The header " +
                 "has no purpose parameter");
             string strPur = Cih[0].CallInfoField.Parameters.Get("purpose");
@@ -44,7 +44,7 @@ namespace SipLibUnitTests
             Assert.True(Cih.Count == 2, "The header count is incorrect");
             SIPURI Uri = Cih[0].CallInfoField.URI;
             Assert.True(Uri.Scheme == SIPSchemesEnum.http, "The first URI scheme is incorrect");
-            Assert.True(Uri.Host == "//www.example.com/alice/photo.jpg", "The first host is " +
+            Assert.True(Uri.Host == "www.example.com/alice/photo.jpg", "The first host is " +
                 "incorrect");
             Assert.True(Cih[0].CallInfoField.Parameters.Has("purpose") == true, "The first " +
                 "header has no purpose parameter");
@@ -52,7 +52,7 @@ namespace SipLibUnitTests
             Assert.True(strPur == "icon", "The first header purpose parameter is incorrect");
             Uri = Cih[1].CallInfoField.URI;
             Assert.True(Uri.Scheme == SIPSchemesEnum.http, "The second URI scheme is incorrect");
-            Assert.True(Uri.Host == "//www.example.com/alice/", "The second hos is incorrect");
+            Assert.True(Uri.Host == "www.example.com/alice/", "The second hos is incorrect");
             Assert.True(Cih[1].CallInfoField.Parameters.Has("purpose") == true, "The second " +
                 "header has no purpose parameter");
             strPur = Cih[1].CallInfoField.Parameters.Get("purpose");

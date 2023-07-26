@@ -123,10 +123,7 @@ public class SIPUserField
     public static SIPUserField ParseSIPUserField(string userFieldStr)
     {
         if (string.IsNullOrEmpty(userFieldStr) == true)
-        {
-            throw new ArgumentException(
-                "A SIPUserField cannot be parsed from an empty string.");
-        }
+            throw new ArgumentException("A SIPUserField cannot be parsed from an empty string.");
 
         SIPUserField userField = new SIPUserField();
         string trimUserField = userFieldStr.Trim();
@@ -141,10 +138,8 @@ public class SIPUserField
 
             if (paramDelimPosn != -1)
             {
-                string paramStr = trimUserField.Substring(paramDelimPosn + 1).
-                    Trim();
-                userField.Parameters = new SIPParameters(paramStr, 
-                    PARAM_TAG_DELIMITER);
+                string paramStr = trimUserField.Substring(paramDelimPosn + 1).Trim();
+                userField.Parameters = new SIPParameters(paramStr, PARAM_TAG_DELIMITER);
                 uriStr = trimUserField.Substring(0, paramDelimPosn);
             }
 
@@ -154,10 +149,8 @@ public class SIPUserField
         {
             if (position > 0)
             {
-                userField.Name = trimUserField.Substring(0, position).Trim().
-                    Trim('"');
-                trimUserField = trimUserField.Substring(position, trimUserField.
-                    Length - position);
+                userField.Name = trimUserField.Substring(0, position).Trim().Trim('"');
+                trimUserField = trimUserField.Substring(position, trimUserField.Length - position);
             }
 
             int addrSpecLen = trimUserField.Length;
@@ -169,22 +162,16 @@ public class SIPUserField
                 {
                     addrSpecLen = position - 1;
 
-                    string paramStr = trimUserField.Substring(position + 1).
-                        Trim();
-                    userField.Parameters = new SIPParameters(paramStr, 
-                        PARAM_TAG_DELIMITER);
+                    string paramStr = trimUserField.Substring(position + 1).Trim();
+                    userField.Parameters = new SIPParameters(paramStr, PARAM_TAG_DELIMITER);
                 }
 
                 string addrSpec = trimUserField.Substring(1, addrSpecLen);
-
                 userField.URI = SIPURI.ParseSIPURI(addrSpec);
             }
             else
-            {
-                throw new SIPValidationException(SIPValidationFieldsEnum.
-                    ContactHeader, "A SIPUserField was missing the right " + 
-                    "quote, " + userFieldStr + ".");
-            }
+                throw new SIPValidationException(SIPValidationFieldsEnum.ContactHeader,
+                    "A SIPUserField was missing the right quote, " + userFieldStr + ".");
         }
 
         return userField;
@@ -203,9 +190,7 @@ public class SIPUserField
             string userFieldStr = null;
 
             if (Name != null)
-            {
                 userFieldStr = "\"" + Name + "\" ";
-            }
 
             if (URI == null)
                 throw new NullReferenceException("The URI field is null");
@@ -221,8 +206,27 @@ public class SIPUserField
     }
 
     /// <summary>
-    /// Converts this object into a string containing a SIPURI that contains
-    /// no parameters.
+    /// Formats the string for use in the header value of a CPIM message. The difference is that if
+    /// the name portion is present, it is not quoted.
+    /// </summary>
+    /// <returns>Returns the string formatted for usin in a CPIM message.</returns>
+    // <exception cref="NullReferenceException"></exception>
+    public string ToCpimFormatString()
+    {
+        string userFieldStr = null;
+
+        if (Name != null)
+            userFieldStr = Name + " ";
+
+        if (URI == null)
+            throw new NullReferenceException("The URI field is null");
+
+        userFieldStr += "<" + URI.ToString() + ">" + Parameters.ToString();
+        return userFieldStr;
+    }
+
+    /// <summary>
+    /// Converts this object into a string containing a SIPURI that contains no parameters.
     /// </summary>
     /// <returns>The SIPURI portion only with no parameters.</returns>
     // <exception cref="NullReferenceException">Thrown if the SIPURI is null.</exception>
