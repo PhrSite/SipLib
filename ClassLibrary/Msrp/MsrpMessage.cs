@@ -2,9 +2,7 @@
 //  File:   MsrpMessage.cs                                          24 Jul 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-using Org.BouncyCastle.Asn1.Cmp;
 using SipLib.Core;
-using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace SipLib.Msrp;
@@ -28,6 +26,12 @@ public class MsrpMessage
     /// Request line for the message. This will be null if the MessageType is not MessageType.Request
     /// </summary>
     public string RequestLine { get; set; } = null;
+
+    /// <summary>
+    /// Contains the request methode type (SEND or REPORT) if MessageType == MsrpMessageType.Request.
+    /// Set to null otherwise.
+    /// </summary>
+    public string RequestMethod { get; set; } = null;
 
     /// <summary>
     /// Response code for the message. Valid if the MessageType is MessageType.Response
@@ -81,16 +85,31 @@ public class MsrpMessage
     public MsrpPathHeader FromPath { get; set; } = new MsrpPathHeader();
 
     /// <summary>
+    /// Use-Nickname header value. See RFC 7701. This header value contains a quoted (using double
+    /// quotation marks) nickname.
+    /// </summary>
+    public string UseNickname { get; set; } = null;
+
+    /// <summary>
     /// Contains the binary byte array containing the message contents. Null indicates that there are
     /// no contents for the message.
     /// </summary>
-    public byte[] Contents = null;
+    public byte[] Body = null;
+
+    /// <summary>
+    /// Gets or sets the completion status for this MSRP message
+    /// </summary>
+    public MsrpCompletionStatus CompletionStatus { get; set; } = MsrpCompletionStatus.Complete;
 
     /// <summary>
     /// Byte string that delimits the MSRP header block from the contents body. This corresponds to 
     /// CRLFCRLF (\r\n\r\n).
     /// </summary>
     private static readonly byte[] BodyDelimArray = { 0x0d, 0x0a, 0x0d, 0x0a };
+
+    private const string EndLinePrefixString = "-------";
+
+    private const string CRLF = "\r\n";
 
     /// <summary>
     /// Constructor
@@ -104,9 +123,8 @@ public class MsrpMessage
     /// </summary>
     /// <param name="bytes">Bytes of the complete MSRP message or a MSRP message chunk. The byte
     /// array includes the end-line.</param>
-    /// <param name="completionStatus">Indicates the completion status of the MSRP message</param>
     /// <returns>Returns a new MsrpMessage object or null if a parsing error occurred.</returns>
-    public static MsrpMessage ParseMsrpMessage(byte[] bytes, MsrpCompletionStatus completionStatus)
+    public static MsrpMessage ParseMsrpMessage(byte[] bytes)
     {
         MsrpMessage msrpMessage = new MsrpMessage();
 
@@ -124,11 +142,43 @@ public class MsrpMessage
         if (Success == false)
             return null;
 
+        // Get the continuation flag from the end-line
+        byte[] EndLinePatternBytes = Encoding.UTF8.GetBytes(EndLinePrefixString + msrpMessage.TransactionID);
+        int EndLineIndex = ByteBufferInfo.FindLastBytePattern(bytes, bytes.Length - 1, EndLinePatternBytes);
+        if (EndLineIndex == -1)
+            return null;    // Error: No end-line in the message
+
+        int ContinuationFlagIndex = EndLineIndex + EndLinePatternBytes.Length;
+        if (ContinuationFlagIndex >= bytes.Length)
+            return null;    // Error: No continuation flag in the message
+
+        char ContinuationFlag = Convert.ToChar(bytes[ContinuationFlagIndex]);
+        switch (ContinuationFlag)
+        {
+            case '$':
+                msrpMessage.CompletionStatus = MsrpCompletionStatus.Complete;
+                break;
+            case '+':
+                msrpMessage.CompletionStatus = MsrpCompletionStatus.Continuation;
+                break;
+            case '#':
+                msrpMessage.CompletionStatus = MsrpCompletionStatus.Truncated;
+                break;
+            default:
+                msrpMessage.CompletionStatus = MsrpCompletionStatus.Unknown;
+                break;
+        }
+
         // Get the body if there is one
         if (BodyDelimiterIndex > 0)
         {   // There is a body
-            msrpMessage.Contents = ByteBufferInfo.ExtractDelimitedByteArray(bytes, BodyDelimiterIndex,
-                BodyDelimArray, Encoding.UTF8.GetBytes("-------"));
+            int BodyStartIndex = BodyDelimiterIndex + BodyDelimArray.Length;
+            int BodyLength = EndLineIndex - BodyStartIndex;
+            if (BodyLength > 0)
+            {
+                msrpMessage.Body = new byte[BodyLength];
+                Array.ConstrainedCopy(bytes, BodyStartIndex, msrpMessage.Body, 0, BodyLength);
+            }
         }
 
         return msrpMessage;
@@ -157,13 +207,15 @@ public class MsrpMessage
         {   // Its a MSRP response message
             msrpMessage.MessageType = MsrpMessageType.Response;
             msrpMessage.ResponseCode = code;
-            if (FirstLineFields.Length > 4)
+            if (FirstLineFields.Length >= 4)
                 msrpMessage.ResponseText = FirstLineFields[3];
         }
-        else if (FirstLineFields[2] == "SEND" || FirstLineFields[2] == "REPORT")
-        {   // It is a known request
+        else if (FirstLineFields[2] == "SEND" || FirstLineFields[2] == "REPORT" || FirstLineFields[2] ==
+            "NICKNAME")
+        {   // It is a known request. "NICKNAME" is defined in RFC 7701.
             msrpMessage.MessageType = MsrpMessageType.Request;
             msrpMessage.RequestLine = HeaderLines[0];
+            msrpMessage.RequestMethod = FirstLineFields[2];
         }
         else
             return false;   // Error: Unknown request type
@@ -201,6 +253,9 @@ public class MsrpMessage
                     break;
                 case "Status":
                     msrpMessage.Status = MsrpStatusHeader.ParseStatusHeader(HeaderValue);
+                    break;
+                case "Use-Nickname":
+                    msrpMessage.UseNickname = HeaderValue;
                     break;
                 case "Content-Type":
                     msrpMessage.ContentType = HeaderValue;
@@ -247,6 +302,159 @@ public class MsrpMessage
     public static string NewTransactionID()
     {
         return Crypto.GetRandomString(10);
+    }
+
+    /// <summary>
+    /// Converts this object into a byte array so that it can be sent over the TCP/TLS stream. All of
+    /// the required properties must be set before calling this method.
+    /// </summary>
+    /// <returns>Returns a byte array.</returns>
+    public byte[] ToByteArray()
+    {
+        byte[] byteArray = null;
+        StringBuilder sb = new StringBuilder(2048); // Initial size
+
+        if (MessageType == MsrpMessageType.Request)
+            sb.Append($"MSRP {TransactionID} {RequestMethod}{CRLF}");
+        else
+        {
+            sb.Append($"MSRP {TransactionID} {ResponseCode}");
+            if (string.IsNullOrEmpty(ResponseText) == false)
+                sb.Append($" {ResponseText}");
+
+            sb.Append(CRLF);
+        }
+
+        sb.Append($"To-Path: {ToPath.ToString()}{CRLF}");
+        sb.Append($"From-Path: {FromPath.ToString()}{CRLF}");
+
+        if (string.IsNullOrEmpty(MessageID) == false)
+            sb.Append($"Message-ID: {MessageID}{CRLF}");
+
+        if (ByteRange != null)
+            sb.Append($"Byte-Range: {ByteRange.ToString()}{CRLF}");
+
+        if (string.IsNullOrEmpty(SuccessReport) == false)
+            sb.Append($"Success-Report: {SuccessReport}{CRLF}");
+
+        if (string.IsNullOrEmpty(FailureReport) == false)
+            sb.Append($"Failure-Report: {FailureReport}{CRLF}");
+
+        if (string.IsNullOrEmpty(UseNickname) == false)
+            sb.Append($"Use-Nickname: {UseNickname}{CRLF}");
+
+        if (Status != null)
+            sb.Append($"Status: {Status.ToString()}{CRLF}");
+
+        if (MessageType == MsrpMessageType.Request && RequestMethod == "SEND" && string.IsNullOrEmpty(
+            ContentType) == false && Body != null)
+            sb.Append($"Content-Type: {ContentType}{CRLF}{CRLF}");
+
+        MemoryStream memoryStream = new MemoryStream();
+        // Write the first line and the header lines to the stream
+        memoryStream.Write(Encoding.UTF8.GetBytes(sb.ToString()));
+
+        string Flag;
+        switch (CompletionStatus)
+        {
+            case MsrpCompletionStatus.Complete:
+                Flag = "$";
+                break;
+            case MsrpCompletionStatus.Continuation:
+                Flag = "+";
+                break;
+            case MsrpCompletionStatus.Truncated:
+                Flag = "#";
+                break;
+            default:
+                Flag = "$";     // Error, but assume complete
+                break;
+        }
+
+        // Write the body if there is one
+        if (Body != null)
+            memoryStream.Write(Body, 0, Body.Length);
+
+        string EndLine = $"{EndLinePrefixString}{TransactionID}{Flag}{CRLF}";
+        memoryStream.Write(Encoding.UTF8.GetBytes(EndLine));
+        byteArray = memoryStream.ToArray();
+        return byteArray;
+    }
+
+    /// <summary>
+    /// Gets the value of the Content-Type header value without any parameters
+    /// </summary>
+    /// <returns>Returns the Content-Type header value after removing any header parameters if there
+    /// are any. Return null if there is no Content-Type header value.</returns>
+    public string GetContentType()
+    {
+        if (ContentType == null)
+            return null;
+
+        int index = ContentType.IndexOf(";");
+        if (index != -1)
+            // Strip out any parameters
+            return ContentType.Substring(0, index).Trim();
+        else
+            return ContentType;
+    }
+
+    /// <summary>
+    /// Returns true if there is a Success-Report header and its value is "yes"
+    /// </summary>
+    /// <returns></returns>
+    public bool SuccessReportRequested()
+    {
+        if (string.IsNullOrEmpty(SuccessReport) == false && SuccessReport == "yes")
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// Returns true if there is a Failure-Report header and its value is "yes"
+    /// </summary>
+    /// <returns></returns>
+    public bool FailureReportRequested()
+    {
+        if (string.IsNullOrEmpty(FailureReport) == false && FailureReport == "yes")
+            return true;
+        else 
+            return false;
+    }
+
+    /// <summary>
+    /// Builds a MSRP response message to this message. This message must be a MSRP request message.
+    /// </summary>
+    /// <param name="ResponseCode">Response code. For example: 200</param>
+    /// <param name="ResponseText">Response text. Optional. For example: OK</param>
+    /// <returns>Returns a MsrpMessage containing a response that can be sent to the remote end point.</returns>
+    public MsrpMessage BuildResponseMessage(int ResponseCode, string ResponseText)
+    {
+        MsrpMessage Msg = new MsrpMessage();
+
+        Msg.MessageType = MsrpMessageType.Response; 
+        Msg.ResponseCode = ResponseCode;
+        Msg.ResponseText = ResponseText;
+        Msg.TransactionID = TransactionID;
+        Msg.CompletionStatus = MsrpCompletionStatus.Complete;
+
+        if (ResponseCode == 200)
+        {   // Special case -- For 200 OK, set the To-Path to the first (left-most MSRP URI in the From-Path
+            // header. See Section 7.2 of RFC 4975.
+            if (FromPath.MsrpUris.Count > 0)
+                Msg.ToPath.MsrpUris.Add(FromPath.MsrpUris[0]);
+        }
+        else
+        {   // All other cases use the full list of MSRP URIs.
+            foreach (MsrpUri MsUri in FromPath.MsrpUris)
+                Msg.ToPath.MsrpUris.Add(MsUri);
+        }
+
+        if (ToPath.MsrpUris.Count > 0)
+            Msg.FromPath.MsrpUris.Add(ToPath.MsrpUris[0]);
+
+        return Msg;
     }
 }
 

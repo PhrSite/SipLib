@@ -1,0 +1,5 @@
+MSRP d93kswow NICKNAME
+To-Path: msrp://chat.example.com:12763/kjhd37s2s20w2a;tcp
+From-Path: msrp://client.atlanta.example.com:7654/jshA7weztas;tcp
+Use-Nickname: "Alice the great"
+-------d93kswow$

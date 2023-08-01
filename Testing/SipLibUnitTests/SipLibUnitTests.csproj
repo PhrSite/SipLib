@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MsrpMessages\" />
     <Folder Include="SipMessages\" />
   </ItemGroup>
 

@@ -62,7 +62,7 @@ namespace SipLibUnitTests
         /// Change this if the project location or the location of the test files
         /// change.
         /// </summary>
-        private const string Path = @"\_MyProjects\SipLibUnitTests\rfc4475tests\";
+        private const string Path = @"..\..\..\rfc4475tests\";
 
         /// <summary>
         /// Helper function to read a test case SIP message file into a string.

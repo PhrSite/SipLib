@@ -27,11 +27,11 @@ public class SipBodyContents
     public string Contents = null;
 
     /// <summary>
-    /// Constructs a new object from the Content-Type and the Contents. The Content-Disposition and 
+    /// Constructs a new object from the Content-Type and the Body. The Content-Disposition and 
     /// the Content-ID header value are set to null.
     /// </summary>
     /// <param name="Ct">Content-Type header value.</param>
-    /// <param name="Cont">Contents</param>
+    /// <param name="Cont">Body</param>
     public SipBodyContents(string Ct, string Cont)
     {
         ContentType = Ct;

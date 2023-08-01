@@ -8,7 +8,7 @@ using System.Text;
 namespace SipLib.Body;
 
 /// <summary>
-/// Class for holding the Contents-Type and the contents lines for a single contents block of a 
+/// Class for holding the Body-Type and the contents lines for a single contents block of a 
 /// SIP message.
 /// </summary>
 public class SipContentsContainer
@@ -34,7 +34,7 @@ public class SipContentsContainer
     public string ContentTransferEncoding = null;
 
     /// <summary>
-    /// Contains the string value of the Contents-Length header. Will be null if there is none.
+    /// Contains the string value of the Body-Length header. Will be null if there is none.
     /// </summary>
     public string ContentsLength = null;
 

@@ -19,7 +19,7 @@ namespace SipLibUnitTests
         /// Change this if the project location or the location of the test files
         /// change.
         /// </summary>
-        private const string Path = @"\_MyProjects\SipLibUnitTests\SipMessages\";
+        private const string Path = @"..\..\..\SipMessages\";
 
         public BodyParsingUnitTests(Xunit.Abstractions.ITestOutputHelper output)
         {

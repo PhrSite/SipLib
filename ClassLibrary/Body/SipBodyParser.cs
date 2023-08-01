@@ -267,7 +267,7 @@ public class SipBodyParser
     /// <summary>
     /// Gets the contents of the body of the SIP message as a string given the specified type of contents.
     /// </summary>
-    /// <param name="ContentType">Contents type to search for. For example:
+    /// <param name="ContentType">Body type to search for. For example:
     ///     "application/pidf+xml or application/conference-info+xml.</param>
     /// <returns>Returns a string containing the specified contents or
     /// null if the contents could not be found.</returns>
