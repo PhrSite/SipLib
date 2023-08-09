@@ -3,8 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Msrp;
-
-using Org.BouncyCastle.Bcpg.OpenPgp;
+using System.Net;
 using SipLib.Core;
 
 //<bnf>
@@ -34,7 +33,7 @@ public class MsrpUri
     public string SessionID { get; set; }
 
     /// <summary>
-    /// Specifies the MSRP transport protocol. Required. Must be one of: tcp, tls, ws or wss.
+    /// Specifies the MSRP transport protocol. Required. Must be one of: tcp, tls.
     /// </summary>
     public string Transport { get; set; }
 
@@ -43,6 +42,21 @@ public class MsrpUri
     /// </summary>
     public MsrpUri()
     {
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="msrpScheme">Must be either SIPSchemesEnum.msrp or SIPSchemesEnum.msrps</param>
+    /// <param name="user">User part of the URI. Optional. May be null.</param>
+    /// <param name="address">IP address. May be either an IPv4 or an IPv6 IP address</param>
+    /// <param name="port">Port number</param>
+    public MsrpUri(SIPSchemesEnum msrpScheme, string user, IPAddress address, int port)
+    {
+        uri = new SIPURI(msrpScheme, address, port);
+        uri.User = user;
+        Transport = msrpScheme == SIPSchemesEnum.msrp ? "tcp" : "tls";
+        SessionID = MsrpMessage.NewRandomID();
     }
 
     /// <summary>

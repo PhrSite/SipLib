@@ -17,6 +17,8 @@ public class MsrpPathHeaderUnitTests
         Assert.NotNull(pathHeader);
         Assert.True(pathHeader.MsrpUris.Count == 1, "The number of MsrpUris is wrong");
         Assert.True(pathHeader.MsrpUris[0].uri.User == "8185553333", "The User is wrong");
+        Assert.True(pathHeader.MsrpUris[0].SessionID == "abcd", "The SessionID is wrong");
+        Assert.True(pathHeader.MsrpUris[0].Transport == "tcp", "The Transport is wrong");
     }
 
     [Fact]

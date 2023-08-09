@@ -21,6 +21,9 @@
 //                  a RandomNumberGenerator class because RNGCryptoServiceProvider
 //                  is now obsolete.
 //                - Deleted commented out code.
+//              3 Aug 23 PHR
+//                - Added numeric digits 0-9 to the CHARS array.
+//                - Modified GetRandomString to return lower case characters
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -39,7 +42,7 @@ public class Crypto
     private const int DEFAULT_RANDOM_LENGTH = 10;    
     private const int AES_KEY_SIZE = 32;
     private const int AES_IV_SIZE = 16;
-    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private static Random _rng = new Random();
     //private static RNGCryptoServiceProvider m_randomProvider = new
@@ -77,7 +80,7 @@ public class Crypto
         for (int i = 0; i < length; i++)
             buffer[i] = CHARS[_rng.Next(CHARS.Length)];
 
-        return new string(buffer);
+        return new string(buffer).ToLower();
     }
 
     /// <summary>

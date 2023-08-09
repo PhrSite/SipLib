@@ -12,7 +12,7 @@ using SipLib.Channels;
 using SipLib.Core;
 using System.Net.Security;
 using System.Collections.Concurrent;
-using Org.BouncyCastle.Crypto.Paddings;
+using System.Text;
 
 /// <summary>
 /// Class for managing a single MSRP connection to either a remote server or a remote client.
@@ -45,7 +45,7 @@ public class MsrpConnection
     private ConcurrentQueue<MsrpMessage> m_ResponseTransmitQueue = new ConcurrentQueue<MsrpMessage>();
     private SemaphoreSlim m_TransmitTaskSemaphore = new SemaphoreSlim(0, int.MaxValue);
     private CancellationTokenSource m_TokenSource = new CancellationTokenSource();
-     private MsrpMessage m_ResponseMessage = null;
+    private MsrpMessage m_ResponseMessage = null;
 
     /// <summary>
     /// Constructor
@@ -60,15 +60,43 @@ public class MsrpConnection
     /// Event that is fired when a complete MSRP message is received. This event is not fired for empty
     /// SEND requests.
     /// </summary>
-    public event MsrpMessageReceivedDelegate MsrpMessageReceived;
+    public event MsrpMessageReceivedDelegate MsrpMessageReceived = null;
 
     /// <summary>
-    /// 
+    /// This event is fired when a connection is established with the remote endpoint either as a client
+    /// or as a server.
     /// </summary>
-    /// <param name="LocalMsrpUri"></param>
-    /// <param name="RemoteMsrpUri"></param>
-    /// <param name="LocalCert"></param>
-    /// <returns></returns>
+    public event MsrpConnectionStatusDelegate MsrpConnectionEstablished = null;
+
+    /// <summary>
+    /// This event is fired if the MsrpConnection object was unable to connect to the remote endpoint as
+    /// a client.
+    /// </summary>
+    public event MsrpConnectionStatusDelegate MsrpConnectionFailed = null;
+
+    /// <summary>
+    /// This event is fired if the remote endpoint rejected a MSRP message sent by the MsrpConnection object
+    /// or if there was another problem delivering the message.
+    /// </summary>
+    public event MsrpMessageDeliveryFailedDelegate MsrpMessageDeliveryFailed = null;
+
+    /// <summary>
+    /// Event that is fired when a MSRP REPORT request is received.
+    /// </summary>
+    public event ReportReceivedDelegate ReportReceived = null;
+
+    /// <summary>
+    /// Creates a client MsrpConnection object. Call this method to create a client that connects to a
+    /// remote endpoint that listens as a server. After calling this method, hook the events and then
+    /// call the StartClientConnection() method when ready to connect.
+    /// </summary>
+    /// <param name="LocalMsrpUri">MsrpUri of the local endpoint. The host portion of the URI must
+    /// be a valid IPEndPoint object.</param>
+    /// <param name="RemoteMsrpUri">MsrpUri of the remote endpoint to connect to. The host portion of the
+    /// URI must be a valid IPEndPoint.</param>
+    /// <param name="LocalCert">X.509 certificate to use for MSRP over TLS (MSRPS) for optional mutual
+    /// authentication as a client. Optional. May be null is not using MSRP over TLS.</param>
+    /// <returns>Returns a new MsrpConnection object.</returns>
     public static MsrpConnection CreateAsClient(MsrpUri LocalMsrpUri, MsrpUri RemoteMsrpUri, 
         X509Certificate2 LocalCert)
     {
@@ -77,23 +105,36 @@ public class MsrpConnection
         Mc.m_RemoteMsrpUri = RemoteMsrpUri;
         Mc.m_Certificate = LocalCert;
 
-        Mc.m_TcpClient = new TcpClient();
-        Mc.m_TcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-        Mc.m_TcpClient.Client.Bind(LocalMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint());
+        Mc.m_TcpClient = new TcpClient(LocalMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint());
         Mc.ConnectionIsPassive = false;
-        IPEndPoint RemIpe = RemoteMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint();
-        Mc.m_TcpClient.BeginConnect(RemIpe.Address, RemIpe.Port, Mc.ClientConnectCallback, Mc);
-
         return Mc;
     }
 
     /// <summary>
-    /// 
+    /// Start the connection request to the remote endpoint server. Only use this method after calling
+    /// the CreateAsClient() method.
     /// </summary>
-    /// <param name="LocalMsrpUri"></param>
-    /// <param name="RemoteMsrpUri"></param>
-    /// <param name="LocalCert"></param>
-    /// <returns></returns>
+    // <exception cref="InvalidOperationException"></exception>
+    public void StartClientConnection()
+    {
+        if (m_TcpClient == null || ConnectionIsPassive == true)
+            throw new InvalidOperationException("This method can only be called for client connections");
+
+        IPEndPoint RemIpe = m_RemoteMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint();
+        m_TcpClient.BeginConnect(RemIpe.Address, RemIpe.Port, ClientConnectCallback, this);
+    }
+
+    /// <summary>
+    /// Creates a new MsrpConnection object that listens for MSRP connection requests as a server.
+    /// After calling this method, hook the events and then call the StartListening() method.
+    /// </summary>
+    /// <param name="LocalMsrpUri">Specifies the MsrpUri that the server listens on. The host portion of
+    /// the URI must be a valid IPEndPoint.</param>
+    /// <param name="RemoteMsrpUri">Specifies the MsrpUri that the remote client will be connecting from.
+    /// The host portion of the URI must be a valid IPEndPoint.</param>
+    /// <param name="LocalCert">X.509 certificate to use. Required if using MSRP over TLS (MSRPS). May
+    /// be null if using MSRP over TCP.</param>
+    /// <returns>Returns a new MsrpConnection object.</returns>
     public static MsrpConnection CreateAsServer(MsrpUri LocalMsrpUri, MsrpUri RemoteMsrpUri,
         X509Certificate2 LocalCert)
     {
@@ -106,12 +147,27 @@ public class MsrpConnection
         Mc.m_Certificate = LocalCert;
         Mc.m_TcpListener = new TcpListener(LocalMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint());
         Mc.ConnectionIsPassive = true;
-        Mc.m_TcpListener.Start();
-        Mc.m_TcpListener.BeginAcceptTcpClient(Mc.AcceptCallback, Mc.m_TcpListener);
-
         return Mc;
     }
 
+    /// <summary>
+    /// Starts the server listening for connection requests. Call this method after calling the CreateAsServer()
+    /// method.
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
+    public void StartListening()
+    {
+        if (m_TcpListener == null || ConnectionIsPassive == false)
+            throw new InvalidOperationException("This method can only be used for MSRP servers");
+
+        m_TcpListener.Start();
+        m_TcpListener.BeginAcceptTcpClient(AcceptCallback, m_TcpListener);
+    }
+
+    /// <summary>
+    /// Called by the TcpListener object when a client attempts to connect.
+    /// </summary>
+    /// <param name="Iar">The AsuncState property is set to the TcpListener object, but its not used.</param>
     private void AcceptCallback(IAsyncResult Iar)
     {
         if (m_ShuttingDown == true)
@@ -125,6 +181,7 @@ public class MsrpConnection
             // m_RemoteMsrpUri object.
             IPEndPoint ClientRemIpe = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
             IPEndPoint RemIpe = m_RemoteMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint();
+
             if (ClientRemIpe.Equals(RemIpe) == false)
             {
                 CancelTcpClient(tcpClient);
@@ -147,13 +204,11 @@ public class MsrpConnection
                 m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
                     m_NetworkStream);
 
-                // TODO: Send an empty MSRP SEND request
-
+                SendMsrpMessage(null, null);
             }
 
             // Listen for another connection request
             m_TcpListener.BeginAcceptTcpClient(AcceptCallback, m_TcpListener);
-
         }
         catch (SocketException) { }
         catch (IOException) { }
@@ -170,16 +225,19 @@ public class MsrpConnection
         catch { }
     }
 
+    /// <summary>
+    /// Called by the SslStream object when authenticating as a server when using MSRP over TLS.
+    /// </summary>
+    /// <param name="Iar">The AsyncState property is set to this MsrpConnection object but its not used.</param>
     private void AuthenticateAsServerCallback(IAsyncResult Iar)
     {
         try
         {
             SslStream sslStream = (SslStream)m_NetworkStream;
             sslStream.EndAuthenticateAsServer(Iar);
+            MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, m_NetworkStream);
-
-            // TODO: Send an empty MSRP SEND request
-
+            SendMsrpMessage(null, null);
         }
         catch (Exception) { }
     }
@@ -212,37 +270,41 @@ public class MsrpConnection
 
     }
 
+    /// <summary>
+    /// Called by the TcpClient object when connecting as a client when the connection to the server is
+    /// established.
+    /// </summary>
+    /// <param name="Iar">Ths AsyncState property is set to this MsrpConnection object, but its not used.</param>
     private void ClientConnectCallback(IAsyncResult Iar)
     {
-        MsrpConnection Mc = (MsrpConnection)Iar.AsyncState;
+        //MsrpConnection Mc = (MsrpConnection)Iar.AsyncState;
         Exception Excpt = null;
 
         try
         {
             m_TcpClient.EndConnect(Iar);
-            m_Qos.SetTcpDscp(Mc.m_TcpClient, DscpSettings.MSRPDscp, Mc.m_RemoteMsrpUri.uri.ToSIPEndPoint().
+            m_Qos.SetTcpDscp(m_TcpClient, DscpSettings.MSRPDscp, m_RemoteMsrpUri.uri.ToSIPEndPoint().
                 GetIPEndPoint());
             if (m_LocalMsrpUri.uri.Scheme == SIPSchemesEnum.msrps)
             {
                 SslStream sslStream = new SslStream(m_TcpClient.GetStream(), false, ValidateServerCertificate, null);
                 m_NetworkStream = sslStream;
                 if (m_Certificate == null)
-                    sslStream.BeginAuthenticateAsClient("*", AuthenticateAsClientCallback, Mc);
+                    sslStream.BeginAuthenticateAsClient("*", AuthenticateAsClientCallback, this);
                 else
                 {
                     X509CertificateCollection Col = new X509CertificateCollection();
                     Col.Add(m_Certificate);
-                    sslStream.BeginAuthenticateAsClient("*", Col, false, AuthenticateAsClientCallback, Mc);
+                    sslStream.BeginAuthenticateAsClient("*", Col, false, AuthenticateAsClientCallback, this);
                 }
             }
             else
             {
                 m_NetworkStream = m_TcpClient.GetStream();
-                if (m_NetworkStream == null)
+                if (m_NetworkStream != null)
                 {
-                    // TODO: Send an empty message
-
-                    // TODO: Fire an event that indicates that the connection is established
+                    MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
+                    SendMsrpMessage(null, null);
 
                     // Start reading from the stream asynchronously
                     m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
@@ -250,9 +312,7 @@ public class MsrpConnection
                 }
                 else
                 {   // An error occurred
-
-                    // TODO: Fire an event that indicates a connection occurred.
-
+                    MsrpConnectionFailed?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
                 }
             }
         }
@@ -262,7 +322,28 @@ public class MsrpConnection
 
         if (Excpt != null)
         {
-            // TODO: Handle the exception
+            MsrpConnectionFailed?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
+        }
+    }
+
+    /// <summary>
+    /// Called to complete the authentication as a client.
+    /// </summary>
+    /// <param name="ar">The AsyncState property is set to this MsrpConnection object.</param>
+    private void AuthenticateAsClientCallback(IAsyncResult ar)
+    {
+        MsrpConnection Mc = (MsrpConnection)ar.AsyncState;
+        SslStream sslStream = (SslStream)Mc.m_NetworkStream;
+        try
+        {
+            sslStream.EndAuthenticateAsClient(ar);
+            SendMsrpMessage(null, null);    // Send an empty SEND request.
+            MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
+            sslStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, sslStream);
+        }
+        catch (Exception)
+        {
+            MsrpConnectionFailed?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
         }
     }
 
@@ -314,9 +395,7 @@ public class MsrpConnection
         MsrpMessage msrpMessage = MsrpMessage.ParseMsrpMessage(bytes);
         if (msrpMessage == null)
         {   // Error: Unable to parse the message
-            // TODO: Figure out how to handle this case because the message could be either a request or
-            // a response
-
+            EnqueueMsrpResponseMessage(msrpMessage.BuildResponseMessage(400, "Bad Request"));
             return;
         }
 
@@ -347,6 +426,11 @@ public class MsrpConnection
                 }
 
                 // Else its an empty SEND request so just OK it (done above)
+            }
+            else if (msrpMessage.RequestMethod == "REPORT")
+            {
+                ReportReceived?.Invoke(msrpMessage.MessageID, msrpMessage.ByteRange.Total,
+                    msrpMessage.Status.StatusCode, msrpMessage.Status.Comment);
             }
 
         }
@@ -424,7 +508,7 @@ public class MsrpConnection
     private void EnqueueMsrpRequestMessage(MsrpMessage message)
     {
         m_RequestTransmitQueue.Enqueue(message);
-        m_TransmitTaskSemaphore.Release();
+        m_TransmitTaskSemaphore.Release();      // Signal the transmit task.
     }
 
     private const int MAX_TRANSMIT_RETRIES = 3;
@@ -449,7 +533,7 @@ public class MsrpConnection
             while (cancellationToken.IsCancellationRequested == false)
             {
                 await m_TransmitTaskSemaphore.WaitAsync(100, cancellationToken);
-                if (m_NetworkStream == null)
+                if (m_NetworkStream == null || m_NetworkStream.CanWrite == false)
                     continue;
 
                 // Send all MSRP response messages that are queued
@@ -472,15 +556,13 @@ public class MsrpConnection
                 else
                 {   // Waiting for a response to the current request.
                     if (m_ResponseMessage != null)
-                    {
+                    {   // A response was received
                         if (CurrentRequest.TransactionID == m_ResponseMessage.TransactionID)
                         {
                             if (m_ResponseMessage.ResponseCode != 200)
-                            {   // An error code was returned
-
-                                // TODO: Fire an event for this error response
-
-                            }
+                                // An error code was returned
+                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri, m_ResponseMessage.
+                                    ResponseCode, m_ResponseMessage.ResponseText);
 
                             CurrentRequest = null;
                             m_TransmitTaskSemaphore.Release();
@@ -496,8 +578,8 @@ public class MsrpConnection
                             }
                             else
                             {   // Too many attempts
-
-                                // TODO: Fire an event
+                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri, 481,
+                                    "Timeout");
 
                                 // Give up on the current request
                                 CurrentRequest = null;
@@ -520,8 +602,8 @@ public class MsrpConnection
                             }
                             else
                             {   // Too many attempts
-
-                                // TODO: Fire an event
+                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri, 481,
+                                    "Timeout");
 
                                 // Give up on the current request
                                 CurrentRequest = null;
@@ -551,27 +633,6 @@ public class MsrpConnection
         catch (Exception) { }
     }
 
-    private void AuthenticateAsClientCallback(IAsyncResult ar)
-    {
-        MsrpConnection Mc = (MsrpConnection)ar.AsyncState;
-        SslStream sslStream = (SslStream)Mc.m_NetworkStream;
-        try
-        {
-            sslStream.EndAuthenticateAsClient(ar);
-
-            SendMsrpMessage(null, null);    // Send an empty SEND request.
-
-            // TODO: Fire an event to indicate that the connection was successful
-
-            sslStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, sslStream);
-
-        }
-        catch (Exception)
-        {
-            // TODO: Fire an event to indicate that the connection failed
-        }
-    }
-
     private MsrpMessage BuildSendRequest(string MessageID)
     {
         MsrpMessage msg = new MsrpMessage();
@@ -580,20 +641,39 @@ public class MsrpConnection
         msg.RequestMethod = "SEND";
         msg.ToPath.MsrpUris.Add(m_RemoteMsrpUri);
         msg.FromPath.MsrpUris.Add(m_LocalMsrpUri);
-
         return msg;
     }
 
     private const int CHUNK_SIZE = 2048;
 
     /// <summary>
-    /// 
+    /// Sends an MSRP message to the remote endpoint. The method queues the message for transmission and
+    /// returns immediately. It does not block. If the length of the message contents is longer than
+    /// 2048 bytes, then the message is split up into chunks and each message chunk is queued.
+    /// To send an empty SEND request, set the ContentType and the Contents parameters to null.
     /// </summary>
-    /// <param name="ContentType"></param>
-    /// <param name="Contents"></param>
-    public void SendMsrpMessage(string ContentType, byte[] Contents)
+    /// <param name="ContentType">Specifies the Content-Type header value for the message. For example:
+    /// text/plain or message/cpim.</param>
+    /// <param name="Contents">Binary message contents encoded using UTF8 if the message is text or
+    /// the un-encode binary contents if sending a non-text message such as a picture or a video
+    /// file.</param>
+    /// <param name="messageID">If specified, this is the Message-ID header that will be include
+    /// in the SEND request. This should be a 9 or 10 digit alphanumeric string that identifies the
+    /// method. This parameter is optional. If pressent then the SEND request will include a
+    /// Success-Report header with a value of "yes" so that the remote endpoint will generate a
+    /// success report.</param>
+    public void SendMsrpMessage(string ContentType, byte[] Contents, string messageID = null)
     {
-        string MessageID = MsrpMessage.NewTransactionID();  // Use a new random ID
+        string MessageID;
+        bool RequestSuccessReport = false;
+        if (string.IsNullOrEmpty(messageID) == true)
+            MessageID = MsrpMessage.NewRandomID();  // Use a new random ID
+        else
+        {
+            MessageID = messageID;
+            RequestSuccessReport = true;
+        }
+
         MsrpMessage msg;
         if (ContentType == null || Contents == null)
         {   // Send an empty SEND request
@@ -607,12 +687,35 @@ public class MsrpConnection
         if (Contents.Length % CHUNK_SIZE != 0)
             NumChunks += 1;
 
+        int CurrentStartIdx = 0;
+        int BytesRemaining = Contents.Length;
+        int CurrentChunkSize = BytesRemaining >= CHUNK_SIZE ? CHUNK_SIZE : BytesRemaining;
+        int CurrentEndIdx = CurrentStartIdx + CurrentChunkSize - 1;
+
         for (int i = 0; i < NumChunks; i++)
         {
             msg = BuildSendRequest(MessageID);
+            msg.ContentType = ContentType;
+            if (RequestSuccessReport == true)
+                msg.SuccessReport = "yes";
 
+            msg.ByteRange = new ByteRangeHeader() { Start = CurrentStartIdx + 1, End = CurrentEndIdx + 1,
+                Total = Contents.Length };
+            msg.Body = new byte[CurrentChunkSize];
+            Array.ConstrainedCopy(Contents, CurrentStartIdx, msg.Body, 0, CurrentChunkSize);
+
+            if (i == NumChunks - 1)
+                msg.CompletionStatus = MsrpCompletionStatus.Complete;
+            else
+                msg.CompletionStatus = MsrpCompletionStatus.Continuation;
+
+            EnqueueMsrpRequestMessage(msg);
+
+            CurrentStartIdx = CurrentStartIdx + CurrentChunkSize;
+            BytesRemaining -= CurrentChunkSize;
+            CurrentChunkSize = BytesRemaining >= CHUNK_SIZE ? CHUNK_SIZE : BytesRemaining;
+            CurrentEndIdx = CurrentEndIdx + CurrentChunkSize;
         }
-
     }
 
     /// <summary>

@@ -20,7 +20,7 @@ public class MsrpMessage
     /// <summary>
     /// Transaction ID for the message;
     /// </summary>
-    public string TransactionID = NewTransactionID();
+    public string TransactionID = NewRandomID();
 
     /// <summary>
     /// Request line for the message. This will be null if the MessageType is not MessageType.Request
@@ -296,10 +296,10 @@ public class MsrpMessage
     }
 
     /// <summary>
-    /// Creates a random string to use as a Session ID for MSRP.
+    /// Creates a random string to use as a Session ID or a Transaction ID for MSRP.
     /// </summary>
     /// <returns>Returns the random string.</returns>
-    public static string NewTransactionID()
+    public static string NewRandomID()
     {
         return Crypto.GetRandomString(10);
     }
@@ -438,6 +438,7 @@ public class MsrpMessage
         Msg.ResponseText = ResponseText;
         Msg.TransactionID = TransactionID;
         Msg.CompletionStatus = MsrpCompletionStatus.Complete;
+        Msg.ByteRange = ByteRange;
 
         if (ResponseCode == 200)
         {   // Special case -- For 200 OK, set the To-Path to the first (left-most MSRP URI in the From-Path
