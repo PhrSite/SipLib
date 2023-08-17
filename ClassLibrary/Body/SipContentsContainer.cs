@@ -17,12 +17,12 @@ public class SipContentsContainer
     /// Contains the value of the Content-Type header that indicates the type of the contents received 
     /// with a SIP message.
     /// </summary>
-    public string ContentsType = "";
+    public string ContentType = "";
     /// <summary>
     /// Contains the Content-Disposition header value. Will be null if there is no Content-Disposition 
     /// header.
     /// </summary>
-    public string ContentsDispositon = null;
+    public string ContentDispositon = null;
     /// <summary>
     /// Contains the Content-ID header value. Will be null if there is none.
     /// </summary>
@@ -34,9 +34,9 @@ public class SipContentsContainer
     public string ContentTransferEncoding = null;
 
     /// <summary>
-    /// Contains the string value of the Body-Length header. Will be null if there is none.
+    /// Contains the string value of the Content-Length header. Will be null if there is none.
     /// </summary>
-    public string ContentsLength = null;
+    public string ContentLength = null;
 
     /// <summary>
     /// Contains the contents lines.
@@ -49,8 +49,7 @@ public class SipContentsContainer
     public NameValueCollection Params = new NameValueCollection();
 
     /// <summary>
-    /// If true, then the contents contains raw binary data that must not
-    /// be converted to a string in order to a string.
+    /// If true, then the contents contains raw binary data that must not be converted to a string.
     /// </summary>
     public bool IsBinaryContents = false;
     /// <summary>
@@ -59,7 +58,8 @@ public class SipContentsContainer
     public byte[] BinaryContents = null;
 
     /// <summary>
-    /// Converts the lines of the contents into a string.
+    /// Converts the lines of the contents into a string. This method must not be called if IsBinaryContents
+    /// is true.
     /// </summary>
     /// <returns>Returns a single string containing the lines of the contents block. Each line is 
     /// separated by a \r\n (CRLF). Returns an empty string if there are no contents.</returns>

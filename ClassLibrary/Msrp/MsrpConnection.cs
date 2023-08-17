@@ -12,14 +12,14 @@ using SipLib.Channels;
 using SipLib.Core;
 using System.Net.Security;
 using System.Collections.Concurrent;
-using System.Text;
 
 /// <summary>
-/// Class for managing a single MSRP connection to either a remote server or a remote client.
+/// Class for managing a single MSRP connection to either a remote server or from a remote client.
 /// </summary>
 public class MsrpConnection
 {
-    private const int DEFAULT_BUFFER_LENGTH = 4096;
+    private const int DEFAULT_READ_BUFFER_LENGTH = 4096;
+    private const int CHUNK_SIZE = 2048;
 
     private TcpListener m_TcpListener = null;
     private TcpClient m_TcpClient;
@@ -28,15 +28,20 @@ public class MsrpConnection
     private X509Certificate2 m_Certificate = null;
 
     private Stream m_NetworkStream = null;
+    /// <summary>
+    /// Absolute maximum size of a MSRP transaction (chunk) message.
+    /// </summary>
+    private const int DEFAULT_MAX_MSRP_MSG_LENGTH = 10000;
+    private int m_MaxMsrpMessageLength = DEFAULT_MAX_MSRP_MSG_LENGTH;
 
-    private MsrpStreamParser m_StreamParser = new MsrpStreamParser();
-    private byte[] m_ReadBuffer = new byte[DEFAULT_BUFFER_LENGTH];
+    private MsrpStreamParser m_StreamParser = new MsrpStreamParser(DEFAULT_MAX_MSRP_MSG_LENGTH);
+    private byte[] m_ReadBuffer = new byte[DEFAULT_READ_BUFFER_LENGTH];
 
     /// <summary>
     /// Returns true if the connection is passive, i.e., this end is the server and listening for connection
     /// requests. Returns false if this end of the connection is the client.
     /// </summary>
-    public bool ConnectionIsPassive = false;
+    public bool ConnectionIsPassive { get; private set; } = false;
 
     private Qos m_Qos = new Qos();
     private bool m_ShuttingDown = false;
@@ -46,6 +51,7 @@ public class MsrpConnection
     private SemaphoreSlim m_TransmitTaskSemaphore = new SemaphoreSlim(0, int.MaxValue);
     private CancellationTokenSource m_TokenSource = new CancellationTokenSource();
     private MsrpMessage m_ResponseMessage = null;
+    private bool m_Started = false;
 
     /// <summary>
     /// Constructor
@@ -54,6 +60,50 @@ public class MsrpConnection
     {
         // Don't wait, let it run in the background
         Task transmitTask = TransmitTask(m_TokenSource.Token);
+    }
+
+    private const int MINIMUM_MAX_MSRP_MESSAGE_LENGTH = 3000;
+
+    /// <summary>
+    /// Gets or sets the maximum MSRP message transaction (chunk) length for receiving long MSRP messages.
+    /// This represents the absolute maximum of a single MSRP SEND request message chunk, not the maximum
+    /// size of a MSRP message that is properly chunked. The setter for this property must be called before
+    /// calling the StartListening() or the StartClientConnection() methods.
+    /// <para> 
+    /// This property does not affect the maximum MSRP message length if a sender follows the chunking rules
+    /// set forth in RFC 4975.
+    /// </para>
+    /// <para>
+    /// The minimum value for this property is 3000 (this allows for 2048 byte contents plus a few hundred
+    /// bytes for the MSRP message headers. The default value of this property is 10000 bytes.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// <para>According to RFC 4975, MSRP message senders must split messages where the body of
+    /// the message is greater than 2048 bytes into chunks containing 2048 byte blocks so it is not
+    /// necessary to set this property.
+    /// </para>
+    /// <para>
+    /// The only time that setting this property is necessary is if a remote MSRP endpoint does not follow
+    /// the rules for message chunking and is expected to send large messages that may contain images or
+    /// video recordings.
+    /// </para>
+    /// </remarks>
+    public int MaxMsrpMessageLength
+    {
+        get { return m_MaxMsrpMessageLength; }
+        set
+        {
+            if (m_Started == false)
+            {
+                if (value < 2048)
+                    throw new ArgumentException("The maximum MSRP message chunk length may not be less than " +
+                        $"{MINIMUM_MAX_MSRP_MESSAGE_LENGTH} bytes");
+
+                m_MaxMsrpMessageLength = value;
+                m_StreamParser = new MsrpStreamParser(m_MaxMsrpMessageLength);
+            }
+        }
     }
 
     /// <summary>
@@ -120,6 +170,7 @@ public class MsrpConnection
         if (m_TcpClient == null || ConnectionIsPassive == true)
             throw new InvalidOperationException("This method can only be called for client connections");
 
+        m_Started = true;
         IPEndPoint RemIpe = m_RemoteMsrpUri.uri.ToSIPEndPoint().GetIPEndPoint();
         m_TcpClient.BeginConnect(RemIpe.Address, RemIpe.Port, ClientConnectCallback, this);
     }
@@ -154,12 +205,13 @@ public class MsrpConnection
     /// Starts the server listening for connection requests. Call this method after calling the CreateAsServer()
     /// method.
     /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
+    // <exception cref="InvalidOperationException"></exception>
     public void StartListening()
     {
         if (m_TcpListener == null || ConnectionIsPassive == false)
             throw new InvalidOperationException("This method can only be used for MSRP servers");
 
+        m_Started = true;
         m_TcpListener.Start();
         m_TcpListener.BeginAcceptTcpClient(AcceptCallback, m_TcpListener);
     }
@@ -204,7 +256,8 @@ public class MsrpConnection
                 m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
                     m_NetworkStream);
 
-                SendMsrpMessage(null, null);
+                // For debug only
+                //SendMsrpMessage(null, null);
             }
 
             // Listen for another connection request
@@ -237,7 +290,8 @@ public class MsrpConnection
             sslStream.EndAuthenticateAsServer(Iar);
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, m_NetworkStream);
-            SendMsrpMessage(null, null);
+            // For debug only
+            //SendMsrpMessage(null, null);
         }
         catch (Exception) { }
     }
@@ -304,7 +358,8 @@ public class MsrpConnection
                 if (m_NetworkStream != null)
                 {
                     MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
-                    SendMsrpMessage(null, null);
+                    // For debug only
+                    //SendMsrpMessage(null, null);
 
                     // Start reading from the stream asynchronously
                     m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
@@ -337,7 +392,8 @@ public class MsrpConnection
         try
         {
             sslStream.EndAuthenticateAsClient(ar);
-            SendMsrpMessage(null, null);    // Send an empty SEND request.
+            // For debug only
+            //SendMsrpMessage(null, null);    // Send an empty SEND request.
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             sslStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, sslStream);
         }
@@ -643,8 +699,6 @@ public class MsrpConnection
         msg.FromPath.MsrpUris.Add(m_LocalMsrpUri);
         return msg;
     }
-
-    private const int CHUNK_SIZE = 2048;
 
     /// <summary>
     /// Sends an MSRP message to the remote endpoint. The method queues the message for transmission and

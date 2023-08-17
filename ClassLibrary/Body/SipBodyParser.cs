@@ -118,13 +118,13 @@ public class SipBodyParser
             strUpper = str.ToUpper();
             if (strUpper.IndexOf("CONTENT-TYPE") >= 0)
             {
-                Cc.ContentsType = GetHeaderValue(str);
+                Cc.ContentType = GetHeaderValue(str);
                 // Process any parameters in the Content-Type line
-                string[] Fields = Cc.ContentsType.Split(new char[] { ';' },
+                string[] Fields = Cc.ContentType.Split(new char[] { ';' },
                     StringSplitOptions.RemoveEmptyEntries);
                 if (Fields != null && Fields.Length > 0)
                 {
-                    Cc.ContentsType = Fields[0];
+                    Cc.ContentType = Fields[0];
                     for (int i = 1; i < Fields.Length; i++)
                     {   // Parameters may be of the form: name=value or simply a
                         // parameter name with no value.
@@ -140,11 +140,11 @@ public class SipBodyParser
 
             }
             else if (strUpper.IndexOf("CONTENT-DISPOSITION") >= 0)
-                Cc.ContentsDispositon = GetHeaderValue(str);
+                Cc.ContentDispositon = GetHeaderValue(str);
             else if (strUpper.IndexOf("CONTENT-ID") >= 0)
                 Cc.ContentID = GetHeaderValue(str);
             else if (strUpper.IndexOf("CONTENT-LENGTH") >= 0)
-                Cc.ContentsLength = GetHeaderValue(str);
+                Cc.ContentLength = GetHeaderValue(str);
             else if (strUpper.IndexOf("CONTENT-TRANSFER-ENCODING") >= 0)
                 Cc.ContentTransferEncoding = GetHeaderValue(str);
             else
@@ -171,7 +171,7 @@ public class SipBodyParser
 
         char[] Whitespace = { '\r', '\n', ' ' };
         SipContentsContainer Cc = new SipContentsContainer();
-        Cc.ContentsType = Sbp.m_ContentsType;
+        Cc.ContentType = Sbp.m_ContentsType;
         string strTrim;
 
         foreach (string str in strLines)
@@ -198,7 +198,7 @@ public class SipBodyParser
         SipContentsContainer RetCc = null;
         foreach (SipContentsContainer Cc in ContentsContainers)
         {
-            if (Cc.ContentsType == ContentsType)
+            if (Cc.ContentType == ContentsType)
             {
                 RetCc = Cc;
                 break;
@@ -220,7 +220,7 @@ public class SipBodyParser
         SipContentsContainer RetCc = null;
         foreach (SipContentsContainer Cc in ContentsContainers)
         {
-            if (Cc.ContentsType.ToLower() == ContentsType.ToLower())
+            if (Cc.ContentType.ToLower() == ContentsType.ToLower())
             {
                 RetCc = Cc;
                 break;
@@ -240,7 +240,7 @@ public class SipBodyParser
         bool Result = false;
         foreach (SipContentsContainer Cc in ContentsContainers)
         {
-            if (Cc.ContentsType.ToLower() == ContentsType.ToLower())
+            if (Cc.ContentType.ToLower() == ContentsType.ToLower())
             {
                 Result = true; ;
                 break;

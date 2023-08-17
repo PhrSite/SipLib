@@ -23,11 +23,6 @@ public class MsrpStreamParser
     private const int DEFAULT_BUFFER_LENGTH = 10000;
 
     /// <summary>
-    /// Absolute maximum size of a MSRP transaction message.
-    /// </summary>
-    private const int MAX_MSRP_MSG_LENGTH = 1000000;
-
-    /// <summary>
     /// Buffer for building up a complete MSRP transaction message.
     /// </summary>
     private byte[] m_MessageBuffer = new byte[DEFAULT_BUFFER_LENGTH];
@@ -43,16 +38,20 @@ public class MsrpStreamParser
 
     private byte[] m_EndLineBytePattern = null;
 
-    // The bytes to collect after the end lind pattern is detected are the continuation flag byte ($, + or #),
+    // The bytes to collect after the end line pattern is detected are the continuation flag byte ($, + or #),
     // CR and LF.
     private const int PostEndLinePatternBytes = 3;
     private int m_PostEndEndLinePatternBytesCollected = 0;
 
+    private int m_MaxMsrpMessageLength;
+
     /// <summary>
     /// Constructor
     /// </summary>
-    public MsrpStreamParser()
+    /// <param name="MaxMsrpMessageLength"></param>
+    public MsrpStreamParser(int MaxMsrpMessageLength)
     {
+        m_MaxMsrpMessageLength = MaxMsrpMessageLength;
     }
 
     /// <summary>
@@ -69,7 +68,7 @@ public class MsrpStreamParser
         if (m_CurrentLength >= m_MessageBuffer.Length)
         {   // Need to re-allocate the message buffer
             int NewLength = m_MessageBuffer.Length + DEFAULT_BUFFER_LENGTH;
-            if (NewLength > MAX_MSRP_MSG_LENGTH)
+            if (NewLength > m_MaxMsrpMessageLength)
                 Reset();
             else
             {
@@ -112,7 +111,7 @@ public class MsrpStreamParser
         }
         else if (m_ParsingState == ParsingStateEnum.EndLineSearch)
         {
-            index = ByteBufferInfo.FindLastBytePattern(m_MessageBuffer, m_CurrentLength - 1, m_EndLineBytePattern);
+            index = FindEndLinePattern(m_MessageBuffer, m_CurrentLength - 1, m_EndLineBytePattern);
             if (index > 0)
             {   // The end line pattern was found
                 m_ParsingState = ParsingStateEnum.EndLineFound;
@@ -127,6 +126,41 @@ public class MsrpStreamParser
         }
 
         return MessageFound;
+    }
+
+    /// <summary>
+    /// Searches for the MSRP end line pattern byte array pattern within an array by searching from the
+    /// end of the read buffer.
+    /// </summary>
+    /// <param name="SrcArray">Array to search in.</param>
+    /// <param name="LastSrcIndex">Last index in the source array to include in the search range</param>
+    /// <param name="BytePattern">Array of bytes containing the end line pattern to search for.</param>
+    /// <returns>The index within the search array of the start of the pattern to search for. Returns -1
+    /// if the pattern is not found.
+    /// </returns>
+    public static int FindEndLinePattern(byte[] SrcArray, int LastSrcIndex, byte[] BytePattern)
+    {
+        int Idx = -1;
+        if ((LastSrcIndex - 1) < BytePattern.Length)
+            return Idx;
+
+        bool Found = false;
+        int SrcIdx = LastSrcIndex;
+        int i;
+
+        Found = true;   // Assume success
+        for (i = BytePattern.Length - 1; (i > 0 && Found == true); i--)
+        {
+            if (SrcArray[SrcIdx] != BytePattern[i])
+                Found = false;  // Mismatch found
+
+            SrcIdx -= 1;
+        } // end for i
+
+        if (Found == true)
+            Idx = SrcIdx;
+
+        return Idx;
     }
 
     /// <summary>

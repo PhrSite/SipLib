@@ -315,7 +315,7 @@ namespace SipLibUnitTests
 
             Assert.True(Scc[0].IsBinaryContents == true, "The contents are not binary for the first " +
                 "contents block");
-            Assert.True(Scc[0].ContentsType == "text/plain", "The Content-Type is incorrect for " +
+            Assert.True(Scc[0].ContentType == "text/plain", "The Content-Type is incorrect for " +
                 "the first contents block");
             Assert.True(Scc[0].ContentTransferEncoding == "binary", "The first Content-Transfer-" +
                 "Encoding value is incorrect");
@@ -324,7 +324,7 @@ namespace SipLibUnitTests
 
             Assert.True(Scc[1].IsBinaryContents == true, "The contents are not binary for the second " +
                 "contents block");
-            Assert.True(Scc[1].ContentsType == "application/octet-stream", 
+            Assert.True(Scc[1].ContentType == "application/octet-stream", 
                 "The Content-Type is incorrect for the second contents block");
             Assert.True(Scc[1].ContentTransferEncoding == "binary", "The second Content-Transfer-" +
                 "Encoding value is incorrect");
@@ -405,7 +405,7 @@ namespace SipLibUnitTests
             Assert.True(Contents.Count == 1, "The contents count is incorrect");
             Assert.True(Contents[0].IsBinaryContents == false, "The IsBinaryContents value is " +
                 "incorrect");
-            Assert.True(Contents[0].ContentsType == "application/sdp", "The Content-Type is incorrect");
+            Assert.True(Contents[0].ContentType == "application/sdp", "The Content-Type is incorrect");
             Sdp sdp = Sdp.ParseSDP(Contents[0].ContentsLines);
             Assert.NotNull(sdp);
         }

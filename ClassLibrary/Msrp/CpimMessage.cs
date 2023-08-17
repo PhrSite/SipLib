@@ -3,12 +3,13 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Msrp;
+
 using SipLib.Core;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 /// <summary>
-/// Class for Common Profile for Instant Messaging (CPIM) messages defined by RFC 3862
+/// Class for Common Profile for Instant Messaging (CPIM) messages defined by RFC 3862. CPIM messages
+/// are not used in standalone manner in NG9-1-1 applications. They are always encapsulated in MSRP messages.
 /// </summary>
 public class CpimMessage
 {
@@ -72,7 +73,7 @@ public class CpimMessage
     /// <summary>
     /// Gets or sets the contents (body) of the message.
     /// </summary>
-    public string Body { get; set; } = null;
+    public byte[] Body { get; set; } = null;
 
     /// <summary>
     /// Default constructor
@@ -93,37 +94,46 @@ public class CpimMessage
         string strMsg = Encoding.UTF8.GetString(cpimBytes);
         int LastIdx = strMsg.LastIndexOf(BodyDelim);
         string HeaderString = null;
-        string BodyString = string.Empty;
+        byte[] BodyBytes = null;
 
-        if (LastIdx < 0)
-            HeaderString = strMsg;    // No body, just headers
+
+        int Idx = strMsg.ToLower().IndexOf("content-type");
+        if (Idx < 0)
+            // This is an error because there must be a Content-Type header. The body, if there is one
+            // is not usable. Try to parse just the headers.
+            HeaderString = strMsg;
         else
         {
-            int Idx = strMsg.ToLower().IndexOf("content-type");
-            if (Idx < 0)
-                // This is an error because there must be a Content-Type header. The body, if there is one
-                // is not usable. Try to parse just the headers.
+            // Must do a binary search for the body.
+            int FirstBodyDelimIdx = ByteBufferInfo.GetStringPosition(cpimBytes, 0, cpimBytes.Length
+                - 1, BodyDelim, null);
+            if (FirstBodyDelimIdx < 0)
+                // Error: Try to parse just the headers
                 HeaderString = strMsg;
             else
             {
-                HeaderString = strMsg.Substring(0, Idx);
-                string strTemp = strMsg.Substring(Idx);
-                // Get past all of the headers
-                Idx = strTemp.IndexOf(BodyDelim);
-                if (Idx >= 0)
+                int LastBodyDelimIdx = ByteBufferInfo.GetStringPosition(cpimBytes, FirstBodyDelimIdx +
+                        BodyDelim.Length, cpimBytes.Length - 1, BodyDelim, null);
+                if (LastBodyDelimIdx < 0)
+                    HeaderString = strMsg;
+                else
                 {
-                    HeaderString += "\r\n" + strTemp.Substring(0, Idx) + "\r\n";    // Content-Type header
-                    if (Idx + BodyDelim.Length < strMsg.Length)
+                    byte[] HeaderBytes = new byte[LastBodyDelimIdx];
+                    Array.Copy(cpimBytes, HeaderBytes, HeaderBytes.Length);
+                    HeaderString = Encoding.UTF8.GetString(HeaderBytes);
+                    int BodyStartIdx = LastBodyDelimIdx + BodyDelim.Length;
+                    if (BodyStartIdx < cpimBytes.Length - 1)
                     {
-                        BodyString = strTemp.Substring(Idx + BodyDelim.Length);
-                        BodyString = BodyString.Replace(BodyDelim, "");
+                        int BodyLength = cpimBytes.Length - BodyStartIdx;
+                        BodyBytes = new byte[BodyLength];
+                        Array.ConstrainedCopy(cpimBytes, BodyStartIdx, BodyBytes, 0, BodyLength);
                     }
                 }
             }
         }
 
         cpimMessage = new CpimMessage();
-        cpimMessage.Body = BodyString;
+        cpimMessage.Body = BodyBytes;
 
         try
         {
@@ -202,11 +212,13 @@ public class CpimMessage
     }
 
     /// <summary>
-    /// Converts this CpimMessage to a string for sending as part of an MSRP message
+    /// Converts this object into a byte array so that it may be encapsulated in a MSRP message.
     /// </summary>
-    /// <returns></returns>
-    public override string ToString()
+    /// <returns>Returns a UTF8 encoded byte array.</returns>
+    public byte[] ToByteArray()
     {
+        byte[] byteArray = null;
+
         StringBuilder Sb = new StringBuilder(1024);
 
         foreach (SIPUserField ToUsf in To)
@@ -233,17 +245,21 @@ public class CpimMessage
         foreach (string strNonStandard in NonStandardHeaders)
             Sb.AppendFormat("{0}{1}", strNonStandard, CRLF);
 
-        if (string.IsNullOrEmpty(ContentType) == false && string.IsNullOrEmpty(Body) == false)
+        if (string.IsNullOrEmpty(ContentType) == false && Body != null && Body.Length > 0)
         {
             Sb.AppendFormat("\r\nContent-Type: {0}{1}", ContentType, CRLF);
             if (string.IsNullOrEmpty(ContentID) == false)
                 Sb.AppendFormat("Content-ID: {0}{1}", ContentID, BodyDelim);
             else
                 Sb.Append(CRLF);
-
-            Sb.Append(Body);
         }
 
-        return Sb.ToString();
+        MemoryStream memoryStream = new MemoryStream();
+        memoryStream.Write(Encoding.UTF8.GetBytes(Sb.ToString()));
+        if (Body != null && Body.Length > 0)
+            memoryStream.Write(Body, 0, Body.Length);
+
+        byteArray = memoryStream.ToArray();
+        return byteArray;
     }
 }

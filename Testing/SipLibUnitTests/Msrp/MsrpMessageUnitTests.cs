@@ -13,7 +13,7 @@ using Veds;
 public class MsrpMessageUnitTests
 {
     /// <summary>
-    /// Specifies the path to the files containing the test SIP messages. Change this if the project
+    /// Specifies the path to the files containing the test MSRP messages. Change this if the project
     /// location or the location of the test files change.
     /// </summary>
      private const string Path = @"..\..\..\MsrpMessages\";
@@ -62,6 +62,38 @@ public class MsrpMessageUnitTests
 
         string strResultBody = Encoding.UTF8.GetString(msrpMessageResult.Body);
         Assert.True(strResultBody.Trim() == "Hi, I'm Alice!", "The Body is wrong");
+    }
+
+    [Fact]
+    public void MsrpRequestMessage1_ImageJpeg()
+    {
+        byte[] MsgBytes = GetTestFile("MsrpRequestMessage1.txt");
+        MsrpMessage msrpMessage1 = MsrpMessage.ParseMsrpMessage(MsgBytes);
+        Assert.NotNull(msrpMessage1);
+
+        byte[] CarCrashBytes = GetTestFile("CarCrashPicture.jpg");
+        msrpMessage1.ContentType = "image/jpeg";
+        msrpMessage1.Body = CarCrashBytes;
+        msrpMessage1.ByteRange.Start = 1;
+        msrpMessage1.ByteRange.End = CarCrashBytes.Length - 1;
+        msrpMessage1.ByteRange.Total = CarCrashBytes.Length - 1;
+
+        byte[] msrpMessage2Bytes = msrpMessage1.ToByteArray();
+        MsrpMessage msrpMessage2 = MsrpMessage.ParseMsrpMessage(msrpMessage2Bytes);
+        Assert.NotNull(msrpMessage2);
+        Assert.True(msrpMessage2.ContentType == "image/jpeg", "The ContentType is wrong");
+        Assert.True(msrpMessage2.Body.Length == CarCrashBytes.Length, "The Body length is wrong");
+        bool BodyMatches = true;
+        for (int i = 0; i < msrpMessage2.Body.Length; i++)
+        {
+            if (msrpMessage2.Body[i] != CarCrashBytes[i])
+            {
+                BodyMatches = false;
+                break;
+            }
+        }
+
+        Assert.True(BodyMatches == true, "The message Body is wrong");
     }
 
     [Fact]

@@ -48,15 +48,13 @@ public class SipBodyBuilder
             return;
         }
 
-        Req.Header.ContentType = string.Format("multipart/mixed;boundary={0}",
-            Boundary);
+        Req.Header.ContentType = string.Format("multipart/mixed;boundary={0}", Boundary);
         foreach (SipBodyContents Sbc in ContentsList)
         {
             Sb.AppendFormat("--{0}\r\n", Boundary);
             Sb.AppendFormat("Content-Type: {0}\r\n", Sbc.ContentType);
             if (string.IsNullOrEmpty(Sbc.ContentDisposition) == false)
-                Sb.AppendFormat("Content-Disposition: {0}\r\n", Sbc.
-                    ContentDisposition);
+                Sb.AppendFormat("Content-Disposition: {0}\r\n", Sbc.ContentDisposition);
             if (string.IsNullOrEmpty(Sbc.ContentID) == false)
                 Sb.AppendFormat("Content-ID: {0}\r\n", Sbc.ContentID);
 

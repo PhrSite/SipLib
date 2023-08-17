@@ -19,7 +19,7 @@ public class MsrpStreamParserUnitTests
     public void MsrpRequestMessage1()
     {
         byte[] MsgBytes = GetTestFile("MsrpRequestMessage1.txt");
-        MsrpStreamParser parser = new MsrpStreamParser();
+        MsrpStreamParser parser = new MsrpStreamParser(10000);
         int i;
         bool FullMessage = false;
         for (i = 0; i < MsgBytes.Length; i++)
@@ -47,7 +47,7 @@ public class MsrpStreamParserUnitTests
     [Fact]
     public void TwoMessagesBackToBack()
     {
-        MsrpStreamParser parser = new MsrpStreamParser();
+        MsrpStreamParser parser = new MsrpStreamParser(10000);
         byte[] MsgBytes1 = GetTestFile("MsrpRequestMessage1.txt");
         byte[] MsgBytes2 = GetTestFile("MsrpPositiveReport1.txt");
         MemoryStream Ms = new MemoryStream();
@@ -73,7 +73,7 @@ public class MsrpStreamParserUnitTests
     [Fact]
     public void TwoMessagesWithRandomCharactersInStream()
     {
-        MsrpStreamParser parser = new MsrpStreamParser();
+        MsrpStreamParser parser = new MsrpStreamParser(10000);
         byte[] MsgBytes1 = GetTestFile("MsrpRequestMessage1.txt");
         byte[] MsgBytes2 = GetTestFile("MsrpPositiveReport1.txt");
         MemoryStream Ms = new MemoryStream();

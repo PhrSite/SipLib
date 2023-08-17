@@ -84,11 +84,11 @@ public class BinaryBodyParser
         byte[] BodyBytes = new byte[Len];
         Array.ConstrainedCopy(MsgBytes, StartIdx, BodyBytes, 0, Len);
         SipContentsContainer Scc = new SipContentsContainer();
-        Scc.ContentsType = ContentType;
+        Scc.ContentType = ContentType;
 
         if (ContentsAreBinary(ContentType, null) == false)
         {
-            Scc.ContentsLength = BodyBytes.Length.ToString();
+            Scc.ContentLength = BodyBytes.Length.ToString();
             Scc.IsBinaryContents = false;
             string str = Encoding.UTF8.GetString(BodyBytes);
             string[] strings = str.Split(CRLF, StringSplitOptions.RemoveEmptyEntries);
@@ -106,7 +106,7 @@ public class BinaryBodyParser
         else
         {
             Scc.IsBinaryContents = true;
-            Scc.ContentsLength = BodyBytes.Length.ToString();
+            Scc.ContentLength = BodyBytes.Length.ToString();
             Scc.BinaryContents = BodyBytes;
         }
         
@@ -122,7 +122,7 @@ public class BinaryBodyParser
     /// <param name="MsgBytes"></param>
     /// <param name="ContentType"></param>
     /// <returns></returns>
-    public static List<SipContentsContainer> ProcessMultiPartContents(byte[] MsgBytes, 
+    private static List<SipContentsContainer> ProcessMultiPartContents(byte[] MsgBytes, 
         string ContentType)
     {
         List<SipContentsContainer> RetVal = new List<SipContentsContainer>();
@@ -155,8 +155,7 @@ public class BinaryBodyParser
         {
             StartIdx = Indexes[i] + BoundaryString.Length;
             StopIdx = Indexes[i + 1];
-            BodyStartIdx = ByteBufferInfo.GetStringPosition(MsgBytes, StartIdx, StopIdx, ContentDelim,
-                null);
+            BodyStartIdx = ByteBufferInfo.GetStringPosition(MsgBytes, StartIdx, StopIdx, ContentDelim, null);
 
             if (BodyStartIdx == -1)
                 throw new Exception("The contents delimiter is not present");
@@ -183,20 +182,20 @@ public class BinaryBodyParser
                 strLower = Header.ToLower();
                 if (strLower.IndexOf("content-type") >= 0)
                 {
-                    Cc.ContentsType = GetHeaderValue(Header);
+                    Cc.ContentType = GetHeaderValue(Header);
                     ProcessContentTypeHeaderParameters(Cc);
                 }
                 else if (strLower.IndexOf("content-disposition") >= 0)
-                    Cc.ContentsDispositon = GetHeaderValue(Header);
+                    Cc.ContentDispositon = GetHeaderValue(Header);
                 else if (strLower.IndexOf("content-id") >= 0)
                     Cc.ContentID = GetHeaderValue(Header);
                 else if (strLower.IndexOf("content-length") >= 0)
-                    Cc.ContentsLength = GetHeaderValue(Header);
+                    Cc.ContentLength = GetHeaderValue(Header);
                 else if (strLower.IndexOf("content-transfer-encoding") >= 0)
                     Cc.ContentTransferEncoding = GetHeaderValue(Header);
             }
 
-            if (ContentsAreBinary(Cc.ContentsType, Cc.ContentTransferEncoding) == true)
+            if (ContentsAreBinary(Cc.ContentType, Cc.ContentTransferEncoding) == true)
             {
                 Cc.IsBinaryContents = true;
                 Cc.BinaryContents = BodyBytes;
@@ -217,14 +216,13 @@ public class BinaryBodyParser
 
     private static void ProcessContentTypeHeaderParameters(SipContentsContainer Cc)
     {
-        string[] Fields = Cc.ContentsType.Split(new char[] { ';' },
+        string[] Fields = Cc.ContentType.Split(new char[] { ';' },
             StringSplitOptions.RemoveEmptyEntries);
         if (Fields != null && Fields.Length > 0)
         {
-            Cc.ContentsType = Fields[0];
+            Cc.ContentType = Fields[0];
             for (int i = 1; i < Fields.Length; i++)
-            {   // Parameters may be of the form: name=value or simply a
-                // parameter name with no value.
+            {   // Parameters may be of the form: name=value or simply a parameter name with no value.
                 string[] Nv = Fields[i].Split(new char[] { '=' },
                     StringSplitOptions.RemoveEmptyEntries);
                 if (Nv != null && Nv.Length > 0)
@@ -242,7 +240,7 @@ public class BinaryBodyParser
     /// <param name="ContentType">Value of the Content-Type header</param>
     /// <param name="ContentTransferEncoding">Value of the Content-Transfer-Encoding header.
     /// May be null if not present.</param>
-    /// <returns></returns>
+    /// <returns>Returns true if the Content-Type is a known binary type or false if it is not.</returns>
     public static bool ContentsAreBinary(string ContentType, string ContentTransferEncoding)
     {
         bool RetVal = false;
@@ -269,10 +267,34 @@ public class BinaryBodyParser
 
     private static string[] KnownBinaryTypes = 
     {
-        "application/octet-stream",
+        // The application types might be encountered in the body of SIP messages
+        "application/octet-stream",     // Not expected in a SIP message, but maybe in a MSRP message
         "application/isup",
-        "application/jpeg",
-        "application/jpg"
+
+        // Some common image types -- These types might be encountered in the body of a MSRP message or in a
+        // CPIM message embedded in  a MSRP message
+        // See: https://www.iana.org/assignments/media-types/media-types.xhtml#image
+        "image/bmp",
+        "image/jpeg",
+        "image/jpg",
+        "image/gif",
+        "image/tiff",
+
+        // Some common video types -- These types might be encountered in the body of a MSRP message or in a
+        // CPIM message embedded in  a MSRP message
+        // See: https://www.iana.org/assignments/media-types/media-types.xhtml#video
+        "video/h264",
+        "video/h265",
+        "video/h266",
+        "video/jpeg",
+        "video/mp4",
+        "video/mpeg",
+        "video/mpeg-generic",
+        "video/ogg",
+        "video/quicktime",
+        "video/raw",
+        "video/vp8",
+        "video/vp9",
 
     };
 
