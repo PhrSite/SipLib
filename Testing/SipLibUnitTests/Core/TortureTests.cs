@@ -309,7 +309,7 @@ namespace SipLibUnitTests
             Assert.NotNull(Msg);
             SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
             Assert.NotNull(Req);
-            List<SipContentsContainer> Scc = BinaryBodyParser.ParseSipBody(MsgBytes, Req.Header.
+            List<MessageContentsContainer> Scc = BinaryBodyParser.ParseSipBody(MsgBytes, Req.Header.
                 ContentType);
             Assert.True(Scc.Count == 2, "The SIP contents count is incorrect");
 
@@ -319,7 +319,7 @@ namespace SipLibUnitTests
                 "the first contents block");
             Assert.True(Scc[0].ContentTransferEncoding == "binary", "The first Content-Transfer-" +
                 "Encoding value is incorrect");
-            Assert.True(Encoding.UTF8.GetString(Scc[0].BinaryContents).ToString() == "Hello",
+            Assert.True(Encoding.UTF8.GetString(Scc[0].BinaryContents).ToString().Trim() == "Hello",
                 "The first contents is incorrect");
 
             Assert.True(Scc[1].IsBinaryContents == true, "The contents are not binary for the second " +
@@ -392,21 +392,20 @@ namespace SipLibUnitTests
             "m=video 3227 RTP/AVP 31" + CRLF +
             "a=rtpmap:31 LPC" + CRLF;
 
-
         [Fact]
         public void SimpleTextContents()
         {
             SIPRequest Req = SIPRequest.ParseSIPRequest(strInviteWithSdp);
             byte[] ReqBytes = Encoding.UTF8.GetBytes(strInviteWithSdp);
             Assert.NotNull(Req);
-            List<SipContentsContainer> Contents = BinaryBodyParser.ParseSipBody(ReqBytes,
+            List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(ReqBytes,
                 Req.Header.ContentType);
 
             Assert.True(Contents.Count == 1, "The contents count is incorrect");
             Assert.True(Contents[0].IsBinaryContents == false, "The IsBinaryContents value is " +
                 "incorrect");
             Assert.True(Contents[0].ContentType == "application/sdp", "The Content-Type is incorrect");
-            Sdp sdp = Sdp.ParseSDP(Contents[0].ContentsLines);
+            Sdp sdp = Sdp.ParseSDP(Contents[0].StringContents);
             Assert.NotNull(sdp);
         }
 

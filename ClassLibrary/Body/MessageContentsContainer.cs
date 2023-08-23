@@ -1,21 +1,24 @@
 ﻿//////////////////////////////////////////////////////////////////////////////////////
-//  File:   SipContentsContainer.cs                                 23 Nov 22 PHR
+//  File:   MessageContentsContainer.cs                             23 Nov 22 PHR
+//
+//  Revised:    20 Aug 23 PHR
+//                -- Removed List<string> ContentsLines and replaced it with
+//                   string StringContents.
+//                -- Changed the name from SipContentsContainer to MessageContentsContainer
 //////////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Specialized;
-using System.Text;
 
 namespace SipLib.Body;
 
 /// <summary>
-/// Class for holding the Body-Type and the contents lines for a single contents block of a 
-/// SIP message.
+/// Class for holding the Content-Type and the contents for a single contents block of a SIP message
+/// or an MSRP message.
 /// </summary>
-public class SipContentsContainer
+public class MessageContentsContainer
 {
     /// <summary>
-    /// Contains the value of the Content-Type header that indicates the type of the contents received 
-    /// with a SIP message.
+    /// Contains the value of the Content-Type header that indicates the type of the body contents block. 
     /// </summary>
     public string ContentType = "";
     /// <summary>
@@ -35,18 +38,19 @@ public class SipContentsContainer
 
     /// <summary>
     /// Contains the string value of the Content-Length header. Will be null if there is none.
+    /// Optional for contents blocks in a message where the Contents-Type is multipart/mixed.
     /// </summary>
     public string ContentLength = null;
 
     /// <summary>
-    /// Contains the contents lines.
+    /// Contains the message body contents as a string. Not null if IsBinaryContents is false.
     /// </summary>
-    public List<string> ContentsLines = new List<string>();
+    public string StringContents = null;
 
     /// <summary>
     /// Contains a collection of parameters from the Content-Type header.
     /// </summary>
-    public NameValueCollection Params = new NameValueCollection();
+    public NameValueCollection ContentTypeParams = new NameValueCollection();
 
     /// <summary>
     /// If true, then the contents contains raw binary data that must not be converted to a string.
@@ -56,21 +60,4 @@ public class SipContentsContainer
     /// Contains the raw binary data. Will be non-null if IsBinaryContents is true.
     /// </summary>
     public byte[] BinaryContents = null;
-
-    /// <summary>
-    /// Converts the lines of the contents into a string. This method must not be called if IsBinaryContents
-    /// is true.
-    /// </summary>
-    /// <returns>Returns a single string containing the lines of the contents block. Each line is 
-    /// separated by a \r\n (CRLF). Returns an empty string if there are no contents.</returns>
-    public override string ToString()
-    {
-        StringBuilder Sb = new StringBuilder(2048);
-        foreach (string str in ContentsLines)
-        {
-            Sb.Append(str + "\r\n");
-        }
-
-        return Sb.ToString();
-    }
 }

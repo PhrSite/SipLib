@@ -32,4 +32,13 @@
     <Folder Include="SipMessages\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="MsrpMessages\MsrpClient.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MsrpMessages\MsrpServer.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

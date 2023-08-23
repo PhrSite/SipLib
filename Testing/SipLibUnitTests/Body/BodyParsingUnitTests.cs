@@ -16,8 +16,7 @@ namespace SipLibUnitTests
     {
         /// <summary>
         /// Specifies the path to the files containing the test SIP messages.
-        /// Change this if the project location or the location of the test files
-        /// change.
+        /// Change this if the project location or the location of the test files change.
         /// </summary>
         private const string Path = @"..\..\..\SipMessages\";
 
@@ -48,7 +47,7 @@ namespace SipLibUnitTests
             SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
             Assert.NotNull(Req);
 
-            List<SipContentsContainer> Contents = BinaryBodyParser.ParseSipBody(Bytes, Req.Header.
+            List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(Bytes, Req.Header.
                 ContentType);
             Assert.NotNull(Contents);
 
@@ -60,37 +59,37 @@ namespace SipLibUnitTests
 
             Assert.True(Contents[1].ContentType == SchemaConsts.PidfContentType, 
                 "The second content type is wrong");
-            Presence Pres = (Presence) XmlHelper.DeserializeFromString(Contents[1].ToString(),
+            Presence Pres = (Presence) XmlHelper.DeserializeFromString(Contents[1].StringContents,
                 typeof(Presence));
             Assert.True(Pres != null, "Error deserializing the PIDF-LO Presence document");
             
             Assert.True(Contents[2].ContentType == SchemaConsts.ProviderInfoContentType,
                 "The third content type is wrong");
-            ProviderInfoType Pi = (ProviderInfoType)XmlHelper.DeserializeFromString(Contents[2].ToString(),
+            ProviderInfoType Pi = (ProviderInfoType)XmlHelper.DeserializeFromString(Contents[2].StringContents,
                 typeof(ProviderInfoType));
             Assert.True(Pi != null, "Error deserializing the ProviderInfo XML document");
 
             Assert.True(Contents[3].ContentType == SchemaConsts.ServiceInfoContentType,
                 "The fourth content type is wrong");
-            ServiceInfoType Si = (ServiceInfoType)XmlHelper.DeserializeFromString(Contents[3].ToString(),
+            ServiceInfoType Si = (ServiceInfoType)XmlHelper.DeserializeFromString(Contents[3].StringContents,
                 typeof(ServiceInfoType));
             Assert.True(Si != null, "Error deserializing the ServiceInfo XML document");
 
             Assert.True(Contents[4].ContentType == SchemaConsts.DeviceInfoContentType,
                 "The fifth content type is wrong");
-            DeviceInfoType Di = (DeviceInfoType)XmlHelper.DeserializeFromString(Contents[4].ToString(),
+            DeviceInfoType Di = (DeviceInfoType)XmlHelper.DeserializeFromString(Contents[4].StringContents,
                 typeof(DeviceInfoType));
             Assert.True(Di != null, "Error deserializing the DeviceInfo XML document");
 
             Assert.True(Contents[5].ContentType == SchemaConsts.SubscriberInfoContentType,
                 "The sixth content type is wrong");
             SubscriberInfoType SubInfo = (SubscriberInfoType)XmlHelper.DeserializeFromString(
-                Contents[5].ToString(), typeof(SubscriberInfoType));
+                Contents[5].StringContents, typeof(SubscriberInfoType));
             Assert.True(SubInfo != null, "Error deserializing the SubscriberInfo XML document");
 
             Assert.True(Contents[6].ContentType == SchemaConsts.CommentContentType,
                 "The seventh content type is wrong");
-            CommentType Ct = (CommentType)XmlHelper.DeserializeFromString(Contents[6].ToString(),
+            CommentType Ct = (CommentType)XmlHelper.DeserializeFromString(Contents[6].StringContents,
                 typeof(CommentType));
             Assert.True(Ct != null, "Error deserializing the Comment XML document");
 

@@ -25,7 +25,7 @@ public class MultipartBinaryBodyBuilder
     /// value of the boundary parameter in the Content-Type header value. For example, if the Content-Type
     /// header value is "multipart/mixed;boundary=boundary1", this parameter must be boundary1.</param>
     /// <returns></returns>
-    public static byte[] ToByteArray(List<SipContentsContainer> Contents, string BoundaryString)
+    public static byte[] ToByteArray(List<MessageContentsContainer> Contents, string BoundaryString)
     {
         if (Contents == null || Contents.Count == 0)
             throw new ArgumentException("Not body contents provided");
@@ -34,28 +34,69 @@ public class MultipartBinaryBodyBuilder
             throw new ArgumentException("No BoundaryString provided");
 
         string BoundaryDelim = "--" + BoundaryString;
-        string LastBoundaryDelim = BoundaryString + "--";
-
-        byte[] BodyBytes = null;
+        string LastBoundaryDelim = BoundaryDelim + "--";
         MemoryStream ms = new MemoryStream();
 
         for (int i = 0; i < Contents.Count; i++)
         {
             if (i == 0)
-                ms.Write(Encoding.UTF8.GetBytes(BoundaryString + CRLF));
-            else if (i == Contents.Count - 1)
-                ms.Write(Encoding.UTF8.GetBytes(CRLF + LastBoundaryDelim));
+                ms.Write(Encoding.UTF8.GetBytes(BoundaryDelim + CRLF));
             else
                 ms.Write(Encoding.UTF8.GetBytes(CRLF + BoundaryDelim + CRLF));
 
-            SipContentsContainer Scc = Contents[i];
+            MessageContentsContainer Scc = Contents[i];
+            WriteContentType(ms, Scc);
 
-            if (string.IsNullOrEmpty(Scc.ContentType) == false)
-                ms.Write(Encoding.UTF8.GetBytes($"Content-Type: {Scc.ContentType}{CRLF}"));
+            if (string.IsNullOrEmpty(Scc.ContentDispositon) == false)
+                ms.Write(Encoding.UTF8.GetBytes($"Content-Disposition: {Scc.ContentDispositon}{CRLF}"));
 
+            if (string.IsNullOrEmpty(Scc.ContentID) == false)
+                ms.Write(Encoding.UTF8.GetBytes($"Content-ID: {Scc.ContentID}{CRLF}"));
+
+            if (string.IsNullOrEmpty(Scc.ContentTransferEncoding) == false)
+                ms.Write(Encoding.UTF8.GetBytes($"Content-Transfer-Encoding: {Scc.ContentTransferEncoding}{CRLF}"));
+
+            // Note: There is no need to write a Content-Length header for each contents block in a
+            // multipart/mixed body.
+
+            ms.Write(Encoding.UTF8.GetBytes(CRLF));
+
+            if (Scc.IsBinaryContents == false)
+                ms.Write(Encoding.UTF8.GetBytes(Scc.StringContents));
+            else
+                ms.Write(Scc.BinaryContents);
         }
 
-        BodyBytes = ms.ToArray();
-        return BodyBytes;
+        ms.Write(Encoding.UTF8.GetBytes(CRLF + LastBoundaryDelim + CRLF));
+        return ms.ToArray();
+    }
+
+    private static void WriteContentType(MemoryStream ms, MessageContentsContainer Scc)
+    {
+        if (string.IsNullOrEmpty(Scc.ContentType) == true)
+            return;
+
+        if (Scc.ContentTypeParams.Count == 0)
+        {
+            ms.Write(Encoding.UTF8.GetBytes($"Content-Type: {Scc.ContentType}{CRLF}"));
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i < Scc.ContentTypeParams.Count; i++)
+        {
+            string pname = Scc.ContentTypeParams.GetKey(i);
+            string pval = Scc.ContentTypeParams.Get(i);
+            if (string.IsNullOrEmpty(pval) == true)
+                sb.Append($"{pname}");
+            else
+                sb.Append($"{pname}={pval}");
+
+            if (i < Scc.ContentTypeParams.Count - 1)
+                sb.Append("; ");
+        }
+
+        string ContentTypeLine = $"Content-Type: {Scc.ContentType}; {sb.ToString()}{CRLF}";
+        ms.Write(Encoding.UTF8.GetBytes(ContentTypeLine));
     }
 }

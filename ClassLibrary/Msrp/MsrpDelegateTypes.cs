@@ -13,7 +13,7 @@ namespace SipLib.Msrp;
 public delegate void MsrpMessageReceivedDelegate(string ContentType, byte[] Contents);
 
 /// <summary>
-/// Delegate type for the MsrpConnectionEstablisned and the MsrpConnectionFailed events of the MsrpConnection
+/// Delegate type for the MsrpConnectionEstablished and the MsrpConnectionFailed events of the MsrpConnection
 /// class.
 /// </summary>
 /// <param name="ConnectionIsPassive">If true then the connection is passive, i.e., the MsrpConnection

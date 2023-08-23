@@ -1,7 +1,15 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File: BinaryBodyParser.cs                                       28 Nov 22 PHR
+//
+//  Revised:    17 Aug 23 PHR
+//                -- Modified ProcessMultiPartContents to check for the presence of
+//                   the boundary parameter of the Content-Type header instead of
+//                   searching for the first occurrance of "=", because there might
+//                   be more than one header parameter.
+//                -- Made ProcessMultiPartContents() public
 /////////////////////////////////////////////////////////////////////////////////////
 
+using System.Collections.Specialized;
 using System.Text;
 using SipLib.Core;
 
@@ -9,6 +17,7 @@ namespace SipLib.Body;
 
 /// <summary>
 /// This class extracts both binary and text contents blocks from a SIP message.
+/// The ProcessMultiPartContents() method may be used to handle MSRP multipart/mixed message bodies.
 /// </summary>
 /// <remarks>The reason that this class must be used when there is the possiblity that a SIP message might
 /// contain binary data is that almost all SIP related functions treat the entire message as UTF8 encoded
@@ -27,9 +36,9 @@ public class BinaryBodyParser
     /// <param name="ContentType">Value of the Content-Type header of the SIP message</param>
     /// <returns>Returns a list of SipContentsContainer objects. The list will be empty if the SIP message
     /// does not contain a body or if an error occurred.</returns>
-    public static List<SipContentsContainer> ParseSipBody(byte[] MsgBytes, string ContentType)
+    public static List<MessageContentsContainer> ParseSipBody(byte[] MsgBytes, string ContentType)
     {
-        List<SipContentsContainer> RetVal = new List<SipContentsContainer>();
+        List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
         if (MsgBytes == null || MsgBytes.Length == 0 || string.IsNullOrEmpty(ContentType))
             return RetVal;
 
@@ -65,10 +74,10 @@ public class BinaryBodyParser
     /// <param name="MsgBytes"></param>
     /// <param name="ContentType"></param>
     /// <returns></returns>
-    private static List<SipContentsContainer> ProcessSinglePartContents(byte[] MsgBytes, 
+    private static List<MessageContentsContainer> ProcessSinglePartContents(byte[] MsgBytes, 
         string ContentType)
     {
-        List<SipContentsContainer> RetVal = new List<SipContentsContainer>();
+        List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
 
         int DelimIdx = ByteBufferInfo.GetStringPosition(MsgBytes, 0, MsgBytes.Length, 
             ContentDelim, null);
@@ -83,25 +92,14 @@ public class BinaryBodyParser
         int Len = MsgBytes.Length - StartIdx;
         byte[] BodyBytes = new byte[Len];
         Array.ConstrainedCopy(MsgBytes, StartIdx, BodyBytes, 0, Len);
-        SipContentsContainer Scc = new SipContentsContainer();
+        MessageContentsContainer Scc = new MessageContentsContainer();
         Scc.ContentType = ContentType;
 
         if (ContentsAreBinary(ContentType, null) == false)
         {
             Scc.ContentLength = BodyBytes.Length.ToString();
             Scc.IsBinaryContents = false;
-            string str = Encoding.UTF8.GetString(BodyBytes);
-            string[] strings = str.Split(CRLF, StringSplitOptions.RemoveEmptyEntries);
-
-            char[] Whitespace = { '\r', '\n', ' ' };
-            string strTrim;
-
-            foreach (string s in strings)
-            {
-                strTrim = s.Trim(Whitespace);
-                if (string.IsNullOrEmpty(strTrim) == false && strTrim.StartsWith("--") == false)
-                    Scc.ContentsLines.Add(strTrim);
-            }
+            Scc.StringContents = Encoding.UTF8.GetString(BodyBytes);
         }
         else
         {
@@ -118,29 +116,37 @@ public class BinaryBodyParser
     /// <summary>
     /// Processes a SIP message with multiple body parts (i.e., Content-Type = multipart/mixed).
     /// Some body parts may be binary and some may be text.
+    /// This method will also work with multipart/mixed MSRP message.
     /// </summary>
-    /// <param name="MsgBytes"></param>
-    /// <param name="ContentType"></param>
-    /// <returns></returns>
-    private static List<SipContentsContainer> ProcessMultiPartContents(byte[] MsgBytes, 
-        string ContentType)
+    /// <param name="MsgBytes">Bytes of the entire message including headers and request line) and the body.
+    /// Alternatively, pass all of the bytes of only the body of the message.
+    /// </param>
+    /// <param name="ContentType">Value of the Content-Type header of the overall message. For example:
+    /// multipart/mixed; boundary=boundary1. The boundary parameter value may be quoted or not.</param>
+    /// <returns>Returns a list of SipContentsContainer objects. The return value will not be null,
+    /// but it may be empty is an error occurred.</returns>
+    public static List<MessageContentsContainer> ProcessMultiPartContents(byte[] MsgBytes, string ContentType)
     {
-        List<SipContentsContainer> RetVal = new List<SipContentsContainer>();
+        List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
 
-        // Get the boundary string
-        int Idx = ContentType.IndexOf("=");
-        if (Idx < 0)
-            // Error: There is no contents boundary string specified.
+        NameValueCollection Parameters = GetHeaderParameters(ContentType);
+        if (Parameters["boundary"] == null)
             throw new Exception("There is no boundary parameter for the Content-Type header");
 
         // Get the boundary string and remove any quotes if present.
-        string Bndry = ContentType.Substring(Idx + 1).Replace("\"", "").Trim();
-        string BoundaryString = CRLF + "--" + Bndry + CRLF;
+        string Bndry = Parameters["boundary"].Replace("\"", "").Trim();
+
+        //string BoundaryString = CRLF + "--" + Bndry + CRLF;
+        // The first boundary string may not necessarily be preceeded by a CRLF in cases where only
+        // the binary body byte array is passed to this function. GetBodyDelimIndices() adds a CRLF
+        // string to the beginning of the BoundaryString after the first BoundaryString pattern is
+        // detected.
+        string BoundaryString = "--" + Bndry + CRLF;
         string LastBoundaryString = CRLF + "--" + Bndry + "--";
 
         // Get the indexes of all boundary strings
         List<int> Indexes = GetBodyDelimIndices(MsgBytes, 0, BoundaryString);
-        int LastBoundaryIdx = ByteBufferInfo.GetStringPosition(MsgBytes, 0, MsgBytes.Length,
+        int LastBoundaryIdx = ByteBufferInfo.GetStringPosition(MsgBytes, 0, MsgBytes.Length, 
             LastBoundaryString, null);
 
         if (LastBoundaryIdx != -1)
@@ -175,7 +181,7 @@ public class BinaryBodyParser
             if (Headers == null || Headers.Length == 0)
                 throw new Exception("There are no headers in the body part");
 
-            SipContentsContainer Cc = new SipContentsContainer();
+            MessageContentsContainer Cc = new MessageContentsContainer();
             string strLower;
             foreach (string Header in Headers)
             {
@@ -203,9 +209,7 @@ public class BinaryBodyParser
             else
             {
                 Cc.IsBinaryContents = false;
-                string[] Lines = Encoding.UTF8.GetString(BodyBytes).Split(CRLF,
-                    StringSplitOptions.RemoveEmptyEntries);
-                Cc.ContentsLines = new List<string>(Lines);
+                Cc.StringContents = Encoding.UTF8.GetString(BodyBytes);
             }
 
             RetVal.Add(Cc);
@@ -214,7 +218,7 @@ public class BinaryBodyParser
         return RetVal;
     }
 
-    private static void ProcessContentTypeHeaderParameters(SipContentsContainer Cc)
+    private static void ProcessContentTypeHeaderParameters(MessageContentsContainer Cc)
     {
         string[] Fields = Cc.ContentType.Split(new char[] { ';' },
             StringSplitOptions.RemoveEmptyEntries);
@@ -228,14 +232,40 @@ public class BinaryBodyParser
                 if (Nv != null && Nv.Length > 0)
                 {
                     string Val = Nv.Length == 2 ? Nv[1].Trim() : null;
-                    Cc.Params.Add(Nv[0].Trim(), Val);
+                    Cc.ContentTypeParams.Add(Nv[0].Trim(), Val);
                 }
             }
         }
     }
 
+    private static NameValueCollection GetHeaderParameters(string HeaderValue)
+    {
+        NameValueCollection Parameters = new NameValueCollection();
+        string[] Fields = HeaderValue.Split(";", StringSplitOptions.RemoveEmptyEntries |
+            StringSplitOptions.TrimEntries);
+        if (Fields != null && Fields.Length > 0)
+        {
+            // Note, the Content-Type header value is at index 0, but its not needed here.
+
+            for (int i = 1; i < Fields.Length; i++)
+            {   // Parameters may be of the form: name=value or simply a parameter name with no value.
+                string[] Nv = Fields[i].Split("=", StringSplitOptions.RemoveEmptyEntries |
+                    StringSplitOptions.TrimEntries);
+                if (Nv != null && Nv.Length > 0)
+                {
+                    string Val = Nv.Length == 2 ? Nv[1] : null;
+                    Parameters.Add(Nv[0], Val);
+                }
+            }
+        }
+
+        return Parameters;
+    }
+
     /// <summary>
-    /// Determines if the contents of a SIP message body are binary or text.
+    /// Determines if the contents of a SIP message body are binary or text. The known binary types
+    /// are defined in the KnownBinaryTypes array. This array contains only a small subset of the IANA
+    /// registered MIME types defined at: https://www.iana.org/assignments/media-types/media-types.xhtml
     /// </summary>
     /// <param name="ContentType">Value of the Content-Type header</param>
     /// <param name="ContentTransferEncoding">Value of the Content-Transfer-Encoding header.
@@ -312,8 +342,13 @@ public class BinaryBodyParser
                 Done = true;
             else
             {
-                IdxList.Add(CurIdx);
                 CurStart = CurIdx + BoundaryString.Length;
+                if (BoundaryString.StartsWith(CRLF) == false)
+                    // The first boundary string might not have a preceeding CRLF string so add it in
+                    // after the first one is detected.
+                    BoundaryString = CRLF + BoundaryString;
+
+                IdxList.Add(CurIdx);
             }
         }
 

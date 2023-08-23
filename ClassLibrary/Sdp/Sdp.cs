@@ -144,8 +144,7 @@ public class Sdp
     /// <summary>
     /// Parses the SDP contained in an array of strings.
     /// </summary>
-    /// <param name="Lines">Each string in the array contains one
-    /// line in the SDP</param>
+    /// <param name="Lines">Each string in the array contains one line in the SDP</param>
     /// <returns>Returns an Sdp object</returns>
     // <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
     // <exception cref="Exception">Thrown if an unexpected error occurs</exception>

@@ -253,11 +253,11 @@ public class MsrpConnection
             else
             {
                 m_NetworkStream = m_TcpClient.GetStream();
+                MsrpConnectionEstablished?.Invoke(true, m_RemoteMsrpUri);
                 m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
                     m_NetworkStream);
 
-                // For debug only
-                //SendMsrpMessage(null, null);
+                SendMsrpMessage(null, null);
             }
 
             // Listen for another connection request
@@ -290,8 +290,8 @@ public class MsrpConnection
             sslStream.EndAuthenticateAsServer(Iar);
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, m_NetworkStream);
-            // For debug only
-            //SendMsrpMessage(null, null);
+            
+            SendMsrpMessage(null, null);
         }
         catch (Exception) { }
     }
@@ -358,8 +358,7 @@ public class MsrpConnection
                 if (m_NetworkStream != null)
                 {
                     MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
-                    // For debug only
-                    //SendMsrpMessage(null, null);
+                    SendMsrpMessage(null, null);
 
                     // Start reading from the stream asynchronously
                     m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
@@ -392,8 +391,7 @@ public class MsrpConnection
         try
         {
             sslStream.EndAuthenticateAsClient(ar);
-            // For debug only
-            //SendMsrpMessage(null, null);    // Send an empty SEND request.
+            SendMsrpMessage(null, null);    // Send an empty SEND request.
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             sslStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, sslStream);
         }
@@ -473,7 +471,7 @@ public class MsrpConnection
                 if (msrpMessage.Body != null)
                 {
                     if (msrpMessage.CompletionStatus == MsrpCompletionStatus.Complete)
-                        ProcessCompletedMessage(msrpMessage);
+                        ProcessCompletedSendRequest(msrpMessage);
                     else if (msrpMessage.CompletionStatus == MsrpCompletionStatus.Continuation)
                         m_ReceivedMessagChunks.Add(msrpMessage);
                     else if (msrpMessage.CompletionStatus == MsrpCompletionStatus.Truncated)
@@ -497,11 +495,15 @@ public class MsrpConnection
         }
     }
 
-    private void ProcessCompletedMessage(MsrpMessage message)
+    /// <summary>
+    /// This method is not called for empty SEND requests.
+    /// </summary>
+    /// <param name="message"></param>
+    private void ProcessCompletedSendRequest(MsrpMessage message)
     {
         if (m_ReceivedMessagChunks.Count == 0)
         {   // The received message is complete
-            MsrpMessageReceived?.Invoke(message.GetContentType(), message.Body);
+            MsrpMessageReceived?.Invoke(message.ContentType, message.Body);
         }
         else
         {   // The message was chunked so build up the entire contents
@@ -519,7 +521,7 @@ public class MsrpConnection
                 CurIdx += msg.Body.Length;
             }
 
-            MsrpMessageReceived?.Invoke(message.GetContentType(), buffer);
+            MsrpMessageReceived?.Invoke(message.ContentType, buffer);
         }
 
         m_ReceivedMessagChunks.Clear();
@@ -707,7 +709,7 @@ public class MsrpConnection
     /// To send an empty SEND request, set the ContentType and the Contents parameters to null.
     /// </summary>
     /// <param name="ContentType">Specifies the Content-Type header value for the message. For example:
-    /// text/plain or message/cpim.</param>
+    /// text/plain or message/CPIM.</param>
     /// <param name="Contents">Binary message contents encoded using UTF8 if the message is text or
     /// the un-encode binary contents if sending a non-text message such as a picture or a video
     /// file.</param>
@@ -720,12 +722,15 @@ public class MsrpConnection
     {
         string MessageID;
         bool RequestSuccessReport = false;
+        bool RequestFailureReport = false;
+
         if (string.IsNullOrEmpty(messageID) == true)
             MessageID = MsrpMessage.NewRandomID();  // Use a new random ID
         else
         {
             MessageID = messageID;
             RequestSuccessReport = true;
+            RequestFailureReport = true;
         }
 
         MsrpMessage msg;
@@ -750,8 +755,11 @@ public class MsrpConnection
         {
             msg = BuildSendRequest(MessageID);
             msg.ContentType = ContentType;
+
             if (RequestSuccessReport == true)
                 msg.SuccessReport = "yes";
+            if (RequestFailureReport == true)
+                msg.FailureReport = "yes";
 
             msg.ByteRange = new ByteRangeHeader() { Start = CurrentStartIdx + 1, End = CurrentEndIdx + 1,
                 Total = Contents.Length };

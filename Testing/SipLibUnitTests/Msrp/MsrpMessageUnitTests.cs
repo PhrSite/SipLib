@@ -4,10 +4,10 @@
 
 namespace SipLibUnitTests;
 
+using SipLib.Body;
 using SipLib.Msrp;
 using System.IO;
 using System.Text;
-using Veds;
 
 [Trait("Category", "unit")]
 public class MsrpMessageUnitTests
@@ -16,7 +16,7 @@ public class MsrpMessageUnitTests
     /// Specifies the path to the files containing the test MSRP messages. Change this if the project
     /// location or the location of the test files change.
     /// </summary>
-     private const string Path = @"..\..\..\MsrpMessages\";
+    private const string Path = @"..\..\..\MsrpMessages\";
 
     [Fact]
     public void MsrpRequestMessage1()
@@ -94,6 +94,66 @@ public class MsrpMessageUnitTests
         }
 
         Assert.True(BodyMatches == true, "The message Body is wrong");
+    }
+
+    [Fact]
+    public void MsrpRequestMessage1_MultipartMixed()
+    {
+        byte[] MsgBytes = GetTestFile("MsrpRequestMessage1.txt");
+        MsrpMessage msrpMessage1 = MsrpMessage.ParseMsrpMessage(MsgBytes);
+        Assert.NotNull(msrpMessage1);
+
+        byte[] CarCrashBytes = GetTestFile("CarCrashPicture.jpg");
+        List<MessageContentsContainer> contents1 = new List<MessageContentsContainer>();
+        MessageContentsContainer TextContents = new MessageContentsContainer();
+        TextContents.ContentType = "text/plain";
+        TextContents.IsBinaryContents = false;
+        TextContents.StringContents = "Here is a picture of a car crash";
+        contents1.Add(TextContents);
+
+        MessageContentsContainer ImageContents = new MessageContentsContainer();
+        ImageContents.ContentType = "image/jpeg";
+        ImageContents.IsBinaryContents = true;
+        ImageContents.BinaryContents = CarCrashBytes;
+        contents1.Add(ImageContents);
+
+        string BoundaryString = "boundary1";
+        msrpMessage1.ContentType = $"multipart/mixed; boundary={BoundaryString}";
+        msrpMessage1.Body = MultipartBinaryBodyBuilder.ToByteArray(contents1, BoundaryString);
+        msrpMessage1.ByteRange.Start = 1;
+        msrpMessage1.ByteRange.End = msrpMessage1.Body.Length - 1;
+        msrpMessage1.ByteRange.Total = msrpMessage1.Body.Length - 1;
+
+        byte[] msrpMessage2Bytes = msrpMessage1.ToByteArray();
+        string msrpMessage2String = Encoding.UTF8.GetString(msrpMessage2Bytes);
+
+        MsrpMessage msrpMessage2 = MsrpMessage.ParseMsrpMessage(msrpMessage2Bytes);
+        Assert.NotNull(msrpMessage2);
+
+        Assert.True(msrpMessage2.ContentType.Contains("multipart") == true, "The ContentType is wrong");
+        //List<SipContentsContainer> contents2 = BinaryBodyParser.ProcessMultiPartContents(msrpMessage2Bytes,
+        //    msrpMessage2.ContentType);
+        List<MessageContentsContainer> contents2 = BinaryBodyParser.ProcessMultiPartContents(msrpMessage2.Body,
+            msrpMessage2.ContentType);
+        Assert.True(contents2.Count == 2, "The contents count is wrong");
+
+        Assert.True(contents2[0].ContentType == "text/plain", "The first ContentType is wrong");
+        Assert.True(contents2[0].StringContents == "Here is a picture of a car crash", 
+            "The first StringContents is wrong");
+
+        Assert.True(contents2[1].ContentType == "image/jpeg", "The second ContentType is wrong");
+        Assert.True(contents2[1].IsBinaryContents == true, "The second IsBinaryContents is wrong");
+        Assert.True(contents2[1].BinaryContents.Length == CarCrashBytes.Length, "The second BinaryContents " +
+            "length is wrong");
+        //Assert.True(contents2[1].BinaryContents.Equals(CarCrashBytes) == true, "BinaryContents mismatch");
+        bool Mismatch = false;
+        for (int i = 0; i < CarCrashBytes.Length; i++)
+        {
+            if (contents2[1].BinaryContents[i] != CarCrashBytes[i])
+                Mismatch = true;
+        }
+
+        Assert.False(Mismatch == true, "BinaryContents mismatch");
     }
 
     [Fact]
