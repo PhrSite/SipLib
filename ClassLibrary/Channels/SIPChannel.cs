@@ -213,22 +213,19 @@ public abstract class SIPChannel
                     try
                     {
                         SIPConnection inactiveConnection = null;
-                        Dictionary<string, SIPConnection> connections = 
-                            GetConnectionsList();
+                        Dictionary<string, SIPConnection> connections = GetConnectionsList();
 
                         lock (connections)
                         {
                             var inactiveConnectionKey = 
                                 (from connection in connections
                                 where connection.Value.LastTransmission 
-                                <DateTime.Now.AddMinutes(
-                                    PRUNE_NOTRANSMISSION_MINUTES * -1)
+                                <DateTime.Now.AddMinutes(PRUNE_NOTRANSMISSION_MINUTES * -1)
                                 select connection.Key).FirstOrDefault();
 
                             if (inactiveConnectionKey != null)
                             {
-                                inactiveConnection = connections[
-                                    inactiveConnectionKey];
+                                inactiveConnection = connections[inactiveConnectionKey];
                                 connections.Remove(inactiveConnectionKey);
                             }
                         }
