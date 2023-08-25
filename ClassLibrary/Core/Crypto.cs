@@ -51,6 +51,17 @@ public class Crypto
     // 21 Nov 22 PHR
     private static RandomNumberGenerator m_randomProvider = RandomNumberGenerator.Create();
 
+    /// <summary>
+    /// Fills an array of bytes with random numbers.
+    /// </summary>
+    /// <param name="buffer">Destination</param>
+    /// <param name="offset">Starting index in the destination buffer</param>
+    /// <param name="length">Number of bytes to write</param>
+    public static void GetRandomByteArray(byte[] buffer, int offset, int length)
+    {
+        m_randomProvider.GetBytes(buffer, offset, length);
+    }
+
     private static byte[] GetFixedLengthByteArray(string value, int length)
     {
         if (value.Length < length)

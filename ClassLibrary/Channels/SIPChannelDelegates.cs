@@ -1,6 +1,6 @@
 ﻿#region Licenses
 // ============================================================================
-// FileName: SIPFunctionDelegates.cs
+// FileName: SIPChannelDelegates.cs
 //
 // Description:
 // A list of function delegates that are used by the SIP Server Agents.
@@ -65,8 +65,17 @@ public delegate void SIPMessageSentDelegate(SIPChannel sipChannel, SIPEndPoint r
 public delegate void SIPMessageReceivedDelegate(SIPChannel sipChannel, SIPEndPoint remoteEndPoint, 
     byte[] buffer);
 
+// 23 Aug 23 PHR
 /// <summary>
-/// Delegate type for the SIPSocketDisconnected event of th SIPConnection class.
+/// Delegate type for the SIPSocketDisconnected event of the SIPConnection class.
 /// </summary>
 /// <param name="remoteEndPoint">IPEndPoint of the remote endpoint</param>
 public delegate void SIPConnectionDisconnectedDelegate(IPEndPoint remoteEndPoint);
+
+// 23 Aug 23 PHR
+/// <summary>
+/// Delegate type for the SIPConnectionFailed event of the SIPTCPChannel and the SIPTLSChannel classes.
+/// </summary>
+/// <param name="sipChannel">SIPChannel derived object that the connection request failed on.</param>
+/// <param name="remoteEndPoint">Remote IPEndPoint</param>
+public delegate void SipConnectionFailedDelegate(SIPChannel sipChannel, IPEndPoint remoteEndPoint);

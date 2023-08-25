@@ -62,6 +62,10 @@
 //             connection if a client is reconnecting using the same remote
 //             endpoint.
 //          -- Added documentation comments
+//          23 Aug 23 PHR
+//          -- Modified LockCollections() and UnlockCollections() to use a single
+//             lock object
+//          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -94,6 +98,16 @@ public class SIPTLSChannel : SIPChannel
     private Thread m_ListenerThread = null;
     private X509CertificateCollection m_CertCollection;
     private bool m_UseMutualAuth;
+
+    /// <summary>
+    /// Fired if the TCP connection request to a remote endpoint failed.
+    /// </summary>
+    public event SipConnectionFailedDelegate SIPConnectionFailed = null;
+
+    /// <summary>
+    /// Fired if the TCP connection gets disconnected
+    /// </summary>
+    public event SipConnectionFailedDelegate SIPConnectionDisconnected = null;
 
     /// <summary>
     /// Constructs a new SIPTLSChannel and initializes it.
@@ -133,16 +147,16 @@ public class SIPTLSChannel : SIPChannel
         SetupContactURI(User);
     }
 
+    private object m_CollectionLock = new object();
+
     private void LockCollections()
     {
-        Monitor.Enter(m_connectedSockets);
-        Monitor.Enter(m_connectingSockets);
+        Monitor.Enter(m_CollectionLock);
     }
 
     private void UnlockCollections()
     {
-        Monitor.Exit(m_connectedSockets);
-        Monitor.Exit(m_connectingSockets);
+        Monitor.Exit(m_CollectionLock);
     }
 
     private void Initialise()
@@ -160,8 +174,6 @@ public class SIPTLSChannel : SIPChannel
 
             LocalTCPSockets.Add(((IPEndPoint)m_tlsServerListener.Server.LocalEndPoint).ToString());
 
-            //ThreadPool.QueueUserWorkItem(delegate { AcceptConnections(
-            //    ACCEPT_THREAD_NAME + LocalSIPEndPoint.Port); });
             m_ListenerThread = new Thread(AcceptConnections);
             m_ListenerThread.IsBackground = true;
             m_ListenerThread.Priority = ThreadPriority.AboveNormal;
@@ -245,9 +257,6 @@ public class SIPTLSChannel : SIPChannel
             sipTLSConnection.SIPMessageReceived += SIPTLSMessageReceived;
 
             sipTLSConnection.StartSynchronousRead();
-            //sipTLSConnection.SIPStream.BeginRead(sipTLSConnection.SocketBuffer,
-            //    0, MaxSIPTCPMessageSize, new AsyncCallback(ReceiveCallback),
-            //    sipTLSConnection);
         }
         catch (Exception)
         {
@@ -347,9 +356,6 @@ public class SIPTLSChannel : SIPChannel
                         SIPStream.CanWrite)
                     {
                         sipTLSClient.SIPStream.Write(buffer, 0, buffer.Length);
-                        //sipTLSClient.SIPStream.BeginWrite(buffer,0,buffer.
-                        //    Length, new AsyncCallback(EndSend),
-                        //    sipTLSClient);
                         sipTLSClient.SIPStream.Flush();
                         sent = true;
                         sipTLSClient.LastTransmission = DateTime.Now;
@@ -388,12 +394,6 @@ public class SIPTLSChannel : SIPChannel
                     TcpClient tcpClient = new TcpClient();
                     tcpClient.Client.SetSocketOption(SocketOptionLevel.
                         Socket, SocketOptionName.ReuseAddress, true);
-
-                    // If Bind() is called with the local end point, it will not be possible to
-                    // communicate with the remote server using the local endpoint for a period equal
-                    // to the TIME_WAIT interval (about 4 minutes) if the application or server is
-                    // stopped and restarted again before the TIME_WAIT interval expires.
-                    //tcpClient.Client.Bind(LocalSIPEndPoint.GetIPEndPoint());
 
                     // Use a random local port
                     IPEndPoint LocIpe = new IPEndPoint(LocalSIPEndPoint.Address, 0); 
@@ -443,24 +443,23 @@ public class SIPTLSChannel : SIPChannel
             LockCollections();
             m_connectingSockets.Remove(dstEndPoint.ToString());
 
-            tcpClient.EndConnect(ar);
+            if (tcpClient.Connected == false)
+                SIPConnectionFailed?.Invoke(this, dstEndPoint);
+            else
+            {
+                tcpClient.EndConnect(ar);
+                SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteCertificate, null);
+                SIPConnection callerConnection = new SIPConnection(this, tcpClient, sslStream, dstEndPoint,
+                    SIPProtocolsEnum.tls, SIPConnectionsEnum.Caller);
 
-            //SslStream sslStream = new SslStream(tcpClient.GetStream(), false, 
-            //    new RemoteCertificateValidationCallback(
-            //        ValidateRemoteCertificate), null);
-            SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteCertificate, null);
-
-            SIPConnection callerConnection = new SIPConnection(this, tcpClient, sslStream, dstEndPoint,
-                SIPProtocolsEnum.tls, SIPConnectionsEnum.Caller);
-
-             if (m_UseMutualAuth == false)
-                 sslStream.BeginAuthenticateAsClient(serverCN, EndAuthenticateAsClient, new object[]
-                    { tcpClient, dstEndPoint, buffer, callerConnection });
-             else
-                 sslStream.BeginAuthenticateAsClient(serverCN, m_CertCollection,
-                    System.Security.Authentication.SslProtocols.Tls12, false, EndAuthenticateAsClient, 
-                    new object[] { tcpClient, dstEndPoint, buffer, callerConnection });
-
+                if (m_UseMutualAuth == false)
+                    sslStream.BeginAuthenticateAsClient(serverCN, EndAuthenticateAsClient, new object[]
+                       { tcpClient, dstEndPoint, buffer, callerConnection });
+                else
+                    sslStream.BeginAuthenticateAsClient(serverCN, m_CertCollection,
+                       System.Security.Authentication.SslProtocols.Tls12, false, EndAuthenticateAsClient,
+                       new object[] { tcpClient, dstEndPoint, buffer, callerConnection });
+            }
         }
         catch (Exception excp)
         {
@@ -616,6 +615,7 @@ public class SIPTLSChannel : SIPChannel
             LockCollections();
             m_connectedSockets.Remove(remoteEndPoint.ToString());
             m_connectingSockets.Remove(remoteEndPoint.ToString());
+            SIPConnectionDisconnected?.Invoke(this, remoteEndPoint);
         }
         catch (Exception)
         {

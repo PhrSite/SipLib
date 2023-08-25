@@ -65,6 +65,11 @@
 //          -- Modified AcceptConnections() to force close the existing connection if
 //             the client is connecting using the same remote endpoint.
 //          -- Added documentation comments
+//          23 Aug 23 PHR 
+//          -- Removed m_ConnectionFailureStrikes and m_ConnectionFailures
+//          -- Modified LockCollections() and UnlockCollections() to use a single
+//             lock object
+//          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -85,13 +90,6 @@ public class SIPTCPChannel : SIPChannel
     // Maximum number of connections for the TCP listener.
     private const int MAX_TCP_CONNECTIONS = 1000;
 
-    // The number of failed connection attempts permitted before classifying a remote socket as failed.
-    private const int CONNECTION_ATTEMPTS_ALLOWED = 3;
-
-    // If a socket cannot be connected to don't try and reconnect to it for this interval. Units = seconds.
-    // Was 300.
-    private const int FAILED_CONNECTION_DONTUSE_INTERVAL = 5;
-
     private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
     
     private TcpListener m_tcpServerListener;
@@ -101,13 +99,17 @@ public class SIPTCPChannel : SIPChannel
     // initiating multiple connect attempts.
     private List<string> m_connectingSockets = new List<string>();
     
-    // Tracks the number of connection attempts made to a remote socket, three strikes and it's out.
-    private Dictionary<string, int> m_connectionFailureStrikes = new Dictionary<string, int>();
-
-    // Tracks sockets that have had a connection failure on them to avoid endless re-connect attmepts.
-    private Dictionary<string, DateTime> m_connectionFailures = new Dictionary<string, DateTime>();
-
     private Thread m_ListenerThread = null;
+
+    /// <summary>
+    /// Fired if the TCP connection request to a remote endpoint failed.
+    /// </summary>
+    public event SipConnectionFailedDelegate SIPConnectionFailed = null;
+
+    /// <summary>
+    /// Fired if the TCP connection gets disconnected
+    /// </summary>
+    public event SipConnectionFailedDelegate SIPConnectionDisconnected = null;
 
     /// <summary>
     /// Constructs a new SIPTCPChannel and initializes the connection.
@@ -123,20 +125,16 @@ public class SIPTCPChannel : SIPChannel
         SetupContactURI(User);
     }
 
+    private object m_CollectionLock = new object();
+
     private void LockCollections()
     {
-        Monitor.Enter(m_connectedSockets);
-        Monitor.Enter(m_connectingSockets);
-        Monitor.Enter(m_connectionFailureStrikes);
-        Monitor.Enter(m_connectionFailures);
+        Monitor.Enter(m_CollectionLock);
     }
 
     private void UnlockCollections()
     {
-        Monitor.Exit(m_connectedSockets);
-        Monitor.Exit(m_connectingSockets);
-        Monitor.Exit(m_connectionFailureStrikes);
-        Monitor.Exit(m_connectionFailures);
+        Monitor.Exit(m_CollectionLock);
     }
 
     private void Initialise()
@@ -155,8 +153,6 @@ public class SIPTCPChannel : SIPChannel
 
             LocalTCPSockets.Add(((IPEndPoint)m_tcpServerListener.Server.LocalEndPoint).ToString());
 
-            //ThreadPool.QueueUserWorkItem(delegate { AcceptConnections(
-            //    ACCEPT_THREAD_NAME + LocalSIPEndPoint.Port); });
             m_ListenerThread = new Thread(AcceptConnections);
             m_ListenerThread.IsBackground = true;
             m_ListenerThread.Priority = ThreadPriority.AboveNormal;
@@ -279,13 +275,11 @@ public class SIPTCPChannel : SIPChannel
     {
         try
         {
-            lock (m_connectedSockets)
-            {
-                if(m_connectedSockets.ContainsKey(remoteEndPoint.ToString()))
-                {
-                    m_connectedSockets.Remove(remoteEndPoint.ToString());
-                }
-            }
+            LockCollections();
+            if (m_connectedSockets.ContainsKey(remoteEndPoint.ToString()))
+                m_connectedSockets.Remove(remoteEndPoint.ToString());
+            UnlockCollections();
+            SIPConnectionDisconnected?.Invoke(this, remoteEndPoint);
         }
         catch (Exception)
         {
@@ -294,20 +288,6 @@ public class SIPTCPChannel : SIPChannel
 
     private void SIPTCPMessageReceived(SIPChannel channel, SIPEndPoint remoteEndPoint, byte[] buffer)
     {
-        try
-        {
-            LockCollections();
-            if (m_connectionFailures.ContainsKey(remoteEndPoint.GetIPEndPoint().ToString()))
-                m_connectionFailures.Remove(remoteEndPoint.GetIPEndPoint().ToString());
-
-            if (m_connectionFailureStrikes.ContainsKey(remoteEndPoint.GetIPEndPoint().ToString()))
-                m_connectionFailureStrikes.Remove(remoteEndPoint.GetIPEndPoint().ToString());
-        }
-        finally
-        {
-            UnlockCollections();
-        }
-
         SIPMessageReceived?.Invoke(channel, remoteEndPoint, buffer);
     }
 
@@ -382,29 +362,16 @@ public class SIPTCPChannel : SIPChannel
 
             if (!sent)
             {
-                if (m_connectionFailures.ContainsKey(strDestEndPoint) && m_connectionFailures[
-                    strDestEndPoint] < DateTime.Now.AddSeconds(FAILED_CONNECTION_DONTUSE_INTERVAL * -1))
-                    m_connectionFailures.Remove(strDestEndPoint);
-    
-                if (m_connectionFailures.ContainsKey(strDestEndPoint))
-                {
-                }
-                else if (!m_connectingSockets.Contains(strDestEndPoint))
+                if (!m_connectingSockets.Contains(strDestEndPoint))
                 {
                     TcpClient tcpClient = new TcpClient();
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, 
-                        SocketOptionName.ReuseAddress, true);
-
-                    // If Bind() is called with the local end point, it will not be possible to
-                    // communicate with the remote server using the local endpoint for a period equal
-                    // to the TIME_WAIT interval (about 4 minutes) if the application or server is
-                    // stopped and restarted again before the TIME_WAIT interval expires.
-                    //tcpClient.Client.Bind(LocalSIPEndPoint.GetIPEndPoint());
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
+                        true);
 
                     // Use a random local port
                     IPEndPoint LocIpe = new IPEndPoint(LocalSIPEndPoint.Address, 0); 
                     tcpClient.Client.Bind(LocIpe);
-
+                    
                     m_connectingSockets.Add(strDestEndPoint);
 
                     // Applies to send operations only
@@ -454,8 +421,7 @@ public class SIPTCPChannel : SIPChannel
 
     private void EndConnect(IAsyncResult ar)
     {
-        bool connected = false;
-        IPEndPoint dstEndPoint = null;
+         IPEndPoint dstEndPoint = null;
 
         try
         {
@@ -467,15 +433,11 @@ public class SIPTCPChannel : SIPChannel
 
             m_connectingSockets.Remove(dstEndPoint.ToString());
 
-            tcpClient.EndConnect(ar);
-
-            if (tcpClient != null && tcpClient.Connected)
+            if (tcpClient.Connected == false)
+                SIPConnectionFailed?.Invoke(this, dstEndPoint);
+            else
             {
-                connected = true;
-
-                m_connectionFailureStrikes.Remove(dstEndPoint.ToString());
-                m_connectionFailures.Remove(dstEndPoint.ToString());
-
+                tcpClient.EndConnect(ar);
                 SIPConnection callerConnection = new SIPConnection(this, tcpClient, tcpClient.GetStream(),
                     dstEndPoint, SIPProtocolsEnum.tcp, SIPConnectionsEnum.Caller);
                 m_connectedSockets.Add(dstEndPoint.ToString(), callerConnection);
@@ -484,10 +446,6 @@ public class SIPTCPChannel : SIPChannel
                 callerConnection.SIPMessageReceived += SIPTCPMessageReceived;
 
                 callerConnection.StartSynchronousRead();
-                //callerConnection.SIPStream.BeginRead(callerConnection.
-                //    SocketBuffer, 0, MaxSIPTCPMessageSize, new 
-                //    AsyncCallback(ReceiveCallback), callerConnection);
-
                 callerConnection.SIPStream.BeginWrite(buffer, 0, buffer.Length, EndSend, callerConnection);
             }
         }
@@ -499,26 +457,7 @@ public class SIPTCPChannel : SIPChannel
         }
         finally
         {
-            if (!connected && dstEndPoint != null)
-            {
-                if (m_connectionFailureStrikes.ContainsKey(dstEndPoint.ToString()))
-                    m_connectionFailureStrikes[dstEndPoint.ToString()] = m_connectionFailureStrikes[
-                        dstEndPoint.ToString()] + 1;
-                else
-                    m_connectionFailureStrikes.Add(dstEndPoint.ToString(), 1);
-
-                if (m_connectionFailureStrikes[dstEndPoint.ToString()] >= CONNECTION_ATTEMPTS_ALLOWED)
-                {
-                    if (!m_connectionFailures.ContainsKey(dstEndPoint.ToString()))
-                    {
-                        m_connectionFailures.Add(dstEndPoint.ToString(), DateTime.Now);
-                    }
-
-                    m_connectionFailureStrikes.Remove(dstEndPoint.ToString());
-                }
-            }
-
-            UnlockCollections();
+             UnlockCollections();
         }
     }
 

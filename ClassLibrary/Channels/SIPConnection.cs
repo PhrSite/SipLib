@@ -73,7 +73,7 @@ public class SIPConnection
     /// <summary>
     /// Maximum allowed SIP message size
     /// </summary>
-    public static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
+    private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
     private static string m_sipEOL = SIPConstants.CRLF;
     private static string m_sipMessageDelimiter = SIPConstants.CRLF + SIPConstants.CRLF;
 
@@ -186,10 +186,9 @@ public class SIPConnection
                         Array.Copy(SocketBuffer, sipMsgBuffer.Length + bytesSkipped, SocketBuffer, 0, 
                             SocketBufferEndPosition);
 
-                        // Try and extract another SIP message from the receive 
-                        // buffer.
-                        sipMsgBuffer = SIPConnection.ProcessReceive(SocketBuffer, 0, 
-                            SocketBufferEndPosition, out bytesSkipped);
+                        // Try and extract another SIP message from the receive buffer.
+                        sipMsgBuffer = ProcessReceive(SocketBuffer, 0, SocketBufferEndPosition, 
+                            out bytesSkipped);
                     }
                 }
 
@@ -233,8 +232,7 @@ public class SIPConnection
     /// <param name="bytesSkipped">Number of bytes skipped.</param>
     /// <returns>A byte array holding a full SIP message or if no full SIP messages are avialble null.
     /// </returns>
-    public static byte[] ProcessReceive(byte[] receiveBuffer, int start, 
-        int length, out int bytesSkipped)
+    private static byte[] ProcessReceive(byte[] receiveBuffer, int start, int length, out int bytesSkipped)
     {
         // NAT keep-alives can be interspersed between SIP messages. Treat any non-letter character at
         // the start of a receive as a non SIP transmission and skip over it.
@@ -366,11 +364,22 @@ public class SIPConnection
         }
     }
 
+    private bool m_Closed = false;
+    private object m_CloseLock = new object();
+
     /// <summary>
     /// Closes the connection
     /// </summary>
     public void Close()
     {
+        Monitor.Enter(m_CloseLock);
+
+        if (m_Closed == true)
+        {  
+            Monitor.Exit(m_CloseLock);
+            return;
+        }
+
         try
         {
             m_Qos.Shutdown();
@@ -390,6 +399,11 @@ public class SIPConnection
         }
         catch (Exception)
         {
+        }
+        finally
+        { 
+            m_Closed = true;
+            Monitor.Exit(m_CloseLock);
         }
     }
 
@@ -447,6 +461,13 @@ public class SIPConnection
             }
             catch (ObjectDisposedException)
             {   // Occurs if the stream is closed on this end
+                Success = false;
+            }
+            catch (IOException)
+            {   // This exception occurs if the remote endpoint resets (aborts) the connection by sending
+                // a RST TCP packet.
+                if (m_Closed == false)
+                    SIPSocketDisconnected?.Invoke(RemoteEndPoint);
                 Success = false;
             }
             catch (Exception)

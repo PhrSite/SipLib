@@ -64,7 +64,7 @@ public abstract class SIPChannel
     /// Keeps a list of TCP sockets this process is listening on to prevent it establishing TCP
     /// connections to itself.
     /// </summary>
-    public static List<string> LocalTCPSockets = new List<string>();
+    public List<string> LocalTCPSockets = new List<string>();
 
     /// <summary>
     /// This is the local SIPURI
@@ -136,7 +136,7 @@ public abstract class SIPChannel
     /// </summary>
     public bool IsTLS
     {
-        get { return IsTLS; }
+        get { return m_IsTLS; }
     }
 
     /// <summary>
