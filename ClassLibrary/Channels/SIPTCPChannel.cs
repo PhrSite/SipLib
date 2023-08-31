@@ -49,8 +49,8 @@
 //             Bind to the local address with a random port that is picked by the
 //             operating system.
 //          -- Changed ReceiveCallback() to test for SIPStream.CanRead before calling
-//             before calling SIPStream.EndRead() to avoid an ObjectDisposedException
-//             (which was being caught OK) when closing or if a disconnect occurred.
+//             SIPStream.EndRead() to avoid an ObjectDisposedException (which was
+//             being caught OK) when closing or if a disconnect occurred.
 //          -- Added handling of an IOExeption in the Send() function.
 //          -- Added LockCollections() and UnlockCollections() to lock and unlock the
 //             dictionary collections in try/finally blocks because they were being
@@ -316,14 +316,12 @@ public class SIPTCPChannel : SIPChannel
         if (buffer == null)
             throw new ApplicationException("An empty buffer was specified to Send in SIPTCPChannel.");
         
-        if (LocalTCPSockets.Contains(strDestEndPoint) == true)
-            throw new ApplicationException("A Send call was made in " +
-                "SIPTCPChannel to send to another local TCP socket.");
-
         try
         {
             LockCollections();
-            bool sent = false;
+            if (LocalTCPSockets.Contains(strDestEndPoint) == true)
+                throw new ApplicationException("A Send call was made in " +
+                    "SIPTCPChannel to send to another local TCP socket."); bool sent = false;
 
             // Lookup a client socket that is connected to the destination.
             if (m_connectedSockets.ContainsKey(strDestEndPoint) == true)

@@ -46,6 +46,8 @@
 //          -- Added documentation comments
 //          20 Jul 23 PHR
 //          -- Modified to use m_Qos.SetUdpDscp()
+//          31 Aug 23 PHR
+//          -- Made the Send() method thread-safe.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -194,6 +196,9 @@ public class SIPUDPChannel : SIPChannel
         Send(destinationEndPoint, messageBuffer);
     }
 
+    // 31 Aug 23 PHR
+    object m_SendLockObj = new object();
+
     /// <summary>
     /// Sends a byte array
     /// </summary>
@@ -201,13 +206,9 @@ public class SIPUDPChannel : SIPChannel
     /// <param name="buffer">Message to send.</param>
     public override void Send(IPEndPoint destinationEndPoint, byte[] buffer)
     {
-        try
+        lock (m_SendLockObj)
         {
             m_sipConn.Send(buffer, buffer.Length, destinationEndPoint);
-        }
-        catch (Exception)
-        {
-            throw;
         }
     }
 

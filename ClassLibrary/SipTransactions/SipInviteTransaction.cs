@@ -1,0 +1,14 @@
+﻿/////////////////////////////////////////////////////////////////////////////////////
+//  File:   SipInviteTransaction.cs                                 31 Aug 23 PHR
+/////////////////////////////////////////////////////////////////////////////////////
+
+namespace SipLib.Transactions;
+
+/// <summary>
+/// Data class for a single SIP client INVITE transaction
+/// </summary>
+public class SipInviteTransaction
+{
+
+}
+

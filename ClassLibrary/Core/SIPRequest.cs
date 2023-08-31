@@ -380,6 +380,13 @@ public class SIPRequest
             return false;
         }
 
+        if (Header.ContentLength != 0 && string.IsNullOrEmpty(Header.ContentType) == true)
+        {
+            errorField = SIPValidationFieldsEnum.ContentType;
+            errorMessage = "No Content-Type header provided";
+            return false;
+        }
+
         return true;
     }
 }

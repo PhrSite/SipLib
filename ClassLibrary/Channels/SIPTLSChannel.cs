@@ -334,13 +334,13 @@ public class SIPTLSChannel : SIPChannel
         if (buffer == null)
             throw new ApplicationException("An empty buffer was specified" +
                 "to Send in SIPTLSChannel.");
-        else if (LocalTCPSockets.Contains(dstEndPoint.ToString()))
-            throw new ApplicationException("A Send call was made in " +
-                "SIPTLSChannel to send to another local TCP socket.");
 
         try
         {
             LockCollections();
+            if (LocalTCPSockets.Contains(dstEndPoint.ToString()))
+                throw new ApplicationException("A Send call was made in " +
+                    "SIPTLSChannel to send to another local TCP socket.");
             bool sent = false;
             bool existingConnection = false;
 

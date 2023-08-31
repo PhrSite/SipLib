@@ -40,6 +40,7 @@
 //	Revised:	8 Nov 22 PHR -- Initial version.
 /////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.Body;
 using SipLib.Core;
 using System.Net;
 
@@ -79,3 +80,35 @@ public delegate void SIPConnectionDisconnectedDelegate(IPEndPoint remoteEndPoint
 /// <param name="sipChannel">SIPChannel derived object that the connection request failed on.</param>
 /// <param name="remoteEndPoint">Remote IPEndPoint</param>
 public delegate void SipConnectionFailedDelegate(SIPChannel sipChannel, IPEndPoint remoteEndPoint);
+
+/// <summary>
+/// Delegate type for the SipRequestReceived event of the SipTransportManager class.
+/// </summary>
+/// <param name="sipRequest">Request that was received.</param>
+/// <param name="remoteEndPoint">Remote endpoint that received the message.</param>
+/// <param name="ContentsList">List of the contents contained in the body of the request. Will be null
+/// if the request does not have a body.</param>
+/// <param name="sipTransportManager">SipTransportManager that fired the event.</param>
+public delegate void SipRequestReceivedDelegate(SIPRequest sipRequest, SIPEndPoint remoteEndPoint,
+    List<MessageContentsContainer> ContentsList, SipTransportManager sipTransportManager);
+
+/// <summary>
+/// Delegate type for the SipResponseReceived event of the SipTransportManager class.
+/// </summary>
+/// <param name="sipResponse">Request that was received</param>
+/// <param name="remoteEndPoint">Remote endpoint that sent the response</param>
+/// <param name="sipTransportManager">SipTransportManager that fired the event.</param>
+public delegate void SipResponseReceivedDelegate(SIPResponse sipResponse, SIPEndPoint remoteEndPoint,
+    SipTransportManager sipTransportManager);
+
+/// <summary>
+/// Delegate type for the method that the SipTransportManager will call when a SIP transaction has been
+/// completed.
+/// </summary>
+/// <param name="sipRequest">SIP request for the transaction.</param>
+/// <param name="sipResponse">SIP response that was received. Will be null if the transaction timed out.</param>
+/// <param name="remoteEndPoint">Endpoint that send the response. Will be null if the transaction timed out.
+/// </param>
+/// <param name="sipTransportManager">SipTransportManager that called this method.</param>
+public delegate void SipTransactionCompleteDelegate(SIPRequest sipRequest, SIPResponse sipResponse,
+    IPEndPoint remoteEndPoint, SipTransportManager sipTransportManager);

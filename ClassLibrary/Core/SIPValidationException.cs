@@ -61,7 +61,8 @@ namespace SipLib.Core
         Expires,        // 10 Nov 22 PHR
         SipVersion,     // 11 Nov 22 PHR
         CallID,         // 11 Nov 22 PHR
-        ContentLength,  // 15 Nov 22
+        ContentLength,  // 15 Nov 22 PHR
+        ContentType,    // 29 Nov 23 PHR
     }
 #pragma warning restore CS1591
 

@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.7.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Ng911Lib" Version="1.0.3" />
     <PackageReference Include="Portable.BouncyCastle-GOST2012" Version="1.8.6.11" />
     <PackageReference Include="SIPSorcery.WebSocketSharp" Version="0.0.1" />
     <PackageReference Include="SIPSorceryMedia.Abstractions" Version="1.2.0" />
