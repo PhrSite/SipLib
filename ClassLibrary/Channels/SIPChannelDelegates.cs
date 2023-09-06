@@ -86,11 +86,9 @@ public delegate void SipConnectionFailedDelegate(SIPChannel sipChannel, IPEndPoi
 /// </summary>
 /// <param name="sipRequest">Request that was received.</param>
 /// <param name="remoteEndPoint">Remote endpoint that received the message.</param>
-/// <param name="ContentsList">List of the contents contained in the body of the request. Will be null
-/// if the request does not have a body.</param>
 /// <param name="sipTransportManager">SipTransportManager that fired the event.</param>
 public delegate void SipRequestReceivedDelegate(SIPRequest sipRequest, SIPEndPoint remoteEndPoint,
-    List<MessageContentsContainer> ContentsList, SipTransportManager sipTransportManager);
+    SipTransport sipTransportManager);
 
 /// <summary>
 /// Delegate type for the SipResponseReceived event of the SipTransportManager class.
@@ -99,7 +97,7 @@ public delegate void SipRequestReceivedDelegate(SIPRequest sipRequest, SIPEndPoi
 /// <param name="remoteEndPoint">Remote endpoint that sent the response</param>
 /// <param name="sipTransportManager">SipTransportManager that fired the event.</param>
 public delegate void SipResponseReceivedDelegate(SIPResponse sipResponse, SIPEndPoint remoteEndPoint,
-    SipTransportManager sipTransportManager);
+    SipTransport sipTransportManager);
 
 /// <summary>
 /// Delegate type for the method that the SipTransportManager will call when a SIP transaction has been
@@ -111,4 +109,4 @@ public delegate void SipResponseReceivedDelegate(SIPResponse sipResponse, SIPEnd
 /// </param>
 /// <param name="sipTransportManager">SipTransportManager that called this method.</param>
 public delegate void SipTransactionCompleteDelegate(SIPRequest sipRequest, SIPResponse sipResponse,
-    IPEndPoint remoteEndPoint, SipTransportManager sipTransportManager);
+    IPEndPoint remoteEndPoint, SipTransport sipTransportManager);

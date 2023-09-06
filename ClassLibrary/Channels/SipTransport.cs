@@ -1,21 +1,20 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SipTransportManager.cs                                  29 Aug 23 PHR
+//  File:   SipTransport.cs                                         29 Aug 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Core;
 using SipLib.Body;
 using System.Collections.Concurrent;
-using SipLib.Collections;
 using System.Net;
-
+using SipLib.Transactions;
 
 namespace SipLib.Channels;
 
 /// <summary>
 /// This class manages sending and receiving SIP messages on a single SIPChannel. It also manages SIP
-/// transactions and thread-safe send operations on the SIPChannel.
+/// transactions for transactions on that SIPChannel.
 /// </summary>
-public class SipTransportManager
+public class SipTransport
 {
     private SIPChannel m_SipChannel;
     private Thread m_Thread = null;
@@ -23,6 +22,12 @@ public class SipTransportManager
     private SemaphoreSlim m_Semaphore = new SemaphoreSlim(0, int.MaxValue);
     private const int MAX_WAIT_TIME_MS = 100;
     private ConcurrentQueue<SipMessageReceivedParams> m_ReceiveQueue = new ConcurrentQueue<SipMessageReceivedParams>();
+
+    /// <summary>
+    /// The key is the TransactionID
+    /// </summary>
+    private ConcurrentDictionary<string, SipTransactionBase> m_Transactions = new ConcurrentDictionary<string, 
+        SipTransactionBase>();
 
     /// <summary>
     /// Event that is fired when a SIP request is received
@@ -34,11 +39,14 @@ public class SipTransportManager
     /// </summary>
     public event SipResponseReceivedDelegate SipResponseReceived = null;
 
+    private DateTime m_LastDoTimedEvents = DateTime.Now - TimeSpan.FromMilliseconds(100);
+    private const int DoTimedEventsIntervalMs = 100;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="sipChannel">SIPChannel to use for sending and receiving SIP messages.</param>
-    public SipTransportManager(SIPChannel sipChannel)
+    public SipTransport(SIPChannel sipChannel)
     {
         m_SipChannel = sipChannel;
       
@@ -68,9 +76,21 @@ public class SipTransportManager
         if (m_IsEnding == true)
             return;
 
+        m_SipChannel.Close();
         m_IsEnding = true;
         m_Semaphore.Release();
         m_Thread.Join(500);
+    }
+
+    /// <summary>
+    /// Adds a new SIP transaction if it does not already exist in the list (dictionary) of currently
+    /// active transactions.
+    /// </summary>
+    /// <param name="sipTransaction">New SIP transaction to add.</param>
+    public void AddSipTransaction(SipTransactionBase sipTransaction)
+    {
+        m_Transactions.TryAdd(sipTransaction.TransactionID, sipTransaction);
+        sipTransaction.StartTransaction();
     }
 
     /// <summary>
@@ -83,8 +103,10 @@ public class SipTransportManager
 
     private void ThreadLoop()
     {
+        DateTime Now;
         while (m_IsEnding == false)
         {
+            Now = DateTime.Now;
             m_Semaphore.Wait(MAX_WAIT_TIME_MS);
             if (m_IsEnding == true)
                 break;
@@ -94,9 +116,29 @@ public class SipTransportManager
                 ProcessSipReceivedSipMessage(Smr);
             }
 
+            if ((Now - m_LastDoTimedEvents).TotalMilliseconds > DoTimedEventsIntervalMs)
+            {
+                DoTimedEvents();
+                m_LastDoTimedEvents = Now;
+            }
         }
     }
 
+    private void DoTimedEvents()
+    {
+        List<SipTransactionBase> TransactionsToTerminate = new List<SipTransactionBase>();
+        bool Terminate;
+        foreach (SipTransactionBase sipTransaction in m_Transactions.Values)
+        {
+            Terminate = sipTransaction.DoTimedEvents();
+            if (Terminate == true)
+                TransactionsToTerminate.Add(sipTransaction);
+        }
+
+        SipTransactionBase outTransaction;
+        foreach (SipTransactionBase Transaction in m_Transactions.Values)
+            m_Transactions.TryRemove(Transaction.TransactionID, out outTransaction);
+    }
 
     private void ProcessSipReceivedSipMessage(SipMessageReceivedParams Smr)
     {
@@ -165,33 +207,35 @@ public class SipTransportManager
             return;
         }
 
-        List<MessageContentsContainer> ContentsList = null;
-        if (string.IsNullOrEmpty(sipRequest.Body) == false)
-            ContentsList = BinaryBodyParser.ParseSipBody(MsgBytes, sipRequest.Header.ContentType);
-
-        SipRequestReceived?.Invoke(sipRequest, RemoteEndPoint, ContentsList, this);
+        string TransactionID = SipTransactionBase.GetServerTransactionID(sipRequest);
+        SipTransactionBase sipTransaction;
+        if (m_Transactions.TryGetValue(TransactionID, out sipTransaction) == true)
+        {
+            bool Terminated = sipTransaction.HandleSipRequest(sipRequest, RemoteEndPoint.GetIPEndPoint());
+            if (Terminated == true)
+                m_Transactions.TryRemove(TransactionID, out sipTransaction);
+        }
+        else
+            // There is no transaction related to this request, so pass the request up to the transport
+            // user(s).
+            SipRequestReceived?.Invoke(sipRequest, RemoteEndPoint, this);
     }
 
     private void ProcessSipResponse(SIPResponse sipResponse, SIPEndPoint RemoteEndPoint, byte[] MsgBytes)
     {
-    }
-
-    /// <summary>
-    /// Checks to see if a SIP response message is for the request of this transaction.
-    /// </summary>
-    /// <remarks>See Section 17.1.3 of RFC 3261.</remarks>
-    /// <param name="Req">Original SIP request.</param>
-    /// <param name="Res">SIPResponse message.</param>
-    /// <returns>Returns true is the response is for the request or false if it does not.</returns>
-    private bool ResponseMatchesRequest(SIPRequest Req, SIPResponse Res)
-    {
-        if (Req.Header.Vias.TopViaHeader.Branch == Res.Header.Vias.TopViaHeader.Branch && Req.Header.
-            CSeqMethod == Res.Header.CSeqMethod)
-            return true;
+        string TransactionID = SipTransactionBase.GetClientTransactionID(sipResponse);
+        SipTransactionBase sipTransaction;
+        if (m_Transactions.TryGetValue(TransactionID, out sipTransaction) == true)
+        {
+            bool Terminated = sipTransaction.HandleSipResponse(sipResponse, RemoteEndPoint.GetIPEndPoint());
+            if (Terminated == true)
+                m_Transactions.TryRemove(TransactionID, out sipTransaction);
+        }
         else
-            return false;
+            // There is no transaction for this response, so pass the response up to the transport user(s)
+            SipResponseReceived?.Invoke(sipResponse, RemoteEndPoint, this);
     }
-
+   
     private void SipMessageReceived(SIPChannel sipChannel, SIPEndPoint remoteEndPoint, byte[] buffer)
     {
         m_ReceiveQueue.Enqueue(new SipMessageReceivedParams(sipChannel, remoteEndPoint, buffer));
