@@ -53,7 +53,7 @@ public static class SipTimers
 
     /// <summary>
     /// Used for server INVITE transactions in the Completed state. Specifies the interval in milliseconds
-    /// that the server stops trying to retransmit the last send final response.
+    /// that the server stops trying to retransmit the last sent final response.
     /// </summary>
     public static int TimerH = 64 * T1;
 
@@ -62,4 +62,10 @@ public static class SipTimers
     /// Specifies the interval in milliseconds that the server transaction remains in the Confirmed state.
     /// </summary>
     public static int TimerI = T4;
+
+    /// <summary>
+    /// Used for server non-INVITE transactions in the Completed state when the transport protocol is UDP.
+    /// The units are milliseconds.
+    /// </summary>
+    public static int TimerJ = 64 * T1;
 }

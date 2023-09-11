@@ -309,7 +309,7 @@ namespace SipLibUnitTests
             Assert.NotNull(Msg);
             SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
             Assert.NotNull(Req);
-            List<MessageContentsContainer> Scc = BinaryBodyParser.ParseSipBody(MsgBytes, Req.Header.
+            List<MessageContentsContainer> Scc = BinaryBodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
                 ContentType);
             Assert.True(Scc.Count == 2, "The SIP contents count is incorrect");
 

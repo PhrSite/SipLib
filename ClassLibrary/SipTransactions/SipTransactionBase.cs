@@ -100,9 +100,16 @@ public class SipTransactionBase
     protected SipTransactionCompleteDelegate TransactionComplete = null;
 
     /// <summary>
-    /// Endpoint to send the request to.
+    /// Endpoint to send the request to if the transaction is a client transaction or the source of a
+    /// request if the transaction is a server transaction.
     /// </summary>
     public IPEndPoint RemoteEndPoint = null;
+
+    /// <summary>
+    /// The most recent SIPResponse that was sent to a client if this transaction is a server transaction.
+    /// Not used for client transactions.
+    /// </summary>
+    protected SIPResponse LastSipResponseSent = null;
 
     private string m_TransactionID = null;
 
@@ -131,6 +138,11 @@ public class SipTransactionBase
     /// Semaphore to signal when a transaction is completed or terminated.
     /// </summary>
     protected SemaphoreSlim CompletionSemaphore = new SemaphoreSlim(0);
+
+    /// <summary>
+    /// Used by derived classes for locking the state variables
+    /// </summary>
+    protected object StateLockObj = new object();
 
     /// <summary>
     /// Asynchronously waits for the transaction to complet.
@@ -230,8 +242,10 @@ public class SipTransactionBase
     /// <summary>
     /// Called by the SipTransport to start the transaction.
     /// </summary>
-    public virtual void StartTransaction()
+    /// <returns>Returns true if the transaction has been immediately terminated.</returns>
+    public virtual bool StartTransaction()
     {
+        return false;
     }
 }
 
@@ -299,4 +313,10 @@ public enum TransactionTerminationReasonEnum
     /// A connection failure for a TCP or TLS connection was detected. Does not apply to a UDP.
     /// </summary>
     ConnectionFailure,
+
+    /// <summary>
+    /// For server INVITE transactions. Indicates that the server sent a 300 - 699 final response code
+    /// to the client, but the client never sent an ACK request.
+    /// </summary>
+    AckToFinalResponseNotReceived,
 }

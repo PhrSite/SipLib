@@ -86,10 +86,7 @@ public class SIPMessage
     /// Contains the raw byte array containing the entire message.
     /// </summary>
     public byte[] RawBuffer;
-    /// <summary>
-    /// Time that this objected was created.
-    /// </summary>
-    public DateTime Created = DateTime.Now;
+
     /// <summary>
     /// The remote IP socket the message was received from or sent to. 
     /// </summary>
@@ -122,8 +119,7 @@ public class SIPMessage
             else if (buffer.Length > SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH)
                 throw new ArgumentException("SIP message received that " +
                     "exceeded the maximum allowed message length, ignoring.");
-            else if(!ByteBufferInfo.HasString(buffer, 0, buffer.Length, 
-                SIP_MESSAGE_IDENTIFIER, m_CRLF))
+            else if(!ByteBufferInfo.HasString(buffer, 0, buffer.Length, SIP_MESSAGE_IDENTIFIER, m_CRLF))
                 // Message does not contain "SIP" anywhere on the first line, ignore.
                 return null;
             else
@@ -142,8 +138,6 @@ public class SIPMessage
         }
         catch(Exception)
         {
-            message = message.Replace("\n", "LF");
-            message = message.Replace("\r", "CR");
             return null;
         }
     }

@@ -74,8 +74,7 @@ public class BinaryBodyParser
     /// <param name="MsgBytes"></param>
     /// <param name="ContentType"></param>
     /// <returns></returns>
-    private static List<MessageContentsContainer> ProcessSinglePartContents(byte[] MsgBytes, 
-        string ContentType)
+    private static List<MessageContentsContainer> ProcessSinglePartContents(byte[] MsgBytes, string ContentType)
     {
         List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
 
@@ -220,8 +219,7 @@ public class BinaryBodyParser
 
     private static void ProcessContentTypeHeaderParameters(MessageContentsContainer Cc)
     {
-        string[] Fields = Cc.ContentType.Split(new char[] { ';' },
-            StringSplitOptions.RemoveEmptyEntries);
+        string[] Fields = Cc.ContentType.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         if (Fields != null && Fields.Length > 0)
         {
             Cc.ContentType = Fields[0];

@@ -43,14 +43,20 @@ public class ClientNonInviteTransaction : SipTransactionBase
     /// <summary>
     /// Called by the SipTransport to start the transaction.
     /// </summary>
-    public override void StartTransaction()
+    /// <returns>Returns true if the transaction has been immediately terminated.</returns>
+    public override bool StartTransaction()
     {
-        State = TransactionStateEnum.Trying;
-        DateTime Now = DateTime.Now;
-        RequestSentTime = Now;
-        StateStartTime = Now;
-        NumAttempts = 0;
-        m_transportManager.SendSipRequest(Request, RemoteEndPoint);
+        lock (StateLockObj)
+        {
+            State = TransactionStateEnum.Trying;
+            DateTime Now = DateTime.Now;
+            RequestSentTime = Now;
+            StateStartTime = Now;
+            NumAttempts = 0;
+            TransportManager.SendSipRequest(Request, RemoteEndPoint);
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -62,36 +68,40 @@ public class ClientNonInviteTransaction : SipTransactionBase
     public override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
     {
         ResponseReceived?.Invoke(Response, remoteEndPoint, this);
-        LastReceivedResponse = Response;
         bool Terminated = false;
-        if (Response.StatusCode >= 100 &&  Response.StatusCode <= 199)
+
+        lock (StateLockObj)
         {
-            if (State == TransactionStateEnum.Trying)
+            LastReceivedResponse = Response;
+            if (Response.StatusCode >= 100 && Response.StatusCode <= 199)
             {
-                // Now wait for a final response (200 - 699) or a timeout to occur.
-                State = TransactionStateEnum.Proceeding;
-                StateStartTime = DateTime.Now;
-            }
-
-            // Else, its OK to ignore provisional responses when not in the Trying state.
-        }
-        else
-        {   // Its a final response, complete the transaction
-            TerminationReason = TransactionTerminationReasonEnum.FinalResponseReceived;
-            if (State != TransactionStateEnum.Completed)
-            {   // Entering the Completed state so notify the transaction user.
-                State = TransactionStateEnum.Completed;
-                StateStartTime = DateTime.Now;
-                if (TransportManager.SipChannel.GetProtocol() != SIPProtocolsEnum.udp)
-                {   // For TCP and TLS, the value for the Timer F interval is 0 milliseconds, so terminate
-                    // the transaction.
-                    State = TransactionStateEnum.Terminated;
-                    Terminated = true;
+                if (State == TransactionStateEnum.Trying)
+                {
+                    // Now wait for a final response (200 - 699) or a timeout to occur.
+                    State = TransactionStateEnum.Proceeding;
+                    StateStartTime = DateTime.Now;
                 }
-                // For UDP, must stay in the Completed state for TimerFIntervalMs.
 
-                TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager);
-                CompletionSemaphore.Release();
+                // Else, its OK to ignore provisional responses when not in the Trying state.
+            }
+            else
+            {   // Its a final response, complete the transaction
+                TerminationReason = TransactionTerminationReasonEnum.FinalResponseReceived;
+                if (State != TransactionStateEnum.Completed)
+                {   // Entering the Completed state so notify the transaction user.
+                    State = TransactionStateEnum.Completed;
+                    StateStartTime = DateTime.Now;
+                    if (TransportManager.SipChannel.GetProtocol() != SIPProtocolsEnum.udp)
+                    {   // For TCP and TLS, the value for the Timer F interval is 0 milliseconds, so terminate
+                        // the transaction.
+                        State = TransactionStateEnum.Terminated;
+                        Terminated = true;
+                    }
+                    // For UDP, must stay in the Completed state for TimerFIntervalMs.
+
+                    TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager);
+                    CompletionSemaphore.Release();
+                }
             }
         }
 
@@ -106,48 +116,50 @@ public class ClientNonInviteTransaction : SipTransactionBase
     {
         bool Terminated = false;
         DateTime Now = DateTime.Now;
-        if (State == TransactionStateEnum.Trying)
+
+        lock (StateLockObj)
         {
-            if ((Now - RequestSentTime).TotalMilliseconds > T1IntervalMs)
-            {   // A timeout has occurred, try again?
-                NumAttempts += 1;
-                if (NumAttempts >= MaxAttempts)
-                {   // The transaction failed so notify the transaction user
+            if (State == TransactionStateEnum.Trying)
+            {
+                if ((Now - RequestSentTime).TotalMilliseconds > T1IntervalMs)
+                {   // A timeout has occurred, try again?
+                    NumAttempts += 1;
+                    if (NumAttempts >= MaxAttempts)
+                    {   // The transaction failed so notify the transaction user
+                        State = TransactionStateEnum.Terminated;
+                        TerminationReason = TransactionTerminationReasonEnum.NoResponseReceived;
+                        TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
+                        CompletionSemaphore.Release();
+                        Terminated = true;
+                    }
+                    else
+                    {   // Send the request again
+                        RequestSentTime = Now;
+                        TransportManager.SendSipRequest(Request, RemoteEndPoint);
+                    }
+                }
+            }
+            else if (State == TransactionStateEnum.Proceeding)
+            {   // Waiting for a final response, check for a timeout
+                if ((Now - StateStartTime).TotalMilliseconds > m_FinalResponseTimeoutMs)
+                {   // A timeout occurred and a final response never received
+                    TerminationReason = TransactionTerminationReasonEnum.NoFinalResponseReceived;
                     State = TransactionStateEnum.Terminated;
-                    TerminationReason = TransactionTerminationReasonEnum.NoResponseReceived;
                     TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
                     CompletionSemaphore.Release();
                     Terminated = true;
                 }
-                else
-                {   // Send the request again
-                    RequestSentTime = Now;
-                    TransportManager.SendSipRequest(Request, RemoteEndPoint);
+            }
+            else if (State == TransactionStateEnum.Completed)
+            {
+                if ((Now - StateStartTime).TotalMilliseconds > TimerKIntervalMs)
+                {   // No need to notify the transaction user
+                    State = TransactionStateEnum.Terminated;
+                    Terminated = true;
                 }
-            }
-        }
-        else if (State == TransactionStateEnum.Proceeding)
-        {   // Waiting for a final response, check for a timeout
-            if ((Now - StateStartTime).TotalMilliseconds > m_FinalResponseTimeoutMs)
-            {   // A timeout occurred and a final response never received
-                TerminationReason = TransactionTerminationReasonEnum.NoFinalResponseReceived;
-                State = TransactionStateEnum.Terminated;
-                TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
-                CompletionSemaphore.Release();
-                Terminated = true;
-            }
-        }
-        else if (State == TransactionStateEnum.Completed)
-        {
-            if ((Now - StateStartTime).TotalMilliseconds > TimerKIntervalMs)
-            {   // No need to notify the transaction user
-                State = TransactionStateEnum.Terminated;
-                Terminated = true;
             }
         }
 
         return Terminated;
     }
-
-
 }

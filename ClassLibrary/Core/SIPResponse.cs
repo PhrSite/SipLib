@@ -34,6 +34,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////
 //	Revised:	7 Nov 22 PHR -- Initial version. Added documentation comments.
+//              11 Sep 23 PHR -- Added the RawBuffer field.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -107,6 +108,11 @@ public class SIPResponse
     public SIPEndPoint LocalSIPEndPoint;
 
     /// <summary>
+    /// Contains the raw byte array containing the entire message.
+    /// </summary>
+    public byte[] RawBuffer = null;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     private SIPResponse()
@@ -149,17 +155,15 @@ public class SIPResponse
 
             int firstSpacePosn = statusLine.IndexOf(" ");
 
-            sipResponse.SIPVersion = statusLine.Substring(0, firstSpacePosn).
-                Trim();
+            sipResponse.SIPVersion = statusLine.Substring(0, firstSpacePosn).Trim();
             statusLine = statusLine.Substring(firstSpacePosn).Trim();
             sipResponse.StatusCode = Convert.ToInt32(statusLine.Substring(0, 3));
-            sipResponse.Status = SIPResponseStatusCodes.GetStatusTypeForCode(
-                sipResponse.StatusCode);
+            sipResponse.Status = SIPResponseStatusCodes.GetStatusTypeForCode(sipResponse.StatusCode);
             sipResponse.ReasonPhrase = statusLine.Substring(3).Trim();
 
-            sipResponse.Header = SIPHeader.ParseSIPHeaders(sipMessage.
-                SIPHeaders);
+            sipResponse.Header = SIPHeader.ParseSIPHeaders(sipMessage.SIPHeaders);
             sipResponse.Body = sipMessage.Body;
+            sipResponse.RawBuffer = sipMessage.RawBuffer;
 
             return sipResponse;
         }
@@ -169,8 +173,7 @@ public class SIPResponse
         }
         catch (Exception)
         {
-            throw new SIPValidationException(SIPValidationFieldsEnum.Response, 
-                "Error parsing SIP Response");
+            throw new SIPValidationException(SIPValidationFieldsEnum.Response, "Error parsing SIP Response");
         }
     }
 
@@ -185,7 +188,6 @@ public class SIPResponse
         try
         {
             SIPMessage sipMessage = SIPMessage.ParseSIPMessage(sipMessageStr, null, null);
-
             return ParseSIPResponse(sipMessage);
         }
         catch (SIPValidationException)

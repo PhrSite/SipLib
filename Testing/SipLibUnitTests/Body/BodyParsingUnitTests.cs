@@ -47,7 +47,7 @@ namespace SipLibUnitTests
             SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
             Assert.NotNull(Req);
 
-            List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(Bytes, Req.Header.
+            List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
                 ContentType);
             Assert.NotNull(Contents);
 

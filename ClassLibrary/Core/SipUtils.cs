@@ -535,6 +535,119 @@ public static class SipUtils
     }
 
     /// <summary>
+    /// Builds a BYE SIPRequest for in incoming or an outgoing call.
+    /// </summary>
+    /// <param name="InvReq">Original INVITE message for the call.</param>
+    /// <param name="SipChan">SIPChannel used to communicate with the remote endpoint.</param>
+    /// <param name="RemIpe">IPEndPoint to send the request to.</param>
+    /// <param name="IncomingCall">If true then the call was an incoming call, i.e. the INVITE request was
+    /// received. Else, the call was an outgoing call, i.e. the INVITE request was sent.</param>
+    /// <param name="LastCSeqNumber">Last CSeq number for the call dialog. </param>
+    /// <param name="InviteOkResponse">OK message that was received in response to the INVITE request.
+    /// This parameter is required if the call was an outgoing one and is currently on-line.</param>
+    /// <returns>Returns a SIPRequest object containing the BYE or the CANCEL request.</returns>
+    public static SIPRequest BuildByeRequest(SIPRequest InvReq, SIPChannel SipChan, IPEndPoint RemIpe,
+        bool IncomingCall, int LastCSeqNumber, SIPResponse InviteOkResponse)
+    {
+        SIPRequest ByeRequest;
+        SIPURI RemoteTarget;
+        SIPMethodsEnum Method = SIPMethodsEnum.BYE;
+        SIPFromHeader ByeFromHeader;
+        SIPToHeader ByeToHeader;
+
+        string strBranch = CallProperties.CreateBranchId();
+        SIPMethodsEnum CSeqMethod = SIPMethodsEnum.BYE;
+        int CSeqNum = LastCSeqNumber += 1;
+        SIPRouteSet RouteSet = null;
+        SIPEndPoint RemoteSipEndPoint = null;
+
+        if (IncomingCall == true)
+        {
+            RemoteTarget = GetRemoteSipUri(InvReq.Header);
+            ByeFromHeader = new SIPFromHeader(InvReq.Header.To.ToName, InvReq.Header.To.ToURI, InvReq.Header.
+                To.ToTag);
+            ByeToHeader = new SIPToHeader(InvReq.Header.From.FromName, InvReq.Header.From.FromURI,
+                InvReq.Header.From.FromTag);
+            RouteSet = InvReq.Header.RecordRoutes;
+            RemoteSipEndPoint = InvReq.RemoteSIPEndPoint;
+        }
+        else
+        {   // Its an outgoing call
+            SIPEndPoint Sep = new SIPEndPoint(SipChan.SIPChannelEndPoint.Protocol, RemIpe);
+            RemoteSipEndPoint = Sep;
+            RemoteTarget = new SIPURI(SIPSchemesEnum.sip, Sep);
+            RemoteTarget.User = InvReq.Header.To.ToURI.User;
+
+            ByeFromHeader = InvReq.Header.From;
+            ByeToHeader = InvReq.Header.To;
+            if (InviteOkResponse != null && InviteOkResponse.Header != null && InviteOkResponse.Header.To
+                != null)
+            {
+                ByeToHeader.ToTag = InviteOkResponse.Header.To.ToTag;
+                RemoteTarget = InviteOkResponse.Header.Contact[0].ContactURI;
+                RouteSet = InviteOkResponse.Header.RecordRoutes;
+            }
+        }
+
+        ByeRequest = new SIPRequest(Method, RemoteTarget);
+        SIPHeader ByeHeader = new SIPHeader(ByeFromHeader, ByeToHeader, CSeqNum, InvReq.Header.CallId);
+        ByeHeader.CSeqMethod = CSeqMethod;
+        ByeRequest.Header = ByeHeader;
+        ByeRequest.Header.Routes = RouteSet;
+        ByeRequest.RemoteSIPEndPoint = RemoteSipEndPoint;
+        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch);
+        ByeRequest.Header.Vias.PushViaHeader(ViaHeader);
+
+        return ByeRequest;
+    }
+
+    /// <summary>
+    /// Builds a BYE or a CANCEL for in incoming or an outgoing call.
+    /// </summary>
+    /// <param name="InvReq">Original INVITE message for the call.</param>
+    /// <param name="SipChan">SIPChannel used to communicate with the remote endpoint.</param>
+    /// <param name="RemIpe">IPEndPoint to send the request to.</param>
+    /// <param name="LastCSeqNumber">Last CSeq number for the call dialog. </param>
+    /// <returns>Returns a SIPRequest object containing the BYE or the CANCEL request.</returns>
+    public static SIPRequest BuildCancelRequest(SIPRequest InvReq, SIPChannel SipChan, IPEndPoint RemIpe,
+        int LastCSeqNumber)
+    {
+        SIPRequest CancelRequest;
+        SIPURI RemoteTarget;
+        SIPMethodsEnum Method = SIPMethodsEnum.CANCEL;
+        SIPFromHeader FromHeader;
+        SIPToHeader ToHeader;
+
+        string strBranch = CallProperties.CreateBranchId();
+        SIPMethodsEnum CSeqMethod = SIPMethodsEnum.BYE;
+        int CSeqNum = LastCSeqNumber += 1;
+        SIPRouteSet RouteSet = null;
+        SIPEndPoint RemoteSipEndPoint = null;
+
+        SIPEndPoint Sep = new SIPEndPoint(SipChan.SIPChannelEndPoint.Protocol, RemIpe);
+        RemoteSipEndPoint = Sep;
+        RemoteTarget = new SIPURI(SIPSchemesEnum.sip, Sep);
+        RemoteTarget.User = InvReq.Header.To.ToURI.User;
+
+        FromHeader = InvReq.Header.From;
+        ToHeader = InvReq.Header.To;
+        strBranch = InvReq.Header.Vias.TopViaHeader.Branch;
+        CSeqMethod = SIPMethodsEnum.CANCEL;
+        CSeqNum = InvReq.Header.CSeq;
+
+        CancelRequest = new SIPRequest(Method, RemoteTarget);
+        SIPHeader Header = new SIPHeader(FromHeader, ToHeader, CSeqNum, InvReq.Header.CallId);
+        Header.CSeqMethod = CSeqMethod;
+        CancelRequest.Header = Header;
+        CancelRequest.Header.Routes = RouteSet;
+        CancelRequest.RemoteSIPEndPoint = RemoteSipEndPoint;
+        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch);
+        CancelRequest.Header.Vias.PushViaHeader(ViaHeader);
+
+        return CancelRequest;
+    }
+
+    /// <summary>
     ///  Gets the URI of the remote party for an incoming call.
     /// </summary>
     /// <remarks>This method returns the URI specified in the top Record-Route header if it has a "lr"

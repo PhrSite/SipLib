@@ -90,7 +90,12 @@ public class SipTransport
     public void AddSipTransaction(SipTransactionBase sipTransaction)
     {
         m_Transactions.TryAdd(sipTransaction.TransactionID, sipTransaction);
-        sipTransaction.StartTransaction();
+        bool Terminated = sipTransaction.StartTransaction();
+        if (Terminated == true)
+        {
+            SipTransactionBase TempOut = null;
+            m_Transactions.Remove(sipTransaction.TransactionID, out TempOut);
+        }
     }
 
     /// <summary>

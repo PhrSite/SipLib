@@ -35,6 +35,7 @@
 /////////////////////////////////////////////////////////////////////////////////////
 //	Revised:	7 Nov 22 PHR -- Initial version. Added documentation comments
 //              10 Nov 22 PHR -- Added more validity checks in IsValid()
+//              11 Sep 23 PHR -- Added the RawBuffer field.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -63,12 +64,7 @@ public class SIPRequest
     private static string m_CRLF = SIPConstants.CRLF;
     private static string m_sipFullVersion = SIPConstants.SIP_FULLVERSION_STRING;
     private static string m_sipVersion = SIPConstants.SIP_VERSION_STRING;
-    private static int m_sipMajorVersion = SIPConstants.SIP_MAJOR_VERSION;
-    private static int m_sipMinorVersion = SIPConstants.SIP_MINOR_VERSION;
-
     private string SIPVersion = m_sipVersion;
-    private int SIPMajorVersion = m_sipMajorVersion;
-    private int SIPMinorVersion = m_sipMinorVersion;
 
     /// <summary>
     /// Request method
@@ -91,6 +87,11 @@ public class SIPRequest
     /// Body content as a string
     /// </summary>
     public string Body;
+
+    /// <summary>
+    /// Contains the raw byte array containing the entire message.
+    /// </summary>
+    public byte[] RawBuffer = null;
 
     /// <summary>
     /// The remote IP socket the request was received from or sent to.
@@ -175,6 +176,7 @@ public class SIPRequest
                     secondSpacePosn).Trim();
                 sipRequest.Header = SIPHeader.ParseSIPHeaders(sipMessage.SIPHeaders);
                 sipRequest.Body = sipMessage.Body;
+                sipRequest.RawBuffer = sipMessage.RawBuffer;
 
                 return sipRequest;
             }
@@ -204,8 +206,7 @@ public class SIPRequest
     {
         try
         {
-            SIPMessage sipMessage = SIPMessage.ParseSIPMessage(sipMessageStr, 
-                null, null);
+            SIPMessage sipMessage = SIPMessage.ParseSIPMessage(sipMessageStr, null, null);
             return SIPRequest.ParseSIPRequest(sipMessage);
         }
         catch (SIPValidationException)
@@ -214,8 +215,7 @@ public class SIPRequest
         }
         catch (Exception)
         {
-            throw new SIPValidationException(SIPValidationFieldsEnum.Request, 
-                "Unknown error parsing SIP Request");
+            throw new SIPValidationException(SIPValidationFieldsEnum.Request, "Unknown error parsing SIP Request");
         }
     }
 
@@ -233,7 +233,7 @@ public class SIPRequest
             string message = methodStr + " " + URI.ToString() + " " + SIPVersion + m_CRLF + 
                 this.Header.ToString();
 
-            if(Body != null)
+            if (Body != null)
                 message += m_CRLF + Body;
             else
                 message += m_CRLF;
