@@ -46,6 +46,16 @@ public class ConnectionData
     }
 
     /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="address"></param>
+    public ConnectionData(IPAddress address)
+    {
+        Address = address;
+        AddressType = address.AddressFamily == AddressFamily.InterNetwork ? "IP4" : "IP6";
+    }
+
+    /// <summary>
     /// Parses a string containing the parameter fields of the SDP c= line.
     /// </summary>
     /// <param name="strConnectionData">Contains the parameter fields of the c= line. The "c=" field must
@@ -94,18 +104,6 @@ public class ConnectionData
         }
 
         return Cd;
-    }
-
-    /// <summary>
-    /// Constructs a new ConnectionData object from parameters provided by the caller.
-    /// </summary>
-    /// <param name="strAddressType">Address type. Should be "IP4" or "IP6".</param>
-    /// <param name="Addr">IP address or domain name of the position.</param>
-    public ConnectionData(string strAddressType, IPAddress Addr)
-    {
-        AddressType = strAddressType;
-        Address = Addr;
-        NetworkType = "IN";
     }
 
     /// <summary>

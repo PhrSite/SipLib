@@ -92,7 +92,7 @@ public class SipTransactionBase
     /// <summary>
     /// SIPRequest for the transaction.
     /// </summary>
-    protected SIPRequest Request = null;
+    public SIPRequest Request = null;
 
     /// <summary>
     /// Method to call when the transaction either completes or times out
@@ -145,7 +145,7 @@ public class SipTransactionBase
     protected object StateLockObj = new object();
 
     /// <summary>
-    /// Asynchronously waits for the transaction to complet.
+    /// Asynchronously waits for the transaction to complete.
     /// </summary>
     /// <returns></returns>
     public async Task<SipTransactionBase> WaitForCompletionAsync()
@@ -202,9 +202,11 @@ public class SipTransactionBase
     public static string GetServerTransactionID(SIPRequest request)
     {
         SIPViaHeader Svh = request.Header.Vias.TopViaHeader;
-        string method = request.Method.ToString();
-        if (request.Method == SIPMethodsEnum.ACK || request.Method == SIPMethodsEnum.CANCEL)
-            method = "INVITE";
+        string method;
+        if (request.Method == SIPMethodsEnum.ACK)
+            method = SIPMethodsEnum.INVITE.ToString();
+        else
+            method = request.Method.ToString();
         return Svh.Branch + Svh.Host + method;
     }
 

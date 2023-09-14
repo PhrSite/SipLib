@@ -78,12 +78,12 @@ public class ClientInviteTransaction : SipTransactionBase
                 State = TransactionStateEnum.Terminated;
                 StateStartTime = DateTime.Now;
                 TerminationReason = TransactionTerminationReasonEnum.OkReceived;
-                TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager);
+                TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
                 CompletionSemaphore.Release();
                 Terminated = true;
             }
             else
-            {   // Its a final response (300 - 699), complete the transaction
+            {   // Its a final response (300 - 699), complete the transaction so send an ACK request.
                 SIPRequest AckReq = SipUtils.BuildAckRequest(Response, m_transportManager.SipChannel);
                 TransportManager.SendSipRequest(AckReq, RemoteEndPoint);
 
@@ -92,7 +92,7 @@ public class ClientInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Completed;
                     StateStartTime = DateTime.Now;
                     TerminationReason = TransactionTerminationReasonEnum.FinalResponseReceived;
-                    TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager);
+                    TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
                     CompletionSemaphore.Release();
 
                     if (TransportManager.SipChannel.GetProtocol() != SIPProtocolsEnum.udp)
@@ -126,7 +126,7 @@ public class ClientInviteTransaction : SipTransactionBase
                 {   // The Calling state timed out because no response was received
                     State = TransactionStateEnum.Terminated;
                     TerminationReason = TransactionTerminationReasonEnum.NoResponseReceived;
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
+                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
                     CompletionSemaphore.Release();
                     return true;
                 }
@@ -147,7 +147,7 @@ public class ClientInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Terminated;
                     Terminated = true;
                     TerminationReason = TransactionTerminationReasonEnum.ConnectionFailure;
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
+                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
                     CompletionSemaphore.Release();
                 }
             }

@@ -28,7 +28,7 @@ public class ServerInviteTransaction : SipTransactionBase
     /// <param name="transactionComplete">Notification callback. Called when the transaction is completed or
     /// terminated. May be null if a notification is not required.</param>
     /// <param name="TransportManager">Transport from which the request was received.</param>
-    /// <param name="ResponseToSend">Initial to response send to the client.  Will be sent when the transport
+    /// <param name="ResponseToSend">Initial response to send to the client.  Will be sent when the transport
     /// layer calls the StartTransaction() method.</param>
     public ServerInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint, SipTransactionCompleteDelegate
         transactionComplete, SipTransport TransportManager, SIPResponse ResponseToSend) :
@@ -96,7 +96,7 @@ public class ServerInviteTransaction : SipTransactionBase
             {
                 State = TransactionStateEnum.Terminated;
                 TerminationReason = TransactionTerminationReasonEnum.ConnectionFailure;
-                TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
+                TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
                 CompletionSemaphore.Release();
                 Terminated = true;
             }
@@ -119,7 +119,7 @@ public class ServerInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Terminated;
                     TerminationReason = TransactionTerminationReasonEnum.NoFinalResponseReceived;
                     // Notify the transaction user
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager);
+                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
                     CompletionSemaphore.Release();
                     Terminated = true;
                 }

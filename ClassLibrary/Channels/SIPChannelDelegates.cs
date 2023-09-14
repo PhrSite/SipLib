@@ -40,9 +40,9 @@
 //	Revised:	8 Nov 22 PHR -- Initial version.
 /////////////////////////////////////////////////////////////////////////////////////
 
-using SipLib.Body;
 using SipLib.Core;
 using System.Net;
+using SipLib.Transactions;
 
 namespace SipLib.Channels;
 
@@ -108,5 +108,6 @@ public delegate void SipResponseReceivedDelegate(SIPResponse sipResponse, SIPEnd
 /// <param name="remoteEndPoint">Endpoint that send the response. Will be null if the transaction timed out.
 /// </param>
 /// <param name="sipTransportManager">SipTransportManager that called this method.</param>
+/// <param name="Transaction">Transaction that completed.</param>
 public delegate void SipTransactionCompleteDelegate(SIPRequest sipRequest, SIPResponse sipResponse,
-    IPEndPoint remoteEndPoint, SipTransport sipTransportManager);
+    IPEndPoint remoteEndPoint, SipTransport sipTransportManager, SipTransactionBase Transaction);

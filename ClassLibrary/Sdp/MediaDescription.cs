@@ -185,9 +185,8 @@ public class MediaDescription
     /// Gets a list of SdpAttributes for an attribute name.
     /// </summary>
     /// <param name="strAttr">Attribute name.</param>
-    /// <returns>Returns a list of SdpAttribute object. The return value
-    /// will never be null but will be empty if there are no attributes
-    /// with a name that matches the strAttr parameter.</returns>
+    /// <returns>Returns a list of SdpAttribute object. The return value will never be null but will be
+    /// empty if there are no attributes with a name that matches the strAttr parameter.</returns>
     public List<SdpAttribute> GetNamedAttributes(string strAttr)
     {
         List<SdpAttribute> Attrs = new List<SdpAttribute>();
@@ -220,8 +219,7 @@ public class MediaDescription
     /// <summary>
     /// Determines if its necessary to use DTLS-SRTP to negotiate encryption keys and algorithms.
     /// </summary>
-    /// <param name="Sdp">Media session that this MediaDescription belong to.
-    /// </param>
+    /// <param name="Sdp">Media session that this MediaDescription belong to.</param>
     /// <param name="SetType">SetupType to use in the answer to the offered SetupType.</param>
     /// <returns>Returns true if DTLS-SRTP is required.</returns>
     public bool UsingDtlsSrtp(Sdp Sdp, out SetupType SetType)
@@ -440,8 +438,8 @@ public class MediaDescription
     /// <summary>
     /// Creates a basic MediaDescription object for offerring audio media.
     /// </summary>
-    /// <param name="Port"></param>
-    /// <returns></returns>
+    /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
+    /// <returns>Returns a new MediaDescription object.</returns>
     public static MediaDescription CreateAudioSmd(int Port)
     {
         MediaDescription AudSmd = new MediaDescription();
@@ -451,8 +449,7 @@ public class MediaDescription
         AudSmd.MediaFormatNumbers = new List<string>() { "0", "101" };
         AudSmd.Attributes.Add(new SdpAttribute("fmtp", "101 0-15"));
         AudSmd.Attributes.Add(new SdpAttribute("rtpmap", "0 PCMU/8000"));
-        AudSmd.Attributes.Add(new SdpAttribute("rtpmap",
-            "101 telephone-event/8000"));
+        AudSmd.Attributes.Add(new SdpAttribute("rtpmap", "101 telephone-event/8000"));
 
         return AudSmd;
     }
@@ -468,8 +465,7 @@ public class MediaDescription
         MediaDescription VidSmd = new MediaDescription("video", Port, "96");
         VidSmd.Transport = "RTP/AVP";
         VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("rtpmap:96 H264/90000"));
-        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 " + 
-            "profile-level-id=42801f"));
+        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 " + "profile-level-id=42801f"));
 
         return VidSmd;
     }

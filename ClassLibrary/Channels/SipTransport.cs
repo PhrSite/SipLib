@@ -7,6 +7,7 @@ using SipLib.Body;
 using System.Collections.Concurrent;
 using System.Net;
 using SipLib.Transactions;
+using SipLib.SipTransactions;
 
 namespace SipLib.Channels;
 
@@ -83,11 +84,21 @@ public class SipTransport
     }
 
     /// <summary>
-    /// Adds a new SIP transaction if it does not already exist in the list (dictionary) of currently
-    /// active transactions.
+    /// Gets the number of active transactions.
+    /// </summary>
+    public int TransactionCount
+    {
+        get
+        {
+            return m_Transactions.Count;
+        }
+    }
+
+    /// <summary>
+    /// Starts a new SIP transaction.
     /// </summary>
     /// <param name="sipTransaction">New SIP transaction to add.</param>
-    public void AddSipTransaction(SipTransactionBase sipTransaction)
+    private void StartSipTransaction(SipTransactionBase sipTransaction)
     {
         m_Transactions.TryAdd(sipTransaction.TransactionID, sipTransaction);
         bool Terminated = sipTransaction.StartTransaction();
@@ -96,6 +107,102 @@ public class SipTransport
             SipTransactionBase TempOut = null;
             m_Transactions.Remove(sipTransaction.TransactionID, out TempOut);
         }
+    }
+
+    /// <summary>
+    /// Creates and starts a client non-INVITE SIP transaction
+    /// </summary>
+    /// <param name="request">SIP request to send</param>
+    /// <param name="remoteEndPoint">Destination to send the request to</param>
+    /// <param name="completeDelegate">Notification callback. Called when the transaction is completed or
+    /// terminated. May be null if a notification is not required.</param>
+    /// <param name="FinalResponseTimeoutMs">Number of milliseconds to wait for a final response.
+    /// This corresponds to Timer F shown in Figure 6 of RFC 3261.</param>
+    /// <returns>Returns a new ClientNonInviteTransaction object</returns>
+    // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
+    public ClientNonInviteTransaction StartClientNonInviteTransaction(SIPRequest request, IPEndPoint
+        remoteEndPoint, SipTransactionCompleteDelegate completeDelegate, int FinalResponseTimeoutMs)
+    {
+        if (request.Method == SIPMethodsEnum.INVITE)
+            throw new ArgumentException("This method cannot be used for client INVITE transactions");
+
+        ClientNonInviteTransaction Cnit = new ClientNonInviteTransaction(request, remoteEndPoint,
+            completeDelegate, this, FinalResponseTimeoutMs);
+        StartSipTransaction(Cnit);
+        return Cnit;
+    }
+
+    /// <summary>
+    /// Creates and starts a client INVITE transaction.
+    /// </summary>
+    /// <param name="request">SIP INVITE request to send</param>
+    /// <param name="remoteEndPoint">Destination to send the request to</param>
+    /// <param name="completeDelegate">Notification callback. Called when the transaction is completed or
+    /// terminated. May be null if a notification is not required.</param>
+    /// <param name="responseReceivedDelegate">Callback function to call when a response is received
+    /// for the transaction. Optional, may be null. This may be used when the client transaction user
+    /// need to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
+    /// <returns>Returns a new ClientInviteTransaction object</returns>
+    // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
+    public ClientInviteTransaction StartClientInviteTransaction(SIPRequest request, IPEndPoint
+        remoteEndPoint, SipTransactionCompleteDelegate completeDelegate, TransactionResponseReceivedDelegate
+        responseReceivedDelegate)
+    {
+        if (request.Method != SIPMethodsEnum.INVITE)
+            throw new ArgumentException("The request must be an INVITE");
+
+        ClientInviteTransaction Cit = new ClientInviteTransaction(request, remoteEndPoint, completeDelegate,
+            this);
+        if (responseReceivedDelegate != null)
+            Cit.ResponseReceived = responseReceivedDelegate;
+        StartSipTransaction(Cit);
+        return Cit;
+    }
+
+    /// <summary>
+    /// Creates and starts a server non-INVITE transaction.
+    /// </summary>
+    /// <param name="request">SIP request that was received by the server.</param>
+    /// <param name="remoteEndPoint">IP endpoint of the remote client that sent the request.</param>
+    /// <param name="completeDelegate">Notification callback. Called when the transaction is completed or
+    /// terminated. May be null if a notification is not required.</param>
+    /// <param name="ResponseToSend">Initial response to send to the client. Will be sent when the transport
+    /// layer calls the StartTransaction() method.</param>
+    /// <returns>Returns a new ServerNonInviteTransaction object</returns>
+    // <exception cref="ArgumentException">Thrown if the request is an INVITE</exception>
+    public ServerNonInviteTransaction StartServerNonInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint,
+        SipTransactionCompleteDelegate completeDelegate, SIPResponse ResponseToSend)
+    {
+        if (request.Method == SIPMethodsEnum.INVITE)
+            throw new ArgumentException("This method cannot be used for INVITE transactions");
+
+        ServerNonInviteTransaction Snit = new ServerNonInviteTransaction(request, remoteEndPoint, completeDelegate,
+            this, ResponseToSend);
+        StartSipTransaction(Snit);
+        return Snit;
+    }
+
+    /// <summary>
+    /// Creates and starts a server INVITE transaction.
+    /// </summary>
+    /// <param name="request">INVITE request that was received.</param>
+    /// <param name="remoteEndPoint">IP endpoint of the remote client that sent the request.</param>
+    /// <param name="completeDelegate">Notification callback. Called when the transaction is completed or
+    /// terminated. May be null if a notification is not required.</param>
+    /// <param name="ResponseToSend">Initial response to send to the client.  Will be sent when the transport
+    /// layer calls the StartTransaction() method.</param>
+    /// <returns>Returns a new ServerInviteTransaction object.</returns>
+    // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
+    public ServerInviteTransaction StartServerInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint,
+        SipTransactionCompleteDelegate completeDelegate, SIPResponse ResponseToSend)
+    {
+        if (request.Method != SIPMethodsEnum.INVITE)
+            throw new ArgumentException("The request must be an INVITE");
+
+        ServerInviteTransaction Sit = new ServerInviteTransaction(request, remoteEndPoint, completeDelegate,
+            this, ResponseToSend);
+        StartSipTransaction(Sit);
+        return Sit;
     }
 
     /// <summary>
@@ -141,7 +248,7 @@ public class SipTransport
         }
 
         SipTransactionBase outTransaction;
-        foreach (SipTransactionBase Transaction in m_Transactions.Values)
+        foreach (SipTransactionBase Transaction in TransactionsToTerminate)
             m_Transactions.TryRemove(Transaction.TransactionID, out outTransaction);
     }
 
@@ -206,6 +313,10 @@ public class SipTransport
     {
         SIPValidationFieldsEnum error;
         string strReason;
+
+        // For debug only
+        string strRequest = sipRequest.ToString();
+
         if (sipRequest.IsValid(out error, out strReason) == false)
         {
             // TODO: handle an invalid SIP Request

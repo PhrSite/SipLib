@@ -9,24 +9,21 @@
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection.Metadata;
 
 namespace SipLib.Sdp;
 
 /// <summary>
-/// Class for processing the Session Description Protocol message contents
-/// of a SIP message. See RFC 4566. 
+/// Class for processing the Session Description Protocol message contents of a SIP message. See RFC 4566. 
 /// </summary>
 public class Sdp
 {
     /// <summary>
-    /// Contains the version number (v) of the SDP protocol. This is
-    /// expected to be always 0. See Section 5.1 of RFC 4566.
+    /// Contains the version number (v) of the SDP protocol. This is expected to be always 0. See Section 5.1
+    /// of RFC 4566.
     /// </summary>
     public int Version = 0;
     /// <summary>
-    /// Contains the origin information for the "o" parameter. See Section 5.2 of 
-    /// RFC 4566.
+    /// Contains the origin information for the "o" parameter. See Section 5.2 of RFC 4566.
     /// </summary>
     public Origin Origin = null;
     /// <summary>
@@ -35,26 +32,25 @@ public class Sdp
     public string SessionName = "";
 
     /// <summary>
-    /// Contains the session information "i" parameter. See Section 5.4 of RFC 4566.
-    /// This parameter is optional.
+    /// Contains the session information "i" parameter. See Section 5.4 of RFC 4566. This parameter is optional.
     /// </summary>
     public string SessionInformation = "";
 
     /// <summary>
-    /// Contains a URI to more information about the session. This is the "u" parameter.
-    /// See Section 5.5 of RFC 4566. This parameter is optional.
+    /// Contains a URI to more information about the session. This is the "u" parameter. See Section 5.5 of
+    /// RFC 4566. This parameter is optional.
     /// </summary>
     public string Uri = "";
 
     /// <summary>
-    /// Contains the e-mail parameter (e) for the session. See Section 5.6 of RFC 4566.
-    /// This parameter is optional.
+    /// Contains the e-mail parameter (e) for the session. See Section 5.6 of RFC 4566. This parameter is
+    /// optional.
     /// </summary>
     public string Email = "";
 
     /// <summary>
-    /// Contains the phone number (p) parameter for the session. See Section 5.6 of RFC 4566.
-    /// This parameter is optional.
+    /// Contains the phone number (p) parameter for the session. See Section 5.6 of RFC 4566. This parameter
+    /// is optional.
     /// </summary>
     public string PhoneNumber = "";
 
@@ -103,19 +99,14 @@ public class Sdp
     public Sdp(IPAddress LocalIp, string UaName)
     {
         Origin = new Origin(UaName, LocalIp);
-        if (LocalIp.AddressFamily == AddressFamily.InterNetwork)
-            ConnectionData = new ConnectionData("IP4", LocalIp);
-        else
-                ConnectionData = new ConnectionData("IP6", LocalIp);
-
-            SessionName = UaName + "_" + Rnd.Next().ToString();
+        ConnectionData = new ConnectionData(LocalIp);
+        SessionName = UaName + "_" + Rnd.Next().ToString();
     }
 
     /// <summary>
     /// Parses the SDP contained in a list of strings.
     /// </summary>
-    /// <param name="SdpContents">Each item in the list contains one
-    /// line in the SDP</param>
+    /// <param name="SdpContents">Each item in the list contains one line in the SDP</param>
     /// <returns>Returns an Sdp object</returns>
     // <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
     // <exception cref="Exception">Thrown if an unexpected error occurs</exception>
@@ -502,12 +493,11 @@ public class Sdp
 
 
     /// <summary>
-    /// Returns the SdpAttribute object for a named attribute for the entire
-    /// SDP at the session level.
+    /// Returns the SdpAttribute object for a named attribute for the entire SDP at the session level.
     /// </summary>
     /// <param name="strAttr">Name of the attribute to search for.</param>
-    /// <returns>Returns a SdpAttribute for the named attribute if it is found 
-    /// or null if the named attribute is not present.</returns>
+    /// <returns>Returns a SdpAttribute for the named attribute if it is found or null if the named attribute
+    /// is not present.</returns>
     public SdpAttribute GetNamedAttribute(string strAttr)
     {
         SdpAttribute RetVal = null;
@@ -518,7 +508,7 @@ public class Sdp
                 RetVal = Sa;
                 break;
             }
-        } // end foreach
+        }
 
         return RetVal;
     }
@@ -619,8 +609,7 @@ public class Sdp
     /// <param name="Smd">The SDP Media Description block for the media to get the IP address for.</param>
     /// <returns>Returns an IPAddress. Returns null if there was no address specified in the session or
     /// media levels.</returns>
-    public static IPEndPoint GetMediaEndPoint(Sdp Sdp, MediaDescription 
-        Smd)
+    public static IPEndPoint GetMediaEndPoint(Sdp Sdp, MediaDescription Smd)
     {
         IPAddress MediaIpAddr = Sdp.GetMediaIPAddr(Sdp, Smd);
         if (MediaIpAddr == null)

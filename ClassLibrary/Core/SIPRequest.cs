@@ -63,8 +63,8 @@ public class SIPRequest
 
     private static string m_CRLF = SIPConstants.CRLF;
     private static string m_sipFullVersion = SIPConstants.SIP_FULLVERSION_STRING;
-    private static string m_sipVersion = SIPConstants.SIP_VERSION_STRING;
-    private string SIPVersion = m_sipVersion;
+    //private static string m_sipVersion = SIPConstants.SIP_VERSION_STRING;
+    private string SIPVersion = m_sipFullVersion;
 
     /// <summary>
     /// Request method
@@ -358,11 +358,10 @@ public class SIPRequest
             return false;
         }
 
-        if (SIPVersion != "2.0")
+        if (SIPVersion != m_sipFullVersion)
         {
             errorField = SIPValidationFieldsEnum.SipVersion;
-            errorMessage = "The SIP version number in the request line " +
-                "is not valid";
+            errorMessage = "The SIP version number in the request line is not valid";
             return false;
         }
 
