@@ -12,7 +12,10 @@ using SipLib.Sdp;
 using SipLib.Transactions;
 
 /// <summary>
-/// 
+/// This class performs unit tests for several SIP transactions from the perspective of the SIP client.
+/// It uses the ServerTransactionSimulator class to simulate the server-side of the transaction.
+/// ServerTransactionSimulator uses the ServerNonInviteTransaction and ServerInviteTransaction classes
+/// so the server-side transactions are also exercised.
 /// </summary>
 [Trait("Category", "unit")]
 public class ClientTransactions
@@ -89,8 +92,8 @@ public class ClientTransactions
 
         Transport.Shutdown();
         Server.Shutdown();
-
     }
+
 
     [Fact]
     public async Task ClientInviteTransaction_Success()
@@ -102,6 +105,8 @@ public class ClientTransactions
         SIPURI ServerUri = new SIPURI(SIPSchemesEnum.sip, ServerIpe.Address, ServerPort);
         ServerUri.User = "Server";
 
+        // The server will send a Trying, Ringing and then an OK response to the INVITE request sent
+        // to it by the client.
         ServerTransactionSimulator Server = new ServerTransactionSimulator(ServerIpe, true, true);
         SIPTCPChannel ClientChannel = new SIPTCPChannel(ClientIpe, "Client");
         SipTransport Transport = new SipTransport(ClientChannel);
@@ -166,6 +171,7 @@ public class ClientTransactions
         ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
 
         await Task.Delay(100);
+        // Now send a CANCEL request to the server
         SIPRequest CancelReq = SipUtils.BuildCancelRequest(Invite, Transport.SipChannel, Cit.RemoteEndPoint,
             Invite.Header.CSeq);
         ClientNonInviteTransaction Cnit = Transport.StartClientNonInviteTransaction(CancelReq,
@@ -188,6 +194,88 @@ public class ClientTransactions
 
         Transport.Shutdown();
         Server.Shutdown();
+    }
+
+    [Fact]
+    public async Task ClientInviteServerConnectionFails()
+    {
+        IPAddress ipAddress = GetIpAddress(true);
+        IPEndPoint ClientIpe = new IPEndPoint(ipAddress, ClientPort + 4);
+        IPEndPoint ServerIpe = new IPEndPoint(ipAddress, ServerPort + 4);
+
+        SIPURI ServerUri = new SIPURI(SIPSchemesEnum.sip, ServerIpe.Address, ServerPort);
+        ServerUri.User = "Server";
+
+        // Don't answer the call
+        ServerTransactionSimulator Server = new ServerTransactionSimulator(ServerIpe, false, true);
+
+        SIPTCPChannel ClientChannel = new SIPTCPChannel(ClientIpe, "Client");
+        SipTransport Transport = new SipTransport(ClientChannel);
+        Transport.Start();
+
+        SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
+        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+            null, ClientChannel.SIPChannelContactURI, null);
+        Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
+        Invite.Header.ContentType = "application/sdp";
+        Invite.Body = AudioSdp.ToString();
+        Invite.Header.ContentLength = Invite.Body.Length;
+        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+
+        // Simulate a network failure or a disconnect by the server
+        await Task.Delay(200);
+        Server.Shutdown();
+
+        await Cit.WaitForCompletionAsync();
+        Assert.True(Cit.TerminationReason == TransactionTerminationReasonEnum.ConnectionFailure,
+            "Termination reason is not ConnectionFailure");
+
+        await Task.Delay(200);
+        // Make sure that the transactions are properly terminated
+        Assert.True(Transport.TransactionCount == 0, "The client transport transaction count is not 0");
+
+        Transport.Shutdown();
+    }
+
+    [Fact]
+    public async Task ClientInviteClientConnectionFails()
+    {
+        IPAddress ipAddress = GetIpAddress(true);
+        IPEndPoint ClientIpe = new IPEndPoint(ipAddress, ClientPort + 5);
+        IPEndPoint ServerIpe = new IPEndPoint(ipAddress, ServerPort + 5);
+
+        SIPURI ServerUri = new SIPURI(SIPSchemesEnum.sip, ServerIpe.Address, ServerPort);
+        ServerUri.User = "Server";
+
+        // Don't answer the call
+        ServerTransactionSimulator Server = new ServerTransactionSimulator(ServerIpe, false, true);
+
+        SIPTCPChannel ClientChannel = new SIPTCPChannel(ClientIpe, "Client");
+        SipTransport Transport = new SipTransport(ClientChannel);
+        Transport.Start();
+
+        SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
+        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+            null, ClientChannel.SIPChannelContactURI, null);
+        Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
+        Invite.Header.ContentType = "application/sdp";
+        Invite.Body = AudioSdp.ToString();
+        Invite.Header.ContentLength = Invite.Body.Length;
+        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+
+        // Simulate a network failure or a disconnect on the client side
+        await Task.Delay(500);
+        ClientChannel.Close();
+
+        await Cit.WaitForCompletionAsync();
+        Assert.True(Cit.TerminationReason == TransactionTerminationReasonEnum.ConnectionFailure,
+            "Termination reason is not ConnectionFailure");
+
+        await Task.Delay(200);
+        // Make sure that the transactions are properly terminated
+        Assert.True(Transport.TransactionCount == 0, "The client transport transaction count is not 0");
+
+        Transport.Shutdown();
     }
 
     private IPAddress GetIpAddress(bool GetIPv4)

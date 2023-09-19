@@ -483,8 +483,7 @@ public class SIPTCPChannel : SIPChannel
 
             lock (m_connectedSockets)
             {
-                foreach (SIPConnection tcpConnection in m_connectedSockets.
-                    Values)
+                foreach (SIPConnection tcpConnection in m_connectedSockets.Values)
                 {
                     try
                     {
@@ -495,6 +494,11 @@ public class SIPTCPChannel : SIPChannel
                     }
                 }
             }
+
+            LockCollections();
+            m_connectedSockets.Clear();
+            m_connectingSockets.Clear();
+            UnlockCollections();
         }
     }
 

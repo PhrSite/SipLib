@@ -95,8 +95,7 @@ public class ServerNonInviteTransaction : SipTransactionBase
             {
                 Terminated = true;
                 TerminationReason = TransactionTerminationReasonEnum.ConnectionFailure;
-                TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                CompletionSemaphore.Release();
+                NotifyTransactionUser(Request, null, RemoteEndPoint);
             }
             else
             {

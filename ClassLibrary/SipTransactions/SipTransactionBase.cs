@@ -174,6 +174,18 @@ public class SipTransactionBase
     }
 
     /// <summary>
+    /// Notifies the transaction user that the transaction has either terminated or timed out.
+    /// </summary>
+    /// <param name="Request">Request relating to the transaction</param>
+    /// <param name="Response">Response that was received. May be null if a response was never received</param>
+    /// <param name="RemoteEndPoint">Remote endpoint for the transaction.</param>
+    protected void NotifyTransactionUser(SIPRequest Request, SIPResponse Response, IPEndPoint RemoteEndPoint)
+    {
+        TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
+        CompletionSemaphore.Release();
+    }
+
+    /// <summary>
     /// Calculates the TransactionID for a client transaction. See Section 17.1.3 of RFC 3261.
     /// </summary>
     /// <param name="request">Request that was sent.</param>

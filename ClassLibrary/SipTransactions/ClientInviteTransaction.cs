@@ -78,8 +78,7 @@ public class ClientInviteTransaction : SipTransactionBase
                 State = TransactionStateEnum.Terminated;
                 StateStartTime = DateTime.Now;
                 TerminationReason = TransactionTerminationReasonEnum.OkReceived;
-                TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
-                CompletionSemaphore.Release();
+                NotifyTransactionUser(Request, Response, RemoteEndPoint);
                 Terminated = true;
             }
             else
@@ -92,8 +91,7 @@ public class ClientInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Completed;
                     StateStartTime = DateTime.Now;
                     TerminationReason = TransactionTerminationReasonEnum.FinalResponseReceived;
-                    TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, Response, RemoteEndPoint);
 
                     if (TransportManager.SipChannel.GetProtocol() != SIPProtocolsEnum.udp)
                     {   // For TCP and TLS, the value for the Timer F interval is 0 milliseconds, so terminate
@@ -126,8 +124,7 @@ public class ClientInviteTransaction : SipTransactionBase
                 {   // The Calling state timed out because no response was received
                     State = TransactionStateEnum.Terminated;
                     TerminationReason = TransactionTerminationReasonEnum.NoResponseReceived;
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, null, RemoteEndPoint);
                     return true;
                 }
 
@@ -147,8 +144,7 @@ public class ClientInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Terminated;
                     Terminated = true;
                     TerminationReason = TransactionTerminationReasonEnum.ConnectionFailure;
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, null, RemoteEndPoint);
                 }
             }
             else if (State == TransactionStateEnum.Completed)

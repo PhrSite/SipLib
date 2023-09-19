@@ -96,8 +96,7 @@ public class ServerInviteTransaction : SipTransactionBase
             {
                 State = TransactionStateEnum.Terminated;
                 TerminationReason = TransactionTerminationReasonEnum.ConnectionFailure;
-                TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                CompletionSemaphore.Release();
+                NotifyTransactionUser(Request, null, RemoteEndPoint);
                 Terminated = true;
             }
             else if (CurrentState == TransactionStateEnum.Completed)
@@ -118,9 +117,7 @@ public class ServerInviteTransaction : SipTransactionBase
                 {
                     State = TransactionStateEnum.Terminated;
                     TerminationReason = TransactionTerminationReasonEnum.NoFinalResponseReceived;
-                    // Notify the transaction user
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, null, RemoteEndPoint);
                     Terminated = true;
                 }
             }

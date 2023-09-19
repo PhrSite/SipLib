@@ -99,8 +99,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
                     }
                     // For UDP, must stay in the Completed state for TimerFIntervalMs.
 
-                    TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, Response, RemoteEndPoint);
                 }
             }
         }
@@ -128,8 +127,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
                     {   // The transaction failed so notify the transaction user
                         State = TransactionStateEnum.Terminated;
                         TerminationReason = TransactionTerminationReasonEnum.NoResponseReceived;
-                        TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                        CompletionSemaphore.Release();
+                        NotifyTransactionUser(Request, null, RemoteEndPoint);
                         Terminated = true;
                     }
                     else
@@ -145,8 +143,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
                 {   // A timeout occurred and a final response never received
                     TerminationReason = TransactionTerminationReasonEnum.NoFinalResponseReceived;
                     State = TransactionStateEnum.Terminated;
-                    TransactionComplete?.Invoke(Request, null, RemoteEndPoint, TransportManager, this);
-                    CompletionSemaphore.Release();
+                    NotifyTransactionUser(Request, null, RemoteEndPoint);
                     Terminated = true;
                 }
             }

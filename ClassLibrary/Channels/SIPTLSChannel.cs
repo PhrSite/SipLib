@@ -680,6 +680,11 @@ public class SIPTLSChannel : SIPChannel
                     }
                 }
             }
+
+            LockCollections();
+            m_connectedSockets.Clear();
+            m_connectingSockets.Clear();
+            UnlockCollections();
         }
     }
 

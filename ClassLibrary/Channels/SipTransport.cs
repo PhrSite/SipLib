@@ -31,16 +31,39 @@ public class SipTransport
         SipTransactionBase>();
 
     /// <summary>
-    /// Event that is fired when a SIP request is received
+    /// Event that is fired when a SIP request is received. This event is not fired if the SIP request
+    /// is handled by a SIP transaction object (a SipTransactionBase derived class). The SIP transaction
+    /// layer may pass the request up to the transaction user if required.
     /// </summary>
     public event SipRequestReceivedDelegate SipRequestReceived = null;
 
     /// <summary>
-    /// Event that is fired when a SIP response is received
+    /// Event that is fired when a SIP response is received. This event is not fired if the SIP response
+    /// is handled by a SIP transaction object (a SipTransactionBase derived class). The SIP transaction
+    /// layer may pass the response up to the transaction user if required.
     /// </summary>
     public event SipResponseReceivedDelegate SipResponseReceived = null;
 
-    private DateTime m_LastDoTimedEvents = DateTime.Now - TimeSpan.FromMilliseconds(100);
+    /// <summary>
+    /// Event that is fired for every SIP request that is sent or received by the SipTransport class.
+    /// For received requests, this event is fired after the request is sent to a transaction object or to the
+    /// SipTransport user.
+    /// </summary>
+    public event LogSipRequestDelegate LogSipRequest = null;
+
+    /// <summary>
+    /// Event that is fired for every SIP response that is sent or received by the SipTransport class.
+    /// For received responses, this event is fired after the response is sent to a transaction object or
+    /// to the SipTransport user.
+    /// </summary>
+    public event LogSipResponseDelegate LogSipResponse = null;
+
+    /// <summary>
+    /// Event that is fired if this SipTransport object receives an invalid SIP message.
+    /// </summary>
+    public event LogInvalidSipMessageDelegate LogInvalidSipMessage = null;
+
+    private DateTime m_LastDoTimedEvents = DateTime.Now - TimeSpan.FromMilliseconds(200);
     private const int DoTimedEventsIntervalMs = 100;
 
     /// <summary>
@@ -50,12 +73,10 @@ public class SipTransport
     public SipTransport(SIPChannel sipChannel)
     {
         m_SipChannel = sipChannel;
-      
-
     }
 
     /// <summary>
-    /// Call this method after hooking the events to start the messaging processing thread.
+    /// Call this method after hooking the events to start the message processing thread.
     /// </summary>
     public void Start()
     {
@@ -225,7 +246,7 @@ public class SipTransport
 
             while (m_IsEnding == false && m_ReceiveQueue.TryDequeue(out SipMessageReceivedParams Smr) == true)
             {
-                ProcessSipReceivedSipMessage(Smr);
+                ProcessReceivedSipMessage(Smr);
             }
 
             if ((Now - m_LastDoTimedEvents).TotalMilliseconds > DoTimedEventsIntervalMs)
@@ -252,7 +273,7 @@ public class SipTransport
             m_Transactions.TryRemove(Transaction.TransactionID, out outTransaction);
     }
 
-    private void ProcessSipReceivedSipMessage(SipMessageReceivedParams Smr)
+    private void ProcessReceivedSipMessage(SipMessageReceivedParams Smr)
     {
         SIPMessage sipMessage = null;
 
@@ -264,9 +285,11 @@ public class SipTransport
         catch (ArgumentException) { }
         catch (Exception) { }
 
+        IPEndPoint RemIpe = Smr.RemoteEndPoint.GetIPEndPoint();
         if (sipMessage == null)
         {
-            // TODO: Handle the invalid SIP message
+            LogInvalidSipMessage?.Invoke(Smr.buffer, RemIpe, SIPMessageTypesEnum.Unknown, this);
+            return;
         }
 
         if (sipMessage.SIPMessageType == SIPMessageTypesEnum.Request)
@@ -280,9 +303,7 @@ public class SipTransport
             catch (Exception) { }
 
             if (sipRequest == null)
-            {
-                // TODO: handle an invalid SIP request
-            }
+                LogInvalidSipMessage?.Invoke(Smr.buffer, RemIpe, SIPMessageTypesEnum.Request, this);
             else
                 ProcessSipRequest(sipRequest, Smr.RemoteEndPoint, Smr.buffer);
         }
@@ -297,29 +318,23 @@ public class SipTransport
             catch (Exception) { }
 
             if (sipResponse == null)
-            {
-                // TODO: handle an invalid SIP response
-            }
+                LogInvalidSipMessage?.Invoke(Smr.buffer, RemIpe, SIPMessageTypesEnum.Response, this);
             else
                 ProcessSipResponse(sipResponse, Smr.RemoteEndPoint, Smr.buffer);
         }
         else
-        {
-            // TODO: Handle the unknown SIP message type case
-        }
+            LogInvalidSipMessage?.Invoke(Smr.buffer, RemIpe, SIPMessageTypesEnum.Unknown, this);
     }
 
     private void ProcessSipRequest(SIPRequest sipRequest, SIPEndPoint RemoteEndPoint, byte[] MsgBytes)
     {
         SIPValidationFieldsEnum error;
         string strReason;
-
-        // For debug only
-        string strRequest = sipRequest.ToString();
+        IPEndPoint RemIpe = RemoteEndPoint.GetIPEndPoint();
 
         if (sipRequest.IsValid(out error, out strReason) == false)
         {
-            // TODO: handle an invalid SIP Request
+            LogInvalidSipMessage?.Invoke(MsgBytes, RemIpe, SIPMessageTypesEnum.Request, this);            
             return;
         }
 
@@ -327,7 +342,7 @@ public class SipTransport
         SipTransactionBase sipTransaction;
         if (m_Transactions.TryGetValue(TransactionID, out sipTransaction) == true)
         {
-            bool Terminated = sipTransaction.HandleSipRequest(sipRequest, RemoteEndPoint.GetIPEndPoint());
+            bool Terminated = sipTransaction.HandleSipRequest(sipRequest, RemIpe);
             if (Terminated == true)
                 m_Transactions.TryRemove(TransactionID, out sipTransaction);
         }
@@ -335,21 +350,26 @@ public class SipTransport
             // There is no transaction related to this request, so pass the request up to the transport
             // user(s).
             SipRequestReceived?.Invoke(sipRequest, RemoteEndPoint, this);
+
+        LogSipRequest?.Invoke(sipRequest, RemIpe, false, this);
     }
 
     private void ProcessSipResponse(SIPResponse sipResponse, SIPEndPoint RemoteEndPoint, byte[] MsgBytes)
     {
         string TransactionID = SipTransactionBase.GetClientTransactionID(sipResponse);
         SipTransactionBase sipTransaction;
+        IPEndPoint RemIpe = RemoteEndPoint?.GetIPEndPoint();
         if (m_Transactions.TryGetValue(TransactionID, out sipTransaction) == true)
         {
-            bool Terminated = sipTransaction.HandleSipResponse(sipResponse, RemoteEndPoint.GetIPEndPoint());
+            bool Terminated = sipTransaction.HandleSipResponse(sipResponse, RemIpe);
             if (Terminated == true)
                 m_Transactions.TryRemove(TransactionID, out sipTransaction);
         }
         else
             // There is no transaction for this response, so pass the response up to the transport user(s)
             SipResponseReceived?.Invoke(sipResponse, RemoteEndPoint, this);
+
+        LogSipResponse?.Invoke(sipResponse, RemIpe, false, this);
     }
    
     private void SipMessageReceived(SIPChannel sipChannel, SIPEndPoint remoteEndPoint, byte[] buffer)
@@ -371,6 +391,8 @@ public class SipTransport
         {
             m_SipChannel.Send(DestEp, Request.ToByteArray());
         }
+
+        LogSipRequest?.Invoke(Request, DestEp, true, this);
     }
 
     /// <summary>
@@ -384,5 +406,7 @@ public class SipTransport
         {
             m_SipChannel.Send(DestEp, Response.ToByteArray());
         }
+
+        LogSipResponse?.Invoke(Response, DestEp, true, this);
     }
 }
