@@ -29,8 +29,8 @@ public class RtpPacket
     /// Constructs a RTP packet from an array of bytes.
     /// </summary>
     /// <param name="SrcBytes">Byte array to "attach" to. Must be at least MIN_PACKET_LENGTH bytes long.</param>
-    /// <exception cref="ArgumentException">Thrown if the SrcBytes array is less than MIN_PACKET_LENGTH bytes
-    /// in length.</exception>
+    // <exception cref="ArgumentException">Thrown if the SrcBytes array is less than MIN_PACKET_LENGTH bytes
+    // in length.</exception>
     // <exception cref="ArgumentNullException">If SrcBytes is null.</exception>
     public RtpPacket(byte[] SrcBytes)
     {

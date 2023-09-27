@@ -296,10 +296,7 @@ public class Sdp
     /// <returns>Returns a new Sdp object.</returns>
     public Sdp CreateCopy()
     {
-        string str = ToString();
-        string[] Lines = str.Split(new char[] { '\r', '\n' }, 
-            StringSplitOptions.RemoveEmptyEntries);
-        return Sdp.ParseSDP(Lines);
+        return Sdp.ParseSDP(ToString());
     }
 
     /// <summary>
@@ -330,10 +327,9 @@ public class Sdp
     /// <summary>
     /// Gets the MediaDescription object for the specified type of media.
     /// </summary>
-    /// <param name="strType">Type of media such as audio, video, text, etc..
-    /// </param>
-    /// <returns>Returns the SepMediaDescription object if the specified type
-    /// of media is present or null if it is not.</returns>
+    /// <param name="strType">Type of media such as audio, video, text, etc..</param>
+    /// <returns>Returns the SepMediaDescription object if the specified type of media is present or null if
+    /// it is not.</returns>
     public MediaDescription GetMediaType(string strType)
     {
         MediaDescription RetVal = null;
@@ -350,27 +346,44 @@ public class Sdp
     }
 
     /// <summary>
+    /// Gets a list of MediaDescription objects in the SDP that have the same type of media.
+    /// </summary>
+    /// <param name="strType">Media type. Must be one of "audio", "video", "text" or "message"</param>
+    /// <returns>Returns a list of MediaDescription objects of the same media type. The return value
+    /// will not be null.</returns>
+    public List<MediaDescription> GetMediaTypeList(string strType)
+    {
+        List<MediaDescription> list = new List<MediaDescription>();
+        foreach (MediaDescription Med in Media)
+        {
+            if (Med.MediaType == strType)
+                list.Add(Med);
+        }
+
+        return list;
+    }
+
+    /// <summary>
     /// Gets the index of a specified media type in the Media list.
     /// </summary>
-    /// <param name="strType">Type of media to look for. Must be "audio",
-    /// "video", "text" or "message"</param>
-    /// <returns>Returns the index of the media type in the Media list.
-    /// Returns -1 if the media type is not present.</returns>
+    /// <param name="strType">Type of media to look for. Must be "audio", "video", "text" or "message"</param>
+    /// <returns>Returns the index of the media type in the Media list. Returns -1 if the media type is not
+    /// present.</returns>
     public int GetMediaTypeIndex(string strType)
-        {
+    {
         int Idx = -1;
 
         for (int i=0; i < Media.Count; i++)
-            {
+        {
             if (Media[i].MediaType == strType)
-                {
+            {
                 Idx = i;
                 break;
-                }
             }
+        }
 
         return Idx;
-        }
+    }
 
     /// <summary>
     /// Checks to see if the offered SDP has media other that "audio" that is a known media type.
@@ -381,8 +394,7 @@ public class Sdp
         bool RetVal = false;
         foreach (MediaDescription Smd in Media)
         {
-            if (Smd.MediaType == "video" || Smd.MediaType == "text" ||
-                Smd.MediaType == "message")
+            if (Smd.MediaType == "video" || Smd.MediaType == "text" || Smd.MediaType == "message")
             {
                 RetVal = true;
                 break;
