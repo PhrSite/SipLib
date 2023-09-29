@@ -49,7 +49,7 @@ public class RtpUtils
     {
         uint RetVal = 0;
         for (int i = 0; i < 4; i++)
-            RetVal = (RetVal << 8) | SrcBytes[i++];
+            RetVal = (RetVal << 8) | SrcBytes[idx++];
 
         return RetVal;
     }

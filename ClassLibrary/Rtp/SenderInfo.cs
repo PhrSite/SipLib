@@ -1,15 +1,19 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:	SenderInfo.cs                                           19 Sep 23 PHR
+//  File:	SenderInfo.cs                                           29 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Class for the Sender Info part of a Sender Report RTCP packet.
+/// Class for the Sender Info part of a Sender Report RTCP packet. See Section 6.4.1 of RFC 3550.
 /// </summary>
 public class SenderInfo
 {
-    private const int SEND_INFO_BLOCK_LENGTH = 20;
+    /// <summary>
+    /// Fixed length of a SenderInfo block
+    /// </summary>
+    public const int SENDER_INFO_BLOCK_LENGTH = 20;
+
     private byte[] m_PacketBytes = null;
 
     private const int NtpIdx = 0;
@@ -23,27 +27,32 @@ public class SenderInfo
     /// </summary>
     public SenderInfo()
     {
-        m_PacketBytes = new byte[SEND_INFO_BLOCK_LENGTH];
+        m_PacketBytes = new byte[SENDER_INFO_BLOCK_LENGTH];
     }
 
     /// <summary>
-    /// Constructs a new SenderInfo object. Use this constructor when parsing a received SenderReport RTCP
-    /// packet.
+    /// Parses a byte array and returns a SenderInfo object.
     /// </summary>
-    /// <param name="Bytes">Byte array containing a SenderInfo block.</param>
-    /// <param name="StartIdx">Starting index of the SenderInfo block in the byte array.</param>
-    public SenderInfo(byte[] Bytes, int StartIdx)
+    /// <param name="Bytes">Input byte array</param>
+    /// <param name="StartIdx">Starting index of the SenderInfo data in the input byte array.</param>
+    /// <returns>Returns a SenderInfo object if successful or null if an error occurred.</returns>
+    public static SenderInfo Parse(byte[] Bytes, int StartIdx)
     {
-        m_PacketBytes = new byte[SEND_INFO_BLOCK_LENGTH];
-        Array.ConstrainedCopy(Bytes, StartIdx, m_PacketBytes, 0, SEND_INFO_BLOCK_LENGTH);
+        SenderInfo Si = new SenderInfo();
+        if (Bytes == null || (Bytes.Length - StartIdx) < SENDER_INFO_BLOCK_LENGTH)
+            return null;
+
+        Si.m_PacketBytes = new byte[SENDER_INFO_BLOCK_LENGTH];
+        Array.ConstrainedCopy(Bytes, StartIdx, Si.m_PacketBytes, 0, SENDER_INFO_BLOCK_LENGTH);
+        return Si;
     }
 
     /// <summary>
     /// Gets the length of the SendInfo block.
     /// </summary>
-    public Int32 SenderInfoLength
+    public int SenderInfoLength
     {
-        get { return SEND_INFO_BLOCK_LENGTH; }
+        get { return SENDER_INFO_BLOCK_LENGTH; }
     }
 
     /// <summary>
@@ -76,7 +85,7 @@ public class SenderInfo
     /// <summary>
     /// Gets or sets the Sender Packet Count field.
     /// </summary>
-    public UInt32 SenderPacketCount
+    public uint SenderPacketCount
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, SenderPcktCntIdx); }
         set { RtpUtils.SetDWord(m_PacketBytes, SenderPcktCntIdx, value); }
@@ -85,7 +94,7 @@ public class SenderInfo
     /// <summary>
     /// Gets or sets the Sender Octet Count field.
     /// </summary>
-    public UInt32 SenderOctetCount
+    public uint SenderOctetCount
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, SenderOctetCntIdx); }
         set { RtpUtils.SetDWord(m_PacketBytes, SenderOctetCntIdx, value); }
@@ -97,7 +106,7 @@ public class SenderInfo
     /// <param name="Dest">The destination byte array. Must be long enough to hold this object beginning at
     /// the StartIdx position.</param>
     /// <param name="StartIdx">Index in the destination to start loading the bytes into.</param>
-    public void LoadBytes(byte[] Dest, Int32 StartIdx)
+    public void LoadBytes(byte[] Dest, int StartIdx)
     {
         Array.ConstrainedCopy(m_PacketBytes, 0, Dest, StartIdx, m_PacketBytes.Length);
     }

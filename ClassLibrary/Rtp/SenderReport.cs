@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SenderReport.cs                                         19 Sep 23 PHR
+//  File:   SenderReport.cs                                         29 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
@@ -12,56 +12,40 @@ public class SenderReport
     private RtcpHeader m_Header = null;
     private SenderInfo m_SenderInfo = null;
     private List<ReportBlock> m_Reports = new List<ReportBlock>();
-
-    private const int HeaderIdx = 0;
     private const int SSRCIdx = 4;
     private const int SenderInfoIdx = 8;
-
     private uint m_SSRC = 0;
 
     /// <summary>
-    /// Constructs a new SenderReport. Use this constructor when parsing a received RTCP packet.
+    /// Parses a byte array and creates a SenderReport object.
     /// </summary>
-    /// <param name="Bytes">Byte array containing an RTCP Sender Report.</param>
-    public SenderReport(byte[] Bytes)
+    /// <param name="Bytes">Input byte array</param>
+    /// <returns>Returns a SenderReport object if successful or null if an error occurred.</returns>
+    public static SenderReport Parse(byte[] Bytes)
     {
-        m_Header = new RtcpHeader(Bytes, 0);
-        m_SSRC = RtpUtils.GetDWord(Bytes, SSRCIdx);
-        m_SenderInfo = new SenderInfo(Bytes, SenderInfoIdx);
-        int FixedBlockLen = RtcpHeader.HeaderLength + 4 + m_SenderInfo.SenderInfoLength;
-        int BlockBytes = (m_Header.Length + 1) * 4;
-
-        int ReportBlockCnt = m_Header.Count;
-        int BytesRemaining = BlockBytes - FixedBlockLen;
-        int CurIdx = FixedBlockLen;
-        ReportBlock Rb = null;
-
-        if (ReportBlockCnt > 0)
-        {
-            while (BytesRemaining >= ReportBlock.ReportBlockLength)
-            {
-                Rb = new ReportBlock(Bytes, CurIdx);
-                m_Reports.Add(Rb);
-                CurIdx += ReportBlock.ReportBlockLength;
-                BytesRemaining -= ReportBlock.ReportBlockLength;
-            } // end while
-        }
+        return Parse(Bytes, 0);
     }
 
     /// <summary>
-    /// Constructs a new SenderReport. Use this constructor when parsing a received compound RTCP packet.
+    /// Parses a byte array and creates a SenderReport object.
     /// </summary>
-    /// <param name="Bytes">Byte array containing an RTCP Sender Report.</param>
-    /// <param name="StartIdx">Starting index of the SenderReport within a compound packet.</param>
-    public SenderReport(byte[] Bytes, int StartIdx)
+    /// <param name="Bytes">Input byte array</param>
+    /// <param name="StartIdx">Starting index of the SenderReport data in the input byte array</param>
+    /// <returns>Returns a SenderReport object if successful or null if an error occurred.</returns>
+    public static SenderReport Parse(byte[] Bytes, int StartIdx)
     {
-        m_Header = new RtcpHeader(Bytes, StartIdx);
-        m_SSRC = RtpUtils.GetDWord(Bytes, SSRCIdx + StartIdx);
-        m_SenderInfo = new SenderInfo(Bytes, SenderInfoIdx + StartIdx);
-        int FixedBlockLen = RtcpHeader.HeaderLength + 4 + m_SenderInfo.SenderInfoLength;
-        int BlockBytes = (m_Header.Length + 1) * 4;
+        int MinSenderReportLength = RtcpHeader.RTCP_HEADER_LENGTH + 4 + SenderInfo.SENDER_INFO_BLOCK_LENGTH;
+        if (Bytes.Length - StartIdx < MinSenderReportLength)
+            return null;    // Error: Input array too short.
 
-        int ReportBlockCnt = m_Header.Count;
+        SenderReport Sr = new SenderReport();
+        Sr.m_Header = new RtcpHeader(Bytes, StartIdx);
+        Sr.m_SSRC = RtpUtils.GetDWord(Bytes, SSRCIdx + StartIdx);
+        Sr.m_SenderInfo = SenderInfo.Parse(Bytes, SenderInfoIdx + StartIdx);
+        int FixedBlockLen = RtcpHeader.HeaderLength + 4 + Sr.m_SenderInfo.SenderInfoLength;
+        int BlockBytes = (Sr.m_Header.Length + 1) * 4;
+
+        int ReportBlockCnt = Sr.m_Header.Count;
         int BytesRemaining = BlockBytes - FixedBlockLen;
         int CurIdx = FixedBlockLen + StartIdx;
         ReportBlock Rb = null;
@@ -70,13 +54,16 @@ public class SenderReport
         {
             while (BytesRemaining >= ReportBlock.ReportBlockLength)
             {
-                Rb = new ReportBlock(Bytes, CurIdx);
-                m_Reports.Add(Rb);
+                Rb = ReportBlock.Parse(Bytes, CurIdx);
+                if (Rb == null) 
+                    break;
+                Sr.m_Reports.Add(Rb);
                 CurIdx += ReportBlock.ReportBlockLength;
                 BytesRemaining -= ReportBlock.ReportBlockLength;
-            } // end while
+            }
         }
 
+        return Sr;
     }
 
     /// <summary>

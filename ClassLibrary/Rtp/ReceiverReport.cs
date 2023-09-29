@@ -2,6 +2,8 @@
 //  File:   ReceiverReport.cs                                       19 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
+using System.Security.Cryptography;
+
 namespace SipLib.Rtp;
 
 /// <summary>
@@ -53,43 +55,47 @@ public class ReceiverReport
     }
 
     /// <summary>
-    /// Calculates the total number of bytes necessary to hold this object in
-    /// a byte array.
+    /// Calculates the total number of bytes necessary to hold this object in a byte array.
     /// </summary>
     /// <returns>The number of bytes required for this object.</returns>
-    public Int32 GetTotalBytes()
+    public int GetTotalBytes()
     {
-        Int32 TotalLength = RtcpHeader.HeaderLength + SSRC_LENGTH + m_Reports.Count * ReportBlock.ReportBlockLength;
+        int TotalLength = RtcpHeader.HeaderLength + SSRC_LENGTH + m_Reports.Count * ReportBlock.ReportBlockLength;
         return TotalLength;
     }
 
     /// <summary>
-    /// Constructs a new ReceiverReport object from a byte array. Use this constructor when parsing a received
-    /// RTCP Receiver Report.
+    /// Parses a byte array containing a ReceiverReport into a ReceiverReport object.
     /// </summary>
-    /// <param name="Bytes">Byte array containing a ReceiverReport.</param>
+    /// <param name="Bytes">Input byte array containing a ReceiverReport.</param>
     /// <param name="StartIdx">Index of the first byte containing the header for the Receiver Report.</param>
-    public ReceiverReport(byte[] Bytes, int StartIdx)
+    /// <returns>Returns a new ReceiverReport object if successful or null if an error occurred.</returns>
+    public static ReceiverReport Parse(byte[] Bytes, int StartIdx)
     {
-        m_Header = new RtcpHeader(Bytes, StartIdx);
+        ReceiverReport Rr = new ReceiverReport();
+        Rr.m_Header = new RtcpHeader(Bytes, StartIdx);
         int CurIdx = StartIdx + RtcpHeader.HeaderLength;
-        m_Ssrc = RtpUtils.GetDWord(Bytes, CurIdx);
-        CurIdx += SSRC_LENGTH;
-        int ReportBlockCnt = m_Header.Count;
+        Rr.m_Ssrc = RtpUtils.GetDWord(Bytes, CurIdx);
+        CurIdx += Rr.SSRC_LENGTH;
+        int ReportBlockCnt = Rr.m_Header.Count;
 
         if (CurIdx + ReportBlockCnt * ReportBlock.ReportBlockLength > Bytes.Length)
-            return;     // Error: Not enough bytes in the input array.
+            return null;     // Error: Input array is too short.
 
-        if (m_Header.Count > 0)
+        if (Rr.m_Header.Count > 0)
         {
             ReportBlock Rb = null;
-            for (int i=0; i < ReportBlockCnt; i++)
+            for (int i = 0; i < ReportBlockCnt; i++)
             {
-                Rb = new ReportBlock(Bytes, CurIdx);
-                m_Reports.Add(Rb);
+                Rb = ReportBlock.Parse(Bytes, CurIdx);
+                if (Rb == null)
+                    break;
+                Rr.m_Reports.Add(Rb);
                 CurIdx += ReportBlock.ReportBlockLength;
             }
         }
+         
+        return Rr;
     }
 
     /// <summary>

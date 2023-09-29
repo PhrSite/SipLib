@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SdesItem.cs                                             19 Sep 23 PHR
+//  File:   SdesItem.cs                                             28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -7,7 +7,7 @@ using System.Text;
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Enumeration for identifying a SDES chunk type.
+/// Enumeration for identifying a SDES chunk type. See Section 6.5 of RFC 3550.
 /// </summary>
 public enum SdesItemType
 {
@@ -46,7 +46,7 @@ public enum SdesItemType
 }
 
 /// <summary>
-/// Class for parsing and building SDES items. Each SDES item 
+/// Class for parsing and building SDES items. See Section 6.5 of RFC 3550.
 /// </summary>
 public class SdesItem
 {
@@ -59,24 +59,31 @@ public class SdesItem
     private const int PayloadLengthIdx = 1;
     private const int PayloadIdx = 2;
 
-    /// <summary>
-    /// Constructs a SdesItem object from a byte array. Use this constructor when parsing a SDES item that was
-    /// received as part of an SDES chunk.
-    /// </summary>
-    /// <param name="Bytes">Byte array containing the SDES item.</param>
-    /// <param name="StartIdx">Index of the first byte of the SDES item.</param>
-    public SdesItem(byte[] Bytes, int StartIdx)
+    private SdesItem()
     {
-        if (Bytes.Length - StartIdx < MinSdesItemLength)
-            return;		// Error the array is not long enough
+    }
 
-        m_SdesItemType = (SdesItemType)Bytes[StartIdx + SdesTypeIdx];
-        m_Length = Bytes[StartIdx + PayloadLengthIdx];
-        if (m_Length > 0)
+    /// <summary>
+    /// Parses a byte array into an SdesItem
+    /// </summary>
+    /// <param name="Bytes">Input byte array containing the SdesItem data to parse</param>
+    /// <param name="StartIdx">Starting index in the input array</param>
+    /// <returns>Returns an SdesItem if successful or null if an error occurred</returns>
+    public static SdesItem Parse(byte[] Bytes, int StartIdx)
+    {
+        SdesItem Si = new SdesItem();
+        if (Bytes.Length - StartIdx < MinSdesItemLength)
+            return null;		// Error the array is not long enough
+
+        Si.m_SdesItemType = (SdesItemType)Bytes[StartIdx + SdesTypeIdx];
+        Si.m_Length = Bytes[StartIdx + PayloadLengthIdx];
+        if (Si.m_Length > 0)
         {
-            m_Payload = new byte[m_Length];
-            Array.ConstrainedCopy(Bytes, StartIdx + PayloadIdx, m_Payload, 0, m_Length);
+            Si.m_Payload = new byte[Si.m_Length];
+            Array.ConstrainedCopy(Bytes, StartIdx + PayloadIdx, Si.m_Payload, 0, Si.m_Length);
         }
+
+        return Si;
     }
 
     /// <summary>
@@ -84,13 +91,13 @@ public class SdesItem
     /// </summary>
     /// <param name="Sit">Type of SDES item.</param>
     /// <param name="strPayload">String containing the payload.</param>
-    public SdesItem(SdesItemType Sit, String strPayload)
+    public SdesItem(SdesItemType Sit, string strPayload)
     {
         m_SdesItemType = Sit;
         m_Payload = Encoding.UTF8.GetBytes(strPayload);
         m_Length = m_Payload.Length;
-        if (m_Length > Byte.MaxValue)
-            m_Length = Byte.MaxValue;
+        if (m_Length > byte.MaxValue)
+            m_Length = byte.MaxValue;
     }
 
     /// <summary>
@@ -102,8 +109,7 @@ public class SdesItem
     }
 
     /// <summary>
-    /// Gets the string value of the payload. Returns null if there is no 
-    /// payload. </summary>
+    /// Gets the string value of the payload. Returns null if there is no payload. </summary>
     public String Payload
     {
         get
@@ -116,8 +122,8 @@ public class SdesItem
     }
 
     /// <summary>
-    /// Gets the total number of bytes in this SDES item. This includes the
-    /// SDES item byte byte, the length byte and the payload bytes.
+    /// Gets the total number of bytes in this SDES item. This includes the SDES item byte byte, the length
+    /// byte and the payload bytes.
     /// </summary>
     public Int32 SdesItemLength
     {
@@ -127,8 +133,7 @@ public class SdesItem
     /// <summary>
     /// Converts this SdesItem to a byte array for loading it into a SDES chunk.
     /// </summary>
-    /// <returns>Returns the byte array for this object. Returns null if there
-    /// is no payload.</returns>
+    /// <returns>Returns the byte array for this object. Returns null if there is no payload.</returns>
     public byte[] ToByteArray()
     {
         if (m_Payload == null || m_Length == 0)

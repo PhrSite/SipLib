@@ -1,11 +1,12 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   ReportBlock.cs                                          19 Sep 23 PHR
+//  File:   ReportBlock.cs                                          29 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
 
 /// <summary>
 /// Class for building or parsing the report block portion of a RTCP Sender Report or Receiver Report.
+/// See Section 6.4.1 of RFC 3550.
 /// </summary>
 public class ReportBlock
 {
@@ -30,23 +31,26 @@ public class ReportBlock
     }
 
     /// <summary>
-    /// Constructs a ReportBlock object from a byte array. Use this constructor when parsing a ReportBlock
-    /// received in an RTCP packet.
+    /// Parses an input byte array and returns a ReportBlock object.
     /// </summary>
-    /// <param name="Bytes">Array containing the Report Block bytes. Must be long enough to include a complete
-    /// ReportBlock object beginning at the StartIdx position.</param>
-    /// <param name="StartIdx">Index of the start of the ReportBlock object.</param>
-    public ReportBlock(byte[] Bytes, Int32 StartIdx)
+    /// <param name="Bytes">Input byte array containing the ReportBlock data.</param>
+    /// <param name="StartIdx">Starting index of the ReportBlock data in the input array.</param>
+    /// <returns>Returns a ReportBlock object if successful or null if an error occurred.</returns>
+    public static ReportBlock Parse(byte[] Bytes, int StartIdx)
     {
-        m_PacketBytes = new byte[REPORT_BLOCK_LENGTH];
-        Array.ConstrainedCopy(Bytes, StartIdx, m_PacketBytes, 0, 
-            REPORT_BLOCK_LENGTH);
+        if (Bytes == null || (Bytes.Length - StartIdx) < REPORT_BLOCK_LENGTH)
+            return null;    // Error: Input array null or too short
+
+        ReportBlock Rb = new ReportBlock();
+        Rb.m_PacketBytes = new byte[REPORT_BLOCK_LENGTH];
+        Array.ConstrainedCopy(Bytes, StartIdx, Rb.m_PacketBytes, 0, REPORT_BLOCK_LENGTH);
+        return Rb;
     }
 
     /// <summary>
     /// Gets the length of a Report Block.
     /// </summary>
-    public static Int32 ReportBlockLength
+    public static int ReportBlockLength
     {
         get { return REPORT_BLOCK_LENGTH; }
     }
@@ -120,7 +124,7 @@ public class ReportBlock
     /// <param name="Dest">The destination byte array. Must be long enough to hold this object beginning at the
     /// StartIdx position.</param>
     /// <param name="StartIdx">Index in the destination to start loading the bytes into.</param>
-    public void LoadBytes(byte[] Dest, Int32 StartIdx)
+    public void LoadBytes(byte[] Dest, int StartIdx)
     {
         Array.ConstrainedCopy(m_PacketBytes, 0, Dest, StartIdx, m_PacketBytes.Length);
     }

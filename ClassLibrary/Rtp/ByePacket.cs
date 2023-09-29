@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   BytePacket.cs                                           19 Sep 23 PHR
+//  File:   BytePacket.cs                                           28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -7,7 +7,7 @@ using System.Text;
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Class for building RTCP BYE packets. See Section 6.6 of RFC 3550.
+/// Class for building and parsing RTCP BYE packets. See Section 6.6 of RFC 3550.
 /// </summary>
 public class ByePacket
 {
@@ -16,50 +16,55 @@ public class ByePacket
     private string m_Reason = null;
 
     /// <summary>
-    /// Constructs a new ByePacket object from a received byte array.
+    /// Constructor
     /// </summary>
-    /// <param name="Bytes">Byte array containing the BYE RTCP packet.</param>
-    /// <param name="StartIdx">Index of the first byte of the RTCP header in the input byte array.</param>
-    public ByePacket(byte[] Bytes, int StartIdx)
+    public ByePacket()
     {
-        if (StartIdx + RtcpHeader.HeaderLength > Bytes.Length)
-        {   // Error: The input byte array is too short.
-            m_Header = new RtcpHeader();
-            m_Header.PacketType = RtcpPacketType.ByePacket;
-            return;
-        }
+    }
 
-        m_Header = new RtcpHeader(Bytes, StartIdx);
-        int TotalBytes = (m_Header.Length + 1) * 4;
+    /// <summary>
+    /// Parses a received byte array into a ByePacket object
+    /// </summary>
+    /// <param name="Bytes">Received input byte array</param>
+    /// <param name="StartIdx">Start index of the ByePacket in the array</param>
+    /// <returns>Returns a new ByePacket or null if a parsing error occurred</returns>
+    public static ByePacket Parse(byte[] Bytes, int StartIdx)
+    {
+        ByePacket Bp = new ByePacket();
+        if (StartIdx + RtcpHeader.HeaderLength > Bytes.Length)
+            // Error: The input byte array is too short.
+            return null;
+
+        Bp.m_Header = new RtcpHeader(Bytes, StartIdx);
+        int TotalBytes = (Bp.m_Header.Length + 1) * 4;
         if (StartIdx + TotalBytes > Bytes.Length)
-        {   // Error: The input byte array is too short.
-            m_Header.Length = 0;
-            m_Header.PacketType = RtcpPacketType.ByePacket;
-            return;
-        }
+            // Error: The input byte array is too short.
+            return null;
 
         int CurIdx = RtcpHeader.HeaderLength + StartIdx;
         int i;
-        for (i=0; i < m_Header.Count; i++)
+        for (i = 0; i < Bp.m_Header.Count; i++)
         {
             if (CurIdx + 4 > Bytes.Length)
-                return;
+                return Bp;
 
-            m_SsrcList.Add(RtpUtils.GetDWord(Bytes, CurIdx));
+            Bp.m_SsrcList.Add(RtpUtils.GetDWord(Bytes, CurIdx));
             CurIdx += 4;
         }
 
         // Get the length of the Reason string;
         if (CurIdx >= Bytes.Length)
-            return;
+            return Bp;
 
         int ReasonLen = Bytes[CurIdx++] & 0xff;
         if (CurIdx + ReasonLen > Bytes.Length)
-            return;
+            return Bp;
 
         byte[] ReasonBytes = new byte[ReasonLen];
         Array.ConstrainedCopy(Bytes, CurIdx, ReasonBytes, 0, ReasonLen);
-        m_Reason = Encoding.UTF8.GetString(ReasonBytes);
+        Bp.m_Reason = Encoding.UTF8.GetString(ReasonBytes);
+
+        return Bp;
     }
 
     /// <summary>
@@ -90,8 +95,8 @@ public class ByePacket
     /// <summary>
     /// Constructs a new BYE packet for sending.
     /// </summary>
-    /// <param name="Ssrcs">Contains a list of SSRC identifies that the BYE
-    /// packet pertains to. The list must contain at least one SSRC.</param>
+    /// <param name="Ssrcs">Contains a list of SSRC identifies that the BYE packet pertains to. The list
+    /// must contain at least one SSRC.</param>
     /// <param name="Reason">A string that describes the reason for leaving.</param>
     public ByePacket(List<uint> Ssrcs, string Reason)
     {

@@ -1,15 +1,15 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SdesChunk.cs                                            19 Sep 23 PHR
+//  File:   SdesChunk.cs                                            28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Class for parsing and building a SDES chunk for an RTCP SDES packet.
+/// Class for parsing and building a SDES chunk for an RTCP SDES packet. See Section 6.5 of RFC 3550.
 /// </summary>
 public class SdesChunk
 {
-    private UInt32 m_Ssrc;
+    private uint m_Ssrc;
     /// <summary>
     /// Length of the SSRC field plus any SDES items in this chunk.
     /// </summary>
@@ -21,23 +21,31 @@ public class SdesChunk
     /// The minimun length is the length of the SSRC (4) + the length of the chunk type field (1).
     /// </summary>
     private const int MinSdesChunkLength = 5;
+    
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public SdesChunk()
+    {
+    }
 
     /// <summary>
-    /// Constructs a new SdesChunk item from the bytes array containing a RTCP packet. Use this constructor
-    /// when parsing a RTCP packet.
+    /// Parses a byte array containing the data for a SdesChunk.
     /// </summary>
-    /// <param name="Bytes">Bytes containing the RTCP packet.</param>
-    /// <param name="StartIdx">Index in Bytes of the first byte of the SDES chunk.</param>
-    public SdesChunk(byte[] Bytes, int StartIdx)
+    /// <param name="Bytes">Input byte array</param>
+    /// <param name="StartIdx">Index of the first byte of the SdesChunk object.</param>
+    /// <returns>Returns a SdesChunk object or null if an error occurred.</returns>
+    public static SdesChunk Parse(byte[] Bytes, int StartIdx)
     {
+        SdesChunk Sc = new SdesChunk();
         if (Bytes.Length - StartIdx < MinSdesChunkLength)
-            return;	
+            return null;
 
-        m_Ssrc = RtpUtils.GetDWord(Bytes, StartIdx);
+        Sc.m_Ssrc = RtpUtils.GetDWord(Bytes, StartIdx);
 
         // Get the list of SDES items that are in this SDES chunk.
         int CurIdx = StartIdx + 4;		// Get past the SSRC field.
-        m_Length = 4;					// Length of the SSRC field.
+        Sc.m_Length = 4;					// Length of the SSRC field.
         SdesItem Si;
         try
         {
@@ -46,24 +54,26 @@ public class SdesChunk
                 if (Bytes[CurIdx] == 0)
                     break;      // An item type of 0 indicates completion.
 
-                Si = new SdesItem(Bytes, CurIdx);
-                m_SdesItems.Add(Si);
-                m_Length += Si.SdesItemLength;
+                Si = SdesItem.Parse(Bytes, CurIdx);
+                Sc.m_SdesItems.Add(Si);
+                Sc.m_Length += Si.SdesItemLength;
                 CurIdx += Si.SdesItemLength;
             }
         }
         catch (Exception)
         {
-
+            return null;
         }
+
+        return Sc;
     }
 
     /// <summary>
-    /// Constructs a new SdesChunk for sending as part of a RTCP packet.
+    /// Constructs a new SdesChunk for sending as part of a RTCP SdesPacket.
     /// </summary>
     /// <param name="Ssrc">SSRC that identifies the media source.</param>
     /// <param name="Items">List of SDES items. The list should include at least one SDES item.</param>
-    public SdesChunk(UInt32 Ssrc, List<SdesItem> Items)
+    public SdesChunk(uint Ssrc, List<SdesItem> Items)
     {
         m_Ssrc = Ssrc;
         m_SdesItems = Items;

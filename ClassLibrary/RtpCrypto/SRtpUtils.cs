@@ -293,8 +293,7 @@ public static class SRtpUtils
     {
         bool Success = true;
 
-        byte[] AuthPacket = BuildAuthPacket(HdrBytes, PacketPayload, 
-            ROCorSRTCPIndex);
+        byte[] AuthPacket = BuildAuthPacket(HdrBytes, PacketPayload, ROCorSRTCPIndex);
         HMACSHA1 hmac = new HMACSHA1(k_a);
         byte[] HashVal = hmac.ComputeHash(AuthPacket);
         
@@ -320,8 +319,7 @@ public static class SRtpUtils
         int AuthPacketLen = HdrBytes.Length + PacketPayload.Length + 4;
         byte[] AuthPacket = new byte[AuthPacketLen];
         Array.Copy(HdrBytes, AuthPacket, HdrBytes.Length);
-        Array.ConstrainedCopy(PacketPayload, 0, AuthPacket, HdrBytes.Length,
-            PacketPayload.Length);
+        Array.ConstrainedCopy(PacketPayload, 0, AuthPacket, HdrBytes.Length, PacketPayload.Length);
         int RocDestIdx = HdrBytes.Length + PacketPayload.Length;
         RtpUtils.SetDWord(AuthPacket, RocDestIdx, ROCorSRTCPIndex);
 
@@ -411,7 +409,6 @@ public static class SRtpUtils
         Context.RtcpSessionKeys.SessionAuthKey = SRtpUtils.DeriveSrtpSessionKey(PI, Mks.KeyDerivationRate,
             SrtpLabelItem.SrtcpAuthKey, Mks.MasterSalt, Mks.MasterKey, AuthZeroInput);
     }
-
 
     /// <summary>
     /// Extracts a string that is delimited by two characters. The delimiter characters may be different.

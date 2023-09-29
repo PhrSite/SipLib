@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   RtcpCompoundPacket.cs                                   19 Sep 23 PHR
+//  File:   RtcpCompoundPacket.cs                                   28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
@@ -41,13 +41,15 @@ public class RtcpCompoundPacket
     }
 
     /// <summary>
-    /// Builds a RtcpCompoundPacket object by parsing a byte array that was received from the network.
+    /// Parses a byte array containg a RtcpCompoundPacket that was received from the network.
     /// </summary>
-    /// <param name="Bytes">Input byte array to parse.</param>
-    public RtcpCompoundPacket(byte[] Bytes)
+    /// <param name="Bytes">Input received byte array.</param>
+    /// <returns>Returns a new RtcpCompoundPacket objedt if successful or null if an error occurred</returns>
+    public static RtcpCompoundPacket Parse(byte[] Bytes)
     {
+        RtcpCompoundPacket Rcp = new RtcpCompoundPacket();
         if (Bytes.Length < RtcpHeader.HeaderLength)
-            return;
+            return null;
 
         RtcpHeader Header;
         bool Done = false;
@@ -60,16 +62,24 @@ public class RtcpCompoundPacket
             switch (Header.PacketType)
             {
                 case RtcpPacketType.SenderReport:
-                    SenderReports.Add(new SenderReport(Bytes, CurIdx));
+                    SenderReport Sr = SenderReport.Parse(Bytes, CurIdx);
+                    if (Sr != null)
+                        Rcp.SenderReports.Add(Sr);
                     break;
                 case RtcpPacketType.ReceiverReport:
-                    ReceiverReports.Add(new ReceiverReport(Bytes, CurIdx));
+                    ReceiverReport Rr = ReceiverReport.Parse(Bytes, CurIdx);
+                    if (Rr != null)
+                        Rcp.ReceiverReports.Add(Rr);
                     break;
                 case RtcpPacketType.SourceDescriptionReport:
-                    SdesPackets.Add(new SdesPacket(Bytes, CurIdx));
+                    SdesPacket Sp = SdesPacket.Parse(Bytes, CurIdx);
+                    if (Sp != null)
+                        Rcp.SdesPackets.Add(Sp);
                     break;
                 case RtcpPacketType.ByePacket:
-                    ByePackets.Add(new ByePacket(Bytes, CurIdx));
+                    ByePacket Bp = ByePacket.Parse(Bytes, CurIdx);
+                    if (Bp != null)
+                        Rcp.ByePackets.Add(Bp);
                     break;
                 default:
                     // This is an error condition so stop trying to parse the
@@ -87,12 +97,15 @@ public class RtcpCompoundPacket
                     CurIdx += PacketLen;
             }
         } // end while done == false
+
+        return Rcp;
     }
 
     /// <summary>
     /// Converts this object to a byte array so that the compound RTCP packet can be sent over the network.
     /// </summary>
-    /// <returns>Returns a byte array. Return null if there are no Sender Reports, Receiver Reports, SDES packets or BYE packets to send.
+    /// <returns>Returns a byte array. Return null if there are no Sender Reports, Receiver Reports, SDES 
+    /// packets or BYE packets to send.
     /// </returns>
     public byte[] ToByteArray()
     {

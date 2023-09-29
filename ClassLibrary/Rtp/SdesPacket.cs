@@ -1,47 +1,53 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SdesPacket.cs                                           19 Sep 23 PHR
+//  File:   SdesPacket.cs                                           29 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Class for parsing and building SDES (Source Description) RTCP packets.
+/// Class for parsing and building SDES (Source Description) RTCP packets. See Section 6.5 of RFC 3550.
 /// </summary>
 public class SdesPacket
 {
     private RtcpHeader m_Header = null;
     private List<SdesChunk> m_SdesChunks = new List<SdesChunk>();
 
-    /// <summary>
-    /// Constructs a new SdesPacket object from a RTCP packet that was received from the network.
-    /// </summary>
-    /// <param name="Bytes">Byte array containing the RTCP packet.</param>
-    /// <param name="StartIdx">Index in Bytes of the first byte of the RTCP header for the SDES RTCP type
-    /// packet.</param>
-    public SdesPacket(byte[] Bytes, int StartIdx)
+    private SdesPacket()
     {
-        if ((Bytes.Length - StartIdx) < RtcpHeader.HeaderLength)
-            return; // Error: Not enough bytes in the input array for a header
+    }
 
-        m_Header = new RtcpHeader(Bytes, StartIdx);
+    /// <summary>
+    /// Parses the data in a byte array from a RTCP packet received from the network into a SdesPacket
+    /// object.
+    /// </summary>
+    /// <param name="Bytes">Input byte array</param>
+    /// <param name="StartIdx">Stating index of the SdesPacket data in the input byte array</param>
+    /// <returns>Returns a SdesPacket object if successful or null if an error occurred</returns>
+    public static SdesPacket Parse(byte[] Bytes, int StartIdx)
+    {
+        SdesPacket Sp = new SdesPacket();
+        if ((Bytes.Length - StartIdx) < RtcpHeader.HeaderLength)
+            return null; // Error: Not enough bytes in the input array for a header
+
+        Sp.m_Header = new RtcpHeader(Bytes, StartIdx);
 
         int CurIdx = StartIdx + RtcpHeader.HeaderLength;
         SdesChunk Sc = null;
-        int NumChunks = m_Header.Count;
+        int NumChunks = Sp.m_Header.Count;
         int Count = 0;
 
         try
         {
             while (CurIdx < Bytes.Length && Count < NumChunks)
             {
-                Sc = new SdesChunk(Bytes, CurIdx);
-                m_SdesChunks.Add(Sc);
+                Sc = SdesChunk.Parse(Bytes, CurIdx);
+                Sp.m_SdesChunks.Add(Sc);
 
                 // Each SDES chunk in a SDES packet must start on a 4 byte index boundary.
                 int Len = Sc.TotalLength;
                 if (Len % 4 == 0)
                     // Account for the terminating 0 byte
-                    Len += 1;       
+                    Len += 1;
                 if (Len % 4 != 0)
                     // Account for the added 0 padding bytes to make the next chunk start on a 32 bit (4 byte)
                     // boundary
@@ -53,8 +59,10 @@ public class SdesPacket
         }
         catch (Exception)
         {
-
+            return null;
         }
+
+        return Sp;
     }
 
     /// <summary>

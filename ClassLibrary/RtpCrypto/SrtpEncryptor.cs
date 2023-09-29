@@ -10,10 +10,9 @@ namespace SipLib.RtpCrypto;
 /// <summary>
 /// Class for encypting RTP and RTCP packets to be sent. See RFC 3711.
 /// </summary>
-public class SrtpEncryptor
+public class SrtpEncryptor : SrtpTransformBase
 {
-    private CryptoContext m_Context = null;
-    private bool m_FirstRtpPacket = false;
+    private bool m_FirstRtpPacketProcessed = false;
     private ushort m_SEQ = 0;
 
     /// <summary>
@@ -21,9 +20,8 @@ public class SrtpEncryptor
     /// </summary>
     /// <param name="context">CryptoContext greated by the sender of the RTP and SRTP. If null, then
     /// RTP and RTCP packets are not encrypted.</param>
-    public SrtpEncryptor(CryptoContext context)
+    public SrtpEncryptor(CryptoContext context) : base(context)
     {
-        m_Context = context;
     }
 
     /// <summary>
@@ -31,23 +29,28 @@ public class SrtpEncryptor
     /// </summary>
     /// <param name="Pckt">Input RTP packet to encrypt.</param>
     /// <returns>Returns an encrypted packet if encryption is being used. Returns the original packet
-    /// if encryption is not being used. Returns null if an error is detected.</returns>
+    /// if encryption is not being used. Returns null if an error is detected and the Error property value
+    /// will indicate the type of error..</returns>
     public byte[] EncryptRtpPacket(byte[] Pckt)
     {
         byte[] EncryptedPckt = null;
         if (Pckt == null || Pckt.Length < RtpPacket.MIN_PACKET_LENGTH)
+        {
+            Error = SRtpErrorsEnum.InputPacketTooShort;
             return null;
+        }
 
         if (m_Context == null)
+            // Not using encryption, just return the input packet.
             return Pckt;
 
         MasterKeys Mks = m_Context.MasterKeys[0];
 
         RtpPacket Rp = new RtpPacket(Pckt);
-        if (m_FirstRtpPacket == false)
+        if (m_FirstRtpPacketProcessed == false)
         {
             m_SEQ = 0;
-            m_FirstRtpPacket = true;
+            m_FirstRtpPacketProcessed = true;
         }
 
         Rp.SequenceNumber = m_SEQ;
@@ -69,18 +72,7 @@ public class SrtpEncryptor
         // Encrypt the RTP payload.
         byte[] PayloadBytes = Rp.GetPayloadBytes();
         byte[] EncryptedBytes = new byte[PayloadBytes.Length];
-        if (m_Context.CryptoSuite != CryptoSuites.F8_128_HMAC_SHA1_80)
-        {
-            byte[] AesCmIV = SRtpUtils.CalcAesCmIV(m_Context.RtpSessionKeys.SessionSalt, Rp.SSRC, PI);
-            AesFunctions.AesCounterModeTransform(m_Context.RtpSessionKeys.
-                SessionKey, AesCmIV, PayloadBytes, EncryptedBytes);
-        }
-        else
-        {   // Its AES_F8
-            byte[] AesF8IV = SRtpUtils.CalcF8SRTPIV(Rp, m_Context.ROC.Roc);
-            AesFunctions.AesF8ModeTransform(m_Context.RtpSessionKeys.SessionKey, m_Context.RtpSessionKeys.
-                SessionSalt, AesF8IV, PayloadBytes, EncryptedBytes);
-        }
+        ApplySrtpTransform(Rp, PI, PayloadBytes, EncryptedBytes);
 
         // Build the authentication tag.
         byte[] AuthTagBytes = SRtpUtils.CalcRtpPacketAuthTag(Rp.GetHeaderBytes(),
@@ -109,21 +101,21 @@ public class SrtpEncryptor
     /// </summary>
     /// <param name="Pckt">Input RTCP packet</param>
     /// <returns>Returns the encrypted RTCP packet if encryption is being used. Returns the original
-    /// input packet if encryption is not being used. Returns null if an error occurs.</returns>
+    /// input packet if encryption is not being used. Returns null if an error occurs and the Error property
+    /// value will indicate the type of error..</returns>
     public byte[] EncryptRtcpPacket(byte[] Pckt)
     {
         if (m_Context == null)
+            // Not using encryption, just return the input packet.
             return Pckt;
 
         byte[] EncryptedPckt = null;
-        // Index of the start byte of the encrypted part of the input packet.
-        // See Figure 2 of RFC 3711.
+        // Index of the start byte of the encrypted part of the input packet. See Figure 2 of RFC 3711.
         int EncStartIdx = RtcpHeader.HeaderLength + 4;
         int EncLen = Pckt.Length - EncStartIdx;
         if (EncLen <= 0)
         {
-            //DebugLogger.LogError("RtpChannel", "EncryptTxRtcpPacket()",
-            //    "The RTCP packet is too short.");
+            Error = SRtpErrorsEnum.InputPacketTooShort;
             return null;
         }
 
@@ -146,19 +138,8 @@ public class SrtpEncryptor
             SRtpUtils.DeriveRtcpSessionKeys(PI, Mks, m_Context);
 
         byte[] EncPayloadBytes = new byte[EncLen];
-        if (m_Context.CryptoSuite == CryptoSuites.F8_128_HMAC_SHA1_80)
-        {
-            byte[] AesCmIV = SRtpUtils.CalcAesCmIV(m_Context.RtcpSessionKeys.SessionSalt, SSRC, PI);
-            AesFunctions.AesCounterModeTransform(m_Context.RtcpSessionKeys.SessionKey, AesCmIV, Pckt,
-                EncStartIdx, EncLen, EncPayloadBytes);
-        }
-        else
-        {
-            RtcpHeader Header = new RtcpHeader(Pckt, 0);
-            byte[] AesF8IV = SRtpUtils.CalcF8SRTCPIV(Header, (uint)PI, SSRC);
-            AesFunctions.AesF8ModeTransform(m_Context.RtcpSessionKeys.SessionKey, m_Context.RtcpSessionKeys.
-                SessionSalt, AesF8IV, Pckt, EncStartIdx, EncLen, EncPayloadBytes);
-        }
+        RtcpHeader Header = new RtcpHeader(Pckt, 0);
+        ApplySrtcpTransform(Header, SSRC, PI, Pckt, EncStartIdx, EncLen, EncPayloadBytes);
 
         int AuthLen = Pckt.Length + 4;
         byte[] AuthBytes = new byte[AuthLen];

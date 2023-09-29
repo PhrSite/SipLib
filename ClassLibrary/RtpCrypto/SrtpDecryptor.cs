@@ -10,10 +10,8 @@ namespace SipLib.RtpCrypto;
 /// <summary>
 /// Class for decrypting SRTP and SRTCP packets received from a remote endpoint.
 /// </summary>
-public class SrtpDecryptor
+public class SrtpDecryptor : SrtpTransformBase
 {
-    private CryptoContext m_Context = null;
-
     private bool m_FirstPacketReceived = false;
 
     /// <summary>
@@ -21,9 +19,8 @@ public class SrtpDecryptor
     /// </summary>
     /// <param name="context">CryptoContext provided by the remote endpoint if SRTP is being used.
     /// If null, then RTP and RTCP packets are not encrypted.</param>
-    public SrtpDecryptor(CryptoContext context)
+    public SrtpDecryptor(CryptoContext context) : base(context)
     {
-        m_Context = context;
     }
 
     /// <summary>
@@ -32,14 +29,17 @@ public class SrtpDecryptor
     /// <param name="Pckt">Input RTP packet.</param>
     /// <returns>Returns the decrypted version of the encrypted input packet if encryption is being
     /// used. Returns the original input packet if encryption is not being used. Returns null if
-    /// an error is detected.</returns>
+    /// an error is detected and the Error property value will indicate the type of error.</returns>
     public byte[] DecryptRtpPacket(byte[] Pckt)
     {
         if (Pckt == null || Pckt.Length < RtpPacket.MIN_PACKET_LENGTH)
+        {
+            Error = SRtpErrorsEnum.InputPacketTooShort;
             return null;
+        }
 
         byte[] DecryptedPckt = null;
-        if (m_Context != null)
+        if (m_Context == null)
             return Pckt;
 
         RtpPacket Rp = new RtpPacket(Pckt);
@@ -48,14 +48,18 @@ public class SrtpDecryptor
         {
             PcktMkiIdx = Pckt.Length - m_Context.AuthTagLength - m_Context.MkiLength;
             if (PcktMkiIdx > Rp.HeaderLength)
-                // Error: The packet is too short, just ignore it.
+            {   // Error: The packet is too short, just ignore it.
+                Error = SRtpErrorsEnum.NoMKI;
                 return Pckt;
+            }
         }
 
         int AuthTagIdx = Pckt.Length - m_Context.AuthTagLength;
         if (AuthTagIdx < Rp.HeaderLength + m_Context.MkiLength)
-            // Error: The packet is not long enough, just ignore it.
-            return Pckt;
+        {   // Error: The packet is not long enough, just ignore it.
+            Error = SRtpErrorsEnum.NoAuthenticationTag;
+            return null;
+        }
 
         ushort SEQ = Rp.SequenceNumber;
         if (m_FirstPacketReceived == false)
@@ -69,7 +73,10 @@ public class SrtpDecryptor
         {   // The MKI is at the end of the RTP packet.
             int MasterKeyIndex = GetMasterKeyIndex(Pckt, PcktMkiIdx);
             if (MasterKeyIndex == -1)
-                return null;    // Errors already logged.
+            {
+                Error = SRtpErrorsEnum.MasterKeyNotFound;
+                return null;
+            }
 
             if (MasterKeyIndex != m_Context.CurrentRtpMasterKeyIndex)
             {   // This packet uses a different master key than the previous packet.
@@ -112,23 +119,14 @@ public class SrtpDecryptor
         // Authenticate the packet using the current auth. session key
         bool Success = AuthenticateRtpPacket(Pckt, PayloadBytes, Rp, AuthTagIdx);
         if (Success == false)
-            // Error: The packet could not be authenticated.
+        {   // Error: The packet could not be authenticated.
+            Error = SRtpErrorsEnum.AuthenticationFailed;
             return null;
+        }
 
         byte[] DecryptedPayload = new byte[ActualPayloadLength];
         // Decrypt the payload portion of the packet.
-        if (m_Context.CryptoSuite != CryptoSuites.F8_128_HMAC_SHA1_80)
-        {
-            byte[] AesCmIV = SRtpUtils.CalcAesCmIV(m_Context.RtpSessionKeys.SessionSalt, Rp.SSRC, PI);
-            AesFunctions.AesCounterModeTransform(m_Context.RtpSessionKeys.SessionKey, AesCmIV, PayloadBytes,
-                DecryptedPayload);
-        }
-        else
-        {   // Its AES_F8
-            byte[] AesF8IV = SRtpUtils.CalcF8SRTPIV(Rp, m_Context.ROC.Roc);
-            AesFunctions.AesF8ModeTransform(m_Context.RtpSessionKeys.SessionKey, m_Context.RtpSessionKeys.
-                SessionSalt, AesF8IV, PayloadBytes, DecryptedPayload);
-        }
+        ApplySrtpTransform(Rp, PI, PayloadBytes, DecryptedPayload);
 
         // Build the decrypted RTP packet from the RTP packet header and
         // the decrypted payload.
@@ -145,20 +143,26 @@ public class SrtpDecryptor
     /// <param name="Pckt">Input RTCP packet.</param>
     /// <returns>Returns the decrypted version of the encrypted input packet if encryption is being
     /// used. Returns the original input packet if encryption is not being used. Returns null if
-    /// an error is detected.</returns>
+    /// an error is detected and the Error property value will indicate the type of error.</returns>
     public byte[] DecryptRtcpPacket(byte[] Pckt)
     {
         if (Pckt == null || Pckt.Length < RtcpHeader.RTCP_HEADER_LENGTH)
+        {
+            Error = SRtpErrorsEnum.InputPacketTooShort;
             return null;
+        }
 
         byte[] DecryptedPckt = null;
-        if (m_Context != null)
+        if (m_Context == null)
+            // Not using encryption, just return the input packet.
             return Pckt;
 
         int RtcpIndexIdx = Pckt.Length - m_Context.AuthTagLength - m_Context.MkiLength - 4;
         if (RtcpIndexIdx < 0)
-            // Error: The RTCP packet is too short
+        {   // Error: The RTCP packet is too short
+            Error = SRtpErrorsEnum.InputPacketTooShort;
             return null;
+        }
 
         uint RtcpIndex = RtpUtils.GetDWord(Pckt, RtcpIndexIdx);
         bool IsEncrypted = (RtcpIndex & 0x80000000) == 0x80000000 ? true : false;
@@ -170,7 +174,10 @@ public class SrtpDecryptor
             int MkiIdx = Pckt.Length - m_Context.AuthTagLength - m_Context.MkiLength;
             int MasterKeyIndex = GetMasterKeyIndex(Pckt, MkiIdx);
             if (MasterKeyIndex == -1)
+            {
+                Error = SRtpErrorsEnum.MasterKeyNotFound;
                 return null;
+            }
 
             if (MasterKeyIndex != m_Context.CurrentRtcpMasterKeyIndex)
             {   // This packet uses a different master key than the previous packet.
@@ -207,7 +214,10 @@ public class SrtpDecryptor
 
         bool Success = AuthenticateRtcpPacket(AuthPayloadBytes, AuthTagBytes);
         if (Success == false)
+        {
+            Error = SRtpErrorsEnum.AuthenticationFailed;
             return null;
+        }
 
         RtcpHeader Header = new RtcpHeader(Pckt, 0);
         uint SSRC = RtpUtils.GetDWord(Pckt, 4);
@@ -225,18 +235,7 @@ public class SrtpDecryptor
             Array.ConstrainedCopy(Pckt, StartIdx, EncryptedBytes, 0, Len);
             byte[] DecryptedBytes = new byte[Len];
 
-            if (m_Context.CryptoSuite != CryptoSuites.F8_128_HMAC_SHA1_80)
-            {
-                byte[] AesCmIV = SRtpUtils.CalcAesCmIV(m_Context.RtcpSessionKeys.SessionSalt, SSRC, PI);
-                AesFunctions.AesCounterModeTransform(m_Context.RtcpSessionKeys.SessionKey, AesCmIV,
-                    EncryptedBytes, DecryptedBytes);
-            }
-            else
-            {   // Its AES_F8
-                byte[] AesF8IV = SRtpUtils.CalcF8SRTCPIV(Header, (uint)PI, SSRC);
-                AesFunctions.AesF8ModeTransform(m_Context.RtcpSessionKeys.SessionKey, 
-                    m_Context.RtcpSessionKeys.SessionSalt, AesF8IV, EncryptedBytes, DecryptedBytes);
-            }
+            ApplySrtcpTransform(Header, SSRC, PI, EncryptedBytes, DecryptedBytes);
 
             // Build the return packet
             Array.Copy(Pckt, DecryptedPckt, 8);   // Copy the RTCP header and the SSRC

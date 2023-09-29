@@ -255,6 +255,18 @@ public class RtpPacket
         get { return RtpUtils.GetWord(m_PacketBytes, SEQUENCE_NUMBER_INDEX); }
     }
 
+    /// <summary>
+    /// Increments the SequenceNumber (SEQ) by 1 and accounts for wrap around
+    /// </summary>
+    public void IncrementSequenceNumber()
+    {
+        ushort Seq = SequenceNumber;
+        if (Seq != ushort.MaxValue)
+            SequenceNumber = (ushort)(Seq + 1);
+        else
+            SequenceNumber = 0;
+    }
+
     private const int TIMESTAMP_INDEX = 4;
 
     /// <summary>
