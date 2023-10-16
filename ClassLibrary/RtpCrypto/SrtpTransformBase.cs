@@ -89,7 +89,7 @@ public class SrtpTransformBase
     protected void ApplySrtcpTransform(RtcpHeader Header, uint SSRC, ulong PI, byte[] InputBytes, 
         int StartIdx, int Length, byte[] OutputBytes)
     {
-        if (m_Context.CryptoSuite == CryptoSuites.F8_128_HMAC_SHA1_80)
+        if (m_Context.CryptoSuite != CryptoSuites.F8_128_HMAC_SHA1_80)
         {
             byte[] AesCmIV = SRtpUtils.CalcAesCmIV(m_Context.RtcpSessionKeys.SessionSalt, SSRC, PI);
             AesFunctions.AesCounterModeTransform(m_Context.RtcpSessionKeys.SessionKey, AesCmIV, InputBytes,

@@ -1,19 +1,17 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   SrtpUnitTests.cs                                        28 Sep 23 PHR
+//  File:   SrtcpUnitTests.cs                                       1 Oct 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
-
-namespace SipLibUnitTests;
 
 using SipLib.Rtp;
 using SipLib.RtpCrypto;
-using System;
-using System.Security.Cryptography;
+
+namespace SipLibUnitTests;
 
 /// <summary>
-/// Tests all SRTP crypto suites.
+/// Tests all of the crypto suites for SRTCP
 /// </summary>
 [Trait("Category", "unit")]
-public class SrtpUnitTests
+public class SrtcpUnitTests
 {
     [Fact]
     public void AES_CM_128_HMAC_SHA1_80()
@@ -57,21 +55,14 @@ public class SrtpUnitTests
         DoSrtpCryptoContext(CryptoSuites.AES_256_CM_HMAC_SHA1_32);
     }
 
-    // Test enough packets so that the SEQ/Packet Index rolls over at least once
-    private const int NumRtpPackets = 100000;
 
-    private static Random Rnd = new Random();
+    // Test enough packets so that the Packet Index rolls over at least once
+    private const int NumRtpPackets = 100000;
 
     private void DoSrtpCryptoContext(string cryptoContextName)
     {
-        RandomNumberGenerator Rng = RandomNumberGenerator.Create();
-        int PayloadLength = 160;
-        int RtpPcktLength = RtpPacket.MIN_PACKET_LENGTH + PayloadLength;
-        byte[] Pckt = new byte[RtpPcktLength];
-        RtpPacket rtpPacket = new RtpPacket(Pckt);
-        rtpPacket.SSRC = (uint) Rnd.Next();
-
         CryptoContext EncryptorContext = new CryptoContext(cryptoContextName);
+
         // Make a copy of the CryptoContext
         CryptoAttribute attr = EncryptorContext.ToCryptoAttribute();
         CryptoContext DecryptorContext = CryptoContext.CreateFromCryptoAttribute(attr);
@@ -82,33 +73,22 @@ public class SrtpUnitTests
         byte[] encryptedPckt;
         byte[] decryptedPckt;
 
+        SenderReport Sr = SenderReportUnitTests.BuildSenderReport();
+        byte[] SrBytes;
+
         for (int i = 0; i < NumRtpPackets; i++)
         {
-            Rng.GetBytes(Pckt, RtpPacket.MIN_PACKET_LENGTH, PayloadLength);
+            SrBytes = Sr.ToByteArray();
+            encryptedPckt = encryptor.EncryptRtcpPacket(SrBytes);
+            decryptedPckt = decryptor.DecryptRtcpPacket(encryptedPckt);
 
-            encryptedPckt = encryptor.EncryptRtpPacket(Pckt);
-            decryptedPckt = decryptor.DecryptRtpPacket(encryptedPckt);
+            Assert.True(SrtpUnitTests.ArraysEqual(SrBytes, decryptedPckt) == true, 
+                $"decryptedPckt mismatch at i = {i}");
 
-            Assert.True(ArraysEqual(decryptedPckt, Pckt) == true, $"Decryption failed. i = {i}, " +
-                $"Context = {cryptoContextName}, Error = {decryptor.Error}");
-
-            rtpPacket.SequenceNumber += 1;
+            // Modify the contents of the SenderReport a little
+            Sr.SenderInfo.RtpTimestamp += 1;
         }
-    }
-
-    public static bool ArraysEqual(byte[] Ary1, byte[] Ary2)
-    {
-        bool Eq = true;
-        if (Ary1.Length != Ary2.Length)
-            return false;
-
-        for (int i = 0; (i < Ary1.Length && Eq == true); i++)
-        {
-            if (Ary1[i] != Ary2[i])
-                Eq = false;
-        }
-
-        return Eq;
     }
 
 }
+
