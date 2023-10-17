@@ -4,7 +4,7 @@
 
 using SipLib.RealTimeText;
 using SipLib.Sdp;
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.RealTimeText;
 
 [Trait("Category", "unit")]
 public class RttParametersUnitTests

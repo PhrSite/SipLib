@@ -50,7 +50,7 @@ public class RttUtils
     /// <summary>
     /// Default number of redundancy levels. A value of 0 indicates that redundancy is not being used.
     /// </summary>
-    public const int DefaultRedundancyLevel = 2;
+    public const int DefaultRedundancyLevel = 3;
 
     /// <summary>
     /// Default number of characters per second. A value of 0 specifies that there is no limit to the number

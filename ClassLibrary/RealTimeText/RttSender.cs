@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text;
 using SipLib.Rtp;
 
@@ -24,27 +25,25 @@ public class RttSender
     private RttParameters m_Params = null;
     private RttRtpSendDelegate Sender = null;
 
-    private const int MAX_REDUNDANCY_LEVELS = 5;
-
-    private ConcurrentQueue<string> m_TxMessages = new ConcurrentQueue<string>();
+    private ConcurrentQueue<string> m_Messages = new ConcurrentQueue<string>();
 
     private CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
 
-    private Semaphore m_SendSemaphore = new Semaphore(0, int.MaxValue);
+    private SemaphoreSlim m_SendSemaphore = new SemaphoreSlim(0, int.MaxValue);
     private Task m_SenderTask = null;
-    private List<RttRedundantBlock> m_RedundantBlocks = new List<RttRedundantBlock>(MAX_REDUNDANCY_LEVELS);
+    private List<RttRedundantBlock> m_RedundantBlocks;
 
     private ushort m_SequenceNumber = 0;
     private uint m_TimeStamp = 0;
     private DateTime m_LastMessageSent = DateTime.Now;
     private uint m_SSRC = 0;
     private uint m_MessageStartTime = (uint)System.Environment.TickCount;
-    private const uint SEND_IDLE_TIME = 300;
+    private const int SEND_IDLE_TIME_MS = 100;
 
     private static Random m_Rnd = new Random();
 
     /// <summary>
-    /// Constructs a new RttTxHndlr object.
+    /// Constructs a new RttSender object.
     /// </summary>
     /// <param name="Rp">Contains the RTT media session parameters.</param>
     /// <param name="sender">Delegate to use to send RTP packets.</param>
@@ -53,20 +52,12 @@ public class RttSender
         m_Params = Rp;
         Sender = sender;
 
-        // Initialize the list or redunant block information even though redundancy may not be required.
-        for (int i = 0; i < MAX_REDUNDANCY_LEVELS; i++)
+        m_RedundantBlocks = new List<RttRedundantBlock>();
+        // Initialize the list of redunant block information even though redundancy may not be required.
+        for (int i = 0; i < Rp.RedundancyLevel; i++)
             m_RedundantBlocks.Add(new RttRedundantBlock());
 
         m_SSRC = Convert.ToUInt32(m_Rnd.Next());
-    }
-
-    /// <summary>
-    /// Gets or sets the RttParameters. If setting, do so before calling Start().
-    /// </summary>
-    public RttParameters Params
-    {
-        get { return m_Params; }
-        set { m_Params = value; }
     }
 
     /// <summary>
@@ -74,7 +65,7 @@ public class RttSender
     /// </summary>
     public void Start()
     {
-        if (m_SenderTask != null)
+        if (m_SenderTask == null)
             m_SenderTask = Task.Factory.StartNew(() => { SenderTask(m_CancellationTokenSource.Token); });
     }
 
@@ -84,25 +75,47 @@ public class RttSender
     public void Stop()
     {
         m_CancellationTokenSource.Cancel();
+        m_SenderTask.Wait();
         m_SenderTask = null;
     }
 
+
+    private const int MAX_REDUNDANCY_MESSAGE_LENGTH = 1024;
+    // Allow 4 bytes for a CSRC after the header in the case of an RTT mixer (RFC 9071).
+    private const int MAX_RTT_UDP_LENGTH = 65535 - RtpPacket.MIN_PACKET_LENGTH - 4;
+
     /// <summary>
-    /// Enqueues characters to send.
+    /// Enqueues characters to send. This method will truncate the message if it exceeds a maximum allowed
+    /// message length. If Cps is 0 and redundancy is being used then the maximum length is 1024 characters.
+    /// If Cps is 0 and redundancy is not being used then the maximum length is the maximum size of a RTP UDP
+    /// packet. If Cps is greater than 0 then characters are sent one at a time so there is no length
+    /// restriction.
     /// </summary>
     /// <param name="message">Contains at least one character to send</param>
-    public void EnqueueMessage(string message)
+    public void SendMessage(string message)
     {
-        m_TxMessages.Enqueue(message);
+        if (string.IsNullOrEmpty(message) == true)
+            return;
 
         if (m_Params.Cps == 0)
-            m_SendSemaphore.Release();
+        {   // Messages will be sent as one long block. If using redundancy, the length of a redundant
+            // block is limited to 10 bits (1024 bytes). Else, the length is limited by the maximum RTP
+            // UDP packet length.
+            int MaxLength = m_Params.RedundancyLevel != 0 ? MAX_REDUNDANCY_MESSAGE_LENGTH : MAX_RTT_UDP_LENGTH;
+            if (message.Length > MaxLength)
+                message = message.Substring(0, MaxLength);
+        }
+        // Else, the message will be sent 1 character at a time at a rate that is determined by the Cps
+        // parameter.
+
+        m_Messages.Enqueue(message);
+        m_SendSemaphore.Release();      // Signal the sender task to wake up
     }
 
     private string DequeueMessage()
     {
         string message = null;
-        m_TxMessages.TryDequeue(out message);
+        m_Messages.TryDequeue(out message);
         return message;
     }
 
@@ -115,8 +128,8 @@ public class RttSender
         {
             while (token.IsCancellationRequested == false)
             {
-                m_SendSemaphore.WaitOne((int)SEND_IDLE_TIME);
-
+                //m_SendSemaphore.WaitOne((int)SEND_IDLE_TIME_MS);
+                m_SendSemaphore.Wait(SEND_IDLE_TIME_MS, token);
                 strNewText = DequeueMessage();
                 if (strNewText != null)
                 {   // There is new text to send.
@@ -133,7 +146,7 @@ public class RttSender
                         for (int i = 0; i < strNewText.Length; i++)
                         {
                             Send(strNewText[i].ToString());
-                            m_SendSemaphore.WaitOne(MsPerChar);
+                            m_SendSemaphore.Wait(MsPerChar, token);
                             m_LastMessageSent = DateTime.Now;
                         }
                     }
@@ -145,11 +158,12 @@ public class RttSender
                     }
                 }
                 else
-                   // No new text to send. See if its necessary to send an empty text block
+                    // No new text to send. See if its necessary to send an empty text block
                     SendEmptyTextBlock();
             }
         }
         catch (TaskCanceledException) { }
+        catch (OperationCanceledException) { }  // Expected if in m_SendSemaphore.Wait() when cancelled.
 
         return Task.CompletedTask;
     }
@@ -165,7 +179,7 @@ public class RttSender
         if (RedundancyLevel == 0)
             return;     // Not using redundancy so don't send an empty block.
 
-        if ((DateTime.Now - m_LastMessageSent).TotalMilliseconds < SEND_IDLE_TIME)
+        if ((DateTime.Now - m_LastMessageSent).TotalMilliseconds < SEND_IDLE_TIME_MS)
             return;
 
         // Its time but see if there is anything in the redundant block history that needs to be sent.
@@ -212,7 +226,9 @@ public class RttSender
         RtpPacket Rp = new RtpPacket(RtpBytes);
         Rp.SSRC = m_SSRC;
 
-        if (TotalCharBytes > 0)
+        //if (TotalCharBytes > 0)
+        //    Rp.Marker = true;
+        if (TotalRedBytes == 0)
             Rp.Marker = true;
 
         Rp.SequenceNumber = m_SequenceNumber;
@@ -233,20 +249,43 @@ public class RttSender
         // Set the last redundant block header byte.
         RtpBytes[CurrentIndex++] = Convert.ToByte(m_Params.T140PayloadType & 0x00ff);
 
+        // For debug only
+        //if (TotalCharBytes > 0)
+        //    Console.Write(strText + ": ");  // For debug only
+
         // Copy in the redundant bytes if there are any.
         for (i = 0; i < m_Params.RedundancyLevel; i++)
         {
             if (m_RedundantBlocks[i].BlockLength > 0 && m_RedundantBlocks[i].PayloadBytes != null)
             {
-                Array.ConstrainedCopy(m_RedundantBlocks[i].PayloadBytes, 0, RtpBytes, CurrentIndex, m_RedundantBlocks[i].
-                    BlockLength);
+                Array.ConstrainedCopy(m_RedundantBlocks[i].PayloadBytes, 0, RtpBytes, CurrentIndex, 
+                    m_RedundantBlocks[i].BlockLength);
                 CurrentIndex += m_RedundantBlocks[i].BlockLength;
+
+                // For debug only
+                //Console.Write(Encoding.UTF8.GetString(m_RedundantBlocks[i].PayloadBytes));
+                //Console.Write(" ");
             }
         } // end for i
+        //Console.WriteLine();    // For debug only
 
         // Copy in the new text bytes if there are any.
         if (TotalCharBytes > 0)
+        {
             Array.ConstrainedCopy(TextBytes, 0, RtpBytes, CurrentIndex, TotalCharBytes);
+            //Console.Write(strText + ": ");  // For debug only
+        }
+
+        // For debug only
+        //for (i = 0; i < m_Params.RedundancyLevel; i++)
+        //{
+        //    if (m_RedundantBlocks[i].BlockLength > 0 && m_RedundantBlocks[i].PayloadBytes != null)
+        //    {
+        //        Console.Write(Encoding.UTF8.GetString(m_RedundantBlocks[i].PayloadBytes));
+        //        Console.Write(" ");
+        //    }
+        //}
+        //Console.WriteLine();
 
         Sender?.Invoke(Rp);
 
