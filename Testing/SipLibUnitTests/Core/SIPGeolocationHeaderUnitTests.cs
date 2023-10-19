@@ -3,12 +3,8 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Core;
-using static System.Net.Mime.MediaTypeNames;
-using System.ComponentModel;
-using System.Reflection.Metadata;
-using System.Runtime.Intrinsics.Arm;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     /// <summary>
     /// Unit tests for the Geolocation header

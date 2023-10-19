@@ -38,7 +38,7 @@ public class RttSender
     private DateTime m_LastMessageSent = DateTime.Now;
     private uint m_SSRC = 0;
     private uint m_MessageStartTime = (uint)System.Environment.TickCount;
-    private const int SEND_IDLE_TIME_MS = 100;
+    private const int SEND_IDLE_TIME_MS = 300;
 
     private static Random m_Rnd = new Random();
 
@@ -74,11 +74,14 @@ public class RttSender
     /// </summary>
     public void Stop()
     {
-        m_CancellationTokenSource.Cancel();
-        m_SenderTask.Wait();
-        m_SenderTask = null;
+        if (m_SenderTask != null)
+        {
+            m_CancellationTokenSource.Cancel();
+            m_SendSemaphore.Release();
+            m_SenderTask.Wait();
+            m_SenderTask = null;
+        }
     }
-
 
     private const int MAX_REDUNDANCY_MESSAGE_LENGTH = 1024;
     // Allow 4 bytes for a CSRC after the header in the case of an RTT mixer (RFC 9071).
@@ -128,8 +131,7 @@ public class RttSender
         {
             while (token.IsCancellationRequested == false)
             {
-                //m_SendSemaphore.WaitOne((int)SEND_IDLE_TIME_MS);
-                m_SendSemaphore.Wait(SEND_IDLE_TIME_MS, token);
+                m_SendSemaphore.Wait(SEND_IDLE_TIME_MS);
                 strNewText = DequeueMessage();
                 if (strNewText != null)
                 {   // There is new text to send.
@@ -146,7 +148,7 @@ public class RttSender
                         for (int i = 0; i < strNewText.Length; i++)
                         {
                             Send(strNewText[i].ToString());
-                            m_SendSemaphore.Wait(MsPerChar, token);
+                            m_SendSemaphore.Wait(MsPerChar);
                             m_LastMessageSent = DateTime.Now;
                         }
                     }
@@ -163,7 +165,6 @@ public class RttSender
             }
         }
         catch (TaskCanceledException) { }
-        catch (OperationCanceledException) { }  // Expected if in m_SendSemaphore.Wait() when cancelled.
 
         return Task.CompletedTask;
     }

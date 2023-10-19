@@ -12,7 +12,7 @@
 using System.Text.RegularExpressions;
 using SipLib.Core;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     [Trait("Category", "unit")]
     public class SIPViaHeaderUnitTest

@@ -2,7 +2,7 @@
 //  File:   MsrpPathHeaderUnitTests.cs                              24 Jul 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Core;
 using SipLib.Msrp;
 using SipLib.Core;
 

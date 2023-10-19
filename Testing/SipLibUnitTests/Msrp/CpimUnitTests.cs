@@ -4,7 +4,7 @@
 
 using System.Text;
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Core;
 using SipLib.Msrp;
 
 [Trait("Category", "unit")]

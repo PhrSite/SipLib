@@ -2,9 +2,9 @@
 //  File:   RttParametersUnitTests.cs                               16 Oct 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
+namespace SipLibUnitTests.RealTimeText;
 using SipLib.RealTimeText;
 using SipLib.Sdp;
-namespace SipLibUnitTests.RealTimeText;
 
 [Trait("Category", "unit")]
 public class RttParametersUnitTests

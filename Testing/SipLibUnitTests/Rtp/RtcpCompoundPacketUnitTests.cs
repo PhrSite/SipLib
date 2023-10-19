@@ -2,7 +2,7 @@
 //  File:   RtcpCompoundPacketUnitTests.cs                          29 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Rtp;
 
 using SipLib.Rtp;
 

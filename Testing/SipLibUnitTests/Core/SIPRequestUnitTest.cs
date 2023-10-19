@@ -9,12 +9,10 @@
 // BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
 //-----------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
 using SipLib.Core;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     // TODO: When .NET Standard and Framework support are deprecated these pragmas can be removed.
 #pragma warning disable SYSLIB0021

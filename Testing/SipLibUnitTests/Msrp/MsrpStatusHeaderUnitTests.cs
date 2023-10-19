@@ -2,7 +2,7 @@
 //  File:   MsrpStatusHeaderUnitTests.cs                            24 Jul 24 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Msrp;
 using SipLib.Msrp;
 
 [Trait("Category", "unit")]

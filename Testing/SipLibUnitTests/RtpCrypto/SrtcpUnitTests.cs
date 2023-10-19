@@ -2,10 +2,10 @@
 //  File:   SrtcpUnitTests.cs                                       1 Oct 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
+namespace SipLibUnitTests.RtpCrypto;
 using SipLib.Rtp;
 using SipLib.RtpCrypto;
-
-namespace SipLibUnitTests;
+using SipLibUnitTests.Rtp;
 
 /// <summary>
 /// Tests all of the crypto suites for SRTCP

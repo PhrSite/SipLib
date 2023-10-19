@@ -9,7 +9,7 @@ using SipLib.Sdp;
 using SipLib.SipTransactions;
 using SipLib.Transactions;
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.SipTransactions;
 
 /// <summary>
 /// 
@@ -99,7 +99,7 @@ internal class ServerTransactionSimulator
         {
             SIPResponse OkResp = SipUtils.BuildResponse(sipRequest, SIPResponseStatusCodesEnum.Ok, "OK",
                 sipTransport.SipChannel, null);
-            Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(m_ServerIpe.Address, 7000, "Server");
+            SipLib.Sdp.Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(m_ServerIpe.Address, 7000, "Server");
             OkResp.Header.ContentType = "application/sdp";
             OkResp.Body = AudioSdp.ToString();
             OkResp.Header.ContentLength = OkResp.Body.Length;

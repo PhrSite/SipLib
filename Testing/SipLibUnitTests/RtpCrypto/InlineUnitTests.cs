@@ -2,7 +2,7 @@
 //  File:   InLineUnitTests.cs                                      22 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.RtpCrypto;
 using SipLib.RtpCrypto;
 using System.Security.Cryptography;
 

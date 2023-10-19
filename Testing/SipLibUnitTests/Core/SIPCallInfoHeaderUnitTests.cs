@@ -4,7 +4,7 @@
 
 using SipLib.Core;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     /// <summary>
     /// Unit tests for the Call-Info header

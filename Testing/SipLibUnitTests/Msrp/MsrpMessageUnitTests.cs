@@ -2,7 +2,7 @@
 //  File:   MsrpMessageUnitTests.cs                                 26 Jul 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Msrp;
 
 using SipLib.Body;
 using SipLib.Msrp;

@@ -4,7 +4,7 @@
 
 using SipLib.Rtp;
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Rtp;
 
 [Trait("Category", "unit")]
 public class ReceiverReportUnitTests

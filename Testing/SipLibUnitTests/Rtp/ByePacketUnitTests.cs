@@ -2,7 +2,7 @@
 //  File:   ByePacketUnitTests.cs                                   28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Rtp;
 using SipLib.Rtp;
 
 [Trait("Category", "unit")]

@@ -2,7 +2,7 @@
 //  File:   SrtpUnitTests.cs                                        28 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.RtpCrypto;
 
 using SipLib.Rtp;
 using SipLib.RtpCrypto;

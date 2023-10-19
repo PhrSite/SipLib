@@ -1,6 +1,6 @@
 using SipLib.Core;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     [Trait("Category", "unit")]
     public class SIPContactHeaderUnitTest

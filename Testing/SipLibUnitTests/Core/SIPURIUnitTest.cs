@@ -9,11 +9,9 @@
 // BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
 //-----------------------------------------------------------------------------
 
-using System.Net;
-
 using SipLib.Core;
 
-namespace SipLibUnitTests
+namespace SipLibUnitTests.Core
 {
     [Trait("Category", "unit")]
     public class SIPURIUnitTest

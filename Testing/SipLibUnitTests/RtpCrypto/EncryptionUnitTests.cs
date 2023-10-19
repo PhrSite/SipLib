@@ -5,7 +5,7 @@
 using SipLib.RtpCrypto;
 using System.Security.Cryptography;
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.RtpCrypto;
 
 [Trait("Category", "unit")]
 public class EncryptionUnitTests

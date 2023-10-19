@@ -2,9 +2,8 @@
 //  File:   ClientTransactions.cs                                   14 Sep 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.SipTransactions;
 using System.Net;
-using System.Transactions;
 using SipLib.Channels;
 using SipLib.Core;
 using SipLib.Network;

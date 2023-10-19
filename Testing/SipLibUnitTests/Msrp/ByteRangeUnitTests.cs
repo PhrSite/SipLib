@@ -2,7 +2,7 @@
 //  File:   ByteRangeUnitTests.cs                                   23 Jul 23 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace SipLibUnitTests;
+namespace SipLibUnitTests.Msrp;
 using SipLib.Msrp;
 
 [Trait("Category", "unit")]

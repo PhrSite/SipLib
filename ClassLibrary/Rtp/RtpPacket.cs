@@ -21,8 +21,18 @@ public class RtpPacket
     /// </summary>
     public RtpPacket()
     {
-            m_PacketBytes = new byte[MIN_PACKET_LENGTH];
-            Version = 2;
+        m_PacketBytes = new byte[MIN_PACKET_LENGTH];
+        Version = 2;
+    }
+
+    /// <summary>
+    /// Creates an new RTP packet given the length of the payload in bytes. The RTP header will be 12 bytes.
+    /// </summary>
+    /// <param name="PayloadLength">Number of bytes in the payload.</param>
+    public RtpPacket(int PayloadLength)
+    {
+        m_PacketBytes = new byte[MIN_PACKET_LENGTH + PayloadLength];
+        Version = 2;
     }
 
     /// <summary>
