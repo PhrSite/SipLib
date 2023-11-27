@@ -10,7 +10,7 @@ using SipLib.Rtp;
 /// Delegate type for a function that sends an RTP packet. Used for the H264RtpSender class when
 /// an RTP packet needs to be sent.
 /// </summary>
-/// <param name="rtpPckt"></param>
+/// <param name="rtpPckt">RTP packet to send</param>
 public delegate void RtpSendDelegate(RtpPacket rtpPckt);
 
 /// <summary>

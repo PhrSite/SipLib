@@ -24,7 +24,8 @@ public class SrtpDecryptor : SrtpTransformBase
     }
 
     /// <summary>
-    /// Decrypts an RTP packet if encryption is used.
+    /// Decrypts an RTP packet if encryption is used or returns the original data if encryption is not
+    /// being used.
     /// </summary>
     /// <param name="Pckt">Input RTP packet.</param>
     /// <returns>Returns the decrypted version of the encrypted input packet if encryption is being

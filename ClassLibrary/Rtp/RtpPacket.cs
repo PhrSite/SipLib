@@ -334,4 +334,12 @@ public class RtpPacket
         Array.Copy(m_PacketBytes, HdrBytes, HeaderLength);
         return HdrBytes;
     }
+
+    /// <summary>
+    /// Gets the entire packet byte array
+    /// </summary>
+    public byte[] PacketBytes
+    {
+        get { return m_PacketBytes; }
+    }
 }

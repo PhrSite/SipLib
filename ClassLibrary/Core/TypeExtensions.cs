@@ -124,4 +124,74 @@ public static class TypeExtensions
         return IPSocket.IsPrivateAddress(address.ToString());
     }
 
+    /// <summary>
+    /// Converts a byte array to a hexadecimal formatted string
+    /// </summary>
+    /// <param name="buffer">Input byte array to convert</param>
+    /// <param name="separator">Separator character. May be null.</param>
+    /// <returns>Returns the formatted hexadecimal string</returns>
+    public static string HexStr(this byte[] buffer, char? separator = null)
+    {
+        return buffer.HexStr(buffer.Length, separator);
+    }
+
+    /// <summary>
+    /// Converts a byte array to a hexadecimal formatted string
+    /// </summary>
+    /// <param name="buffer">Input byte array to convert</param>
+    /// <param name="length">Number of bytes to process in the input array</param>
+    /// <param name="separator">Separator character. May be null.</param>
+    /// <returns>Returns the formatted hexadecimal string</returns>
+    public static string HexStr(this byte[] buffer, int length, char? separator = null)
+    {
+        string rv = string.Empty;
+
+        for (int i = 0; i < length; i++)
+        {
+            var val = buffer[i];
+            rv += hexmap[val >> 4];
+            rv += hexmap[val & 15];
+
+            if (separator != null && i != length - 1)
+            {
+                rv += separator;
+            }
+        }
+
+        return rv.ToUpper();
+    }
+
+    /// <summary>
+    /// Parses an unformatted (no separators) hexadecimal string into a byte array
+    /// </summary>
+    /// <param name="hexStr">Input hexadecimal string</param>
+    /// <returns>Returns a byte array</returns>
+    public static byte[] ParseHexStr(string hexStr)
+    {
+        List<byte> buffer = new List<byte>();
+        var chars = hexStr.ToCharArray();
+        int posn = 0;
+        while (posn < hexStr.Length)
+        {
+            while (char.IsWhiteSpace(chars[posn]))
+            {
+                posn++;
+            }
+            sbyte c = _hexDigits[chars[posn++]];
+            if (c == -1)
+            {
+                break;
+            }
+            sbyte n = (sbyte)(c << 4);
+            c = _hexDigits[chars[posn++]];
+            if (c == -1)
+            {
+                break;
+            }
+            n |= c;
+            buffer.Add((byte)n);
+        }
+        return buffer.ToArray();
+    }
+
 }

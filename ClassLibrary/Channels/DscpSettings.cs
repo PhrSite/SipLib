@@ -33,4 +33,35 @@ public static class DscpSettings
     /// DSCP value for SIP signaling.
     /// </summary>
     public static uint SipSignalingDscp = 0x03;
+
+    /// <summary>
+    /// Gets the DSCP setting for a media type.
+    /// </summary>
+    /// <param name="mediaType">Input media type. Must be one of: audio, text (for RTT), message (for MSRP),
+    /// or video</param>
+    /// <returns>Returns the configured DSCP value to use</returns>
+    public static uint GetDscpForMediaType(string mediaType)
+    {
+        uint DscpSetting = AudioDscp;
+        switch (mediaType)
+        {
+            case "audio":
+                DscpSetting = AudioDscp;
+                break;
+            case "text":
+                DscpSetting = RTTDscp;
+                break;
+            case "message":
+                DscpSetting = MSRPDscp;
+                break;
+            case "video":
+                DscpSetting = VideoDscp;
+                break;
+            default:
+                DscpSetting = AudioDscp;
+                break;
+        }
+
+        return DscpSetting;
+    }
 }

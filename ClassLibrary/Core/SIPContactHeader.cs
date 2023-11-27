@@ -187,9 +187,9 @@ public class SIPContactHeader
 
             return contactHeaderList;
         }
-        catch (SIPValidationException sipValidationExcp)
+        catch (SIPValidationException)
         {
-            throw sipValidationExcp;
+            throw;
         }
         catch (Exception)
         {

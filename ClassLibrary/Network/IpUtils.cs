@@ -87,4 +87,38 @@ public static class IpUtils
 
         return localAddresses;
     }
+
+    /// <summary>
+    /// Gets a list of local link IPv6 addresses on the local machine. The list will not include the
+    /// local loopback address.
+    /// </summary>
+    /// <returns>Returns a list of addresses. The list may be empty but it will never be null.</returns>
+    public static List<IPAddress> GetIPv6LocalLinkAddresses()
+    {
+        List<IPAddress> localAddresses = new List<IPAddress>();
+        NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+        foreach (NetworkInterface adapter in adapters)
+        {
+            if (adapter.OperationalStatus != OperationalStatus.Up)
+                continue;
+
+            IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+
+            UnicastIPAddressInformationCollection localIPs = adapterProperties.UnicastAddresses;
+            foreach (UnicastIPAddressInformation localIP in localIPs)
+            {
+                string strIpv6Addr = localIP.Address.ToString();
+                if (localIP.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                    continue;
+
+                if (strIpv6Addr == IPV6_LOCAL_LOOPBACK)
+                    continue;
+
+                if (strIpv6Addr.StartsWith(IPV6_LOCAL_LINK_PREFIX) == true)
+                    localAddresses.Add(localIP.Address);
+            }
+        }
+
+        return localAddresses;
+    }
 }
