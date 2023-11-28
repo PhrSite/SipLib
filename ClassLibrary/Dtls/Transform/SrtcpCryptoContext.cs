@@ -2,8 +2,8 @@
 // Filename: SrtpCryptoContext.cs
 //
 // Description: SRTPCryptoContext class is the core class of SRTP implementation.
-// There can be multiple SRTP sources in one SRTP session. And each SRTP stream 
-// has a corresponding SRTPCryptoContext object, identified by SSRC. In this way,
+// There can be multiple SRTP sources in one SRTP session.And each SRTP stream 
+// has a corresponding SRTPCryptoContext object, identified by SSRC.In this way,
 // different sources can be protected independently.
 //
 // Derived From:
@@ -23,6 +23,7 @@
 //  Revised: 25 Nov 23 PHR
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
+
 
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -61,12 +62,12 @@ public class SrtcpCryptoContext
     private int receivedIndex = 0;
 
     /// <summary>
-    /// Index sent so fa
+    /// Index sent so far
     /// </summary>
     private int sentIndex = 0;
 
     /// <summary>
-    /// Bit mask for replay chec
+    /// Bit mask for replay check
     /// </summary>
     private long replayWindow;
 
@@ -76,7 +77,7 @@ public class SrtcpCryptoContext
     private byte[] masterKey;
 
     /// <summary>
-    /// Master salting key
+    /// Master encryption salt
     /// </summary>
     private byte[] masterSalt;
 
@@ -103,7 +104,7 @@ public class SrtcpCryptoContext
     /// <summary>
     /// The HMAC object we used to do packet authentication
     /// </summary>
-    private IMac mac;
+    private IMac mac;             // used for various HMAC computations
 
     // The symmetric cipher engines we need here
     private IBlockCipher cipher = null;
@@ -230,7 +231,7 @@ public class SrtcpCryptoContext
         Arrays.Fill(masterSalt, (byte)0);
     }
 
-     /// <summary>
+    /// <summary>
     /// Gets the authentication tag length of this SRTP cryptographic context
     /// </summary>
     /// <returns></returns>
@@ -490,7 +491,7 @@ public class SrtcpCryptoContext
     /// </summary>
     /// <param name="index">Index number of the SRTCP packet</param>
     /// <returns>Returns true if this sequence number indicates the packet is not a replayed one, false if not</returns>
-    private bool CheckReplay(int index)
+    bool CheckReplay(int index)
     {
         // compute the index of previously received packet and its
         // delta to the new received packet
@@ -570,7 +571,6 @@ public class SrtcpCryptoContext
                     break;
             }
         }
-
         Arrays.Fill(authKey, (byte)0);
 
         // compute the session salt
@@ -588,6 +588,7 @@ public class SrtcpCryptoContext
         cipher.Init(true, encryptionKey);
         Arrays.Fill(encKey, (byte)0);
     }
+
 
     /// <summary>
     /// Updates the SRTP packet index. This method is called after all checks were successful.

@@ -42,7 +42,7 @@ public class SrtpTransformEngine : ITransformEngine
     private SrtcpCryptoContext defaultContextControl;
 
     /// <summary>
-    /// Construct a SRTPTransformEngine based on given master encryption key, master salt key and SRTP/SRTCP policy.
+    /// Constructs a SRTPTransformEngine based on given master encryption key, master salt key and SRTP/SRTCP policy.
     /// </summary>
     /// <param name="masterKey">The master encryption key</param>
     /// <param name="masterSalt">The master salt key</param>

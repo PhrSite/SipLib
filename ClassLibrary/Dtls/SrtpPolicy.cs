@@ -14,7 +14,7 @@
 // License:
 // Customisations: BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
 // Original Source: Apache License
-//-----------------------------------------------------------------------------
+//-------------------------------------
 
 //  Revised: 26 Nov 23 PHR
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net

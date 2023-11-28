@@ -24,6 +24,7 @@
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
 
+
 /*
  * SRTPCryptoContext class is the core class of SRTP implementation. There can
  * be multiple SRTP sources in one SRTP session. And each SRTP stream has a
@@ -49,6 +50,7 @@
  * @author Bing SU (nova.su@gmail.com)
  */
 
+using System.IO;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
@@ -95,14 +97,11 @@ public class SrtpCryptoContext
     /// </summary>
     private int guessedROC;
 
-    /**
-     * RTP sequence number of the packet current processing
-     */
-    private int seqNum;
-
     /// <summary>
     /// RTP sequence number of the packet current processing
     /// </summary>
+    private int seqNum;
+
     private bool seqNumSet;
 
     /// <summary>
@@ -143,7 +142,7 @@ public class SrtpCryptoContext
     /// <summary>
     /// Encryption / Authentication policy for this session
     /// </summary>
-    private SrtpPolicy policy;
+    SrtpPolicy policy;
 
     /// <summary>
     /// The HMAC object we used to do packet authentication
@@ -181,7 +180,7 @@ public class SrtpCryptoContext
     private byte[] rbStore = new byte[4];
 
     /// <summary>
-    /// this is a working store, used by some methods to avoid new operations the methods must use this only to
+    /// This is a working store, used by some methods to avoid new operations the methods must use this only to
     /// store results for immediate processing
     /// </summary>
     private byte[] tempStore = new byte[100];
@@ -392,7 +391,7 @@ public class SrtpCryptoContext
         }
     }
 
-     /// <summary>
+    /// <summary>
     /// Transform a SRTP packet into a RTP packet. This method is called when a SRTP packet is received.
     /// 
     /// Operations done by the this operation include: Authentication check, Packet replay check and Decryption.
@@ -558,7 +557,7 @@ public class SrtpCryptoContext
     /// <param name="seqNo">Sequence number of the packet</param>
     /// <param name="guessedIndex">Guessed roc</param>
     /// <returns>Returns true if this sequence number indicates the packet is not a replayed one, false if not</returns>
-    private bool CheckReplay(int seqNo, long guessedIndex)
+    bool CheckReplay(int seqNo, long guessedIndex)
     {
         // compute the index of previously received packet and its
         // delta to the new received packet

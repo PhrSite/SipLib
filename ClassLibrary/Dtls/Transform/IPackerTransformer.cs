@@ -12,7 +12,7 @@
 // Rafael Soares (raf.csoares@kyubinteractive.com)
 //
 // History:
-// 01 Jul 2020	Rafael Soares  Created.
+// 01 Jul 2020	Rafael Soares   Created.
 //
 // License:
 // BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
@@ -22,9 +22,6 @@
 //  Revised: 26 Nov 23 PHR
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
-
-using Org.BouncyCastle.Bcpg;
-using System.Net.Sockets;
 
 namespace SipLib.Dtls;
 

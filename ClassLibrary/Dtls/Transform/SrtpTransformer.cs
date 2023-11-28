@@ -33,7 +33,7 @@ using System.Collections.Concurrent;
 namespace SipLib.Dtls;
 
 /// <summary>
-/// SRTPTransformer implements PacketTransformer and provides implementations for RTP packet to SRTP packet
+/// SRTPTransformer implements IPacketTransformer and provides implementations for RTP packet to SRTP packet
 /// transformation and SRTP packet to RTP packet transformation logic.
 /// 
 /// It will first find the corresponding SRTPCryptoContext for each packet based on their SSRC and then invoke
@@ -92,7 +92,7 @@ public class SrtpTransformer : IPacketTransformer
     /// <returns>Returns the transformed packet. Returns null if the packet cannot be transformed.</returns>
     public byte[] Transform(byte[] pkt, int offset, int length)
     {
-        bool isLocked = Interlocked.CompareExchange(ref _isLocked, 1, 0) != 0;
+        var isLocked = Interlocked.CompareExchange(ref _isLocked, 1, 0) != 0;
 
         try
         {
@@ -145,7 +145,7 @@ public class SrtpTransformer : IPacketTransformer
     /// <returns>The restored packet</returns>
     public byte[] ReverseTransform(byte[] pkt, int offset, int length)
     {
-        bool isLocked = Interlocked.CompareExchange(ref _isLocked, 1, 0) != 0;
+        var isLocked = Interlocked.CompareExchange(ref _isLocked, 1, 0) != 0;
         try
         {
             // Wrap data into the raw packet for readable format

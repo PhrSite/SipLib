@@ -13,6 +13,10 @@
 // BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
 //-----------------------------------------------------------------------------
 
+//  Revised: 18 Nov 23 PHR
+//      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
+//      -- Added documentation comments and code cleanup
+
 namespace SipLib.Dtls;
 
 /// <summary>
@@ -22,11 +26,11 @@ namespace SipLib.Dtls;
 public class NetConvert
 {
     /// <summary>
-    /// Reverses the byte-order of a ushort (unsigned 16 bit integer0
+    /// Reverses the byte-order of a UInt16 (unsigned 16 bit integer0
     /// </summary>
-    /// <param name="x">Input ushort</param>
-    /// <returns>Returns a ushort with the byte order reversed</returns>
-    public static ushort DoReverseEndian(ushort x)
+    /// <param name="x">Input UInt16</param>
+    /// <returns>Returns a UInt16 with the byte order reversed</returns>
+    public static UInt16 DoReverseEndian(UInt16 x)
     {
         return BitConverter.ToUInt16(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
     }
@@ -38,8 +42,7 @@ public class NetConvert
     /// <returns>Returns a uint with the byte order reversed.</returns>
     public static uint DoReverseEndian(uint x)
     {
-        //return (x << 24 | (x & 0xff00) << 8 | (x & 0xff0000) >> 8 | x >> 24);
-        return BitConverter.ToUInt32(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
+         return BitConverter.ToUInt32(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
     }
 
     /// <summary>
@@ -49,12 +52,11 @@ public class NetConvert
     /// <returns>Returns a ulong with the byte order reversed</returns>
     public static ulong DoReverseEndian(ulong x)
     {
-        //return (x << 56 | (x & 0xff00) << 40 | (x & 0xff0000) << 24 | (x & 0xff000000) << 8 | (x & 0xff00000000) >> 8 | (x & 0xff0000000000) >> 24 | (x & 0xff000000000000) >> 40 | x >> 56);
         return BitConverter.ToUInt64(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
     }
 
     /// <summary>
-    /// Reverses the byte order of a int (32 bit signed integer)
+    /// Reverses the byte order of an int (32 bit signed integer)
     /// </summary>
     /// <param name="x">Input int</param>
     /// <returns>Returns an int with the byte order reversed</returns>
@@ -64,33 +66,33 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Parse a ushort from a network buffer using network byte order.
+    /// Parse a UInt16 from a network buffer using network byte order.
     /// </summary>
     /// <param name="buffer">The buffer to parse the value from.</param>
     /// <param name="posn">The position in the buffer to start the parse from.</param>
-    /// <returns>A ushort value.</returns>
+    /// <returns>A UInt16 value.</returns>
     public static ushort ParseUInt16(byte[] buffer, int posn)
     {
         return (ushort)(buffer[posn] << 8 | buffer[posn + 1]);
     }
 
     /// <summary>
-    /// Parse a uint from a network buffer using network byte order.
+    /// Parse a UInt32 from a network buffer using network byte order.
     /// </summary>
     /// <param name="buffer">The buffer to parse the value from.</param>
     /// <param name="posn">The position in the buffer to start the parse from.</param>
-    /// <returns>A uint value.</returns>
+    /// <returns>A UInt32 value.</returns>
     public static uint ParseUInt32(byte[] buffer, int posn)
     {
         return (uint)(buffer[posn] << 24 | buffer[posn + 1] << 16 | buffer[posn + 2] << 8 | buffer[posn + 3]);
     }
 
     /// <summary>
-    /// Parse a ulong from a network buffer using network byte order.
+    /// Parse a UInt64 from a network buffer using network byte order.
     /// </summary>
     /// <param name="buffer">The buffer to parse the value from.</param>
     /// <param name="posn">The position in the buffer to start the parse from.</param>
-    /// <returns>A ulong value.</returns>
+    /// <returns>A UInt64 value.</returns>
     public static ulong ParseUInt64(byte[] buffer, int posn)
     {
         return 
@@ -105,14 +107,14 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Writes a ushort value to a network buffer using network byte order.
+    /// Writes a UInt16 value to a network buffer using network byte order.
     /// </summary>
     /// <param name="val">The value to write to the buffer.</param>
     /// <param name="buffer">The buffer to write the value to.</param>
     /// <param name="posn">The start position in the buffer to write the value at.</param>
     public static void ToBuffer(ushort val, byte[] buffer, int posn)
     {
-        if (buffer.Length < posn + 2)
+        if(buffer.Length < posn + 2)
         {
             throw new ApplicationException("Buffer was too short for ushort ToBuffer.");
         }
@@ -122,7 +124,8 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Get a buffer representing the unsigned 16 bit integer in network byte (big endian) order.
+    /// Get a buffer representing the unsigned 16 bit integer in network
+    /// byte (big endian) order.
     /// </summary>
     /// <param name="val">The value to convert.</param>
     /// <returns>A buffer representing the value in network order </returns>
@@ -134,7 +137,7 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Writes a uint value to a network buffer using network byte order.
+    /// Writes a UInt32 value to a network buffer using network byte order.
     /// </summary>
     /// <param name="val">The value to write to the buffer.</param>
     /// <param name="buffer">The buffer to write the value to.</param>
@@ -153,7 +156,8 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Get a buffer representing the 32 bit unsigned integer in network byte (big endian) order.
+    /// Get a buffer representing the 32 bit unsigned integer in network
+    /// byte (big endian) order.
     /// </summary>
     /// <param name="val">The value to convert.</param>
     /// <returns>A buffer representing the value in network order </returns>
@@ -165,7 +169,7 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Writes a ulong value to a network buffer using network byte order.
+    /// Writes a UInt64 value to a network buffer using network byte order.
     /// </summary>
     /// <param name="val">The value to write to the buffer.</param>
     /// <param name="buffer">The buffer to write the value to.</param>
@@ -188,7 +192,8 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Get a buffer representing the 64 bit unsigned integer in network byte (big endian) order.
+    /// Get a buffer representing the 64 bit unsigned integer in network
+    /// byte (big endian) order.
     /// </summary>
     /// <param name="val">The value to convert.</param>
     /// <returns>A buffer representing the value in network order </returns>
@@ -200,7 +205,7 @@ public class NetConvert
     }
 
     /// <summary>
-    /// Reverses the endianness of a uint.
+    /// Reverses the endianness of a UInt32.
     /// </summary>
     /// <param name="val">The value to flip.</param>
     /// <returns>The same value but with the endianness flipped.</returns>

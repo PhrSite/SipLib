@@ -21,6 +21,8 @@
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
 
+
+using System.IO;
 using Org.BouncyCastle.Crypto;
 
 namespace SipLib.Dtls;
@@ -29,7 +31,7 @@ namespace SipLib.Dtls;
  * SRTPCipherCTR implements SRTP Counter Mode AES Encryption (AES-CM).
  * Counter Mode AES Encryption algorithm is defined in RFC3711, section 4.1.1.
  * 
- * Other than Null Cipher, RFC3711 defined two encryption algorithms:
+ * Other than Null Cipher, RFC3711 defined two two encryption algorithms:
  * Counter Mode AES Encryption and F8 Mode AES encryption. Both encryption
  * algorithms are capable to encrypt / decrypt arbitrary length data, and the
  * size of packet data is not required to be a multiple of the AES block 

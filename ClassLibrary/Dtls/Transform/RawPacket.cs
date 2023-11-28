@@ -331,7 +331,7 @@ public class RawPacket
             buffer = newBuffer;
         }
     }
- 
+
     /// <summary>
     /// Reads an integer from this packet at specified offset
     /// </summary>

@@ -16,8 +16,6 @@
 //  Revised: 17 Nov 23 PHR
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
-//      -- Commented out unused constructors. The constructors that takes a .NET X509Certificate2 object
-//         cause an exception to be thrown.
 
 using System.Collections;
 using Org.BouncyCastle.Crypto;
@@ -43,6 +41,7 @@ namespace SipLib.Dtls
 
         public virtual void NotifyServerCertificate(Certificate serverCertificate)
         {
+            //Console.WriteLine("DTLS client received server certificate chain of length " + chain.Length);
             mClient.ServerCertificate = serverCertificate;
         }
 
@@ -65,7 +64,7 @@ namespace SipLib.Dtls
         {
             return GetClientCredentials(certificateRequest);
         }
-    }
+    };
 
     /// <summary>
     /// Class for a DTLS-SRTP handshake client.
@@ -104,7 +103,7 @@ namespace SipLib.Dtls
 
         private UseSrtpData clientSrtpData;
 
-        // Asymmetric shared keys derived from the DTLS handshake and used for the SRTP encryption
+        // Asymmetric shared keys derived from the DTLS handshake and used for the SRTP encryption/
         private byte[] srtpMasterClientKey;
         private byte[] srtpMasterServerKey;
         private byte[] srtpMasterClientSalt;
@@ -127,27 +126,40 @@ namespace SipLib.Dtls
         {
         }
 
-        //public DtlsSrtpClient(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) :
-        //    this(DtlsUtils.LoadCertificateChain(certificate), DtlsUtils.LoadPrivateKeyResource(certificate))
-        //{
-        //}
+        /// <summary>
+        /// Constructor. Creates a self-signed certificate from a .NET X509Certificate2
+        /// </summary>
+        /// <param name="certificate">Input certificate</param>
+        public DtlsSrtpClient(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) :
+            this(DtlsUtils.LoadCertificateChain(certificate), DtlsUtils.LoadPrivateKeyResource(certificate))
+        {
+        }
 
-        //public DtlsSrtpClient(string certificatePath, string keyPath) :
-        //    this(new string[] { certificatePath }, keyPath)
-        //{
-        //}
-
-        //public DtlsSrtpClient(string[] certificatesPath, string keyPath) :
-        //    this(DtlsUtils.LoadCertificateChain(certificatesPath), DtlsUtils.LoadPrivateKeyResource(keyPath))
-        //{
-        //}
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="certificatePath">File path to the certificate file</param>
+        /// <param name="keyPath">File path to the private key file</param>
+        public DtlsSrtpClient(string certificatePath, string keyPath) : this(new string[] { certificatePath }, 
+            keyPath)
+        {
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="certificateChain">Contains at least one X.509 certificate. If null, then a self-signed
-        /// certificate will be automatically created.</param>
-        /// <param name="privateKey">Private key for the certificate</param>
+        /// <param name="certificatesPath"></param>
+        /// <param name="keyPath"></param>
+        public DtlsSrtpClient(string[] certificatesPath, string keyPath) :
+            this(DtlsUtils.LoadCertificateChain(certificatesPath), DtlsUtils.LoadPrivateKeyResource(keyPath))
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="certificateChain"></param>
+        /// <param name="privateKey"></param>
         public DtlsSrtpClient(Certificate certificateChain, AsymmetricKeyParameter privateKey) :
             this(certificateChain, privateKey, null)
         {
@@ -162,23 +174,25 @@ namespace SipLib.Dtls
         /// <param name="clientSrtpData">BouncyCastle UseSrtpData object to use. May be null. If null the
         /// a UseSrtpData object will be created. The UseSrtpData class contains the SRTP protection
         /// profiles and the Master Key Index that will be negotiated during the DTLS handshake process.</param>
-        public DtlsSrtpClient(Certificate certificateChain, AsymmetricKeyParameter privateKey, UseSrtpData 
-            clientSrtpData)
+        public DtlsSrtpClient(Certificate certificateChain, AsymmetricKeyParameter privateKey, UseSrtpData clientSrtpData)
         {
             if (certificateChain == null && privateKey == null)
+            {
                 (certificateChain, privateKey) = DtlsUtils.CreateSelfSignedTlsCert();
+            }
 
             if (clientSrtpData == null)
             {
                 SecureRandom random = new SecureRandom();
                 int[] protectionProfiles = { SrtpProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_80 };
-                byte[] mki = new byte[(SrtpParameters.SRTP_AES128_CM_HMAC_SHA1_80.GetCipherKeyLength() + 
-                    SrtpParameters.SRTP_AES128_CM_HMAC_SHA1_80.GetCipherSaltLength()) / 8];
+                byte[] mki = new byte[(SrtpParameters.SRTP_AES128_CM_HMAC_SHA1_80.GetCipherKeyLength() + SrtpParameters.SRTP_AES128_CM_HMAC_SHA1_80.GetCipherSaltLength()) / 8];
                 random.NextBytes(mki); // Reusing our secure random for generating the key.
                 this.clientSrtpData = new UseSrtpData(protectionProfiles, mki);
             }
             else
+            {
                 this.clientSrtpData = clientSrtpData;
+            }
 
             this.mPrivateKey = privateKey;
             mCertificateChain = certificateChain;
@@ -188,8 +202,12 @@ namespace SipLib.Dtls
             Fingerprint = certificate != null ? DtlsUtils.Fingerprint(certificate) : null;
         }
 
-        //public DtlsSrtpClient(UseSrtpData clientSrtpData) : this(null, null, clientSrtpData)
-        //{ }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="clientSrtpData"></param>
+        public DtlsSrtpClient(UseSrtpData clientSrtpData) : this(null, null, clientSrtpData)
+        { }
 
         /// <summary>
         /// Gets the DTLS extensions for this DTLS-SRTP client.
@@ -201,11 +219,12 @@ namespace SipLib.Dtls
             if (TlsSRTPUtils.GetUseSrtpExtension(clientExtensions) == null)
             {
                 if (clientExtensions == null)
+                {
                     clientExtensions = new Hashtable();
+                }
 
                 TlsSRTPUtils.AddUseSrtpExtension(clientExtensions, clientSrtpData);
             }
-
             return clientExtensions;
         }
 
@@ -260,6 +279,7 @@ namespace SipLib.Dtls
             return srtcpPolicy;
         }
 
+
         /// <summary>
         /// Gets the server's master key for SRTP
         /// </summary>
@@ -313,11 +333,11 @@ namespace SipLib.Dtls
             base.NotifyHandshakeComplete();
 
             //Copy master Secret (will be inaccessible after this call)
-            masterSecret = new byte[mContext.SecurityParameters.MasterSecret != null ? 
+            masterSecret = new byte[mContext.SecurityParameters.MasterSecret != null ?
                 mContext.SecurityParameters.MasterSecret.Length : 0];
             Buffer.BlockCopy(mContext.SecurityParameters.MasterSecret, 0, masterSecret, 0, masterSecret.Length);
 
-            //Prepare Srtp Keys (we must do it here because master key will be cleared after that)
+            //Prepare Srtp Keys (we must to it here because master key will be cleared after that)
             PrepareSrtpSharedSecret();
         }
 
@@ -503,9 +523,13 @@ namespace SipLib.Dtls
         {
             string description = null;
             if (message != null)
+            {
                 description += message;
+            }
             if (cause != null)
+            {
                 description += cause;
+            }
 
             string alertMessage = $"{AlertLevel.GetText(alertLevel)}, {AlertDescription.GetText(alertDescription)}";
             alertMessage += !string.IsNullOrEmpty(description) ? $", {description}." : ".";
@@ -542,10 +566,14 @@ namespace SipLib.Dtls
             AlertTypesEnum alertType = AlertTypesEnum.unknown;
 
             if (Enum.IsDefined(typeof(AlertLevelsEnum), alertLevel))
+            {
                 level = (AlertLevelsEnum)alertLevel;
- 
+            }
+
             if (Enum.IsDefined(typeof(AlertTypesEnum), alertDescription))
+            {
                 alertType = (AlertTypesEnum)alertDescription;
+            }
 
             OnAlert?.Invoke(level, alertType, description);
         }
