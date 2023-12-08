@@ -47,7 +47,6 @@ public class DtlsServerUdpTransport
 
         m_Thread = new Thread(ReceiveThread);
         m_Thread.IsBackground = true;
-        m_Thread.Priority = ThreadPriority.Highest;
         m_Thread.Start();
     }
 
@@ -58,7 +57,6 @@ public class DtlsServerUdpTransport
     /// <param name="buf">DTLS-SRTP handshake message to send to the client</param>
     private void DataReady(byte[] buf)
     {
-        Console.WriteLine($"DTLS server transport sending {buf.Length} bytes to client.");
         m_UdpClient.Send(buf, buf.Length, m_RemIpEndPoint);
     }
 

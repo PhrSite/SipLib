@@ -44,6 +44,8 @@
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
 //      -- Added CreateCertificateFromPfxFile()
+//      -- Added CreateSelfSignedEcdsaTlsCert(), CreateSelfSignedBouncyCastleEcdsaCert(),
+//         CreateEcdsaPrivateKeyResource()
 
 using System.Collections;
 using System.Security.Cryptography;
@@ -76,9 +78,15 @@ namespace SipLib.Dtls;
 public class DtlsUtils
 {
     /// <summary>
-    /// The key size when generating random keys for self signed certificates.
+    /// The key size in bits when generating random keys for RSA self signed certificates.
     /// </summary>
     public const int DEFAULT_KEY_SIZE = 2048;
+
+    /// <summary>
+    /// The key size in bits when generating random keys for ECDSA self signed certificates.
+    /// This is the maximum maximum key size for ECDSA keys. 
+    /// </summary>
+    public const int DEFAULT_ECDSA_KEY_SIZE = 384;
 
     /// <summary>
     /// Gets the fingerprint of an .NET X.509 certificate.
@@ -410,7 +418,7 @@ public class DtlsUtils
     /// </summary>
     /// <param name="certificate"></param>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    // <exception cref="Exception"></exception>
     public static X509CertificateStructure LoadCertificateResource(X509Certificate2 certificate)
     {
         if (certificate != null)
@@ -426,7 +434,7 @@ public class DtlsUtils
     /// </summary>
     /// <param name="resource"></param>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    // <exception cref="Exception"></exception>
     public static X509CertificateStructure LoadCertificateResource(string resource)
     {
         PemObject pem = LoadPemResource(resource);
@@ -455,7 +463,7 @@ public class DtlsUtils
     /// </summary>
     /// <param name="resource"></param>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    // <exception cref="Exception"></exception>
     public static AsymmetricKeyParameter LoadPrivateKeyResource(string resource)
     {
         PemObject pem = LoadPemResource(resource);
@@ -479,7 +487,7 @@ public class DtlsUtils
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    // <exception cref="Exception"></exception>
     public static PemObject LoadPemResource(string path)
     {
         using (var s = new System.IO.StreamReader(path))
@@ -733,6 +741,116 @@ public class DtlsUtils
         var tlsCertificate = new Org.BouncyCastle.Crypto.Tls.Certificate(chain);
 
         return (tlsCertificate, privateKey);
+    }
+
+    // 29 Nov 23 PHR
+    /// <summary>
+    /// Creates a self-signed ECDSA BouncyCastle TLS certificate and its private key.
+    /// </summary>
+    /// <param name="subjectName">Subject Name for the certificate. For example: "CN=localhost"</param>
+    /// <param name="issuerName">Issuer Name for the certificate. For example: "CN=root"</param>
+    /// <param name="issuerPrivateKey">The private key of the certificate issuer to use. May
+    /// be null</param>
+    /// <returns></returns>
+    public static (Certificate certificate, AsymmetricKeyParameter privateKey)
+        CreateSelfSignedEcdsaTlsCert(string subjectName, string issuerName, AsymmetricKeyParameter
+        issuerPrivateKey)
+    {
+        var tuple = CreateSelfSignedBouncyCastleEcdsaCert(subjectName, issuerName, 
+            issuerPrivateKey);
+        var certificate = tuple.certificate;
+        var privateKey = tuple.privateKey;
+        var chain = new X509CertificateStructure[] { X509CertificateStructure.
+             GetInstance(certificate.GetEncoded()) };
+        var tlsCertificate = new Certificate(chain);
+
+        return (tlsCertificate, privateKey);
+    }
+
+    // 29 Nov 23 PHR
+    private static (Org.BouncyCastle.X509.X509Certificate certificate, AsymmetricKeyParameter
+        privateKey) CreateSelfSignedBouncyCastleEcdsaCert(string subjectName, string issuerName,
+        AsymmetricKeyParameter issuerPrivateKey)
+    {
+        int keyStrength = DEFAULT_ECDSA_KEY_SIZE;
+        if (issuerPrivateKey == null)
+        {
+            issuerPrivateKey = CreateEcdsaPrivateKeyResource(issuerName);
+        }
+
+        // Generating Random Numbers
+        var randomGenerator = new CryptoApiRandomGenerator();
+        var random = new SecureRandom(randomGenerator);
+        ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA256WITHECDSA", 
+            issuerPrivateKey, random);
+
+        // The Certificate Generator
+        var certificateGenerator = new X509V3CertificateGenerator();
+        certificateGenerator.AddExtension(X509Extensions.SubjectAlternativeName, false, 
+            new GeneralNames(new GeneralName[] { new GeneralName(GeneralName.DnsName, "localhost"), new GeneralName(
+            GeneralName.DnsName, "127.0.0.1") }));
+        certificateGenerator.AddExtension(X509Extensions.ExtendedKeyUsage, true, 
+            new ExtendedKeyUsage(new List<DerObjectIdentifier>() { 
+            new DerObjectIdentifier("1.3.6.1.5.5.7.3.1") }));
+
+        // Serial Number
+        var serialNumber = BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(
+            Int64.MaxValue), random);
+        certificateGenerator.SetSerialNumber(serialNumber);
+
+        // Issuer and Subject Name
+        var subjectDn = new X509Name(subjectName);
+        var issuerDn = new X509Name(issuerName);
+        certificateGenerator.SetIssuerDN(issuerDn);
+        certificateGenerator.SetSubjectDN(subjectDn);
+
+        // Valid For
+        var notBefore = DateTime.UtcNow.Date;
+        var notAfter = notBefore.AddYears(70);
+
+        certificateGenerator.SetNotBefore(notBefore);
+        certificateGenerator.SetNotAfter(notAfter);
+
+        // Subject Public Key
+        var keyGenerationParameters = new KeyGenerationParameters(random, keyStrength);
+        ECKeyPairGenerator keyPairGenerator = new ECKeyPairGenerator();
+
+        keyPairGenerator.Init(keyGenerationParameters);
+        var subjectKeyPair = keyPairGenerator.GenerateKeyPair();
+
+        certificateGenerator.SetPublicKey(subjectKeyPair.Public);
+
+        // self sign certificate
+        var certificate = certificateGenerator.Generate(signatureFactory);
+
+        return (certificate, subjectKeyPair.Private);
+    }
+
+    // 29 Nov 23 PHR
+    /// <summary>
+    /// Creates a private key for ECDSA certificates
+    /// </summary>
+    /// <param name="subjectName">Subject Name for the private key. Defaults to "CN=root"</param>
+    /// <returns>Returns a new private key.</returns>
+    public static AsymmetricKeyParameter CreateEcdsaPrivateKeyResource(string subjectName = 
+        "CN=root")
+    {
+        const int keyStrength = DEFAULT_ECDSA_KEY_SIZE;
+
+        // Generating Random Numbers
+        CryptoApiRandomGenerator randomGenerator = new CryptoApiRandomGenerator();
+        SecureRandom random = new SecureRandom(randomGenerator);
+
+        // Subject Public Key
+        KeyGenerationParameters keyGenerationParameters = new KeyGenerationParameters(random,
+            keyStrength);
+        //        var keyPairGenerator = new RsaKeyPairGenerator();
+        ECKeyPairGenerator keyPairGenerator = new ECKeyPairGenerator();
+
+        keyPairGenerator.Init(keyGenerationParameters);
+        AsymmetricCipherKeyPair subjectKeyPair = keyPairGenerator.GenerateKeyPair();
+
+        return subjectKeyPair.Private;
     }
 
     /// <remarks>Plagiarised from https://github.com/CryptLink/CertBuilder/blob/master/CertBuilder.cs.

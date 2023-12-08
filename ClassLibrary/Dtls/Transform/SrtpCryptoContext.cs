@@ -21,9 +21,12 @@
 //-----------------------------------------------------------------------------
 
 //  Revised: 27 Nov 23 PHR
-//      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
-//      -- Added documentation comments and code cleanup
-
+//              -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
+//              -- Added documentation comments and code cleanup
+//           7 Dec 23 PHR
+//              -- Modified ReverseTransformPacket() to call Update() just before the call to
+//                 ProcessPacketAESCM() to fix the problem of decryption failure when the
+//                 sequence number of the RTP packet rolls over to 0 and roc is still 0.
 
 /*
  * SRTPCryptoContext class is the core class of SRTP implementation. There can
@@ -59,6 +62,9 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities;
 
 namespace SipLib.Dtls;
+
+using RtpCrypto;    // 7 Dec 23 PHR -- For Debug Only
+using static SipLib.Dtls.SrtpCipherF8;
 
 /// <summary>
 /// SRTPCryptoContext class is the core class of SRTP implementation. There can be multiple SRTP sources in one 
@@ -445,6 +451,10 @@ public class SrtpCryptoContext
             }
         }
 
+        // 7 Dec 23 PHR -- Moved here from below to fix the setNum and roc rollover when the input
+        // packet sequence number of rolls over to 0.
+        Update(seqNo, guessedIndex);
+
         // Decrypt packet
         switch (policy.EncType)
         {
@@ -463,7 +473,10 @@ public class SrtpCryptoContext
             default:
                 return false;
         }
-        Update(seqNo, guessedIndex);
+        
+        // 7 Dec 23 PHR -- Moved to above
+        //Update(seqNo, guessedIndex);
+
         return true;
     }
 
