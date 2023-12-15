@@ -162,7 +162,7 @@ public class SipTransport
     /// terminated. May be null if a notification is not required.</param>
     /// <param name="responseReceivedDelegate">Callback function to call when a response is received
     /// for the transaction. Optional, may be null. This may be used when the client transaction user
-    /// need to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
+    /// needs to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
     /// <returns>Returns a new ClientInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
     public ClientInviteTransaction StartClientInviteTransaction(SIPRequest request, IPEndPoint

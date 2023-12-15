@@ -435,38 +435,4 @@ public class MediaDescription
         return Sb.ToString();
     }
 
-    /// <summary>
-    /// Creates a basic MediaDescription object for offerring audio media.
-    /// </summary>
-    /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
-    /// <returns>Returns a new MediaDescription object.</returns>
-    public static MediaDescription CreateAudioSmd(int Port)
-    {
-        MediaDescription AudSmd = new MediaDescription();
-        AudSmd.MediaType = "audio";
-        AudSmd.Port = Port;
-        AudSmd.Transport = "RTP/AVP";
-        AudSmd.MediaFormatNumbers = new List<string>() { "0", "101" };
-        AudSmd.Attributes.Add(new SdpAttribute("fmtp", "101 0-15"));
-        AudSmd.Attributes.Add(new SdpAttribute("rtpmap", "0 PCMU/8000"));
-        AudSmd.Attributes.Add(new SdpAttribute("rtpmap", "101 telephone-event/8000"));
-
-        return AudSmd;
-    }
-
-    /// <summary>
-    /// Builds a basic MediaDescription object for offering H.264 video using the Basic Level 1 video
-    /// profile.
-    /// </summary>
-    /// <param name="Port"></param>
-    /// <returns></returns>
-    public static MediaDescription CreateVideoSmd(int Port)
-    {
-        MediaDescription VidSmd = new MediaDescription("video", Port, "96");
-        VidSmd.Transport = "RTP/AVP";
-        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("rtpmap:96 H264/90000"));
-        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 " + "profile-level-id=42801f"));
-
-        return VidSmd;
-    }
 }

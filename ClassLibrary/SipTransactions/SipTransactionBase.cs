@@ -129,7 +129,7 @@ public class SipTransactionBase
         TransactionTerminationReasonEnum.NoResponseReceived;
 
     /// <summary>
-    /// Gets the last responsed received for a client transaction. Will be null if a response was never
+    /// Gets the last response received for a client transaction. Will be null if a response was never
     /// received.
     /// </summary>
     public SIPResponse LastReceivedResponse { get; protected set; } = null;

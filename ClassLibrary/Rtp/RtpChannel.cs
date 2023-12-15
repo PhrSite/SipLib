@@ -6,9 +6,13 @@ namespace SipLib.Rtp;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using Org.BouncyCastle.Crypto.Paddings;
 using SipLib.Channels;
 using SipLib.RtpCrypto;
+using SipLib.Sdp;
+
+using Org.BouncyCastle.Crypto.Tls;
+using Org.BouncyCastle.Crypto;
+using SipLib.Dtls;
 
 /// <summary>
 /// Delegate type for the RtpPacketReceived event of the RtpChannel class.
@@ -23,6 +27,13 @@ public delegate void RtpPacketReceivedDelegate(RtpPacket rtpPacket);
 public delegate void RtpPacketSentDelegate(RtpPacket rtpPacket);
 
 /// <summary>
+/// Delegate type for the DtlsHandshakeFailed event of the RtpChannel class
+/// </summary>
+/// <param name="IsServer">True if this RtpChannel is the DTLS server or false if it is the DTLS client.</param>
+/// <param name="remoteEndPoint">IP endpoint of the remote peer</param>
+public delegate void DtlsHandshakeFailedDelegate(bool IsServer, IPEndPoint remoteEndPoint);
+
+/// <summary>
 /// Class for sending and receiving Real Time Protocol (RTP) media such as audio, video and text (RTT).
 /// </summary>
 public class RtpChannel
@@ -33,6 +44,7 @@ public class RtpChannel
     private IPEndPoint m_remoteRtcpEndpoint = null;
 
     private string m_mediaType = null;
+    private bool m_Incoming = false;
 
     private UdpClient m_RtpUdpClient = null;
     private UdpClient m_RtcpUdpClient = null;
@@ -46,6 +58,29 @@ public class RtpChannel
     private SrtpEncryptor m_srtpEncryptor = null;
     private SrtpDecryptor m_srtpDecryptor = null;
 
+    private static Certificate m_SelfSigned = null;
+    private static AsymmetricKeyParameter m_AsymmetricKeyParameter = null;
+    private static string m_CertificateFingerprint = null;
+
+    /// <summary>
+    /// Gets the fingerprint of the self-signed X.509 certificate that will be used for DTLS-SRTP.
+    /// The certificate is a required SDP attribute for calls that offer or answer DTLS-SRTP media encryption.
+    /// </summary>
+    public static string CertificateFingerprint
+    {
+        get
+        {
+            if (m_SelfSigned == null)
+            {   // Only do this once so the same X.509 self-signed certificate will be used for all RtpChannels
+                // that use DTLS-SRTP
+                (m_SelfSigned, m_AsymmetricKeyParameter) = DtlsUtils.CreateSelfSignedTlsCert();
+                m_CertificateFingerprint = DtlsUtils.Fingerprint(m_SelfSigned).ToString();
+            }
+
+            return m_CertificateFingerprint;
+        }
+    }
+
     /// <summary>
     /// Event that is fired when a RTP media packet has been received by this RtpChannel
     /// </summary>
@@ -56,6 +91,11 @@ public class RtpChannel
     /// </summary>
     public event RtpPacketSentDelegate RtpPacketSent = null;
 
+    /// <summary>
+    /// Event that is fired fired if the DTLS-SRTP handshake failed
+    /// </summary>
+    public event DtlsHandshakeFailedDelegate DtlsHandshakeFailed = null;
+
     private RtpChannel(IPEndPoint localRtpEndpoint, string mediaType, bool enableRtcp, string CNAME)
     {
         m_localRtpEndPoint = localRtpEndpoint;
@@ -64,38 +104,177 @@ public class RtpChannel
         m_CNAME = CNAME;
         if (string.IsNullOrEmpty(m_CNAME) == true)
             m_CNAME = $"RtpChannel_{m_mediaType}@{m_localRtpEndPoint}";
-
-        m_localRtcpEndPoint = new IPEndPoint(m_localRtpEndPoint.Address, m_localRtpEndPoint.Port + 1);
-
-        CreateUdpEndPoints();
     }
 
+    private bool m_IsDtlsSrtp = false;
+    private bool m_IsSdesSrtp = false;
+
     /// <summary>
-    /// Creates a new RtpChannel object for an incoming call or an outgoing call.
+    /// Creates an RtpChannel using the offered and answered Session Description Protocol (SDP) parameters.
     /// </summary>
-    /// <param name="localRtpEndpoint">Local IPEndPoint to listen on for RTP packets</param>
-    /// <param name="mediaType">Media type. Must be one of: audio, text (for RTT), message (for MSRP) or
-    /// video.</param>
+    /// <param name="Incoming">Set to true if the call is incoming.</param>
+    /// <param name="OfferedSdp">The SDP that was offered.</param>
+    /// <param name="OfferedMd">The offered media description parameter block from the offered SDP</param>
+    /// <param name="AnsweredSdp">The SDP that was answered.</param>
+    /// <param name="AnsweredMd">The answered media description parameter block from the answered SDP</param>
     /// <param name="enableRtcp">If true, then RTCP packets will be sent periodically.</param>
     /// <param name="CNAME">Cononical name to use for sending SDES RTCP packets that identify the
     /// media source. If null, then a default CNAME will be automatically generated.</param>
-    /// <param name="remoteRtpEndPoint">Remote endpoint to send media to and to receive media from</param>
-    /// <param name="receiveContext">CryptoContext to use for decrypting RTP and RTCP packets
-    /// that are received from the remote endpoint. If null, then received packets will not be encrypted.</param>
-    /// <param name="sendContext">CryptoContext to use for encrypting RTP and RTCP packets that are sent to
-    /// the remote endpoints. If null, then RTP and RTCP packets will not be encrypted.</param>
-    /// <returns></returns>
-    public static RtpChannel Create(IPEndPoint localRtpEndpoint, string mediaType, bool enableRtcp,
-        string CNAME, IPEndPoint remoteRtpEndPoint, CryptoContext receiveContext = null, 
-        CryptoContext sendContext = null)
+    /// <returns>Returns a RtpChannel, string tuple. If the RtpChannel return value is null then an error
+    /// was detected and the string return value will contain an explanation of the error. If the RtpChannel
+    /// return value is not null then the string return value will be null.</returns>
+    public static (RtpChannel, string) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
+        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string CNAME)
     {
-        RtpChannel rtpChannel = new RtpChannel(localRtpEndpoint, mediaType, enableRtcp, CNAME);
-        rtpChannel.m_remoteRtpEndpoint = remoteRtpEndPoint;
-        rtpChannel.m_remoteRtcpEndpoint = new IPEndPoint(remoteRtpEndPoint.Address, remoteRtpEndPoint.Port + 1);
-        rtpChannel.m_srtpEncryptor = new SrtpEncryptor(sendContext);
-        rtpChannel.m_srtpDecryptor = new SrtpDecryptor(receiveContext);
+        if (OfferedMd.MediaType != AnsweredMd.MediaType)
+            return (null, "Media type mismatch");
 
-        return rtpChannel;
+        Sdp LocalSdp, RemoteSdp;
+        MediaDescription LocalMd, RemoteMd;
+        IPEndPoint localRtpEndPoint, remoteRtpEndPoint;
+
+        if (Incoming == true)
+        {   // Its an incoming call
+            LocalSdp = AnsweredSdp;
+            LocalMd = AnsweredMd;
+            RemoteSdp = OfferedSdp;
+            RemoteMd = OfferedMd;
+        }
+        else
+        {   // Its an outgoing call
+            LocalSdp = OfferedSdp;
+            LocalMd = OfferedMd;
+            RemoteSdp = AnsweredSdp;
+            RemoteMd = AnsweredMd;
+        }
+
+        localRtpEndPoint = Sdp.GetMediaEndPoint(LocalSdp, LocalMd);
+        remoteRtpEndPoint = Sdp.GetMediaEndPoint(RemoteSdp, RemoteMd);
+        RtpChannel rtpChannel = new RtpChannel(localRtpEndPoint, LocalMd.MediaType, enableRtcp, CNAME);
+        rtpChannel.m_Incoming = Incoming;
+        rtpChannel.m_remoteRtcpEndpoint = remoteRtpEndPoint;
+        rtpChannel.m_mediaType = LocalMd.MediaType;
+
+        // Figure out the RTCP endpoints. See RFC 3605
+        rtpChannel.m_localRtcpEndPoint = rtpChannel.GetRtcpEndPoint(LocalMd, localRtpEndPoint);
+        rtpChannel.m_remoteRtcpEndpoint = rtpChannel.GetRtcpEndPoint(RemoteMd, remoteRtpEndPoint);
+
+        if (AnsweredMd.Transport.IndexOf("SAVP") >= 0)
+        {   // Using the Secure Audio Video Profile (SAVP) for either SDES-SRTP or DTLS-SRTP. Figure out 
+            // which one.
+
+            // The fingerprint attribute can be in the session level or in the media level. If its present
+            // in either then use DTLS-SRTP
+            if (AnsweredSdp.GetNamedAttribute("fingerprint") != null || AnsweredMd.GetNamedAttribute(
+                "fingerprint") != null)
+            {
+                rtpChannel.m_IsDtlsSrtp = true;
+
+            }
+            else
+            {   // If its SDES-SRTP then there must be at least one crypto attribute in the answered media
+                // description
+
+                // Set up the encryptor and the decryptor based on the answered crypto suite.
+                List<CryptoAttribute> AnsweredCryptoAttributes = GetCryptoAttributes(AnsweredMd);
+                List<CryptoAttribute> OfferedCryptoAttributes = GetCryptoAttributes(OfferedMd);
+                if (AnsweredCryptoAttributes.Count > 0 && OfferedCryptoAttributes.Count > 0)
+                {
+                    string selectedCryptoSuite = AnsweredCryptoAttributes[0].CryptoSuite;
+                    CryptoAttribute senderAttribute, receiverAttribute;
+                    if (Incoming == true)
+                    {
+                        senderAttribute = AnsweredCryptoAttributes[0];
+                        receiverAttribute = GetSelectedCryptoAttibute(OfferedCryptoAttributes, selectedCryptoSuite);
+                        if (receiverAttribute == null)
+                            return (null, "Thd selected crypto suite was not found in the offered crypto attributes");
+                    }
+                    else
+                    {
+                        senderAttribute = GetSelectedCryptoAttibute(OfferedCryptoAttributes, selectedCryptoSuite);
+                        if (senderAttribute == null)
+                            return (null, "The selected crypto suite was not found in the offered crypto attributes");
+                        receiverAttribute = AnsweredCryptoAttributes[0];
+                    }
+
+                    CryptoContext sendContext = CryptoContext.CreateFromCryptoAttribute(senderAttribute);
+                    CryptoContext receiveContext = CryptoContext.CreateFromCryptoAttribute(receiverAttribute);
+                    rtpChannel.m_srtpEncryptor = new SrtpEncryptor(sendContext);
+                    rtpChannel.m_srtpDecryptor = new SrtpDecryptor(receiveContext);
+                    rtpChannel.m_IsSdesSrtp = true;
+                }
+                else
+                {
+                    if (AnsweredCryptoAttributes.Count == 0)
+                        return (null, "SDES-SRTP was answered but no crypto attributes were provided in the " +
+                            "answered media description");
+
+                    if (OfferedCryptoAttributes.Count == 0)
+                        return (null, "SDES-SRTP was answered but no crypto attributes were offered");
+                }
+            }
+        }
+        else
+        {   // Not using any encryption
+            
+        }
+        
+        return (rtpChannel, null);
+    }
+
+    private static CryptoAttribute GetSelectedCryptoAttibute(List<CryptoAttribute> OfferedCryptoAttributes,
+        string cryptoSuiteName)
+    {
+        CryptoAttribute cryptoAttribute = null;
+        foreach (CryptoAttribute attr in OfferedCryptoAttributes)
+        {
+            if (attr.CryptoSuite == cryptoSuiteName)
+            {
+                cryptoAttribute = attr;
+                break;
+            }
+        }
+
+
+        return cryptoAttribute;
+    }
+
+    private static List<CryptoAttribute> GetCryptoAttributes(MediaDescription mediaDescription)
+    {
+        List<CryptoAttribute> list = new List<CryptoAttribute>();
+        List<SdpAttribute> attrList = mediaDescription.GetNamedAttributes("crypto");
+        foreach (SdpAttribute attr in attrList)
+            list.Add(CryptoAttribute.Parse(attr.Value));
+
+        return list;
+    }
+
+    // See RFC 3605
+    private IPEndPoint GetRtcpEndPoint(MediaDescription mediaDescription, IPEndPoint remoteRtpEndPoint)
+    {
+        IPAddress iPAddress = remoteRtpEndPoint.Address;
+        int port = remoteRtpEndPoint.Port + 1;
+        SdpAttribute Sa = mediaDescription.GetNamedAttribute("rtcp");
+        if (Sa != null && string.IsNullOrEmpty(Sa.Value) == false)
+        {
+            string[] attrFields = Sa.Value.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            if (attrFields != null && (attrFields.Length == 1 || attrFields.Length == 4))
+            {
+                // The port number is the first field  
+                int index = attrFields[0].IndexOf("/");
+                if (index >= 0)
+                    // Multiple ports have been specified, but we want only the first one
+                    attrFields[0] = attrFields[0].Substring(0, index);
+
+                int.TryParse(attrFields[0], out port);  // If this fails then the default port will be used
+
+                if (attrFields.Length == 4)
+                    // An IP address has been provided. If this fails then the default will be used
+                    IPAddress.TryParse(attrFields[3], out iPAddress);
+            }
+        }
+
+        return new IPEndPoint(iPAddress, port);
     }
 
     private void CreateUdpEndPoints()
@@ -125,10 +304,81 @@ public class RtpChannel
     /// </summary>
     public void StartListening()
     {
+        if (m_IsDtlsSrtp == false)
+            // Start immediately
+            InternalStartListening();
+        else
+            // Don't start listening until the DTLS-SRTP handshake is completed  
+            StartDtlsHandshake();
+
+    }
+
+    private void StartDtlsHandshake()
+    {
+        Thread HandshakeThread;
+
+        if (m_Incoming == true)
+            HandshakeThread = new Thread(DtlsServerHandshakeThread);
+        else
+            HandshakeThread = new Thread(DtlsClientHandshakeThread);
+
+        HandshakeThread.IsBackground = true;
+        HandshakeThread.Priority = ThreadPriority.Highest;
+        HandshakeThread.Start();
+    }
+
+    private DtlsSrtpTransport m_DtlsTransport = null;
+
+    private void DtlsClientHandshakeThread()
+    {
+        DtlsSrtpClient dtlsClient = new DtlsSrtpClient(m_SelfSigned, m_AsymmetricKeyParameter);
+        DtlsSrtpTransport dtlsClientTransport = new DtlsSrtpTransport(dtlsClient);
+        dtlsClientTransport.TimeoutMilliseconds = 1000;
+        UdpClient udpClient = new UdpClient(m_localRtpEndPoint);
+        DtlsClientUdpTransport dtlsClientUdpTransport = new DtlsClientUdpTransport(udpClient, m_remoteRtpEndpoint,
+            dtlsClientTransport);
+        Task<bool> clientTask = Task.Run<bool>(() => dtlsClientTransport.DoHandshake(out _));
+        bool Result = clientTask.Result;
+
+        dtlsClientUdpTransport.Close(); // Also closes the udpClient
+
+        if (dtlsClientTransport.IsHandshakeFailed() == false)
+        {
+            m_DtlsTransport = dtlsClientTransport;
+            InternalStartListening();
+        }
+        else
+            DtlsHandshakeFailed?.Invoke(false, m_remoteRtpEndpoint);
+    }
+
+    private void DtlsServerHandshakeThread()
+    {
+        DtlsSrtpServer dtlsSrtpServer = new DtlsSrtpServer(m_SelfSigned, m_AsymmetricKeyParameter);
+        DtlsSrtpTransport dtlsServerTransport = new DtlsSrtpTransport(dtlsSrtpServer);
+        dtlsServerTransport.TimeoutMilliseconds = 1000;
+        UdpClient udpClient = new UdpClient(m_localRtpEndPoint);
+        DtlsServerUdpTransport dtlsServerUdpTransport = new DtlsServerUdpTransport(udpClient, m_remoteRtpEndpoint,
+            dtlsServerTransport);
+        Task<bool> serverTask = Task.Run<bool>(() => dtlsServerTransport.DoHandshake(out _));
+        bool Result = serverTask.Result;
+
+        dtlsServerUdpTransport.Close(); // Also closes the udpClient
+
+        if (dtlsServerTransport.IsHandshakeFailed() == false)
+        {
+            m_DtlsTransport = dtlsServerTransport;
+            InternalStartListening();
+        }
+        else
+            DtlsHandshakeFailed?.Invoke(true, m_remoteRtpEndpoint);
+    }
+
+    private void InternalStartListening()
+    {
         if (m_IsListening == true || m_ThreadsEnding == true)
             return;
 
-        m_IsListening = true;
+        CreateUdpEndPoints();
 
         m_RtpListenerThread = new Thread(RtpListenerThread);
         m_RtpListenerThread.Priority = ThreadPriority.Highest;
@@ -136,6 +386,9 @@ public class RtpChannel
 
         m_RtcpListenerThread = new Thread(RtcpListenerThread);
         m_RtcpListenerThread.Start();
+
+        m_IsListening = true;
+
     }
 
     /// <summary>
@@ -195,7 +448,14 @@ public class RtpChannel
         if (buf.Length < RtpPacket.MIN_PACKET_LENGTH || Ipe == null)
             return;     // Error: Packet too short or no remote endpoint provided
 
-        byte[] decryptedPckt = m_srtpDecryptor.DecryptRtpPacket(buf);
+        byte[] decryptedPckt;
+        if (m_IsSdesSrtp == true)
+            decryptedPckt = m_srtpDecryptor.DecryptRtpPacket(buf);
+        else if (m_IsDtlsSrtp == true)
+            decryptedPckt = m_DtlsTransport.UnprotectRTP(buf, 0, buf.Length);
+        else
+            decryptedPckt = buf;
+
         RtpPacket rtpPacket = new RtpPacket(decryptedPckt);
 
         if (m_RtcpEnabled == true)
@@ -235,7 +495,13 @@ public class RtpChannel
         if (buf.Length < RtcpHeader.RTCP_HEADER_LENGTH)
             return;     // Error: input buffer is too short
 
-        byte[] decryptedPckt = m_srtpDecryptor.DecryptRtcpPacket(buf);
+        byte[] decryptedPckt;
+        if (m_IsSdesSrtp == true)
+            decryptedPckt = m_srtpDecryptor.DecryptRtcpPacket(buf);
+        else if (m_IsDtlsSrtp == true)
+            decryptedPckt = m_DtlsTransport.UnprotectRTCP(buf, 0, buf.Length);
+        else
+            decryptedPckt = buf;
 
         // TODO: Handle the RTCP packet
     }
@@ -256,7 +522,14 @@ public class RtpChannel
             // TODO: RTCP calculations
         }
 
-        byte[] encryptedPckt = m_srtpEncryptor.EncryptRtpPacket(rtpPacket.PacketBytes);
+        byte[] encryptedPckt;
+        byte[] packetBytes = rtpPacket.PacketBytes;
+        if (m_IsSdesSrtp == true)
+            encryptedPckt = m_srtpEncryptor.EncryptRtpPacket(packetBytes);
+        else if (m_IsDtlsSrtp == true)
+            encryptedPckt = m_DtlsTransport.ProtectRTP(packetBytes, 0, packetBytes.Length);
+        else
+            encryptedPckt = packetBytes;
 
         try
         {
