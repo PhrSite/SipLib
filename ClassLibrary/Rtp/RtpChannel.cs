@@ -6,6 +6,8 @@ namespace SipLib.Rtp;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Timers;
+
 using SipLib.Channels;
 using SipLib.RtpCrypto;
 using SipLib.Sdp;
@@ -53,10 +55,22 @@ public class RtpChannel
 
     private bool m_RtcpEnabled = false;
     private string m_CNAME = null;
+    private uint m_SSRC = 0;
 
     private bool m_IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     private SrtpEncryptor m_srtpEncryptor = null;
     private SrtpDecryptor m_srtpDecryptor = null;
+    private bool m_IsDtlsSrtp = false;
+    private bool m_IsSdesSrtp = false;
+
+    private RtpReceiveStatisticsManager m_RtpReceiveStaticsManager = null;
+    private RtpSentStatisticsManager m_RtpSentStaticsManager = null;
+    private Timer m_RtcpTimer = null;
+    private const double RTCP_TIMER_INTERVAL_MS = 5000;
+    private const int AUDIO_SAMPLE_RATE = 8000;
+    private const int AUDIO_PACKETS_PER_SECOND = 50;
+    private const int RTT_SAMPLE_RATE = 1000;
+    private const int RTT_PACKETS_PER_SECOND = 0;   // Because its not a constant
 
     private static Certificate m_SelfSigned = null;
     private static AsymmetricKeyParameter m_AsymmetricKeyParameter = null;
@@ -96,18 +110,64 @@ public class RtpChannel
     /// </summary>
     public event DtlsHandshakeFailedDelegate DtlsHandshakeFailed = null;
 
+    private static Random m_Random = new Random();
+
     private RtpChannel(IPEndPoint localRtpEndpoint, string mediaType, bool enableRtcp, string CNAME)
     {
         m_localRtpEndPoint = localRtpEndpoint;
         m_mediaType = mediaType;
         m_RtcpEnabled = enableRtcp;
         m_CNAME = CNAME;
+        m_SSRC = (uint) m_Random.Next();
+
         if (string.IsNullOrEmpty(m_CNAME) == true)
             m_CNAME = $"RtpChannel_{m_mediaType}@{m_localRtpEndPoint}";
+
+        // Enable RTCP only if the media type is audio or RTT (text)
+        if (RtcpEnabled == true)
+        {
+            // TODO: Figure out the sample rate and the packets/second based on the audio codec in use.
+
+            int SampleRate, PacketsPerSeconds;
+            if (m_mediaType == "audio")
+            {
+                SampleRate = AUDIO_SAMPLE_RATE;
+                PacketsPerSeconds = AUDIO_PACKETS_PER_SECOND;
+            }
+            else
+            {   // It must be RTT (m_mediaType == "text")
+                SampleRate = RTT_SAMPLE_RATE;
+                PacketsPerSeconds = RTT_PACKETS_PER_SECOND;
+            }
+
+            m_RtpReceiveStaticsManager = new RtpReceiveStatisticsManager(SampleRate, PacketsPerSeconds, m_mediaType);
+            m_RtpSentStaticsManager = new RtpSentStatisticsManager(SampleRate);
+            m_RtcpTimer = new Timer(RTCP_TIMER_INTERVAL_MS);
+            m_RtcpTimer.AutoReset = true;
+            m_RtcpTimer.Elapsed += OnRtcpTimerExpired;
+        }
+    }
+    
+    /// <summary>
+    /// Gets or sets the RTP SSRC for this RtpChannel. By default, the SSRC is set to a random unsigned 32-bit
+    /// number so there is usually no need to change it by calling the setter.
+    /// </summary>
+    public uint SSRC
+    {
+        get { return m_SSRC; }
+        set { m_SSRC = value; }
     }
 
-    private bool m_IsDtlsSrtp = false;
-    private bool m_IsSdesSrtp = false;
+    private bool RtcpEnabled
+    {
+        get
+        {
+            if (m_RtcpEnabled == true && (m_mediaType == "audio" || m_mediaType == "text"))
+                return true;
+            else
+                return false;
+        }
+    }
 
     /// <summary>
     /// Creates an RtpChannel using the offered and answered Session Description Protocol (SDP) parameters.
@@ -120,7 +180,7 @@ public class RtpChannel
     /// <param name="enableRtcp">If true, then RTCP packets will be sent periodically.</param>
     /// <param name="CNAME">Cononical name to use for sending SDES RTCP packets that identify the
     /// media source. If null, then a default CNAME will be automatically generated.</param>
-    /// <returns>Returns a RtpChannel, string tuple. If the RtpChannel return value is null then an error
+    /// <returns>Returns a (RtpChannel, string) tuple. If the RtpChannel return value is null then an error
     /// was detected and the string return value will contain an explanation of the error. If the RtpChannel
     /// return value is not null then the string return value will be null.</returns>
     public static (RtpChannel, string) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
@@ -128,6 +188,9 @@ public class RtpChannel
     {
         if (OfferedMd.MediaType != AnsweredMd.MediaType)
             return (null, "Media type mismatch");
+
+        if (OfferedMd.MediaType != "audio" && OfferedMd.MediaType == "text" && OfferedMd.MediaType == "video")
+            return (null, $"Uknown media type: {OfferedMd.MediaType}");
 
         Sdp LocalSdp, RemoteSdp;
         MediaDescription LocalMd, RemoteMd;
@@ -305,7 +368,7 @@ public class RtpChannel
     public void StartListening()
     {
         if (m_IsDtlsSrtp == false)
-            // Start immediately
+            // Start immediately for SDES-SRTP or no encryption
             InternalStartListening();
         else
             // Don't start listening until the DTLS-SRTP handshake is completed  
@@ -387,8 +450,87 @@ public class RtpChannel
         m_RtcpListenerThread = new Thread(RtcpListenerThread);
         m_RtcpListenerThread.Start();
 
+        if (RtcpEnabled == true)
+        {
+            // Send an empty Sender report with an SDES packet to associate the RtpChannel's SSRC with the assigned
+            // CNAME
+            OnRtcpTimerExpired(null, null);
+
+            m_RtcpTimer.Enabled = true;
+            m_RtcpTimer.Start();
+        }
+
         m_IsListening = true;
 
+    }
+
+    /// <summary>
+    /// Event handler for the Elapsed event of the m_RtcpTimer object. This timer only runs if RTCP processing
+    /// is enabled.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnRtcpTimerExpired(object sender, ElapsedEventArgs e)
+    {
+        if (m_ThreadsEnding == true)
+            return;
+
+        // Get the current received and sent statistics
+        RtpReceiveStatistics currentReceiveStats = m_RtpReceiveStaticsManager.CurrentStatistics;
+        RtpSentStatistics currentSentStats = m_RtpSentStaticsManager.GetCurrentStatistics();
+        DateTime utcNow = DateTime.UtcNow;
+
+        // Build an RTCP compound packet containing a Sender report block, a Receiver report block and an SDES block
+        RtcpCompoundPacket rtcpCompoundPacket = new RtcpCompoundPacket();
+        SenderReport senderReport = new SenderReport();
+        senderReport.SSRC = m_SSRC;
+        senderReport.SenderInfo.NTP = utcNow;
+        senderReport.SenderInfo.RtpTimestamp = currentSentStats.Timestamp;
+        senderReport.SenderInfo.SenderPacketCount = currentSentStats.PacketsSent;
+        senderReport.SenderInfo.SenderOctetCount = currentSentStats.BytesSent;
+
+        ReportBlock rb = new ReportBlock();
+        rb.SSRC = currentReceiveStats.SSRC;
+        if (currentReceiveStats.PacketsReceived < currentReceiveStats.PacketsExpected && currentReceiveStats.
+            PacketsExpected != 0)
+        {   // See Section 6.4.1 of RFC 3550
+            double LostFraction = 1 - (double)currentReceiveStats.PacketsReceived / currentReceiveStats.PacketsExpected;
+            rb.FractionLost = (byte)(LostFraction * 256);
+            rb.CumulativePacketsLost = (uint)(currentReceiveStats.PacketsExpected - currentReceiveStats.PacketsReceived);
+        }
+
+        rb.HighestSequenceNumberReceived = currentReceiveStats.ExtendedLastSequenceNumber;
+        rb.InterarrivalJitter = (uint)currentReceiveStats.SmoothedJitter.Maximum;
+        senderReport.AddReportBlock(rb);
+
+        rtcpCompoundPacket.SenderReports.Add(senderReport);
+
+        SdesItem sdesItem = new SdesItem(SdesItemType.CNAME, $"{m_CNAME}@{m_localRtpEndPoint.Address}");
+        SdesPacket sdesPacket = new SdesPacket(m_SSRC, sdesItem);
+        rtcpCompoundPacket.SdesPackets.Add(sdesPacket);
+
+        SendRtcpPacket(rtcpCompoundPacket.ToByteArray());
+    }
+
+    private void SendRtcpPacket(byte[] packetBytes)
+    {
+        byte[] encryptedPacket = null;
+        if (m_IsSdesSrtp == true)
+            encryptedPacket = m_srtpEncryptor.EncryptRtcpPacket(packetBytes);
+        else if (m_IsDtlsSrtp == true)
+            m_DtlsTransport.ProtectRTCP(packetBytes, 0, packetBytes.Length);
+        else
+            encryptedPacket = packetBytes;
+
+        if (encryptedPacket == null)
+            return;     // Error encrypting the RTCP compound packet
+
+        try
+        {
+            m_RtcpUdpClient.Send(encryptedPacket, encryptedPacket.Length);
+        }
+        catch (SocketException) { }
+        catch (Exception) { }
     }
 
     /// <summary>
@@ -401,6 +543,18 @@ public class RtpChannel
             return;
         
         m_ThreadsEnding = true;
+
+        if (RtcpEnabled == true && m_RtcpTimer != null)
+        {
+            try
+            {
+                m_RtcpTimer.Stop();
+                m_RtcpTimer.Dispose();
+                m_RtcpTimer = null;
+            }
+            catch { }
+        }
+
         // Closing the UdpClient objects will cause the threads to terminate
         if (m_RtpUdpClient != null)
         {
@@ -458,10 +612,8 @@ public class RtpChannel
 
         RtpPacket rtpPacket = new RtpPacket(decryptedPckt);
 
-        if (m_RtcpEnabled == true)
-        {
-            // TODO: handle RTCP receive statistics
-        }
+        if (RtcpEnabled == true)
+            m_RtpReceiveStaticsManager.Update(decryptedPckt);
 
         RtpPacketReceived?.Invoke(rtpPacket);
     }
@@ -517,13 +669,11 @@ public class RtpChannel
 
         RtpPacketSent ?.Invoke(rtpPacket);
 
-        if (m_RtcpEnabled == true)
-        {
-            // TODO: RTCP calculations
-        }
-
         byte[] encryptedPckt;
         byte[] packetBytes = rtpPacket.PacketBytes;
+        if (RtcpEnabled == true)
+            m_RtpSentStaticsManager.Update(packetBytes);
+
         if (m_IsSdesSrtp == true)
             encryptedPckt = m_srtpEncryptor.EncryptRtpPacket(packetBytes);
         else if (m_IsDtlsSrtp == true)
