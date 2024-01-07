@@ -89,8 +89,7 @@ public class SdpUnitTests
         Assert.True(sdp2.Bandwidth == "CT:500", "The bandwidth parameter is incorrect");
 
         Assert.NotNull(sdp2.ConnectionData);
-        Assert.True(sdp2.ConnectionData.Address.ToString() == "224.2.17.12", "The c= address " +
-        "is incorrect");
+        Assert.True(sdp2.ConnectionData.Address.ToString() == "224.2.17.12", "The c= address is incorrect");
 
         Assert.True(sdp2.Media.Count == 2, "Incorrect number of media blocks");
         Assert.True(sdp2.Media[0].MediaType == "audio", "The first media type is incorrect");

@@ -13,12 +13,12 @@ internal class RtpReceiveStatisticsManager
     private DateTime m_FirstPacketTime = DateTime.MinValue;
 
     /// <summary>
-    /// Time in RTP timestamp units that previous RTP packet that was received. See Section 6.4.1 of RFC 3550.
+    /// Time in RTP timestamp units that previous RTP rtpPacket that was received. See Section 6.4.1 of RFC 3550.
     /// </summary>
     /// 
     private long m_Last_R = 0;
     /// <summary>
-    /// Timestamp value from the previous RTP packet. See Section 6.4.1 of RFC 3550.
+    /// Timestamp value from the previous RTP rtpPacket. See Section 6.4.1 of RFC 3550.
     /// </summary>
     private long m_Last_S = 0;
 
@@ -33,7 +33,7 @@ internal class RtpReceiveStatisticsManager
     private long m_Cur_J = 0;
 
     /// <summary>
-    /// Sequence number from the previous RTP packet.
+    /// Sequence number from the previous RTP rtpPacket.
     /// </summary>
     private ushort m_Last_SEQ = 0;
 
@@ -49,8 +49,8 @@ internal class RtpReceiveStatisticsManager
     private int m_Delay = 0;
 
     /// <summary>
-    /// Window for detecting packets out of order or missing using the packet sequence number. This corresponds 
-    /// to 2000 * 0.20 seconds/packet = 40 seconds.
+    /// Window for detecting packets out of order or missing using the rtpPacket sequence number. This corresponds 
+    /// to 2000 * 0.20 seconds/rtpPacket = 40 seconds.
     /// </summary>
     private const ushort OutOfOrderThreshold = 2000;
 
@@ -111,20 +111,19 @@ internal class RtpReceiveStatisticsManager
     }
 
     /// <summary>
-    /// Processes a new RTP packet and updates the current statistics. This function must be called for each RTP
-    /// packet received for the media stream.
+    /// Processes a new RTP rtpPacket and updates the current statistics. This function must be called for each RTP
+    /// rtpPacket received for the media stream.
     /// </summary>
-    /// <param name="packet">Byte array of the RTP packet.</param>
-    public void Update(byte[] packet)
+    /// <param name="rtpPacket">Byte array of the RTP rtpPacket.</param>
+    public void Update(RtpPacket rtpPacket)
     {
-        if (packet == null || packet.Length < RtpPacket.MIN_PACKET_LENGTH)
+        if (rtpPacket == null)
             return;     // Error: invalid parameter.
 
         Monitor.Enter(m_LockObj);
-        RtpPacket Rp = new RtpPacket(packet);
 
-        if (Rp.Version != 2)
-        {   // Its not an RTP packet so ignore it
+        if (rtpPacket.Version != 2)
+        {   // Its not an RTP rtpPacket so ignore it
             Monitor.Exit(m_LockObj);
             return;
         }
@@ -133,18 +132,18 @@ internal class RtpReceiveStatisticsManager
         if (m_FirstPacketReceived == false)
         {
             m_FirstPacketTime = Now;
-            m_Last_S = Rp.Timestamp;
+            m_Last_S = rtpPacket.Timestamp;
             m_Last_R = 0;
             m_FirstPacketReceived = true;
-            m_Last_SEQ = Rp.SequenceNumber;
+            m_Last_SEQ = rtpPacket.SequenceNumber;
             m_ReceiveStatics.PacketsReceived += 1;
             m_ExtendedLastSequenceNumber = m_Last_SEQ;
-            m_FirstSSRC = Rp.SSRC;
+            m_FirstSSRC = rtpPacket.SSRC;
             Monitor.Exit(m_LockObj);
             return;
         }
 
-        ushort CurSEQ = Rp.SequenceNumber;
+        ushort CurSEQ = rtpPacket.SequenceNumber;
         ushort ElapsedSeq = ElapsedSeqNumbers(m_Last_SEQ, CurSEQ);
 
         m_Last_J = m_Cur_J;
@@ -154,7 +153,7 @@ internal class RtpReceiveStatisticsManager
         if (ElapsedSeq < OutOfOrderThreshold)
         {   // Packets are in order so update the jitter statistics. See Section 6.4.1 of RFC 3550.
             long Cur_R = Convert.ToUInt32(Ts.TotalSeconds * m_SampleRate);
-            long Cur_S = Rp.Timestamp;
+            long Cur_S = rtpPacket.Timestamp;
             long D = (Cur_R - Cur_S) - (m_Last_R - m_Last_S);
             m_Cur_J = m_Last_J + (Math.Abs(D) - m_Last_J) / 4;
 
@@ -208,7 +207,7 @@ internal class RtpReceiveStatisticsManager
             Current.SSRC = m_FirstSSRC;
             Current.DelayInMilliseconds = m_Delay;
 
-            // Calculate the packet loss percentage
+            // Calculate the rtpPacket loss percentage
             double PlPer = (1.0 - ((double)Current.PacketsReceived /
                 (double)Current.PacketsExpected)) * 100.0;
 

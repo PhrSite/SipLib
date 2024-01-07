@@ -155,7 +155,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets or sets the Length field.
     /// </summary>
-    public UInt16 Length
+    public ushort Length
     {
         get { return RtpUtils.GetWord(m_PacketBytes, RTCP_LENGTH_OFFSET); }
         set { RtpUtils.SetWord(m_PacketBytes, RTCP_LENGTH_OFFSET, value); }

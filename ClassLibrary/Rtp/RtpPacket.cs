@@ -325,6 +325,18 @@ public class RtpPacket
     }
 
     /// <summary>
+    /// Sets the payload bytes in the packet.
+    /// </summary>
+    /// <param name="payloadBytes">Contains the payload bytes. The length must be equal to PayloadLength</param>
+    public void SetPayloadBytes(byte[] payloadBytes)
+    {
+        if (payloadBytes == null || payloadBytes.Length > PayloadLength)
+            throw new ArgumentException("Invalid PayloadBytes length");
+
+        Array.ConstrainedCopy(payloadBytes, 0, m_PacketBytes, HeaderLength, payloadBytes.Length);
+    }
+
+    /// <summary>
     /// Gets only the bytes from the header portion of the RTP packet.
     /// </summary>
     /// <returns>Returns a byte array containing the header bytes.</returns>

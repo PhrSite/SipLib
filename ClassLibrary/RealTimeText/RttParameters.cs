@@ -59,24 +59,27 @@ public class RttParameters
             return null;
 
         RttParameters rttParams = new RttParameters();
-        SdpAttribute T140RtpMap = mediaDescription.GetRtpmapForCodecType("t140/1000");
-        rttParams.T140PayloadType = T140RtpMap != null ? int.Parse(T140RtpMap.Value) : 0;
-        SdpAttribute RedRtpMap = mediaDescription.GetRtpmapForCodecType("red/1000");
-        rttParams.RedundancyPayloadType = RedRtpMap != null ? int.Parse(RedRtpMap.Value) : 0;
+        //SdpAttribute T140RtpMap = mediaDescription.GetRtpmapForCodecType("t140/1000");
+        RtpMapAttribute T140RtpMap = mediaDescription.GetRtpMapForCodecType("t140");
+        rttParams.T140PayloadType = T140RtpMap.PayloadType;
+        //SdpAttribute RedRtpMap = mediaDescription.GetRtpmapForCodecType("red/1000");
+        RtpMapAttribute RedRtpMap = mediaDescription.GetRtpMapForCodecType("red");
+        rttParams.RedundancyPayloadType = RedRtpMap != null ? RedRtpMap.PayloadType : 0;
 
         SdpAttribute Fmtp;
         if (rttParams.RedundancyPayloadType != 0)
         {
-            Fmtp = mediaDescription.GetFmtpForFormatNumber(RedRtpMap.Value);
+            Fmtp = mediaDescription.GetFmtpForFormatNumber(RedRtpMap.PayloadType.ToString());
             if (Fmtp != null)
             {   // Determine the number of redundancy levels
                 foreach (string strName in Fmtp.Params.Keys)
                 {
-                    if (strName.IndexOf(T140RtpMap.Value) >= 0)
+                    if (strName.IndexOf(T140RtpMap.PayloadType.ToString()) >= 0)
                         // Note: The number of occurrances of the T140 codec number in the fmtp attribute
                         // minus 1 defines the redundancy level. For example 98/98/98 defines a
                         // redundancy level of 2.
-                        rttParams.RedundancyLevel = Regex.Matches(strName, T140RtpMap.Value).Count - 1;
+                        rttParams.RedundancyLevel = Regex.Matches(strName, T140RtpMap.PayloadType.ToString()).
+                            Count - 1;
                 }
             }
             else
@@ -86,7 +89,7 @@ public class RttParameters
             rttParams.RedundancyLevel = 0;
 
         // Get the cps= parameter from the fmtp attribute that is for text (i.e. t140)
-        Fmtp = mediaDescription.GetFmtpForFormatNumber(T140RtpMap?.Value);
+        Fmtp = mediaDescription.GetFmtpForFormatNumber(T140RtpMap?.PayloadType.ToString());
         if (Fmtp != null)
         {   // Determine the cps parameter
             rttParams.Cps = 0;
@@ -115,19 +118,18 @@ public class RttParameters
         string strT140Pt = T140PayloadType.ToString();
         string strRedPt = RedundancyPayloadType.ToString();
 
-        mediaDescription.MediaFormatNumbers.Add(strT140Pt);
+        mediaDescription.PayloadTypes.Add(T140PayloadType);
         if (RedundancyPayloadType != 0)
-            mediaDescription.MediaFormatNumbers.Add(strRedPt);
+            mediaDescription.PayloadTypes.Add(RedundancyPayloadType);
 
-        SdpAttribute T140Attribute = new SdpAttribute("rtpmap", strT140Pt);
-        T140Attribute.Params.Add("t140/1000", null);
-        mediaDescription.Attributes.Add(T140Attribute);
+        RtpMapAttribute T140RtpMapAttribute = new RtpMapAttribute(T140PayloadType, "t140", 1000);
+        mediaDescription.RtpMapAttributes.Add(T140RtpMapAttribute);
 
         if (RedundancyPayloadType != 0)
         {   // Redundancy is being used.
-            SdpAttribute RedAttribute = new SdpAttribute("rtpmap", strRedPt);
-            RedAttribute.Params.Add("red/1000", null);
-            mediaDescription.Attributes.Add(RedAttribute);
+            RtpMapAttribute RedRtpMapAttribute = new RtpMapAttribute(RedundancyPayloadType, "red", 1000);
+            mediaDescription.RtpMapAttributes.Add(RedRtpMapAttribute);
+
             StringBuilder Sb = new StringBuilder();
             int Cnt = RedundancyLevel + 1;
             for (int i = 0; i < Cnt; i++)

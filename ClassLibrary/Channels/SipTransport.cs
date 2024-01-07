@@ -85,6 +85,7 @@ public class SipTransport
 
         m_Thread = new Thread(ThreadLoop);
         m_Thread.Priority = ThreadPriority.AboveNormal;
+        m_Thread.IsBackground = true;
         m_Thread.Start();
         m_SipChannel.SIPMessageReceived = SipMessageReceived;
     }

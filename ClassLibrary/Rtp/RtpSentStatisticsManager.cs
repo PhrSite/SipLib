@@ -27,13 +27,13 @@ internal class RtpSentStatisticsManager
     }
 
     /// <summary>
-    /// Updates the current statics for a RTP packet that was sent. This method must be called each time that
-    /// an RTP packet is sent.
+    /// Updates the current statics for a RTP rtpPacket that was sent. This method must be called each time that
+    /// an RTP rtpPacket is sent.
     /// </summary>
-    /// <param name="packet">Byte array containing the whole RTP packet (RTP header plus the payload)</param>
-    public void Update(byte[] packet)
+    /// <param name="rtpPacket">RTP packet that was just sent</param>
+    public void Update(RtpPacket rtpPacket)
     {
-        if (packet == null || packet.Length < RtpPacket.MIN_PACKET_LENGTH)
+        if (rtpPacket == null)
             return;
 
         lock (m_LockObj)
@@ -45,7 +45,8 @@ internal class RtpSentStatisticsManager
             }
 
             m_SentStatistics.PacketsSent += 1;
-            m_SentStatistics.BytesSent += (uint) packet.Length;
+            m_SentStatistics.BytesSent += (uint) rtpPacket.PacketBytes.Length;
+            m_SentStatistics.Timestamp = rtpPacket.Timestamp;
         }
     }
 
@@ -55,14 +56,13 @@ internal class RtpSentStatisticsManager
     /// <returns>Returns a deep copy of the current statistics</returns>
     public RtpSentStatistics GetCurrentStatistics()
     {
-        RtpSentStatistics result = m_SentStatistics;
+        RtpSentStatistics result = new RtpSentStatistics();
 
         lock (m_LockObj)
         {
             result.PacketsSent = m_SentStatistics.PacketsSent;
             result.BytesSent = m_SentStatistics.BytesSent;
-            TimeSpan Ts = DateTime.Now - m_FirstPacketTime;
-            result.Timestamp = (uint)(Ts.TotalSeconds * m_SampleRate);
+            result.Timestamp = m_SentStatistics.Timestamp;
             m_SentStatistics.Reset();
         }
 

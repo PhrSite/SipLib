@@ -29,6 +29,19 @@ public delegate void RtpPacketReceivedDelegate(RtpPacket rtpPacket);
 public delegate void RtpPacketSentDelegate(RtpPacket rtpPacket);
 
 /// <summary>
+/// Delegate type for the RtcpPacketReceived event of the RtpChannel class.
+/// </summary>
+/// <param name="rtpCompoundPacket">Un-encrypted compound RTCP packet that was received. Note: All received RTCP packets
+/// are parsed as compound packets even through they may not be compound packets.</param>
+public delegate void RtcpPacketReceivedDelegate(RtcpCompoundPacket rtpCompoundPacket);
+
+/// <summary>
+/// Delegate type for the RtcpPacketSent event of the RtpChannel class.
+/// </summary>
+/// <param name="rtcpCompoundPacket">Un-encrypted compound RTCP packet that was sent.</param>
+public delegate void RtcpPacketSentDelegate(RtcpCompoundPacket rtcpCompoundPacket);
+
+/// <summary>
 /// Delegate type for the DtlsHandshakeFailed event of the RtpChannel class
 /// </summary>
 /// <param name="IsServer">True if this RtpChannel is the DTLS server or false if it is the DTLS client.</param>
@@ -104,6 +117,16 @@ public class RtpChannel
     /// Event that is fired when a RTP packet has been sent by this RtpChannel
     /// </summary>
     public event RtpPacketSentDelegate RtpPacketSent = null;
+
+    /// <summary>
+    /// Event that is fired when a RTCP packet is received.
+    /// </summary>
+    public event RtcpPacketReceivedDelegate RtcpPacketReceived = null;
+
+    /// <summary>
+    /// Event that is fired when this class sends an RTCP packet.
+    /// </summary>
+    public event RtcpPacketSentDelegate RtcpPacketSent = null;
 
     /// <summary>
     /// Event that is fired fired if the DTLS-SRTP handshake failed
@@ -215,7 +238,7 @@ public class RtpChannel
         remoteRtpEndPoint = Sdp.GetMediaEndPoint(RemoteSdp, RemoteMd);
         RtpChannel rtpChannel = new RtpChannel(localRtpEndPoint, LocalMd.MediaType, enableRtcp, CNAME);
         rtpChannel.m_Incoming = Incoming;
-        rtpChannel.m_remoteRtcpEndpoint = remoteRtpEndPoint;
+        rtpChannel.m_remoteRtpEndpoint = remoteRtpEndPoint;
         rtpChannel.m_mediaType = LocalMd.MediaType;
 
         // Figure out the RTCP endpoints. See RFC 3605
@@ -250,7 +273,7 @@ public class RtpChannel
                         senderAttribute = AnsweredCryptoAttributes[0];
                         receiverAttribute = GetSelectedCryptoAttibute(OfferedCryptoAttributes, selectedCryptoSuite);
                         if (receiverAttribute == null)
-                            return (null, "Thd selected crypto suite was not found in the offered crypto attributes");
+                            return (null, "The selected crypto suite was not found in the offered crypto attributes");
                     }
                     else
                     {
@@ -445,7 +468,7 @@ public class RtpChannel
 
         m_RtpListenerThread = new Thread(RtpListenerThread);
         m_RtpListenerThread.Priority = ThreadPriority.Highest;
-        m_RtcpListenerThread.Start();
+        m_RtpListenerThread.Start();
 
         m_RtcpListenerThread = new Thread(RtcpListenerThread);
         m_RtcpListenerThread.Start();
@@ -510,6 +533,8 @@ public class RtpChannel
         rtcpCompoundPacket.SdesPackets.Add(sdesPacket);
 
         SendRtcpPacket(rtcpCompoundPacket.ToByteArray());
+
+        RtcpPacketSent?.Invoke(rtcpCompoundPacket);
     }
 
     private void SendRtcpPacket(byte[] packetBytes)
@@ -527,7 +552,7 @@ public class RtpChannel
 
         try
         {
-            m_RtcpUdpClient.Send(encryptedPacket, encryptedPacket.Length);
+            m_RtcpUdpClient.Send(encryptedPacket, encryptedPacket.Length, m_remoteRtcpEndpoint);
         }
         catch (SocketException) { }
         catch (Exception) { }
@@ -613,7 +638,7 @@ public class RtpChannel
         RtpPacket rtpPacket = new RtpPacket(decryptedPckt);
 
         if (RtcpEnabled == true)
-            m_RtpReceiveStaticsManager.Update(decryptedPckt);
+            m_RtpReceiveStaticsManager.Update(rtpPacket);
 
         RtpPacketReceived?.Invoke(rtpPacket);
     }
@@ -655,7 +680,9 @@ public class RtpChannel
         else
             decryptedPckt = buf;
 
-        // TODO: Handle the RTCP packet
+        RtcpCompoundPacket rtcpCompoundPacket = RtcpCompoundPacket.Parse(decryptedPckt);
+        if (rtcpCompoundPacket != null)
+            RtcpPacketReceived?.Invoke(rtcpCompoundPacket);
     }
 
     /// <summary>
@@ -672,7 +699,7 @@ public class RtpChannel
         byte[] encryptedPckt;
         byte[] packetBytes = rtpPacket.PacketBytes;
         if (RtcpEnabled == true)
-            m_RtpSentStaticsManager.Update(packetBytes);
+            m_RtpSentStaticsManager.Update(rtpPacket);
 
         if (m_IsSdesSrtp == true)
             encryptedPckt = m_srtpEncryptor.EncryptRtpPacket(packetBytes);

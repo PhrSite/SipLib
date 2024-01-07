@@ -1,7 +1,12 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //	File:	MediaDescription.cs                                     16 Nov 22 PHR
+//  Revised: 28 Dec 23 PHR
+//             -- Added the RtpMapAttributes field
+//             -- Removed SdpAttribute GetRtpmapForCodecType(string strCodecName).
+//             -- Added RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
 /////////////////////////////////////////////////////////////////////////////////////
 
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 namespace SipLib.Sdp;
@@ -24,11 +29,12 @@ public class MediaDescription
     /// </summary>
     public string Transport = "";
     /// <summary>
-    /// Contains a list of media format numbers.
+    /// Contains a list of payload types for the m= line.
     /// </summary>
-    public List<string> MediaFormatNumbers = new List<string>();
+    public List<int> PayloadTypes = new List<int>();
     /// <summary>
-    /// Contains the attributes for this type of media.
+    /// Contains the attributes for this type of media except the rtpmap attributes, which are stored
+    /// in the RtpMapAttributes field.
     /// </summary>
     public List<SdpAttribute> Attributes = new List<SdpAttribute>();
     /// <summary>
@@ -43,6 +49,11 @@ public class MediaDescription
     /// line in the media description.
     /// </summary>
     public string Bandwidth = "";
+
+    /// <summary>
+    /// Contains a list of RtpMap objects. Each object corresponds to a a=rtpmap .... line in the media description.
+    /// </summary>
+    public List<RtpMapAttribute> RtpMapAttributes = new List<RtpMapAttribute>();
 
     /// <summary>
     /// Constructs an empty MediaDescription object. Use this constructor to create a new Media Description
@@ -60,11 +71,10 @@ public class MediaDescription
     /// <returns>Returns a new MediaDescription object.</returns>
     // <exception cref="ArgumentException">Thrown if the media description parameters
     // are not valid.</exception>
-    public static MediaDescription ParseMediaDescription(string strMd)
+    public static MediaDescription ParseMediaDescriptionLine(string strMd)
     {
         MediaDescription Md = new MediaDescription();
-            char[] Delim = { ' ' };
-            string[] Fields = strMd.Split(Delim);
+        string[] Fields = strMd.Split(' ');
 
         if (Fields.Length < 4)
             throw new ArgumentException("The number of fields in the media description " +
@@ -83,25 +93,111 @@ public class MediaDescription
 
         bool Success = int.TryParse(strPort, out Md.Port);
         if (Success == false)
-            throw new ArgumentException("The port number in the media description " +
-            "line is not valid", nameof(strMd));
+            throw new ArgumentException("The port number in the media description line is not valid", 
+                nameof(strMd));
             
         Md.Transport = Fields[2];
 
         int i;
+        int Pt;
         for (i = 3; i < Fields.Length; i++)
-            Md.MediaFormatNumbers.Add(Fields[i]);
+        {
+            if (int.TryParse(Fields[i], out Pt) == true)
+                Md.PayloadTypes.Add(Pt);
+        }
 
         return Md;
     }
+    
+    /// <summary>
+    /// Parses a string containing a full media description block into a MediaDescription object.
+    /// </summary>
+    /// <param name="strMd">Input string containing the lines of an SDP media description block. The
+    /// first line must contain an m= line</param>
+    /// <returns>Returns a new MediaDescription object of successful or null if an error is detected.</returns>
+    public static MediaDescription ParseMediaDescriptionString(string strMd)
+    {
+        MediaDescription Md = null;
+        if (string.IsNullOrEmpty(strMd) == true)
+            return null;
+
+        string[] Lines = strMd.Split("\r\n");
+        if (Lines == null || Lines.Length < 1)
+            return null;
+
+        int index = Lines[0].IndexOf("m=");
+        if (index < 0)
+            return null;    // Error: no m= line
+
+        Md = ParseMediaDescriptionLine(Lines[index].Substring(2));
+        if (Md == null)
+            return null;
+
+        string strType;
+        string strValue;
+
+        try
+        {
+            for (int i = 0; i < Lines.Length; i++)
+            {
+                strType = Lines[i].Substring(0, 1);
+                strValue = GetValueOfNameValuePair(Lines[i], '=');
+                if (string.IsNullOrEmpty (strType) == true || string.IsNullOrEmpty(strValue) == true)
+                    return null;
+
+                switch (strType)
+                {
+                    case "a":
+                        SdpAttribute sdpAttr = SdpAttribute.ParseSdpAttribute(strValue);
+                        if (sdpAttr != null)
+                        {
+                            if (sdpAttr.Attribute == "rtpmap")
+                            {
+                                RtpMapAttribute rtpMap = RtpMapAttribute.ParseRtpMap(strValue.Replace(
+                                    "rtpmap:", "").Trim());
+                                if (rtpMap != null)
+                                    Md.RtpMapAttributes.Add(rtpMap);
+                            }
+                            else
+                                Md.Attributes.Add(sdpAttr);
+                        }
+                        break;
+                    case "b":
+                        Md.Bandwidth = strValue;
+                        break;
+                    case "c":
+                        Md.ConnectionData = ConnectionData.ParseConnectionData(strValue);
+                        break;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+        return Md;
+    }
+
+    private static string GetValueOfNameValuePair(string Input, char Sep)
+    {
+        if (string.IsNullOrEmpty(Input) == true)
+            return null;
+
+        int Idx = Input.IndexOf(Sep);
+        if (Idx < 0 || Idx == Input.Length - 1)
+            return null;
+        else
+            return Input.Substring(Idx + 1).TrimStart();
+    }
+
 
     /// <summary>
-    /// Creates a deep copy of this object.
+    /// Creates a deep copy of this object. This only copies the m= line.
     /// </summary>
     /// <returns>Returns a new object with a copy of each member variable in this object.</returns>
     public MediaDescription CreateCopy()
     {
-        MediaDescription MdCopy = MediaDescription.ParseMediaDescription(this.ToString().
+        MediaDescription MdCopy = MediaDescription.ParseMediaDescriptionLine(this.ToString().
             Replace("m=", "").Replace("\r\n", ""));
         return MdCopy;
     }
@@ -111,28 +207,20 @@ public class MediaDescription
     /// </summary>
     /// <param name="strMediaType">Media type. Ex: "audio" or "video"</param>
     /// <param name="iPort">Port number that the session will occur on.</param>
-    /// <param name="strFormatNumbers">Media format for the session.</param>
-    public MediaDescription(string strMediaType, int iPort, string strFormatNumbers)
+    /// <param name="payloadTypes">Media payload types.</param>
+    public MediaDescription(string strMediaType, int iPort, List<int> payloadTypes)
     {
         MediaType = strMediaType;
         Port = iPort;
         Transport = "TCP";
 
-        if (string.IsNullOrEmpty(strFormatNumbers) == true)
+        if (payloadTypes.Count == 0)
         {	// Error, but default to something
-            MediaFormatNumbers.Add("0");
+            PayloadTypes.Add(0);
             return;
         }
 
-        string[] Nums = strFormatNumbers.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-        if (Nums == null || Nums.Length == 0)
-            {   // Error, but default to something
-                MediaFormatNumbers.Add("0");
-                return;
-            }
-
-        foreach (string Num in Nums)
-            MediaFormatNumbers.Add(Num);
+        PayloadTypes = payloadTypes;
     }
 
     /// <summary>
@@ -319,29 +407,44 @@ public class MediaDescription
     }
 
     /// <summary>
-    /// Finds the rtpmap attribute for the specified codec name.
+    /// Finds the RtpMapAttribute object for the specified codec name (encoding name)
     /// </summary>
-    /// <param name="strCodecName">Name of the codec to search for, such as PCMU or H264.</param>
-    /// <returns>Returns the SdpAttribute object if found or null if the specified codec was not found.
-    /// </returns>
-    public SdpAttribute GetRtpmapForCodecType(string strCodecName)
+    /// <param name="strCodecName">Codec or encoding name</param>
+    /// <returns>Returns the RtpMapAttribute object if found or null if not found</returns>
+    public RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
     {
-        SdpAttribute RetVal = null;
-
-        foreach (SdpAttribute Sa in Attributes)
+        RtpMapAttribute rtpMap = null;
+        foreach (RtpMapAttribute rtpMapAttribute in RtpMapAttributes)
         {
-            if (Sa.Attribute == "rtpmap")
+            if (rtpMapAttribute.EncodingName.ToLower() == strCodecName.ToLower() ||
+                rtpMapAttribute.EncodingName.ToUpper() == strCodecName.ToUpper())
             {
-                if (Sa.Params.ContainsKey(strCodecName.ToLower()) == true ||
-                        Sa.Params.ContainsKey(strCodecName.ToUpper()) == true)
-                {
-                    RetVal = Sa;
-                    break;
-                }
+                rtpMap = rtpMapAttribute;
+                break;
             }
-        } // end for each
+        }
 
-        return RetVal;
+        return rtpMap;
+    }
+
+    /// <summary>
+    /// Gets the RtpMapAttribute object for the specified payload type
+    /// </summary>
+    /// <param name="payloadType">Specifies the payload type to look for</param>
+    /// <returns>Returns the RtpMapAttribute object if successful or null if it is not present</returns>
+    public RtpMapAttribute GetRtpMapForPayloadType(int payloadType)
+    {
+        RtpMapAttribute rtpMap = null;
+        foreach (RtpMapAttribute rtpAttr in  RtpMapAttributes)
+        {
+            if (rtpAttr.PayloadType == payloadType)
+            {
+                rtpMap = rtpAttr;
+                break;
+            }
+        }
+
+        return rtpMap;
     }
 
     /// <summary>
@@ -377,29 +480,24 @@ public class MediaDescription
     {
         MediaDescription AnsSmd = null;
 
-        string H264FormatNumber = null;
-        SdpAttribute RtpMap = null;
-        foreach (string str in MediaFormatNumbers)
-        {
-            foreach(SdpAttribute Attr in Attributes)
-            {
-                if (Attr.Attribute == "rtpmap" && 
-                    (Attr.ToString().IndexOf("H264") >= 0 || 
-                    Attr.ToString().IndexOf("h264") >= 0))
-                    {
-                    RtpMap = Attr;
-                    H264FormatNumber = str;
-                }
-            }
-        }
+        RtpMapAttribute rtpMapAttribute = GetRtpMapForCodecType("H264");
+        if (rtpMapAttribute == null)
+            return null;
 
-        if (RtpMap == null)
+        if (rtpMapAttribute == null)
             return null;    // H264 was not offered
 
-        AnsSmd = new MediaDescription("video", Port, H264FormatNumber);
+        AnsSmd = new MediaDescription("video", Port, new List<int> { rtpMapAttribute.PayloadType });
         AnsSmd.Transport = "RTP/AVP";
-        AnsSmd.Attributes.Add(RtpMap);
-        SdpAttribute FmtpAttr = GetFmtpForFormatNumber(H264FormatNumber);
+        RtpMapAttribute AnsRtpAttr = new RtpMapAttribute()
+        {
+            PayloadType = rtpMapAttribute.PayloadType,
+            EncodingName = rtpMapAttribute.EncodingName,
+            ClockRate = rtpMapAttribute.ClockRate
+        };
+        AnsSmd.RtpMapAttributes.Add(AnsRtpAttr);
+
+        SdpAttribute FmtpAttr = GetFmtpForFormatNumber(rtpMapAttribute.PayloadType.ToString());
         if (FmtpAttr != null)
             AnsSmd.Attributes.Add(FmtpAttr);
 
@@ -415,8 +513,8 @@ public class MediaDescription
         StringBuilder Sb = new StringBuilder(1024);
         Sb.AppendFormat("m={0} {1} {2}", MediaType, Port.ToString(),
             Transport);
-        foreach (string strFormat in MediaFormatNumbers)
-            Sb.AppendFormat(" {0}", strFormat);
+        foreach (int Pt in PayloadTypes)
+            Sb.AppendFormat(" {0}", Pt);
 
         Sb.Append("\r\n");
 
@@ -425,6 +523,9 @@ public class MediaDescription
 
         if (string.IsNullOrEmpty(Bandwidth) == false)
             Sb.AppendFormat("b={0}\r\n", Bandwidth);
+
+        foreach (RtpMapAttribute rtpMap in RtpMapAttributes)
+            Sb.Append(rtpMap.ToString());
 
         foreach (SdpAttribute Sa in Attributes)
         {

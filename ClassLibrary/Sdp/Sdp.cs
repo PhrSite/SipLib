@@ -223,7 +223,7 @@ public class Sdp
                         }
                         break;
                     case "m":
-                        sdp.Media.Add(MediaDescription.ParseMediaDescription(strValue));
+                        sdp.Media.Add(MediaDescription.ParseMediaDescriptionLine(strValue));
                         break;
                     case "c":
                         if (sdp.Media.Count == 0)
@@ -234,21 +234,32 @@ public class Sdp
                                 ConnectionData.ParseConnectionData(strValue);
                         break;
                     case "a":
-                        if (sdp.Media.Count > 0)
-                        {   // In a m= block so attributes belong to that media
-                            sdp.Media[sdp.Media.Count - 1].Attributes.Add(SdpAttribute.
-                                ParseSdpAttribute(strValue));
+                        SdpAttribute sdpAttr = SdpAttribute.ParseSdpAttribute(strValue);
+                        if (sdpAttr != null)
+                        {
+                            if (sdp.Media.Count > 0)
+                            {   // In a m= block so attributes belong to that media block
+                                if (sdpAttr != null)
+                                {
+                                    if (sdpAttr.Attribute == "rtpmap")
+                                    {   // rtpmap attributes only apply to the media block, not the session.
+                                        // Pass only the rtpmap attribute value to ParseRtpMap.
+                                        RtpMapAttribute rtpMap = RtpMapAttribute.ParseRtpMap(strValue.Replace(
+                                            "rtpmap:", "").Trim());
+                                        if (rtpMap != null)
+                                            sdp.Media[sdp.Media.Count - 1].RtpMapAttributes.Add(rtpMap);
+                                    }
+                                    else
+                                        sdp.Media[sdp.Media.Count - 1].Attributes.Add(sdpAttr);
+                                }
+                            }
+                            else
+                                // No media blocks yet so attributes belong to the session
+                                sdp.Attributes.Add(sdpAttr);
                         }
-                        else
-                        {   // No media blocks yet so attributes belong to the 
-                            // session
-                            sdp.Attributes.Add(SdpAttribute.ParseSdpAttribute(strValue));
-                        }
-
                         break;
                 } // end switch strType
             }
-
         }
         catch (ArgumentException)
         {
@@ -258,7 +269,7 @@ public class Sdp
         {
             throw new Exception("Unexpected error in Sdp.ParseLine()");
         }
-        }
+    }
 
     /// <summary>
     /// Parses the SDP contained in a string
@@ -437,60 +448,6 @@ public class Sdp
         return true;
     }
 
-    /// <summary>
-    /// Processes the contents of SDP line.
-    /// </summary>
-    /// <param name="str">Input line to parse and process</param>
-    private void ProcessContentsLine(string str)
-    {
-        string strType;
-        string strValue;
-
-        if (str.Length >= 3)
-        {
-            strType = str.Substring(0, 1);
-                strValue = GetValueOfNameValuePair(str, '=');
-
-            switch (strType)
-            {
-                case "v":
-                    Version = Convert.ToInt32(strValue);
-                    break;
-                case "o":
-                    Origin = Origin.ParseOrigin(strValue);
-                    break;
-                case "s":
-                    SessionName = strValue;
-                    break;
-                case "m":
-                    Media.Add(MediaDescription.ParseMediaDescription(strValue));
-                    break;
-                case "c":
-                    if (Media.Count == 0)
-                        ConnectionData = ConnectionData.ParseConnectionData(strValue);
-                    else
-                    {
-                        Media[Media.Count - 1].ConnectionData =  
-                            ConnectionData.ParseConnectionData(strValue);
-                    }
-                    break;
-                case "a":
-                    if (Media.Count > 0)
-                    {	// In a m= block so attributes belong to that media
-                        Media[Media.Count - 1].Attributes.Add(SdpAttribute.ParseSdpAttribute(
-                            strValue));
-                    }
-                    else
-                    {   // No media blocks yet so attributes belong to the 
-                            // session
-                        Attributes.Add(SdpAttribute.ParseSdpAttribute(strValue));
-                    }
-
-                    break;
-            } // end switch strType
-        }
-    }
-
     private string GetValueOfNameValuePair(string Input, char Sep)
     {
         if (string.IsNullOrEmpty(Input) == true)
@@ -502,7 +459,6 @@ public class Sdp
         else
             return Input.Substring(Idx + 1).TrimStart();
     }
-
 
     /// <summary>
     /// Returns the SdpAttribute object for a named attribute for the entire SDP at the session level.
