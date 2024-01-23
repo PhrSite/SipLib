@@ -166,7 +166,7 @@ public class SipTransport
     /// needs to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
     /// <returns>Returns a new ClientInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
-    public ClientInviteTransaction StartClientInviteTransaction(SIPRequest request, IPEndPoint
+    public ClientInviteTransaction StartClientInvite(SIPRequest request, IPEndPoint
         remoteEndPoint, SipTransactionCompleteDelegate completeDelegate, TransactionResponseReceivedDelegate
         responseReceivedDelegate)
     {
@@ -178,6 +178,23 @@ public class SipTransport
         if (responseReceivedDelegate != null)
             Cit.ResponseReceived = responseReceivedDelegate;
         StartSipTransaction(Cit);
+        return Cit;
+    }
+
+    /// <summary>
+    /// Creates and starts a client INVITE transaction asynchronously.
+    /// </summary>
+    /// <param name="request">SIP INVITE request to send</param>
+    /// <param name="remoteEndPoint">Destination to send the request to</param>
+    /// <param name="responseReceivedDelegate">Callback function to call when a response is received
+    /// for the transaction. Optional, may be null. This may be used when the client transaction user
+    /// needs to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
+    /// <returns>Returns a ClientInviteTransaction that contains the results of the transaction</returns>
+    public async Task<ClientInviteTransaction> StartClientInviteAsync(SIPRequest request, IPEndPoint
+        remoteEndPoint, TransactionResponseReceivedDelegate responseReceivedDelegate)
+    {
+        ClientInviteTransaction Cit = StartClientInvite(request, remoteEndPoint, null, responseReceivedDelegate);
+        await Cit.WaitForCompletionAsync();
         return Cit;
     }
 

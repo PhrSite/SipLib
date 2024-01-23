@@ -86,7 +86,7 @@ public class ServerNonInviteTransaction : SipTransactionBase
     /// Called periodically by the SIP transport to check for timeouts and resulting state changes.
     /// </summary>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public override bool DoTimedEvents()
+    internal override bool DoTimedEvents()
     {
         bool Terminated = false;
         lock (StateLockObj)
@@ -121,7 +121,7 @@ public class ServerNonInviteTransaction : SipTransactionBase
     /// <param name="Request">SIP request that was received from the remote endpoint</param>
     /// <param name="remoteEndPoint">Remote endpoint that sent the request</param>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public override bool HandleSipRequest(SIPRequest Request, IPEndPoint remoteEndPoint)
+    internal override bool HandleSipRequest(SIPRequest Request, IPEndPoint remoteEndPoint)
     {
         bool Terminated = false;
         RequestReceived?.Invoke(Request, remoteEndPoint, this);

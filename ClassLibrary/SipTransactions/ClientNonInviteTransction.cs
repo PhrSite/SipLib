@@ -111,7 +111,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
     /// Called periodically by the SIP transport to check for timeouts and resulting state changes.
     /// </summary>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public override bool DoTimedEvents()
+    internal override bool DoTimedEvents()
     {
         bool Terminated = false;
         DateTime Now = DateTime.Now;

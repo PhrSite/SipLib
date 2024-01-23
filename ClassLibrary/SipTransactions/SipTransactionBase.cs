@@ -228,7 +228,7 @@ public class SipTransactionBase
     /// <param name="Request">SIP request that was received from the remote endpoint</param>
     /// <param name="remoteEndPoint">Remote endpoint that sent the request</param>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public virtual bool HandleSipRequest(SIPRequest Request, IPEndPoint remoteEndPoint)
+    internal virtual bool HandleSipRequest(SIPRequest Request, IPEndPoint remoteEndPoint)
     {
         return false;
     }
@@ -248,7 +248,7 @@ public class SipTransactionBase
     /// Called periodically by the SIP transport to check for timeouts and resulting state changes.
     /// </summary>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public virtual bool DoTimedEvents()
+    internal virtual bool DoTimedEvents()
     {
         return false;
     }

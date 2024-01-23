@@ -13,8 +13,16 @@ public interface IAudioEncoder
     /// Input sample array of 16-bit PCMU audio samples
     /// </summary>
     /// <param name="InputSamples">Input linear 16-bit Mu-Law samples</param>
-    /// <param name="EncodedOutput">Destination of the encoded samples.</param>
-    /// <param name="OutputOffset">Starting offset index in the EncodedOutput array to start writing encoded
-    /// samples at.</param>
-    void Encode(short[] InputSamples, byte[] EncodedOutput, int OutputOffset);
+    /// <returns>Returns an array of encoded sample bytes</returns>
+    byte[] Encode(short[] InputSamples);
+
+    /// <summary>
+    /// Gets the clock rate (samples/second)
+    /// </summary>
+    int ClockRate { get; }
+
+    /// <summary>
+    /// Closes the encoder so that it can release any memory or resources it has been using.
+    /// </summary>
+    void CloseEncoder();
 }

@@ -18,6 +18,8 @@ public class AudioSourceBase
     private int m_AudioPayloadType = 0;
     private int m_TelephoneEventPayloadType = 101;
     private bool m_TelephoneEventEnabled = false;
+    private int m_TelephoneEventClockRate = 8000;
+
     private RtpChannel m_RtpChannel;
     private IAudioEncoder m_AudioEncoder = null;
     private uint m_SamplesPerPacket;
@@ -27,8 +29,6 @@ public class AudioSourceBase
     private uint m_SSRC;
     private ushort m_SequenceNumber = 0;
     private uint m_Timestamp  = 0;
-
-    private RtpPacket AudioRtpPacket = null;
 
     /// <summary>
     /// The sample rate in samples per second of the audio source
@@ -47,46 +47,34 @@ public class AudioSourceBase
     /// </summary>
     /// <param name="AnsweredMediaDescription">The MediaDescription that was sent in response to the offered
     /// MediaDescription. Contains the negotiated encoding type and payload information.</param>
+    /// <param name="Encoder">Audio encoder to use</param>
     /// <param name="rtpChannel">Channel to send the generated audio data on.</param>
     /// <param name="HiResTimer">High resolution timer to use. If null, then a low resolution timer
     /// (System.Threading.Timer) will be used.</param>
-    public AudioSourceBase(MediaDescription AnsweredMediaDescription, RtpChannel rtpChannel, HighResolutionTimer
-        HiResTimer)
+    public AudioSourceBase(MediaDescription AnsweredMediaDescription, IAudioEncoder Encoder, RtpChannel rtpChannel, 
+        HighResolutionTimer HiResTimer)
     {
         m_RtpChannel = rtpChannel;
-        
+        m_AudioEncoder = Encoder;
+
         foreach (RtpMapAttribute Rma in AnsweredMediaDescription.RtpMapAttributes)
         {
             switch (Rma.EncodingName.ToUpper())
             {
-                case "PCMU":
-                    m_AudioPayloadType = Rma.PayloadType;
-                    m_AudioEncoder = new PcmuEncoder();
-                    SampleRate = Rma.ClockRate;
-                    break;
-                case "PCMA":
-                    m_AudioPayloadType = Rma.PayloadType;
-                    m_AudioEncoder = new PcmaEncoder();
-                    SampleRate += Rma.ClockRate;
-                    break;
                 case "TELEPHONE-EVENT":
                     m_TelephoneEventEnabled = true;
                     m_TelephoneEventPayloadType = Rma.PayloadType;
+                    m_TelephoneEventClockRate = Rma.ClockRate;
                     break;
                 default:
-
+                    m_AudioPayloadType = Rma.PayloadType;
                     break;
             }
         }
 
-        // TODO: handle unknown encoding types
-
         m_SSRC = rtpChannel.SSRC;
+
         m_SamplesPerPacket = (uint)(SampleRate * PACKET_TIME_MS) / 1000;
-        byte[] PacketBytes = new byte[RtpPacket.MIN_PACKET_LENGTH + m_SamplesPerPacket];
-        AudioRtpPacket = new RtpPacket(PacketBytes);
-        AudioRtpPacket.SSRC = m_SSRC;
-        AudioRtpPacket.PayloadType = m_AudioPayloadType;
         m_HighResolutionTimer = HiResTimer;
     }
 
@@ -136,10 +124,14 @@ public class AudioSourceBase
     {
         short[] NewSamples = new short[m_SamplesPerPacket];
         GetNextAudioSamples(NewSamples);
-        m_AudioEncoder.Encode(NewSamples, AudioRtpPacket.PacketBytes, AudioRtpPacket.HeaderLength);
-        AudioRtpPacket.SequenceNumber = m_SequenceNumber;
-        AudioRtpPacket.Timestamp = m_Timestamp;
-        m_RtpChannel.Send(AudioRtpPacket);
+        byte[] PayloadBytes = m_AudioEncoder.Encode(NewSamples);
+        RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH + PayloadBytes.Length);
+        rtpPacket.SSRC = m_SSRC;
+        rtpPacket.SequenceNumber = m_SequenceNumber;
+        rtpPacket.Timestamp = m_Timestamp;
+        rtpPacket.SetPayloadBytes(PayloadBytes);
+
+        m_RtpChannel.Send(rtpPacket);
         m_SequenceNumber += 1;
         m_Timestamp += m_SamplesPerPacket;
     }
@@ -270,7 +262,7 @@ public class AudioSourceBase
                 RtpPckt.Marker = true;
 
             DtmfPckt.Duration = m_DtmfDuration;
-            m_DtmfDuration = (ushort)(m_DtmfDuration + m_SamplesPerPacket);
+            m_DtmfDuration = (ushort)(m_DtmfDuration + m_TelephoneEventClockRate);
             if (m_DtmfPacketsSent >= DTMF_PACKETS)
                 m_DtmfEventState = DtmfEventState.SendingDtmfEndPackets;
         }
