@@ -45,7 +45,7 @@ public class RtpUtils
     /// <param name="SrcBytes">Source byte array. Must contain at least 4 bytes starting at the idx value.</param>
     /// <param name="idx">Starting index of the 4 byte long field.</param>
     /// <returns>Returns the uint value.</returns>
-    public static UInt32 GetDWord(byte[] SrcBytes, int idx)
+    public static uint GetDWord(byte[] SrcBytes, int idx)
     {
         uint RetVal = 0;
         for (int i = 0; i < 4; i++)

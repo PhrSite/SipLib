@@ -12,16 +12,19 @@ public class ByteRangeHeader
     /// <summary>
     /// Starting byte number.
     /// </summary>
+    /// <value></value>
     public int Start = 1;
     /// <summary>
     /// Ending byte number. A value of -1 indicates that the ending byte number is not specified --
     /// its string value is "*".
     /// </summary>
+    /// <value></value>
     public int End = -1;
     /// <summary>
     /// Total number of bytes in the MSRP message. A value of -1 indicates that the total number of 
     /// bytes is not specified -- its string value "*".
     /// </summary>
+    /// <value></value>
     public int Total = -1;
 
     /// <summary>

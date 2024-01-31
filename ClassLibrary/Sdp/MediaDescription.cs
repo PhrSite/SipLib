@@ -6,7 +6,6 @@
 //             -- Added RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
 /////////////////////////////////////////////////////////////////////////////////////
 
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 namespace SipLib.Sdp;
@@ -19,28 +18,34 @@ public class MediaDescription
     /// <summary>
     /// Specifies the media type. Example: "audio", "video", "text" or "message".
     /// </summary>
+    /// <value></value>
     public string MediaType = "";
     /// <summary>
     /// Specifies the TCP/UDP port number;
     /// </summary>
+    /// <value></value>
     public int Port = 0;
     /// <summary>
     /// Specifies the transport mechanism: "TCP", "UDP", "RTP/AVP", etc.
     /// </summary>
+    /// <value></value>
     public string Transport = "";
     /// <summary>
     /// Contains a list of payload types for the m= line.
     /// </summary>
+    /// <value></value>
     public List<int> PayloadTypes = new List<int>();
     /// <summary>
     /// Contains the attributes for this type of media except the rtpmap attributes, which are stored
     /// in the RtpMapAttributes field.
     /// </summary>
+    /// <value></value>
     public List<SdpAttribute> Attributes = new List<SdpAttribute>();
     /// <summary>
     /// Contains the connection data (c=) for this media. If null, then use the ConnectionData of the SDP
     /// session.
     /// </summary>
+    /// <value></value>
     public ConnectionData ConnectionData = null;
 
     /// <summary>
@@ -48,11 +53,13 @@ public class MediaDescription
     /// a b=AS:Bandwidth line in the media description. An empty or null value indicates that there is no b=
     /// line in the media description.
     /// </summary>
+    /// <value></value>
     public string Bandwidth = "";
 
     /// <summary>
     /// Contains a list of RtpMap objects. Each object corresponds to a a=rtpmap .... line in the media description.
     /// </summary>
+    /// <value></value>
     public List<RtpMapAttribute> RtpMapAttributes = new List<RtpMapAttribute>();
 
     /// <summary>
@@ -535,5 +542,4 @@ public class MediaDescription
 
         return Sb.ToString();
     }
-
 }

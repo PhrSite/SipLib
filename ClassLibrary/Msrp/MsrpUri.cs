@@ -25,16 +25,19 @@ public class MsrpUri
     /// <summary>
     /// Gets or sets the authority URI portion of the MsrpUri
     /// </summary>
+    /// <value></value>
     public SIPURI uri { get; set; }
 
     /// <summary>
     /// Session ID portion of the MSRP URI. Required.
     /// </summary>
+    /// <value></value>
     public string SessionID { get; set; }
 
     /// <summary>
     /// Specifies the MSRP transport protocol. Required. Must be one of: tcp, tls.
     /// </summary>
+    /// <value></value>
     public string Transport { get; set; }
 
     /// <summary>

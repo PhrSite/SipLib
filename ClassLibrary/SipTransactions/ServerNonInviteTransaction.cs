@@ -4,11 +4,9 @@
 
 using SipLib.Channels;
 using SipLib.Core;
-using SipLib.Transactions;
 using System.Net;
-using System.Transactions;
 
-namespace SipLib.SipTransactions;
+namespace SipLib.Transactions;
 
 /// <summary>
 /// Class for handling a server non-INVITE transaction. See Section 17.2.2 of RFC 3261.

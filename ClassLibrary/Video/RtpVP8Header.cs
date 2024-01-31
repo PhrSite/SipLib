@@ -32,31 +32,37 @@ public class RtpVP8Header
     /// <summary>
     /// Indicates whether extended control bits are present.
     /// </summary>
+    /// <value></value>
     public bool ExtendedControlBitsPresent;
 
     /// <summary>
     /// When set indicates the frame can be discarded without affecting any other frames.
     /// </summary>
+    /// <value></value>
     public bool NonReferenceFrame;
 
     /// <summary>
     /// Should be set when the first payload octet is the start of a new VP8 partition.
     /// </summary>
+    /// <value></value>
     public bool StartOfVP8Partition;
 
     /// <summary>
     /// Denotes the VP8 partition index that the first payload octet of the packet belongs to.
     /// </summary>
+    /// <value></value>
     public byte PartitionIndex;
 
     /// <summary>
     /// If true then the PictureID field is present in the VP8 header
     /// </summary>
+    /// <value></value>
     public bool IsPictureIDPresent;
 
     /// <summary>
     /// Contains the PictureID field. Valid only if IsPictureIDPresent is true.
     /// </summary>
+    /// <value></value>
     public ushort PictureID;
 
     // Payload Header Fields.
@@ -64,6 +70,7 @@ public class RtpVP8Header
     /// The size of the first partition in bytes is calculated from the 19 bits in Size0, Size1 and Size2 as:
     /// size = Size0 + (8 x Size1) + (2048 8 Size2).
     /// </summary>
+    /// <value></value>
     public int FirstPartitionSize;
 
     private int _length = 0;
@@ -71,6 +78,7 @@ public class RtpVP8Header
     /// <summary>
     /// Gets the length of the VP8 header.
     /// </summary>
+    /// <value></value>
     public int Length
     {
         get { return _length; }
@@ -81,6 +89,7 @@ public class RtpVP8Header
     /// <summary>
     /// Gets the length of the Payload Descriptor in the VP8 header.
     /// </summary>
+    /// <value></value>
     public int PayloadDescriptorLength
     {
         get { return _payloadDescriptorLength; }

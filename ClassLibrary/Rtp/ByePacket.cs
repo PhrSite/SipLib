@@ -70,6 +70,7 @@ public class ByePacket
     /// <summary>
     /// Gets the reason for the BYE packet. Returns null if this packet is not valid.
     /// </summary>
+    /// <value></value>
     public string Reason
     {
         get { return m_Reason; }
@@ -79,6 +80,7 @@ public class ByePacket
     /// Gets the list of SSRCs. Always returns a non-null value. If the list is empty then this packet is not
     /// valid.
     /// </summary>
+    /// <value></value>
     public List<uint> SSRCs
     {
         get { return m_SsrcList; }
@@ -87,6 +89,7 @@ public class ByePacket
     /// <summary>
     /// Gets the RtcpHeader for this packet.
     /// </summary>
+    /// <value></value>
     public RtcpHeader Header
     {
         get { return m_Header; }

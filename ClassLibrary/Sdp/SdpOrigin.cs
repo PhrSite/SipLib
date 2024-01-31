@@ -15,26 +15,32 @@ public class Origin
     /// <summary>
     /// User name field.
     /// </summary>
+    /// <value></value>
     public string UserName = "";
     /// <summary>
     /// Session ID field.
     /// </summary>
+    /// <value></value>
     public string SessionId = Origin.NewSessionId();
     /// <summary>
     /// Version field.
     /// </summary>
+    /// <value></value>
     public long Version = 1;
     /// <summary>
     /// Network Type field. Example: "IN" for Internet.
     /// </summary>
+    /// <value></value>
     public string NetworkType = "IN";
     /// <summary>
     /// Address type field. Should be "IP4" or "IP6".
     /// </summary>
+    /// <value></value>
     public string AddressType = "IP4";
     /// <summary>
     /// IP address. May be an IPv4, an IPv6 address or a fully qualified domain name.
     /// </summary>
+    /// <value></value>
     public string Address = null;
 
     private static Random m_Random = new Random();
@@ -108,6 +114,7 @@ public class Origin
     /// <summary>
     /// Gets or sets the version number in the SDP Origin as an integer.
     /// </summary>
+    /// <value></value>
     public long VersionNumber
     {
         get { return Version; }

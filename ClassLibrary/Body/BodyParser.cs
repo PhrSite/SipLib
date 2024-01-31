@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File: BinaryBodyParser.cs                                       28 Nov 22 PHR
+//  File: BodyParser.cs                                             28 Nov 22 PHR
 //
 //  Revised:    17 Aug 23 PHR
 //                -- Modified ProcessMultiPartContents to check for the presence of
@@ -23,7 +23,7 @@ namespace SipLib.Body;
 /// contain binary data is that almost all SIP related functions treat the entire message as UTF8 encoded
 /// strings. If arbitrary binary data is encoded to a UTF8 string then converted back to a raw binary array
 /// then encoding errors will occur.</remarks>
-public class BinaryBodyParser
+public class BodyParser
 {
     private const string CRLF = "\r\n";
     private const string ContentDelim = CRLF + CRLF;
@@ -34,8 +34,11 @@ public class BinaryBodyParser
     /// </summary>
     /// <param name="MsgBytes">Contains the entire SIP message -- headers and the body</param>
     /// <param name="ContentType">Value of the Content-Type header of the SIP message</param>
-    /// <returns>Returns a list of SipContentsContainer objects. The list will be empty if the SIP message
+    /// <returns>Returns a list of MessageContentsContainer objects. The list will be empty if the SIP message
     /// does not contain a body or if an error occurred.</returns>
+    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="Exception"></exception>
     public static List<MessageContentsContainer> ParseSipBody(byte[] MsgBytes, string ContentType)
     {
         List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
@@ -91,23 +94,23 @@ public class BinaryBodyParser
         int Len = MsgBytes.Length - StartIdx;
         byte[] BodyBytes = new byte[Len];
         Array.ConstrainedCopy(MsgBytes, StartIdx, BodyBytes, 0, Len);
-        MessageContentsContainer Scc = new MessageContentsContainer();
-        Scc.ContentType = ContentType;
+        MessageContentsContainer Mcc = new MessageContentsContainer();
+        Mcc.ContentType = ContentType;
 
         if (ContentsAreBinary(ContentType, null) == false)
         {
-            Scc.ContentLength = BodyBytes.Length.ToString();
-            Scc.IsBinaryContents = false;
-            Scc.StringContents = Encoding.UTF8.GetString(BodyBytes);
+            Mcc.ContentLength = BodyBytes.Length.ToString();
+            Mcc.IsBinaryContents = false;
+            Mcc.StringContents = Encoding.UTF8.GetString(BodyBytes);
         }
         else
         {
-            Scc.IsBinaryContents = true;
-            Scc.ContentLength = BodyBytes.Length.ToString();
-            Scc.BinaryContents = BodyBytes;
+            Mcc.IsBinaryContents = true;
+            Mcc.ContentLength = BodyBytes.Length.ToString();
+            Mcc.BinaryContents = BodyBytes;
         }
         
-        RetVal.Add(Scc);
+        RetVal.Add(Mcc);
 
         return RetVal;
     }
@@ -115,14 +118,14 @@ public class BinaryBodyParser
     /// <summary>
     /// Processes a SIP message with multiple body parts (i.e., Content-Type = multipart/mixed).
     /// Some body parts may be binary and some may be text.
-    /// This method will also work with multipart/mixed MSRP message.
+    /// This method will also work with multipart/mixed MSRP messages.
     /// </summary>
     /// <param name="MsgBytes">Bytes of the entire message including headers and request line) and the body.
     /// Alternatively, pass all of the bytes of only the body of the message.
     /// </param>
     /// <param name="ContentType">Value of the Content-Type header of the overall message. For example:
-    /// multipart/mixed; boundary=boundary1. The boundary parameter value may be quoted or not.</param>
-    /// <returns>Returns a list of SipContentsContainer objects. The return value will not be null,
+    /// "multipart/mixed; boundary=boundary1". The boundary parameter value may be quoted or not.</param>
+    /// <returns>Returns a list of MessageContentsContainer objects. The return value will not be null,
     /// but it may be empty is an error occurred.</returns>
     public static List<MessageContentsContainer> ProcessMultiPartContents(byte[] MsgBytes, string ContentType)
     {

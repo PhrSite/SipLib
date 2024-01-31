@@ -52,6 +52,7 @@ public class SIPViaSet
     /// <summary>
     /// Gets the number of Via headers in the Via set
     /// </summary>
+    /// <value></value>
     public int Length
     {
         get { return m_viaHeaders.Count; }
@@ -60,6 +61,7 @@ public class SIPViaSet
     /// <summary>
     /// Gets or sets the list of Via headers
     /// </summary>
+    /// <value></value>
     public List<SIPViaHeader> Via
     {
         get { return m_viaHeaders; }
@@ -69,6 +71,7 @@ public class SIPViaSet
     /// <summary>
     /// Gets the top-most SIPViaHeader
     /// </summary>
+    /// <value></value>
     public SIPViaHeader TopViaHeader
     {
         get
@@ -83,6 +86,7 @@ public class SIPViaSet
     /// <summary>
     /// Gets the SIPViaHeader at the bottom of the Via set
     /// </summary>
+    /// <value></value>
     public SIPViaHeader BottomViaHeader
     {
         get
@@ -97,6 +101,7 @@ public class SIPViaSet
     /// <summary>
     /// Pops top Via header off the array.
     /// </summary>
+    /// <returns>The top Via header</returns>
     public SIPViaHeader PopTopViaHeader()
     {
         SIPViaHeader topHeader = m_viaHeaders[0];
@@ -140,6 +145,7 @@ public class SIPViaSet
     /// <summary>
     /// Pushes a new Via header onto the top of the array.
     /// </summary>
+    /// <param name="viaHeader">The Via header to push onto the top of the Via set.</param>
     public void PushViaHeader(SIPViaHeader viaHeader)
     {
         m_viaHeaders.Insert(0, viaHeader);

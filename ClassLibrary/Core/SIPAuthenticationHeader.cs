@@ -46,6 +46,7 @@ public class SIPAuthenticationHeader
     /// <summary>
     /// SIP digest
     /// </summary>
+    /// <value></value>
     public SIPAuthorisationDigest SIPDigest;
 
     private SIPAuthenticationHeader()
@@ -83,8 +84,8 @@ public class SIPAuthenticationHeader
     /// <param name="headerValue">String header value</param>
     /// <returns>Returns a new SIPAuthenticationHeader if successful or null if unable to
     /// parse the input header value.</returns>
-    public static SIPAuthenticationHeader ParseSIPAuthenticationHeader(
-        SIPAuthorisationHeadersEnum authorizationType, string headerValue)
+    public static SIPAuthenticationHeader ParseSIPAuthenticationHeader(SIPAuthorisationHeadersEnum authorizationType,
+        string headerValue)
     {
         try
         {

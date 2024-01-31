@@ -14,6 +14,7 @@ public class SrtpTransformBase
     /// <summary>
     /// Cryptographic context to use for encryption and decryption of RTP and RTCP packets.
     /// </summary>
+    /// <value></value>
     protected CryptoContext m_Context;
 
     /// <summary>
@@ -108,11 +109,12 @@ public class SrtpTransformBase
     /// Gets or sets the reason for an encryption or a decryption error. This property will be set to
     /// a value indicating the cause of the error if an encryption or decryption method returns null.
     /// </summary>
+    /// <value></value>
     public SRtpErrorsEnum Error { get; protected set; } = SRtpErrorsEnum.NoError;
 }
 
 /// <summary>
-/// 
+/// Enumeration of SRTP error conditions
 /// </summary>
 public enum SRtpErrorsEnum
 {
@@ -142,5 +144,4 @@ public enum SRtpErrorsEnum
     /// Packet authentication failed when decrypting an input packet.
     /// </summary>
     AuthenticationFailed,
-
 }

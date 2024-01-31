@@ -226,5 +226,4 @@ internal class RtpReceiveStatisticsManager
             return Current;
         }
     }
-
 }

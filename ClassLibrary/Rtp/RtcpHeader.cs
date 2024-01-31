@@ -35,6 +35,7 @@ public class RtcpHeader
     /// <summary>
     /// Length of a RTCP header
     /// </summary>
+    /// <value></value>
     public const int RTCP_HEADER_LENGTH = 4;
 
     private byte[] m_PacketBytes = null;
@@ -73,6 +74,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets the fixed header length or an RTCP packet header.
     /// </summary>
+    /// <value></value>
     public static Int32 HeaderLength
     {
         get { return RTCP_HEADER_LENGTH; }
@@ -81,6 +83,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets the Version field.
     /// </summary>
+    /// <value></value>
     public int Version
     {
         private set
@@ -100,6 +103,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets or sets the Padding bit.
     /// </summary>
+    /// <value></value>
     public bool Padding
     {
         set
@@ -122,6 +126,7 @@ public class RtcpHeader
     /// <summary>
     /// Sets or gets the Padding bit value as an int
     /// </summary>
+    /// <value></value>
     public int PaddingBit
     {
         get { return Padding == true ? 1 : 0; }
@@ -133,6 +138,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets or sets the Count field.
     /// </summary>
+    /// <value></value>
     public int Count
     {
         get { return m_PacketBytes[RTCP_COUNT_OFFSET] & CountMask; }
@@ -146,6 +152,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets or sets the PT (Packet Type) field.
     /// </summary>
+    /// <value></value>
     public RtcpPacketType PacketType
     {
         get { return (RtcpPacketType)m_PacketBytes[RTCP_PACKET_TYPE_OFFSET]; }
@@ -155,6 +162,7 @@ public class RtcpHeader
     /// <summary>
     /// Gets or sets the Length field.
     /// </summary>
+    /// <value></value>
     public ushort Length
     {
         get { return RtpUtils.GetWord(m_PacketBytes, RTCP_LENGTH_OFFSET); }

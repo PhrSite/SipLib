@@ -49,7 +49,7 @@ public class BodyParsingUnitTests
         SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
         Assert.NotNull(Req);
 
-        List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
+        List<MessageContentsContainer> Contents = BodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
             ContentType);
         Assert.NotNull(Contents);
 

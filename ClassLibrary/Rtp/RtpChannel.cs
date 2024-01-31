@@ -93,6 +93,7 @@ public class RtpChannel
     /// Gets the fingerprint of the self-signed X.509 certificate that will be used for DTLS-SRTP.
     /// The certificate is a required SDP attribute for calls that offer or answer DTLS-SRTP media encryption.
     /// </summary>
+    /// <value></value>
     public static string CertificateFingerprint
     {
         get
@@ -111,26 +112,31 @@ public class RtpChannel
     /// <summary>
     /// Event that is fired when a RTP media packet has been received by this RtpChannel
     /// </summary>
+    /// <value></value>
     public event RtpPacketReceivedDelegate RtpPacketReceived = null;
 
     /// <summary>
     /// Event that is fired when a RTP packet has been sent by this RtpChannel
     /// </summary>
+    /// <value></value>
     public event RtpPacketSentDelegate RtpPacketSent = null;
 
     /// <summary>
     /// Event that is fired when a RTCP packet is received.
     /// </summary>
+    /// <value></value>
     public event RtcpPacketReceivedDelegate RtcpPacketReceived = null;
 
     /// <summary>
     /// Event that is fired when this class sends an RTCP packet.
     /// </summary>
+    /// <value></value>
     public event RtcpPacketSentDelegate RtcpPacketSent = null;
 
     /// <summary>
     /// Event that is fired fired if the DTLS-SRTP handshake failed
     /// </summary>
+    /// <value></value>
     public event DtlsHandshakeFailedDelegate DtlsHandshakeFailed = null;
 
     private static Random m_Random = new Random();
@@ -170,11 +176,12 @@ public class RtpChannel
             m_RtcpTimer.Elapsed += OnRtcpTimerExpired;
         }
     }
-    
+
     /// <summary>
     /// Gets or sets the RTP SSRC for this RtpChannel. By default, the SSRC is set to a random unsigned 32-bit
     /// number so there is usually no need to change it by calling the setter.
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         get { return m_SSRC; }

@@ -16,28 +16,33 @@ public class RttParameters
     /// <summary>
     /// Specifies the number of redundancy levels. A value of 0 specifies that redundancy is not being used.
     /// </summary>
+    /// <value></value>
     public int RedundancyLevel = RttUtils.DefaultRedundancyLevel;
 
     /// <summary>
     /// Specifies the t140 payload type in the RTP packets.
     /// </summary>
+    /// <value></value>
     public int T140PayloadType = RttUtils.DefaultT140PayloadType;
 
     /// <summary>
     /// Specifies the redundant packet payload type in the RTP packets. A value of 0 indicates that redundancy
     /// is not being used.
     /// </summary>
+    /// <value></value>
     public int RedundancyPayloadType = RttUtils.DefaultRedundantPayloadType;
 
     /// <summary>
     /// Specifies the maximum number of characters per second that may be sent. A value of 0 indicates that
     /// the data rate is not limited.
     /// </summary>
+    /// <value></value>
     public int Cps = RttUtils.DefaultCps;
 
     /// <summary>
     /// If true then the UA of the RTT RTP channel is RTT mixer aware as specified in RFC 9071.
     /// </summary>
+    /// <value></value>
     public bool RttMixerAware = false;
 
     /// <summary>

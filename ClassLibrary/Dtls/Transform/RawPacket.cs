@@ -47,16 +47,19 @@ public class RawPacket
     /// <summary>
     /// Maximum RTP packet size
     /// </summary>
+    /// <value></value>
     public const int RTP_PACKET_MAX_SIZE = 8192;
 
     /// <summary>
     /// The size of the extension header as defined by RFC 3550.
     /// </summary>
+    /// <value></value>
     public const int EXT_HEADER_SIZE = 4;
 
     /// <summary>
     /// The size of the fixed part of the RTP header as defined by RFC 3550.
     /// </summary>
+    /// <value></value>
     public const int FIXED_HEADER_SIZE = 12;
 
     /// <summary>

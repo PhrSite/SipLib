@@ -13,22 +13,26 @@ public class RtcpCompoundPacket
     /// <summary>
     /// List of Sender Reports. Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<SenderReport> SenderReports = new List<SenderReport>();
 
     /// <summary>
     /// List of Receiver Reports. Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<ReceiverReport> ReceiverReports = new List<ReceiverReport>();
 
     /// <summary>
     /// List of Session Description (SDES) packets. Initialized to an empty 
     /// list.
     /// </summary>
+    /// <value></value>
     public List<SdesPacket> SdesPackets = new List<SdesPacket>();
 
     /// <summary>
     /// List of BYE packets. Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<ByePacket> ByePackets = new List<ByePacket>();
 
     /// <summary>

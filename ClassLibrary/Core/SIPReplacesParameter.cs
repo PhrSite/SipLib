@@ -52,14 +52,17 @@ public class SIPReplacesParameter
     /// <summary>
     /// SIP Call-ID of the call
     /// </summary>
+    /// <value></value>
     public string CallID;
     /// <summary>
     /// Tag from the To header
     /// </summary>
+    /// <value></value>
     public string ToTag;
     /// <summary>
     /// Tag from the From header
     /// </summary>
+    /// <value></value>
     public string FromTag;
 
     /// <summary>
@@ -69,7 +72,7 @@ public class SIPReplacesParameter
     /// <returns>Returns a new SIPReplacesParameter or null if an error occurred</returns>
     public static SIPReplacesParameter Parse(string replaces)
     {
-        var callIDMatch = Regex.Match(replaces, "^(?<callid>.*?);");
+        Match callIDMatch = Regex.Match(replaces, "^(?<callid>.*?);");
         if (replaces.IndexOf(';') != -1)
         {
             Match toTagMatch = Regex.Match(replaces, "to-tag=(?<totag>.*?)(;|$)", RegexOptions.IgnoreCase);

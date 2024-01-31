@@ -12,6 +12,7 @@ public class SenderInfo
     /// <summary>
     /// Fixed length of a SenderInfo block
     /// </summary>
+    /// <value></value>
     public const int SENDER_INFO_BLOCK_LENGTH = 20;
 
     private byte[] m_PacketBytes = null;
@@ -50,6 +51,7 @@ public class SenderInfo
     /// <summary>
     /// Gets the length of the SendInfo block.
     /// </summary>
+    /// <value></value>
     public int SenderInfoLength
     {
         get { return SENDER_INFO_BLOCK_LENGTH; }
@@ -58,6 +60,7 @@ public class SenderInfo
     /// <summary>
     /// Gets UTC time from the NTP timestamp or sets the NTP timestamp field from the UTC time.
     /// </summary>
+    /// <value></value>
     public DateTime NTP
     {
         get
@@ -76,6 +79,7 @@ public class SenderInfo
     /// <summary>
     /// Gets or sets the RTP Timestamp field.
     /// </summary>
+    /// <value></value>
     public uint RtpTimestamp
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, RtpTimestampIdx); }
@@ -85,6 +89,7 @@ public class SenderInfo
     /// <summary>
     /// Gets or sets the Sender Packet Count field.
     /// </summary>
+    /// <value></value>
     public uint SenderPacketCount
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, SenderPcktCntIdx); }
@@ -94,6 +99,7 @@ public class SenderInfo
     /// <summary>
     /// Gets or sets the Sender Octet Count field.
     /// </summary>
+    /// <value></value>
     public uint SenderOctetCount
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, SenderOctetCntIdx); }

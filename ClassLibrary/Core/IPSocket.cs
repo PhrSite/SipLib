@@ -37,11 +37,13 @@ public class IPSocket
     /// <summary>
     /// Specifies the minimum acceptable value for the <see cref='System.Net.IPEndPoint'/> Port property.
     /// </summary>
+    /// <value></value>
     public const int MinPort = 0x00000000;
 
     /// <summary>
     /// Specifies the maximum acceptable value for the <see cref='System.Net.IPEndPoint'/> Port property.
     /// </summary>
+    /// <value></value>
     public const int MaxPort = 0x0000FFFF;
 
     /// <summary>
@@ -49,6 +51,8 @@ public class IPSocket
     /// https://github.com/dotnet/corefx/blob/master/src/System.Net.Primitives/src/System/Net/IPEndPoint.cs.
     /// If/when that feature makes it into .NET Standard this method can be replaced.
     /// </summary>
+    /// <param name="endPoint"></param>
+    /// <returns></returns>
     public static string GetSocketString(IPEndPoint endPoint)
     {
         string format = (endPoint.Address.AddressFamily == AddressFamily.InterNetworkV6) ? 
@@ -357,7 +361,9 @@ public class IPSocket
 
     /// <summary>
     /// Returns an IPv4 end point from a socket address in 10.0.0.1:5060 format.
-    /// </summary>>
+    /// </summary>
+    /// <param name="IPSocket"></param>
+    /// <returns></returns>
     public static IPEndPoint GetIPEndPoint(string IPSocket)
     {
         return Parse(IPSocket);

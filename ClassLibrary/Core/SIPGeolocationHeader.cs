@@ -28,6 +28,7 @@ public class SIPGeolocationHeader
     /// <summary>
     /// Gets or sets the SIPUserField object used to represent this Geolocation header.
     /// </summary>
+    /// <value></value>
     public SIPUserField GeolocationField
     {
         get { return m_Field; }

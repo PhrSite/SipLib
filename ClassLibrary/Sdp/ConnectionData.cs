@@ -15,26 +15,31 @@ public class ConnectionData
     /// <summary>
     /// Contains the network type. "IN" = Internet.
     /// </summary>
+    /// <value></value>
     public string NetworkType = "IN";
     /// <summary>
     /// Contains the Address Type information. Should be "IP4" or "IP6".
     /// </summary>
+    /// <value></value>
     public string AddressType = "IP4";
 
     /// <summary>
     /// Contains the IP address portion of a c= SDP line. May be an IPv4 or an IPv6 address
     /// </summary>
+    /// <value></value>
     public IPAddress Address = null;
 
     /// <summary>
     /// Contains the number of IP addresses if the Address is a multicast address.
     /// A value of 0 indicates that the address count field is not present.
     /// </summary>
+    /// <value></value>
     public int AddressCount = 0;
     /// <summary>
     /// Contains the Time To Live field of the IP address. A value of -1 indicates that the TTL field is
     /// not present.
     /// </summary>
+    /// <value></value>
     public int TTL = -1;
 
     /// <summary>

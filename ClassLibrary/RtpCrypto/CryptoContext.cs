@@ -13,12 +13,14 @@ public class CryptoContext
     /// Highest received RTP sequence number. This value is the s_l variable in Section 3.3.1 of RFC 3711.
     /// This is used by the receiver only.
     /// </summary>
+    /// <value></value>
     public ushort HighestSeq = 0;
 
     /// <summary>
     /// Specifies the length in bytes of the packet authentication tag that is appended to each RTP or RTCP
     /// packet. Will be equal to 10 or 4 depending upon the crypto suite being used.
     /// </summary>
+    /// <value></value>
     public int AuthTagLength = 10;
 
     /// <summary>
@@ -26,57 +28,68 @@ public class CryptoContext
     /// identifies the master encryption key used for that packet. If false, then no MKI will be attached to
     /// the packets.
     /// </summary>
+    /// <value></value>
     public bool MkiIndicator = false;
 
     /// <summary>
     /// Specifies the length in bytes of the MKI attached to each SRTP or SRTCP packet. Used only if
     /// MkiIndicator is true.
     /// </summary>
+    /// <value></value>
     public int MkiLength = 0;
 
     /// <summary>
     /// Contains the master keys and master salts used for this crypto context. Will contain at least one entry.
     /// </summary>
+    /// <value></value>
     public List<MasterKeys> MasterKeys = new List<MasterKeys>();
     /// <summary>
     /// Index of the current master key in the MasterKeys list for RTP.
     /// </summary>
+    /// <value></value>
     public int CurrentRtpMasterKeyIndex = 0;
     /// <summary>
     /// Index of the current maser key in the MasterKeys list for RTCP.
     /// </summary>
+    /// <value></value>
     public int CurrentRtcpMasterKeyIndex = 0;
 
     /// <summary>
     /// Current Roll Over Counter (ROC) values. The ROC represents the number of times that the SEQ number
     /// of the SRTP packets has been reset to 0. The ROC is not used for RTCP.
     /// </summary>
+    /// <value></value>
     public RocVals ROC = new RocVals();
 
     /// <summary>
     /// Stores the current session keys (key, salt and auth. key) for SRTP.
     /// </summary>
+    /// <value></value>
     public SessionKeys RtpSessionKeys = new SessionKeys();
 
     /// <summary>
     /// Stores the current session keys (key, salt and auth. key) for SRTCP.
     /// </summary>
+    /// <value></value>
     public SessionKeys RtcpSessionKeys = new SessionKeys();
 
     /// <summary>
     /// SRTP Index used for sending RTCP packets
     /// </summary>
+    /// <value></value>
     public uint SendRtcpIndex = 0;
 
     /// <summary>
     /// Maximum RTCP Index value. 2^31 - 1 because only 31 bits of the RTCP index are used, the MS bit is
     /// used to indicate encryption.
     /// </summary>
+    /// <value></value>
     public const uint MaxSendRtcpIndex = 2147483647;
 
     /// <summary>
     /// Gets the crypto suite name used by this crypto context.
     /// </summary>
+    /// <value></value>
     public string CryptoSuite { get; private set; }
 
     /// <summary>

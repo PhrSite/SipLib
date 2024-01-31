@@ -83,22 +83,26 @@ namespace SipLib.Dtls
         /// <summary>
         /// Contains the Org.BouncyCastle.Crypto.Tls.TlsSession
         /// </summary>
+        /// <value></value>
         protected internal TlsSession mSession;
 
         /// <summary>
         /// Gets or sets a flag to indicate whether or not to force the use of the extended MasterSecret.
         /// Defaults to true.
         /// </summary>
+        /// <value></value>
         public bool ForceUseExtendedMasterSecret { get; set; } = true;
 
         /// <summary>
         /// Gets the Certificate received from the server.
         /// </summary>
+        /// <value></value>
         public Certificate ServerCertificate { get; internal set; }
 
         /// <summary>
         /// Gets the fingerprint of the X.509 certificate used by this client
         /// </summary>
+        /// <value></value>
         public RTCDtlsFingerprint Fingerprint { get; private set; }
 
         private UseSrtpData clientSrtpData;
@@ -117,6 +121,7 @@ namespace SipLib.Dtls
         /// <summary>
         /// Event that is fired when an Alert is received from the server during the DTLS handshake
         /// </summary>
+        /// <value></value>
         public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
 
         /// <summary>
@@ -489,6 +494,7 @@ namespace SipLib.Dtls
         /// <summary>
         /// Gets the protcol version for this client
         /// </summary>
+        /// <value></value>
         public override ProtocolVersion ClientVersion
         {
             get { return ProtocolVersion.DTLSv12; }
@@ -497,6 +503,7 @@ namespace SipLib.Dtls
         /// <summary>
         /// Gets the minimum version support by this client
         /// </summary>
+        /// <value></value>
         public override ProtocolVersion MinimumVersion
         {
             get { return ProtocolVersion.DTLSv10; }

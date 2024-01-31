@@ -50,6 +50,7 @@ public class ReportBlock
     /// <summary>
     /// Gets the length of a Report Block.
     /// </summary>
+    /// <value></value>
     public static int ReportBlockLength
     {
         get { return REPORT_BLOCK_LENGTH; }
@@ -58,6 +59,7 @@ public class ReportBlock
     /// <summary>
     /// Sets or gets the SSRC of the source.
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, SsrcIdx);  }
@@ -67,6 +69,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Fraction Lost field.
     /// </summary>
+    /// <value></value>
     public byte FractionLost
     {
         get { return m_PacketBytes[FractionLostIdx]; }
@@ -76,6 +79,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Cumulative Number of Packets Lost field.
     /// </summary>
+    /// <value></value>
     public uint CumulativePacketsLost
     {
         get { return RtpUtils.Get3Bytes(m_PacketBytes, CumulativePacketsLostIdx); }
@@ -85,6 +89,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Extended Highest Sequence Number Received field.
     /// </summary>
+    /// <value></value>
     public uint HighestSequenceNumberReceived
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, HighestSeqNumberIdx); }
@@ -94,6 +99,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Inter-arrival Jitter field.
     /// </summary>
+    /// <value></value>
     public uint InterarrivalJitter
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, JitterIdx); }
@@ -103,6 +109,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Last SR Timestamp (LSR) field.
     /// </summary>
+    /// <value></value>
     public uint LastSR
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, LastSrIdx); }
@@ -112,6 +119,7 @@ public class ReportBlock
     /// <summary>
     /// Gets or sets the Delay Since Last SR (DLSR) field.
     /// </summary>
+    /// <value></value>
     public uint Dlsr
     {
         get { return RtpUtils.GetDWord(m_PacketBytes, DlsrIdx); }

@@ -19,9 +19,9 @@ public class SIPCallInfoHeader
     private SIPUserField m_Field = new SIPUserField();
 
     /// <summary>
-    /// Gets or sets the SIPUserField object used to represent this Call-Info
-    /// header.
+    /// Gets or sets the SIPUserField object used to represent this Call-Info header.
     /// </summary>
+    /// <value>May be null if not set yet.</value>
     public SIPUserField CallInfoField
     {
         get { return m_Field; }
@@ -31,6 +31,7 @@ public class SIPCallInfoHeader
     /// <summary>
     /// Defines the purpose header parameter for Call-Info.
     /// </summary>
+    /// <value></value>
     public const string PURPOSE_PARAMETER_STRING = "purpose";
 
     private SIPCallInfoHeader()

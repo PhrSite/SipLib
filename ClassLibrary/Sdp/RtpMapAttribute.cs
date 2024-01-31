@@ -12,22 +12,26 @@ public class RtpMapAttribute
     /// <summary>
     /// Represents the payload type number. For instance, 0 = PCMU by default.
     /// </summary>
+    /// <value></value>
     public int PayloadType;
 
     /// <summary>
     /// Specifies the encoding-name parameter. For example: PCMU
     /// </summary>
+    /// <value></value>
     public string EncodingName;
 
     /// <summary>
     /// Specifies the clock rate or sample rate.
     /// </summary>
+    /// <value></value>
     public int ClockRate;
 
     /// <summary>
     /// Specifies the number of channels. If not specified then the number of channels is 1.
     /// A value of 0 indicates that the number of channels is not set. This is the default case.
     /// </summary>
+    /// <value></value>
     public int Channels = 0;
 
     /// <summary>

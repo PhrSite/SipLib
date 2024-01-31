@@ -48,81 +48,97 @@ public class SIPConstants
     /// <summary>
     /// SIP message line terminator
     /// </summary>
+    /// <value></value>
     public const string CRLF = "\r\n";
 
     /// <summary>
     /// SIP protocol identifier
     /// </summary>
+    /// <value></value>
     public const string SIP_VERSION_STRING = "SIP";
 
     /// <summary>
     /// SIP major version
     /// </summary>
+    /// <value></value>
     public const int SIP_MAJOR_VERSION = 2;
 
     /// <summary>
     /// SIP minor version
     /// </summary>
+    /// <value></value>
     public const int SIP_MINOR_VERSION = 0;
 
     /// <summary>
     /// SIP full version string
     /// </summary>
+    /// <value></value>
     public const string SIP_FULLVERSION_STRING = "SIP/2.0";
 
     /// <summary>
-    /// Any SIP messages over this size will generate an error.
+    /// Any SIP messages over this size will generate an error
     /// </summary>
-    public const int SIP_MAXIMUM_RECEIVE_LENGTH = 65535;
+    /// <value></value>
+    public const int SIP_MAXIMUM_RECEIVE_LENGTH = 200000;
 
     /// <summary>
     /// Magic cookie for the branch parameter in a Via header
     /// </summary>
+    /// <value></value>
     public const string SIP_BRANCH_MAGICCOOKIE = "z9hG4bK";
 
     /// <summary>
     /// Default URI for the From header
     /// </summary>
+    /// <value></value>
     public const string SIP_DEFAULT_FROMURI = "sip:thisis@anonymous.invalid";
 
     /// <summary>
     /// Remove all registrations
     /// </summary>
+    /// <value></value>
     public const string SIP_REGISTER_REMOVEALL = "*";
 
     /// <summary>
     /// SIP loose routing parameter
     /// </summary>
+    /// <value></value>
     public const string SIP_LOOSEROUTER_PARAMETER = "lr";
 
     /// <summary>
     /// SIP header delimiter character
     /// </summary>
+    /// <value></value>
     public const char HEADER_DELIMITER_CHAR = ':';
 
     /// <summary>
     /// Default value for the Max-Forwards SIP header
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_MAX_FORWARDS = 70;
 
     /// <summary>
     /// Default SIP port number for UDP and TCP
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_SIP_PORT = 5060;
 
     /// <summary>
     /// Default SIP port number for TLS
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_SIP_TLS_PORT = 5061;
 
     /// <summary>
     /// Default SIP port number for the Web Sockets transport
     /// </summary>
+    /// <value></value>
     public const ushort DEFAULT_SIP_WEBSOCKET_PORT = 80;
 
     /// <summary>
     /// Default SIP port number for the secure Web Sockets transport
     /// </summary>
+    /// <value></value>
     public const ushort DEFAULT_SIPS_WEBSOCKET_PORT = 443;
 
     /// <summary>
@@ -378,98 +394,157 @@ public class SIPProtocolsType
 public class SIPHeaders
 {
     // SIP Header Keys.
+    /// <value></value>
     public const string SIP_HEADER_ACCEPT = "Accept";
+    /// <value></value>
     public const string SIP_HEADER_ACCEPTENCODING = "Accept-Encoding";
+    /// <value></value>
     public const string SIP_HEADER_ACCEPTLANGUAGE = "Accept-Language";
+    /// <value></value>
     public const string SIP_HEADER_ALERTINFO = "Alert-Info";
+    /// <value></value>
     public const string SIP_HEADER_ALLOW = "Allow";
 
     /// <summary>
     /// RC3265 (SIP Events).
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_ALLOW_EVENTS = "Allow-Events";
+    /// <value></value>
     public const string SIP_HEADER_AUTHENTICATIONINFO = "Authentication-Info";
+    /// <value></value>
     public const string SIP_HEADER_AUTHORIZATION = "Authorization";
+    /// <value></value>
     public const string SIP_HEADER_CALLID = "Call-ID";
+    /// <value></value>
     public const string SIP_HEADER_CALLINFO = "Call-Info";
+    /// <value></value>
     public const string SIP_HEADER_CONTACT = "Contact";
+    /// <value></value>
     public const string SIP_HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+    /// <value></value>
     public const string SIP_HEADER_CONTENT_ENCODING = "Content-Encoding";
+    /// <value></value>
     public const string SIP_HEADER_CONTENT_LANGUAGE = "Content-Language";
+    /// <value></value>
     public const string SIP_HEADER_CONTENTLENGTH = "Content-Length";
+    /// <value></value>
     public const string SIP_HEADER_CONTENTTYPE = "Content-Type";
+    /// <value></value>
     public const string SIP_HEADER_CSEQ = "CSeq";
+    /// <value></value>
     public const string SIP_HEADER_DATE = "Date";
+    /// <value></value>
     public const string SIP_HEADER_ERROR_INFO = "Error-Info";
 
     /// <summary>
     /// RC3265 (SIP Events).
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_EVENT = "Event";
 
     /// <summary>
     /// RFC3903
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_ETAG = "SIP-ETag";
+    /// <value></value>
     public const string SIP_HEADER_EXPIRES = "Expires";
+    /// <value></value>
     public const string SIP_HEADER_FROM = "From";
 
+    /// <value></value>
     public const string SIP_HEADER_PAI = "P-Asserted-Identity";  // 7 Nov 22 PHR
+    /// <value></value>
     public const string SIP_HEADER_PPI = "P-Preferred-Identity"; // 7 Nov 22 PHR
 
     // 7 Nov 22 PHR -- From RFC 6442
+    /// <value></value>
     public const string SIP_HEADER_GEOLOCATION = "Geolocation";
+    /// <value></value>
     public const string SIP_HEADER_GEOLOCATION_ROUTING = "Geolocation-Routing";
+    /// <value></value>
     public const string SIP_HEADER_GEOLOCATION_ERROR = "Geolocation-Error";
 
+    /// <value></value>
     public const string SIP_HEADER_IN_REPLY_TO = "In-Reply-To";
+    /// <value></value>
     public const string SIP_HEADER_MAXFORWARDS = "Max-Forwards";
+    /// <value></value>
     public const string SIP_HEADER_MINEXPIRES = "Min-Expires";
+    /// <value></value>
     public const string SIP_HEADER_MIME_VERSION = "MIME-Version";
+    /// <value></value>
     public const string SIP_HEADER_ORGANIZATION = "Organization";
+    /// <value></value>
     public const string SIP_HEADER_PRIORITY = "Priority";
+    /// <value></value>
+    /// <value></value>
     public const string SIP_HEADER_PROXYAUTHENTICATION = "Proxy-Authenticate";
+    /// <value></value>
     public const string SIP_HEADER_PROXYAUTHORIZATION = "Proxy-Authorization";
+    /// <value></value>
     public const string SIP_HEADER_PROXY_REQUIRE = "Proxy-Require";
+    /// <value></value>
     public const string SIP_HEADER_REASON = "Reason";
+    /// <value></value>
     public const string SIP_HEADER_RECORDROUTE = "Record-Route";
 
     /// <summary>
     /// RFC 3515 "The Session Initiation Protocol (SIP) Refer Method".
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_REFERREDBY = "Referred-By";
 
     /// <summary>
     /// RFC 4488 Used to stop the implicit SIP event subscription on a REFER request.
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_REFERSUB = "Refer-Sub";
 
     /// <summary>
     /// RFC 3515 "The Session Initiation Protocol (SIP) Refer Method".
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_REFERTO = "Refer-To";
+    /// <value></value>
     public const string SIP_HEADER_REPLY_TO = "Reply-To";
+    /// <value></value>
     public const string SIP_HEADER_REQUIRE = "Require";
 
     // 7 Nov 22 PHR
+    /// <value></value>
     public const string SIP_HEADER_RESOURCE_PRIORITY = "Resource-Priority";
 
+    /// <value></value>
     public const string SIP_HEADER_RETRY_AFTER = "Retry-After";
+    /// <value></value>
     public const string SIP_HEADER_ROUTE = "Route";
+    /// <value></value>
     public const string SIP_HEADER_SERVER = "Server";
+    /// <value></value>
     public const string SIP_HEADER_SUBJECT = "Subject";
 
     /// <summary>
     /// RC3265 (SIP Events).
     /// </summary>
+    /// <value></value>
     public const string SIP_HEADER_SUBSCRIPTION_STATE = "Subscription-State";
+    /// <value></value>
     public const string SIP_HEADER_SUPPORTED = "Supported";
+    /// <value></value>
     public const string SIP_HEADER_TIMESTAMP = "Timestamp";
+    /// <value></value>
     public const string SIP_HEADER_TO = "To";
+    /// <value></value>
     public const string SIP_HEADER_UNSUPPORTED = "Unsupported";
+    /// <value></value>
     public const string SIP_HEADER_USERAGENT = "User-Agent";
+    /// <value></value>
     public const string SIP_HEADER_VIA = "Via";
+    /// <value></value>
     public const string SIP_HEADER_WARNING = "Warning";
+    /// <value></value>
     public const string SIP_HEADER_WWWAUTHENTICATE = "WWW-Authenticate";
 
     // SIP Compact Header Keys.
@@ -477,25 +552,37 @@ public class SIPHeaders
     /// <summary>
     /// RC3265 (SIP Events).
     /// </summary>
+    /// <value></value>
     public const string SIP_COMPACTHEADER_ALLOWEVENTS = "u";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_CALLID = "i";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_CONTACT = "m";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_CONTENTLENGTH = "l";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_CONTENTTYPE = "c";
-    
+
     /// <summary>
     /// RC3265 (SIP Events).
     /// </summary>
+    /// <value></value>
     public const string SIP_COMPACTHEADER_EVENT = "o";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_FROM = "f";
 
     /// <summary>
     /// RFC 3515 "The Session Initiation Protocol (SIP) Refer Method".
     /// </summary>
+    /// <value></value>
     public const string SIP_COMPACTHEADER_REFERTO = "r";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_SUBJECT = "s";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_SUPPORTED = "k";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_TO = "t";
+    /// <value></value>
     public const string SIP_COMPACTHEADER_VIA = "v";
 }
 
@@ -505,17 +592,24 @@ public class SIPHeaders
 public class SIPHeaderAncillary
 {
     // Header parameters used in the core SIP protocol.
+    /// <value></value>
     public const string SIP_HEADERANC_TAG = "tag";
+    /// <value></value>
     public const string SIP_HEADERANC_BRANCH = "branch";
+    /// <value></value>
     public const string SIP_HEADERANC_RECEIVED = "received";
+    /// <value></value>
     public const string SIP_HEADERANC_TRANSPORT = "transport";
+    /// <value></value>
     public const string SIP_HEADERANC_MADDR = "maddr";
 
     // Via header parameter, documented in RFC 3581 "An Extension to the Session Initiation Protocol (SIP)
     // for Symmetric Response Routing".
+    /// <value></value>
     public const string SIP_HEADERANC_RPORT = "rport";
 
     // SIP header parameter from RFC 3515 "The Session Initiation Protocol (SIP) Refer Method".
+    /// <value></value>
     public const string SIP_REFER_REPLACES = "Replaces";
 }
 
@@ -524,16 +618,27 @@ public class SIPHeaderAncillary
 /// </summary>
 public class AuthHeaders
 {
+    /// <value></value>
     public const string AUTH_DIGEST_KEY = "Digest";
+    /// <value></value>
     public const string AUTH_REALM_KEY = "realm";
+    /// <value></value>
     public const string AUTH_NONCE_KEY = "nonce";
+    /// <value></value>
     public const string AUTH_USERNAME_KEY = "username";
+    /// <value></value>
     public const string AUTH_RESPONSE_KEY = "response";
+    /// <value></value>
     public const string AUTH_URI_KEY = "uri";
+    /// <value></value>
     public const string AUTH_ALGORITHM_KEY = "algorithm";
+    /// <value></value>
     public const string AUTH_CNONCE_KEY = "cnonce";
+    /// <value></value>
     public const string AUTH_NONCECOUNT_KEY = "nc";
+    /// <value></value>
     public const string AUTH_QOP_KEY = "qop";
+    /// <value></value>
     public const string AUTH_OPAQUE_KEY = "opaque";
 }
 

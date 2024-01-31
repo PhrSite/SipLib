@@ -10,7 +10,8 @@ namespace SipLib.Media;
 public interface IAudioEncoder
 {
     /// <summary>
-    /// Input sample array of 16-bit PCMU audio samples
+    /// Encodes an input sample array of 16-bit PCMU audio samples into a byte array that can be sent as
+    /// the payload of an RTP packet.
     /// </summary>
     /// <param name="InputSamples">Input linear 16-bit Mu-Law samples</param>
     /// <returns>Returns an array of encoded sample bytes</returns>
@@ -19,7 +20,14 @@ public interface IAudioEncoder
     /// <summary>
     /// Gets the clock rate (samples/second)
     /// </summary>
+    /// <value></value>
     int ClockRate { get; }
+
+    /// <summary>
+    /// Gets the sample rate in samples/second.
+    /// </summary>
+    /// <value></value>
+    int SampleRate { get; }
 
     /// <summary>
     /// Closes the encoder so that it can release any memory or resources it has been using.

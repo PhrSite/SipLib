@@ -36,6 +36,10 @@
 //	Revised:	7 Nov 22 PHR -- Initial version. Added documentation comments
 //              10 Nov 22 PHR -- Added more validity checks in IsValid()
 //              11 Sep 23 PHR -- Added the RawBuffer field.
+//              30 Jan 24 PHR
+//                -- Removed the private string UnknownMethod field
+//                -- Removed public bool IsLoop()
+//                -- Added SIPMessage as the base class
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -54,10 +58,11 @@ namespace SipLib.Core;
 //	 
 //	 SIP-Version    =  "SIP" "/" 1*DIGIT "." 1*DIGIT
 // </bnf>
+
 /// <summary>
 /// Class for a SIP request message
 /// </summary>
-public class SIPRequest
+public class SIPRequest : SIPMessage
 {
     private delegate bool IsLocalSIPSocketDelegate(string socket, SIPProtocolsEnum protocol);
 
@@ -69,39 +74,14 @@ public class SIPRequest
     /// <summary>
     /// Request method
     /// </summary>
-    public SIPMethodsEnum Method;
-
-    private string UnknownMethod = null;
+    /// <value></value>
+    public SIPMethodsEnum Method = SIPMethodsEnum.UNKNOWN;
 
     /// <summary>
     /// Request URI
     /// </summary>
-    public SIPURI URI;
-
-    /// <summary>
-    /// Contains all headers in the request
-    /// </summary>
-    public SIPHeader Header;
-
-    /// <summary>
-    /// Body content as a string
-    /// </summary>
-    public string Body;
-
-    /// <summary>
-    /// Contains the raw byte array containing the entire message.
-    /// </summary>
-    public byte[] RawBuffer = null;
-
-    /// <summary>
-    /// The remote IP socket the request was received from or sent to.
-    /// </summary>
-    public SIPEndPoint RemoteSIPEndPoint;
-
-    /// <summary>
-    /// The local SIP socket the request was received on or sent from.
-    /// </summary>
-    public SIPEndPoint LocalSIPEndPoint;
+    /// <value></value>
+    public SIPURI URI = null;
 
     private SIPRequest()
     {
@@ -111,7 +91,8 @@ public class SIPRequest
     /// Constructs a SIPRequest object. Use this constructor when creating a new request.
     /// </summary>
     /// <param name="method">The SIP method for the request.</param>
-    /// <param name="uri">The URI to use in the request line. Must be a valid SIPURI.</param>
+    /// <param name="uri">The URI to use in the request line. Must be a valid SIP URI.</param>
+    /// <exception cref="SIPValidationException">Thrown if the input uri string is not a valid SIP URI</exception>
     public SIPRequest(SIPMethodsEnum method, string uri)
     {
         try
@@ -120,7 +101,7 @@ public class SIPRequest
             URI = SIPURI.ParseSIPURI(uri);
             SIPVersion = m_sipFullVersion;
         }
-        catch (Exception)
+        catch (SIPValidationException)
         {
             throw;
         }
@@ -129,8 +110,8 @@ public class SIPRequest
     /// <summary>
     /// Constructs a SIPRequest object. Use this constructor when creating a new request.
     /// </summary>
-    /// <param name="method"></param>
-    /// <param name="uri"></param>
+    /// <param name="method">The SIP method for the request.</param>
+    /// <param name="uri">The URI to use in the request line. Must be a valid SIPURI.</param>
     public SIPRequest(SIPMethodsEnum method, SIPURI uri)
     {
          Method = method;
@@ -144,7 +125,7 @@ public class SIPRequest
     /// </summary>
     /// <param name="sipMessage">SIPMessage object to build the SIPRequest from /// </param>
     /// <returns>Returns a new SIPRequest object.</returns>
-    // <exception cref="SIPValidationException"></exception>
+    /// <exception cref="SIPValidationException">Thrown if the SIP message is not a valid SIP Request</exception>
     public static SIPRequest ParseSIPRequest(SIPMessage sipMessage)
     {
         string uriStr = null;
@@ -161,8 +142,6 @@ public class SIPRequest
 
             string method = statusLine.Substring(0, firstSpacePosn).Trim();
             sipRequest.Method = SIPMethods.GetMethod(method);
-            if (sipRequest.Method == SIPMethodsEnum.UNKNOWN)
-                sipRequest.UnknownMethod = method;
 
             statusLine = statusLine.Substring(firstSpacePosn).Trim();
             int secondSpacePosn = statusLine.IndexOf(" ");
@@ -191,8 +170,7 @@ public class SIPRequest
         }
         catch (Exception)
         {
-            throw new SIPValidationException(SIPValidationFieldsEnum.Request, 
-                "Unknown error parsing SIP Request");
+            throw new SIPValidationException(SIPValidationFieldsEnum.Request, "Unknown error parsing SIP Request");
         }
     }
 
@@ -200,8 +178,8 @@ public class SIPRequest
     /// Parses a string containing a SIPMessage into a SIPRequest object. 
     /// </summary>
     /// <param name="sipMessageStr">String containing a SIPMessage object</param>
-    /// <returns></returns>
-    // <exception cref="SIPValidationException">Thrown if the SIPMessage is not a valid SIP request.</exception>
+    /// <returns>Returns a new SIPRequest object.</returns>
+    /// <exception cref="SIPValidationException">Thrown if the SIPMessage is not a valid SIP request.</exception>
     public static SIPRequest ParseSIPRequest(string sipMessageStr)
     {
         try
@@ -223,13 +201,13 @@ public class SIPRequest
     /// Converts this SIP request to a string.
     /// </summary>
     /// <returns>Returns the string represention of this SIPRequest object</returns>
-    // <exception cref="Exception">Thrown if an unexpected error occured</exception>
+    /// <exception cref="Exception">Thrown if an unexpected error occured</exception>
     public new string ToString()
     {
         try
         {
-            string methodStr = (Method != SIPMethodsEnum.UNKNOWN) ? Method.ToString() : UnknownMethod;
-            
+            string methodStr = Method.ToString();   // 25 Jan 24 PHR
+
             string message = methodStr + " " + URI.ToString() + " " + SIPVersion + m_CRLF + 
                 this.Header.ToString();
 
@@ -264,53 +242,6 @@ public class SIPRequest
         return ParseSIPRequest(this.ToString());
     }
     
-    /// <summary>
-    /// Creates the branch-id for the Via header
-    /// </summary>
-    /// <returns></returns>
-    public string CreateBranchId()
-    {
-        string routeStr = (Header.Routes != null) ? Header.Routes.ToString() : null;
-        string toTagStr = (Header.To != null) ? Header.To.ToTag : null;
-        string fromTagStr = (Header.From != null) ? Header.From.FromTag : null;
-        string topViaStr = (Header.Vias != null && Header.Vias.TopViaHeader != 
-            null) ? Header.Vias.TopViaHeader.ToString() : null;
-
-        return CallProperties.CreateBranchId(
-            SIPConstants.SIP_BRANCH_MAGICCOOKIE,
-            toTagStr,
-            fromTagStr,
-            Header.CallId,
-            URI.ToString(),
-            topViaStr,
-            Header.CSeq,
-            routeStr,
-            Header.ProxyRequire,
-            null);
-    }
-    
-    /// <summary>
-    /// Determines if this SIP header is a looped header. The basis for the decision is the branch
-    /// ID in the Via header. If the branch ID for a new header computes to the same branchid as a
-    /// Via header already in the SIP header then it is considered a loop.
-    /// </summary>
-    /// <returns>True if this header is a loop otherwise false.</returns>
-    public bool IsLoop(string ipAddress, int port, string currentBranchId)
-    {			
-        foreach(SIPViaHeader viaHeader in Header.Vias.Via)
-        {
-            if(viaHeader.Host == ipAddress && viaHeader.Port == port)
-            {
-                if(viaHeader.Branch == currentBranchId)
-                {
-                    return true;
-                }
-            }
-        }
-            
-        return false;
-    }
-
     /// <summary>
     /// Determines if this SIPRequest object is vallid
     /// </summary>

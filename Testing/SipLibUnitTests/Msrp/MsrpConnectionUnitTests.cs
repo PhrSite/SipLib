@@ -117,7 +117,7 @@ public class MsrpConnectionUnitTests
         Assert.True(ServerReceivedContentType.Contains("multipart/mixed") == true,
             "multipart/mixed ServerReceivedContentType is wrong");
 
-        List<MessageContentsContainer> RecvContents = BinaryBodyParser.ProcessMultiPartContents(
+        List<MessageContentsContainer> RecvContents = BodyParser.ProcessMultiPartContents(
             ServerReceivedMessageBytes, ServerReceivedContentType);
         Assert.True(RecvContents.Count == 2, "RecvContents.Count is wrong");
         Assert.True(RecvContents[0].ContentType == "message/CPIM", "The first ContentType is wrong");

@@ -55,26 +55,31 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Gets or sets the DTLS transport object
     /// </summary>
+    /// <value></value>
     public DtlsTransport Transport { get; private set; }
 
     /// <summary>
     /// Sets the period in milliseconds that the handshake attempt will timeout after.
     /// </summary>
+    /// <value></value>
     public int TimeoutMilliseconds = DEFAULT_TIMEOUT_MILLISECONDS;
 
     /// <summary>
     /// Sets the period in milliseconds that receive will wait before try retransmission
     /// </summary>
+    /// <value></value>
     public int RetransmissionMilliseconds = DEFAULT_RETRANSMISSION_WAIT_MILLIS;
 
     /// <summary>
     /// Event that is fired when there is data that needs to be sent via UDP
     /// </summary>
+    /// <value></value>
     public Action<byte[]> OnDataReady;
 
     /// <summary>
     /// Event that is fired if a DTlS protocol Alert occurs
     /// </summary>
+    /// <value></value>
     public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
 
     private System.DateTime _startTime = System.DateTime.MinValue;
@@ -111,6 +116,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Gets the SRTP decoder
     /// </summary>
+    /// <value></value>
     public IPacketTransformer SrtpDecoder
     {
         get
@@ -122,6 +128,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Gets the SRTP encoder
     /// </summary>
+    /// <value></value>
     public IPacketTransformer SrtpEncoder
     {
         get
@@ -133,6 +140,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Gets the SRTCP decoder
     /// </summary>
+    /// <value></value>
     public IPacketTransformer SrtcpDecoder
     {
         get
@@ -144,6 +152,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Gets the SRTCP decoder
     /// </summary>
+    /// <value></value>
     public IPacketTransformer SrtcpEncoder
     {
         get
@@ -202,6 +211,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <summary>
     /// Returns true if this transport object is for a DTLS client or false if its for a DTLS server.
     /// </summary>
+    /// <value></value>
     public bool IsClient
     {
         get { return connection.IsClient(); }
@@ -491,22 +501,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
         }
     }
 
-    //public int UnprotectRTP(byte[] payload, int length, out int outLength)
-    //{
-    //    var result = UnprotectRTP(payload, 0, length);
-
-    //    if (result == null)
-    //    {
-    //        outLength = 0;
-    //        return -1;
-    //    }
-
-    //    System.Buffer.BlockCopy(result, 0, payload, 0, result.Length);
-    //    outLength = result.Length;
-
-    //    return 0; //No Errors
-    //}
-
     /// <summary>
     /// Protects (encrypts) a complete RTP packet.
     /// </summary>
@@ -521,22 +515,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             return this.srtpEncoder.Transform(packet, offset, length);
         }
     }
-
-    //public int ProtectRTP(byte[] payload, int length, out int outLength)
-    //{
-    //    var result = ProtectRTP(payload, 0, length);
-
-    //    if (result == null)
-    //    {
-    //        outLength = 0;
-    //        return -1;
-    //    }
-
-    //    System.Buffer.BlockCopy(result, 0, payload, 0, result.Length);
-    //    outLength = result.Length;
-
-    //    return 0; //No Errors
-    //}
 
     /// <summary>
     /// Unprotects (decrypts) a complete RTCP packet
@@ -553,21 +531,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
         }
     }
 
-    //public int UnprotectRTCP(byte[] payload, int length, out int outLength)
-    //{
-    //    var result = UnprotectRTCP(payload, 0, length);
-    //    if (result == null)
-    //    {
-    //        outLength = 0;
-    //        return -1;
-    //    }
-
-    //    System.Buffer.BlockCopy(result, 0, payload, 0, result.Length);
-    //    outLength = result.Length;
-
-    //    return 0; //No Errors
-    //}
-
     /// <summary>
     /// Protects (encrypts) a compete RTCP packet
     /// </summary>
@@ -582,21 +545,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             return this.srtcpEncoder.Transform(packet, offset, length);
         }
     }
-
-    //public int ProtectRTCP(byte[] payload, int length, out int outLength)
-    //{
-    //    var result = ProtectRTCP(payload, 0, length);
-    //    if (result == null)
-    //    {
-    //        outLength = 0;
-    //        return -1;
-    //    }
-
-    //    System.Buffer.BlockCopy(result, 0, payload, 0, result.Length);
-    //    outLength = result.Length;
-
-    //    return 0; //No Errors
-    //}
 
     /// <summary>
     /// Returns the number of milliseconds remaining until a timeout occurs.

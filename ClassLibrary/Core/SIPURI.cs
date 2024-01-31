@@ -53,26 +53,31 @@ public class SIPURI
     /// <summary>
     /// SIP scheme (sip, sips, etc.)
     /// </summary>
+    /// <value></value>
     public SIPSchemesEnum Scheme = m_defaultSIPScheme;
 
     /// <summary>
     /// User portion of the URI
     /// </summary>
+    /// <value></value>
     public string User;
 
     /// <summary>
     /// Host portion of the URI.
     /// </summary>
+    /// <value></value>
     public string Host;
 
     /// <summary>
     /// URI parameters
     /// </summary>
+    /// <value></value>
     public SIPParameters Parameters = new SIPParameters();
 
     /// <summary>
     /// Embedded URI headers
     /// </summary>
+    /// <value></value>
     public SIPParameters Headers = new SIPParameters();
 
     /// <summary>
@@ -82,6 +87,7 @@ public class SIPURI
     /// dictates the protocol for the URI. Finally if there is no transport parameter for a sip
     /// URI then the default UDP transport is used.
     /// </summary>
+    /// <value></value>
     public SIPProtocolsEnum Protocol
     {
         get
@@ -117,8 +123,9 @@ public class SIPURI
     }
 
     /// <summary>
-    /// Returns a string that can be used to compare SIP URI addresses.
+    /// Gets a string that can be used to compare SIP URI addresses.
     /// </summary>
+    /// <value></value>
     public string CanonicalAddress
     {
         get
@@ -142,6 +149,7 @@ public class SIPURI
     /// Gets the host address portion of the URI. If the address is an IPv6 address, then it will
     /// include the [ and ] delimiters.
     /// </summary>
+    /// <value></value>
     public string HostAddress
     {
         get
@@ -163,6 +171,7 @@ public class SIPURI
     /// <summary>
     /// Gets the maddr parameter or the host address if the maddr parameter is not present
     /// </summary>
+    /// <value></value>
     public string MAddrOrHostAddress
     {
         get
@@ -174,6 +183,7 @@ public class SIPURI
     /// <summary>
     /// Gets the maddr parameter or null if it is not present
     /// </summary>
+    /// <value></value>
     public string MAddr
     {
         get
@@ -188,6 +198,7 @@ public class SIPURI
     /// <summary>
     /// Gets the port portion of the host address or null if it is not present
     /// </summary>
+    /// <value></value>
     public string HostPort
     {
         get
@@ -209,6 +220,7 @@ public class SIPURI
     /// <summary>
     /// Gets the un-escapted user part of the URI or null if there is no user part.
     /// </summary>
+    /// <value></value>
     public string UnescapedUser
     {
         get
@@ -285,7 +297,7 @@ public class SIPURI
         Host = sipEndPoint.GetIPEndPoint().ToString();
 
         //if (sipEndPoint.Protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips)
-        // 24 Jul 24 PHR
+        // 24 Jul 23 PHR
         if (sipEndPoint.Protocol != SIPProtocolsEnum.udp && scheme != SIPSchemesEnum.sips && scheme !=
             SIPSchemesEnum.msrp && scheme != SIPSchemesEnum.msrps)
             Parameters.Set(m_uriParamTransportKey, sipEndPoint.Protocol.ToString());
@@ -311,7 +323,7 @@ public class SIPURI
     /// </summary>
     /// <param name="uri">Input string</param>
     /// <returns>Returns a new SIPURI object</returns>
-    // <exception cref="SIPValidationException"></exception>
+    /// <exception cref="SIPValidationException">Thrown if the input string is not a valid SIPURI</exception>
     public static SIPURI ParseSIPURI(string uri)
     {
         try

@@ -94,7 +94,8 @@ public class SdesChunk
     /// Gets the total length of the SDES chunk that was received and parsed. Do not use this property if
     /// constructing a SdesChunk item to send.
     /// </summary>
-    public Int32 TotalLength
+    /// <value></value>
+    public int TotalLength
     {
         get { return m_Length; }
     }
@@ -102,6 +103,7 @@ public class SdesChunk
     /// <summary>
     /// Gets or sets the synchronization source (SSRC) of this chunk.
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         get { return m_Ssrc; }
@@ -111,6 +113,7 @@ public class SdesChunk
     /// <summary>
     /// Gets the list of SDES items in this chunk.
     /// </summary>
+    /// <value></value>
     public List<SdesItem> Items
     {
         get { return m_SdesItems; }

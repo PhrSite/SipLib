@@ -301,7 +301,7 @@ public class SIPTortureTests
         Assert.NotNull(Msg);
         SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
         Assert.NotNull(Req);
-        List<MessageContentsContainer> Scc = BinaryBodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
+        List<MessageContentsContainer> Scc = BodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
             ContentType);
         Assert.True(Scc.Count == 2, "The SIP contents count is incorrect");
 
@@ -390,7 +390,7 @@ public class SIPTortureTests
         SIPRequest Req = SIPRequest.ParseSIPRequest(strInviteWithSdp);
         byte[] ReqBytes = Encoding.UTF8.GetBytes(strInviteWithSdp);
         Assert.NotNull(Req);
-        List<MessageContentsContainer> Contents = BinaryBodyParser.ParseSipBody(ReqBytes,
+        List<MessageContentsContainer> Contents = BodyParser.ParseSipBody(ReqBytes,
             Req.Header.ContentType);
 
         Assert.True(Contents.Count == 1, "The contents count is incorrect");

@@ -19,37 +19,44 @@ public class CryptoAttribute
     /// <summary>
     /// Value of the tag parameter.
     /// </summary>
+    /// <value></value>
     public int Tag = 1;
 
     /// <summary>
     /// Specifies the crypto-suite to use. The default is AES_CM_128_HMAC_SHA1_80.
     /// </summary>
+    /// <value></value>
     public string CryptoSuite = CryptoSuites.AES_CM_128_HMAC_SHA1_80;
 
     /// <summary>
     /// Contains a list of key-params. This list must contain at least 1 element.
     /// </summary>
+    /// <value></value>
     public List<InlineParams> InlineParameters = new List<InlineParams>();
     /// <summary>
     /// Specifies the Key Derivation Rate. Must be in the range of 0 - 24 and is an integer power of 2. 
     /// Optional.
     /// Set to -1 to indicate not specified. An unspecified KDR means that the default KDR of 0 should be used.
     /// </summary>
+    /// <value></value>
     public int KDR = -1;
     /// <summary>
     /// Specifies the fec-order (for forward error correction) session parameter. Must be "FEC_SRTP" or
     /// "SRTP_FEC". Optional. Set to null if it is not specified.
     /// </summary>
+    /// <value></value>
     public string FEC_ORDER = null;
     /// <summary>
     /// Specifies the fec-key session parameter. The value depends upon the FEC scheme being used. Optional.
     /// Set to null if it is not specified.
     /// </summary>
+    /// <value></value>
     public string FEC_KEY = null;
     /// <summary>
     /// Specifies the Window Size Hint used for replay detection. This session parameter is optional. The
     /// minimum value is 64. A value of -1 indicates that the field has not been set.
     /// </summary>
+    /// <value></value>
     public int WSH = -1;
 
     /// <summary>
@@ -153,5 +160,3 @@ public class CryptoAttribute
         return Sb.ToString();
     }
 }
-
-

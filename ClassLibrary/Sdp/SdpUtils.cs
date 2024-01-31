@@ -199,5 +199,4 @@ public static class SdpUtils
         AddDtlsSrtp(RttSmd, fingerPrintAttribute);
         return RttSmd;
     }
-
 }

@@ -69,19 +69,20 @@ public class SrtpCipherF8
     /// <summary>
     /// F8 mode encryption context, see RFC3711 section 4.1.2 for a detailed description.
     /// </summary>
+    /// <value></value>
     public class F8Context
     {
         /// <summary>
-        /// 
         /// </summary>
+        /// <value></value>
         public byte[] S;
         /// <summary>
-        /// 
         /// </summary>
+        /// <value></value>
         public byte[] ivAccent;
         /// <summary>
-        /// 
         /// </summary>
+        /// <value></value>
         public long J;
     }
 
@@ -91,7 +92,6 @@ public class SrtpCipherF8
     /// <param name="f8Cipher"></param>
     /// <param name="key"></param>
     /// <param name="salt"></param>
-
     public static void DeriveForIV(IBlockCipher f8Cipher, byte[] key, byte[] salt)
     {
         /*

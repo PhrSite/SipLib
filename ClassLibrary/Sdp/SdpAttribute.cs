@@ -14,11 +14,13 @@ public class SdpAttribute
     /// <summary>
     /// Contains the attribute name.
     /// </summary>
+    /// <value></value>
     public string Attribute = "";
     /// <summary>
     /// Contains the attribute value. This string may be empty if the attribute
     /// does not have a value.
     /// </summary>
+    /// <value></value>
     public string Value = "";
 
     /// <summary>
@@ -26,6 +28,7 @@ public class SdpAttribute
     /// parameters. The key is the name of the parameter and the value is the parameter value. The parameter
     /// value may be null or empty if there is no associated value for the parameter name.
     /// </summary>
+    /// <value></value>
     public Dictionary<string, string> Params = new Dictionary<string, string>();
 
     /// <summary>

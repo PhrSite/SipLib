@@ -31,6 +31,7 @@ public class ReceiverReport
     /// <summary>
     /// Gets or sets the SSRC field.
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         get { return m_Ssrc; }
@@ -49,6 +50,7 @@ public class ReceiverReport
     /// <summary>
     /// Gets the list Report Blocks for this SenderReport.
     /// </summary>
+    /// <value></value>
     public List<ReportBlock> GetReportBlocks
     {
         get { return m_Reports; }
@@ -101,6 +103,7 @@ public class ReceiverReport
     /// <summary>
     /// Gets the RTCP header.
     /// </summary>
+    /// <value></value>
     public RtcpHeader Header
     {
         get { return m_Header; }

@@ -12,6 +12,7 @@ public class RtpPacket
     /// <summary>
     /// Minimum RTP packet length. This assumes that CSRCs are included.
     /// </summary>
+    /// <value></value>
     public const int MIN_PACKET_LENGTH = 12;
 
     private byte[] m_PacketBytes = null;
@@ -63,6 +64,7 @@ public class RtpPacket
     /// <summary>
     /// Gets the Version field.
     /// </summary>
+    /// <value></value>
     public int Version
     {
         private set
@@ -83,6 +85,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the Padding bit.
     /// </summary>
+    /// <value></value>
     public bool Padding
     {
         set
@@ -107,6 +110,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the CSRC count.
     /// </summary>
+    /// <value></value>
     public int CsrcCount
     {
         set
@@ -122,11 +126,13 @@ public class RtpPacket
     /// <summary>
     /// Length of each CSRC in bytes
     /// </summary>
+    /// <value></value>
     public const int CSRC_LENGTH = 4;
 
     /// <summary>
     /// Gets a list of CSRCs (contributing source identifiers) for this RTP packet.
     /// </summary>
+    /// <value></value>
     public List<uint> CSRCs
     {
         get
@@ -179,8 +185,9 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the payload of the RTP packet.
     /// </summary>
-    // <exception cref="ArgumentException">Thrown by if the input packet is longer than the allocated payload
-    // length for this RTP packet.</exception>
+    /// <exception cref="ArgumentException">Thrown by if the input packet is longer than the allocated payload
+    /// length for this RTP packet.</exception>
+    /// <value></value>
     public byte[] Payload
     {
         get
@@ -206,6 +213,7 @@ public class RtpPacket
     /// <summary>
     /// Gets the length of the RTP packet header.
     /// </summary>
+    /// <value></value>
     public int HeaderLength
     {
         get
@@ -222,6 +230,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the M (marker) bit.
     /// </summary>
+    /// <value></value>
     public bool Marker
     {
         set
@@ -245,6 +254,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the Payload Type (PT) field in the RTP header. The Payload Type must be between 0 and 127.
     /// </summary>
+    /// <value></value>
     public int PayloadType
     {
         set
@@ -259,6 +269,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the Sequence Number field of the RTP packet header.
     /// </summary>
+    /// <value></value>
     public ushort SequenceNumber
     {
         set { RtpUtils.SetWord(m_PacketBytes, SEQUENCE_NUMBER_INDEX, value); }
@@ -282,6 +293,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the Timestamp field of the RTP packet header.
     /// </summary>
+    /// <value></value>
     public uint Timestamp
     {
         set { RtpUtils.SetDWord(m_PacketBytes, TIMESTAMP_INDEX, value); }
@@ -293,6 +305,7 @@ public class RtpPacket
     /// <summary>
     /// Gets or sets the synchronization source identifier (SSRC).
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         set { RtpUtils.SetDWord(m_PacketBytes, SSRC_INDEX, value); }
@@ -302,7 +315,8 @@ public class RtpPacket
     /// <summary>
     /// Gets the number of bytes in the RTP packet payload.
     /// </summary>
-    public Int32 PayloadLength
+    /// <value></value>
+    public int PayloadLength
     {
         get { return m_PacketBytes.Length - HeaderLength; }
     }
@@ -350,6 +364,7 @@ public class RtpPacket
     /// <summary>
     /// Gets the entire packet byte array
     /// </summary>
+    /// <value></value>
     public byte[] PacketBytes
     {
         get { return m_PacketBytes; }

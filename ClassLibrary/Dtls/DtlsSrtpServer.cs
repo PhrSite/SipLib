@@ -154,10 +154,12 @@ public interface IDtlsSrtpPeer
     /// <summary>
     /// Event that will be fired when a protocol handshake alert is received or raised
     /// </summary>
+    /// <value></value>
     event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
     /// <summary>
     /// Returns true if use of the extended master secret is to be forced
     /// </summary>
+    /// <value></value>
     bool ForceUseExtendedMasterSecret { get; set; }
     /// <summary>
     /// Gets the DTLS-SRTP encryption and authentication policy information
@@ -215,11 +217,13 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// Gets or sets a flag to indicate whether or not to force the use of the extended MasterSecret.
     /// Defaults to true.
     /// </summary>
+    /// <value></value>
     public bool ForceUseExtendedMasterSecret { get; set; } = true;
 
     /// <summary>
     /// Gets the client's X.509 certificate
     /// </summary>
+    /// <value></value>
     public Certificate ClientCertificate { get; private set; }
 
     // the server response to the client handshake request
@@ -242,6 +246,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// This event is fired if an Alert message was received during the DTLS protocol handshake
     /// </summary>
+    /// <value></value>
     public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
 
     /// <summary>
@@ -306,6 +311,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// Gets the fingerprint for the certificate.
     /// </summary>
+    /// <value></value>
     public RTCDtlsFingerprint Fingerprint
     {
         get
@@ -317,6 +323,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// Gets the private key for the certificate.
     /// </summary>
+    /// <value></value>
     public AsymmetricKeyParameter PrivateKey
     {
         get
@@ -328,6 +335,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// Gets the certificate change containing the certificate
     /// </summary>
+    /// <value></value>
     public Certificate CertificateChain
     {
         get
@@ -339,6 +347,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// Gets the maximum supported DTLS protocol version
     /// </summary>
+    /// <value></value>
     protected override ProtocolVersion MaximumVersion
     {
         get
@@ -350,6 +359,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <summary>
     /// Gets the minimum supported DTLS version
     /// </summary>
+    /// <value></value>
     protected override ProtocolVersion MinimumVersion
     {
         get
@@ -683,8 +693,8 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <param name="context_value"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    // <exception cref="ArgumentException"></exception>
-    // <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     protected virtual byte[] GetKeyingMaterial(string asciiLabel, byte[] context_value, int length)
     {
         if (context_value != null && !TlsUtilities.IsValidUint16(context_value.Length))

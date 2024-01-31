@@ -79,10 +79,12 @@ public class SIPAuthorisationDigest
     /// <summary>
     /// MD5 authorization algorithm
     /// </summary>
+    /// <value></value>
     public const string AUTH_ALGORITHM = "MD5";
     /// <summary>
     /// QOP authentication value
     /// </summary>
+    /// <value></value>
     public const string QOP_AUTHENTICATION_VALUE = "auth";
     private const int NONCE_DEFAULT_COUNT = 1;
 
@@ -91,68 +93,81 @@ public class SIPAuthorisationDigest
     /// <summary>
     /// This is the type of authorisation request received.
     /// </summary>
+    /// <value></value>
     public SIPAuthorisationHeadersEnum AuthorisationType { get; private set; }
 
     /// <summary>
     /// If this is set it's the type of authorisation response to use otherwise 
     /// use the same as the request 
     /// </summary>
+    /// <value></value>
     public SIPAuthorisationHeadersEnum AuthorisationResponseType { get; private set; }
 
     /// <summary>
     /// Realm value
     /// </summary>
+    /// <value></value>
     public string Realm = null;
 
     /// <summary>
     /// User name value
     /// </summary>
+    /// <value></value>
     public string Username = null;
 
     /// <summary>
     /// Password value
     /// </summary>
+    /// <value></value>
     public string Password = null;
 
     /// <summary>
     /// Destination URL value
     /// </summary>
+    /// <value></value>
     public string DestinationURL = null;
 
     /// <summary>
     /// URI value
     /// </summary>
+    /// <value></value>
     public string URI = null;
 
     /// <summary>
     /// Nonce value
     /// </summary>
+    /// <value></value>
     public string Nonce = null;
 
     /// <summary>
     /// Request type value
     /// </summary>
+    /// <value></value>
     public string RequestType = null;
 
     /// <summary>
     ///  Response value
     /// </summary>
+    /// <value></value>
     public string Response = null;
 
     /// <summary>
     /// Algorithm value
     /// </summary>
+    /// <value></value>
     public string Algorithhm = null;
 
     /// <summary>
     /// Client nonce (used with WWW-Authenticate and qop=auth).
     /// </summary>
+    /// <value></value>
     public string Cnonce = string.Empty;
 
     /// <summary>
     /// Quality of Protection. Values permitted are auth (authentication) and 
     /// auth-int (authentication with integrity protection).
     /// </summary>
+    /// <value></value>
     public string Qop = string.Empty;
 
     /// <summary>
@@ -163,11 +178,13 @@ public class SIPAuthorisationDigest
     /// <summary>
     /// Opaque value
     /// </summary>
+    /// <value></value>
     public string Opaque = string.Empty;
 
     /// <summary>
     /// Gets the digest value
     /// </summary>
+    /// <value></value>
     public string Digest
     {
         get
@@ -441,7 +458,6 @@ public class HTTPDigest
 
         return GetMD5HashBinHex(unhashedDigest);
     }
-
 
     private static string GetMD5HashBinHex(string val)
     {

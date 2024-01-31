@@ -16,14 +16,17 @@ public class RocVals
     /// <summary>
     /// Current ROC value.
     /// </summary>
+    /// <value></value>
     public uint Roc = 0;
     /// <summary>
     /// Stores the value of ROC - 1
     /// </summary>
+    /// <value></value>
     public uint RocMinus1 = uint.MaxValue;
     /// <summary>
     /// Stores the value of ROC + 1
     /// </summary>
+    /// <value></value>
     public uint RocPlus1 = 1;
 
     /// <summary>
@@ -71,45 +74,54 @@ public enum SrtpLabelItem : ulong
 }
 
 /// <summary>
-/// Static class that provides static for performing various Secure RTP (SRTP) calculations.
+/// Static class that provides static functions for performing various Secure RTP (SRTP) calculations.
 /// </summary>
 public static class SRtpUtils
 {
     /// <summary>
     /// Bit size of the block for the block cipher
     /// </summary>
+    /// <value></value>
     public const int n_b = 128;
     /// <summary>
     /// Bit size of the encryption key.
     /// </summary>
+    /// <value></value>
     public const int n_e = 128;
     /// <summary>
     /// Byte size of the encryption key
     /// </summary>
+    /// <value></value>
     public const int n_eB = n_e / 8;
     /// <summary>
     /// Bit size of the session salting key
     /// </summary>
+    /// <value></value>
     public const int n_s = 112;
     /// <summary>
     /// Byte size of the session salting key
     /// </summary>
+    /// <value></value>
     public const int n_sB = n_s / 8;
     /// <summary>
     /// Default bit size of the authentication key.
     /// </summary>
+    /// <value></value>
     public const int n_a = 160;
     /// <summary>
     /// Default byte size of the authentication key.
     /// </summary>
+    /// <value></value>
     public const int n_aB = n_a / 8;
     /// <summary>
     /// Default bit size of the authentication tag.
     /// </summary>
+    /// <value></value>
     public const int n_tag = 80;
     /// <summary>
     /// Default byte size of the authentication tag.
     /// </summary>
+    /// <value></value>
     public const int n_tagB = n_tag / 8;
 
     /// <summary>
@@ -176,16 +188,6 @@ public static class SRtpUtils
         byte[] ShiftedXorResult = new byte[n_eB];
         for (int i = 0; i < n_sB; i++)
             ShiftedXorResult[i] = (byte)(MasterSalt[i] ^ key_id_bytes[i]);
-
-        //ulong key_id = (LabelVal << 48) | r;
-        //byte[] key_id_bytes = new byte[n_eB];
-        //// Right justify the 8-byte key-id in the 14-byte long array.
-        //RtpUtils.Set8ByteWord(key_id_bytes, 8, key_id);
-        //byte[] ShiftedXorResult = new byte[n_eB];
-        //byte[] ShiftedMasterSalt = new byte[n_eB];
-        //Array.ConstrainedCopy(MasterSalt, 0, ShiftedMasterSalt, 0, n_sB);
-        //for (int i = 0; i < n_eB; i++)
-        //    ShiftedXorResult[i] = (byte)(ShiftedMasterSalt[i] ^ key_id_bytes[i]);
 
         byte[] Result = new byte[InputZeroArray.Length];
         AesFunctions.AesCounterModeTransform(MasterKey, ShiftedXorResult, InputZeroArray, Result);

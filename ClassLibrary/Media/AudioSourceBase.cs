@@ -33,11 +33,13 @@ public class AudioSourceBase
     /// <summary>
     /// The sample rate in samples per second of the audio source
     /// </summary>
+    /// <value></value>
     protected int SampleRate = 8000;
 
     /// <summary>
     /// Stores the current state of the audio source.
     /// </summary>
+    /// <value></value>
     protected AudioSourceStateEnum AudioSourceState = AudioSourceStateEnum.Stopped;
 
     private HighResolutionTimer m_HighResolutionTimer = null;
@@ -56,6 +58,7 @@ public class AudioSourceBase
     {
         m_RtpChannel = rtpChannel;
         m_AudioEncoder = Encoder;
+        SampleRate = m_AudioEncoder.SampleRate;
 
         foreach (RtpMapAttribute Rma in AnsweredMediaDescription.RtpMapAttributes)
         {
@@ -284,6 +287,7 @@ public class AudioSourceBase
     /// <summary>
     /// Enumeration of the possible states of an audio source
     /// </summary>
+    /// <value></value>
     protected enum AudioSourceStateEnum
     {
         /// <summary></summary>

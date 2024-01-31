@@ -32,34 +32,42 @@ public class SrtpPolicy
     /// <summary>
     /// No encryption. See RFC 3711.
     /// </summary>
+    /// <value></value>
     public const int NULL_ENCRYPTION = 0;
     /// <summary>
     /// AES counter mode encryption. See RFC 3711.
     /// </summary>
+    /// <value></value>
     public const int AESCM_ENCRYPTION = 1;
     /// <summary>
     /// Not used in DTLS-SRTP
     /// </summary>
+    /// <value></value>
     public const int TWOFISH_ENCRYPTION = 3;
     /// <summary>
     /// AES F8 encryption. See RFC 3711.
     /// </summary>
+    /// <value></value>
     public const int AESF8_ENCRYPTION = 2;
     /// <summary>
     /// Not used in DTLS-SRTP
     /// </summary>
+    /// <value></value>
     public const int TWOFISHF8_ENCRYPTION = 4;
     /// <summary>
     /// Not used in DTLS-SRTP
     /// </summary>
+    /// <value></value>
     public const int NULL_AUTHENTICATION = 0;
     /// <summary>
     /// HMAC SHA1 authentication. See RFC 3711.
     /// </summary>
+    /// <value></value>
     public const int HMACSHA1_AUTHENTICATION = 1;
     /// <summary>
     /// Not used in DTLS-SRTP
     /// </summary>
+    /// <value></value>
     public const int SKEIN_AUTHENTICATION = 2;
 
     private int encType;
@@ -72,26 +80,32 @@ public class SrtpPolicy
     /// <summary>
     /// Gets or sets the authentication key length
     /// </summary>
+    /// <value></value>
     public int AuthKeyLength { get => authKeyLength; set => authKeyLength = value; }
     /// <summary>
     /// Gets or sets the authentication tag length
     /// </summary>
+    /// <value></value>
     public int AuthTagLength { get => authTagLength; set => authTagLength = value; }
     /// <summary>
     /// Gets or sets the authentication type
     /// </summary>
+    /// <value></value>
     public int AuthType { get => authType; set => authType = value; }
     /// <summary>
     /// Gets or sets the encryption key length
     /// </summary>
+    /// <value></value>
     public int EncKeyLength { get => encKeyLength; set => encKeyLength = value; }
     /// <summary>
     /// Gets or sets the encryption type
     /// </summary>
+    /// <value></value>
     public int EncType { get => encType; set => encType = value; }
     /// <summary>
     /// Gets or sets the salt length
     /// </summary>
+    /// <value></value>
     public int SaltKeyLength { get => saltKeyLength; set => saltKeyLength = value; }
 
     /// <summary>

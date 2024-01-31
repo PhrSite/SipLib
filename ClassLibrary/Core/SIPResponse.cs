@@ -35,6 +35,8 @@
 /////////////////////////////////////////////////////////////////////////////////////
 //	Revised:	7 Nov 22 PHR -- Initial version. Added documentation comments.
 //              11 Sep 23 PHR -- Added the RawBuffer field.
+//              30 Jan 24 PHR
+//                -- Added SIPMessage as the base class.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -62,7 +64,7 @@ namespace SipLib.Core;
 /// <summary>
 /// Class for a SIP Response message
 /// </summary>
-public class SIPResponse
+public class SIPResponse : SIPMessage
 {
     private static string m_CRLF = SIPConstants.CRLF;
     private static string m_sipVersion = SIPConstants.SIP_FULLVERSION_STRING;
@@ -70,47 +72,26 @@ public class SIPResponse
     /// <summary>
     /// SIP version number
     /// </summary>
-    public string SIPVersion;
+    /// <value></value>
+    public string SIPVersion = null;
 
     /// <summary>
     /// Response status enumeration
     /// </summary>
-    public SIPResponseStatusCodesEnum Status;
+    /// <value></value>
+    public SIPResponseStatusCodesEnum Status = SIPResponseStatusCodesEnum.None;
 
     /// <summary>
     /// SIP response status code integer
     /// </summary>
-    public int StatusCode;
+    /// <value></value>
+    public int StatusCode = 0;
 
     /// <summary>
     /// Response reason phrase
     /// </summary>
-    public string ReasonPhrase;
-
-    /// <summary>
-    /// Body of the SIP response message. May be null
-    /// </summary>
-    public string Body;
-
-    /// <summary>
-    /// Contains all of the SIP headers in the response message
-    /// </summary>
-    public SIPHeader Header = new SIPHeader();
-
-    /// <summary>
-    /// The remote IP socket the response was received from or sent to.
-    /// </summary>
-    public SIPEndPoint RemoteSIPEndPoint;
-
-    /// <summary>
-    /// The local SIP socket the response was received on or sent from.
-    /// </summary>
-    public SIPEndPoint LocalSIPEndPoint;
-
-    /// <summary>
-    /// Contains the raw byte array containing the entire message.
-    /// </summary>
-    public byte[] RawBuffer = null;
+    /// <value></value>
+    public string ReasonPhrase = null;
 
     /// <summary>
     /// Constructor
@@ -122,11 +103,10 @@ public class SIPResponse
     /// Constructor to use when building a new SIP response message.
     /// </summary>
     /// <param name="responseType">Status code.</param>
-    /// <param name="reasonPhrase">Reason phrase..</param>
+    /// <param name="reasonPhrase">Reason phrase.</param>
     /// <param name="localSIPEndPoint">Local endpoint that is sending or receiving the SIP
     /// response message.</param>
-    public SIPResponse(SIPResponseStatusCodesEnum responseType, string reasonPhrase, SIPEndPoint
-        localSIPEndPoint)
+    public SIPResponse(SIPResponseStatusCodesEnum responseType, string reasonPhrase, SIPEndPoint localSIPEndPoint)
     {
         SIPVersion = m_sipVersion;
         StatusCode = (int)responseType;

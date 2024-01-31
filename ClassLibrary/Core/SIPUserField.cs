@@ -60,16 +60,19 @@ public class SIPUserField
     /// <summary>
     /// Name portion of the user field for a header
     /// </summary>
+    /// <value></value>
     public string Name = null;
-    
+
     /// <summary>
     /// SIPURI portion of the header user field
     /// </summary>
+    /// <value></value>
     public SIPURI URI = null;
 
     /// <summary>
     /// Header parameters
     /// </summary>
+    /// <value></value>
     public SIPParameters Parameters = new SIPParameters(null, PARAM_TAG_DELIMITER);
 
     /// <summary>
@@ -210,7 +213,7 @@ public class SIPUserField
     /// the name portion is present, it is not quoted.
     /// </summary>
     /// <returns>Returns the string formatted for usin in a CPIM message.</returns>
-    // <exception cref="NullReferenceException"></exception>
+    /// <exception cref="NullReferenceException"></exception>
     public string ToCpimFormatString()
     {
         string userFieldStr = null;

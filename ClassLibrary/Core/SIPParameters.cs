@@ -80,6 +80,7 @@ public class SIPParameters
     /// <summary>
     /// Gets the number of parameters
     /// </summary>
+    /// <value></value>
     public int Count
     {
         get { return (m_dictionary != null) ? m_dictionary.Count : 0;  }

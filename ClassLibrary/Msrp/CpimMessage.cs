@@ -19,60 +19,71 @@ public class CpimMessage
     /// <summary>
     /// Gets or sets the From header. Required.
     /// </summary>
+    /// <value></value>
     public SIPUserField From { get; set; }
 
     /// <summary>
     /// Gets or sets a list of To header fields. Initialized to an empty list. The list
     /// must contain at least one To header
     /// </summary>
+    /// <value></value>
     public List<SIPUserField> To { get; set; } = new List<SIPUserField>();
 
     /// <summary>
     /// Gets or sets the list of cc header fields. Initialized to an empty list. cc headers are optional.
     /// </summary>
+    /// <value></value>
     public List<SIPUserField> cc { get; set; } = new List<SIPUserField>();
 
     /// <summary>
     /// Gets or sets the Content-Type header value. Required. Must be set to a valid MIME type such as
     /// text/plain.
     /// </summary>
+    /// <value></value>
     public string ContentType { get; set; } = null;
 
     /// <summary>
     /// Gets or set the Content-ID header value. Optional.
     /// </summary>
+    /// <value></value>
     public string ContentID { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the a list of Subject header values. Optional. Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<string> Subject { get; set; } = new List<string>();
 
     /// <summary>
     /// Gets or sets the value of the DateTime header field. Optional. A value of DateTime.MinValue
     /// indicates that the DateTime header is not present.
     /// </summary>
+    /// <value></value>
     public DateTime DateTime { get; set; } = DateTime.MinValue;
 
     /// <summary>
     /// Gets or sets the value of the Require header field. Optional.
     /// </summary>
+    /// <value></value>
     public string Require { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the list of Name Space (NS) headers. Optional. Initialized to an empty string.
     /// NS headers are not used in this implementation and are treated as simple strings.
     /// </summary>
+    /// <value></value>
     public List<string> NS = new List<string>();
 
     /// <summary>
     /// Stores unknown or non-standard headers lines (header: headervalue). Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<string> NonStandardHeaders = new List<string>();
 
     /// <summary>
     /// Gets or sets the contents (body) of the message.
     /// </summary>
+    /// <value></value>
     public byte[] Body { get; set; } = null;
 
     /// <summary>

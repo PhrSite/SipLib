@@ -50,10 +50,12 @@ public class H264Packetiser
         /// <summary>
         /// Gets the bytes of the NAL
         /// </summary>
+        /// <value></value>
         public byte[] NAL { get; }
         /// <summary>
         /// If true, then this is the last NAL
         /// </summary>
+        /// <value></value>
         public bool IsLast { get; }
 
         /// <summary>

@@ -6,7 +6,7 @@
 namespace SipLib.Rtp;
 
 /// <summary>
-/// Class for calculating and storing the Mean Opionion Score (mos) values. The mos is a numerical
+/// Class for calculating and storing the Mean Opinion Score (MOS) values. The MOS is a numerical
 /// estimation of the audio quality.
 /// </summary>
 public class MeanOpinionScore
@@ -16,12 +16,14 @@ public class MeanOpinionScore
     /// and a value of 1.0 is the lowest quality audio. A value of 0.0 indicates that the mos has not been
     /// calculated.
     /// </summary>
+    /// <value></value>
     public double MOS { get; set; } = 0.0;
-    
+
     /// <summary>
     /// The R value is the rating value used to calculate the mos. It is calculated from the packet loss,
     /// the jitter and the delay.
     /// </summary>
+    /// <value></value>
     public double R {  get; set; } = 0.0;
 
     /// <summary>
@@ -78,5 +80,4 @@ public class MeanOpinionScore
 
         return mos;
     }
-
 }

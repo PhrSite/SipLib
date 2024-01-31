@@ -93,6 +93,7 @@ public class SdesPacket
     /// <summary>
     /// Gets the RTCP header.
     /// </summary>
+    /// <value></value>
     public RtcpHeader Header
     {
         get { return m_Header; }
@@ -101,6 +102,7 @@ public class SdesPacket
     /// <summary>
     /// Gets the list of SDES chunks in the packet.
     /// </summary>
+    /// <value></value>
     public List<SdesChunk> Chunks
     {
         get { return m_SdesChunks; }

@@ -24,6 +24,7 @@ public class HighResolutionTimer
     /// <summary>
     /// Event that is fired when the timer expires.
     /// </summary>
+    /// <value></value>
     public event HighResolutionTimerDelegate TimerExpired = null;
 
     /// <summary>

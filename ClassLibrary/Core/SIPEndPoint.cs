@@ -48,16 +48,19 @@ public class SIPEndPoint
     /// <summary>
     /// The transport/application layer protocol the SIP end point is using.
     /// </summary>
+    /// <value></value>
     public SIPProtocolsEnum Protocol { get; private set; } = SIPProtocolsEnum.udp;
 
     /// <summary>
     /// The network address for the SIP end point. IPv4 and IPv6 are supported.
     /// </summary>
+    /// <value></value>
     public IPAddress Address { get; private set; }
 
     /// <summary>
     /// The network port for the SIP end point.
     /// </summary>
+    /// <value></value>
     public int Port { get; private set; }
 
     /// <summary>
@@ -65,11 +68,13 @@ public class SIPEndPoint
     /// ID can record the unique connection a SIP message was received on. This makes it 
     /// possible to ensure responses or subsequent request can re-use the same connection.
     /// </summary>
+    /// <value></value>
     public string ConnectionID { get; set; }
 
     /// <summary>
     /// If set represents the SIP channel ID that this SIP end point was created from.
     /// </summary>
+    /// <value></value>
     public string ChannelID { get; set; }
 
     private SIPEndPoint() { }
@@ -159,8 +164,7 @@ public class SIPEndPoint
 
     /// <summary>
     /// Parses a SIP end point from either a serialised SIP end point string, format of:
-    /// (udp|tcp|tls|ws|wss):(IPEndpoint)[;connid=abcd]
-    /// or from a string that represents a SIP URI.
+    /// (udp|tcp|tls|ws|wss):(IPEndpoint)[;connid=abcd] or from a string that represents a SIP URI.
     /// </summary>
     /// <param name="sipEndPointStr">The string to parse to extract the SIP end point.</param>
     /// <returns>If successful a SIPEndPoint object or null otherwise.</returns>

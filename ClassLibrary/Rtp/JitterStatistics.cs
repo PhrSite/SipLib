@@ -12,16 +12,19 @@ public class JitterStatistics
     /// <summary>
     /// Stores the maximum inter-packet jitter in milliseconds
     /// </summary>
+    /// <value></value>
     public int Maximum {  get; set; } = int.MinValue;
 
     /// <summary>
     /// Stores the minimum inter-packet jitter in milliseconds
     /// </summary>
+    /// <value></value>
     public int Minimum { get; set; } = int.MaxValue;
 
     /// <summary>
     /// Average jitter in milliseconds
     /// </summary>
+    /// <value></value>
     public int Average { get; set; } = 0;
 
     private long m_Sum = 0;

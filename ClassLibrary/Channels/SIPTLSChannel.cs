@@ -102,11 +102,13 @@ public class SIPTLSChannel : SIPChannel
     /// <summary>
     /// Fired if the TCP connection request to a remote endpoint failed.
     /// </summary>
+    /// <value></value>
     public event SipConnectionFailedDelegate SIPConnectionFailed = null;
 
     /// <summary>
     /// Fired if the TCP connection gets disconnected
     /// </summary>
+    /// <value></value>
     public event SipConnectionFailedDelegate SIPConnectionDisconnected = null;
 
     /// <summary>

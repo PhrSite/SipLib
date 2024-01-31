@@ -268,7 +268,6 @@ public class RttSender
                 //Console.Write(" ");
             }
         } // end for i
-        //Console.WriteLine();    // For debug only
 
         // Copy in the new text bytes if there are any.
         if (TotalCharBytes > 0)
@@ -276,17 +275,6 @@ public class RttSender
             Array.ConstrainedCopy(TextBytes, 0, RtpBytes, CurrentIndex, TotalCharBytes);
             //Console.Write(strText + ": ");  // For debug only
         }
-
-        // For debug only
-        //for (i = 0; i < m_Params.RedundancyLevel; i++)
-        //{
-        //    if (m_RedundantBlocks[i].BlockLength > 0 && m_RedundantBlocks[i].PayloadBytes != null)
-        //    {
-        //        Console.Write(Encoding.UTF8.GetString(m_RedundantBlocks[i].PayloadBytes));
-        //        Console.Write(" ");
-        //    }
-        //}
-        //Console.WriteLine();
 
         Sender?.Invoke(Rp);
 

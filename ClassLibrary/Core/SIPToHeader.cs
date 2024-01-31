@@ -63,6 +63,7 @@ public class SIPToHeader
     /// <summary>
     /// Gets or sets the name field of the To header
     /// </summary>
+    /// <value></value>
     public string ToName
     {
         get { return m_userField.Name; }
@@ -72,6 +73,7 @@ public class SIPToHeader
     /// <summary>
     /// Gets or sets the URI of the To header
     /// </summary>
+    /// <value></value>
     public SIPURI ToURI
     {
         get { return m_userField.URI; }
@@ -81,6 +83,7 @@ public class SIPToHeader
     /// <summary>
     /// Gets or sets the To header tag value
     /// </summary>
+    /// <value></value>
     public string ToTag
     {
         get { return ToParameters.Get(PARAMETER_TAG); }
@@ -99,6 +102,7 @@ public class SIPToHeader
     /// <summary>
     /// Gets or sets the To header parameters
     /// </summary>
+    /// <value></value>
     public SIPParameters ToParameters
     {
         get { return m_userField.Parameters; }
@@ -110,6 +114,7 @@ public class SIPToHeader
     /// <summary>
     /// Gets or sets the SIPUserField for the To header
     /// </summary>
+    /// <value></value>
     public SIPUserField ToUserField
     {
         get { return m_userField; }

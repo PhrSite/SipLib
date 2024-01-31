@@ -50,6 +50,7 @@ public class SIPRouteSet
     /// <summary>
     /// Gets or sets the number of routes in the set
     /// </summary>
+    /// <value></value>
     public int Length
     {
         get { return m_sipRoutes.Count; }
@@ -101,6 +102,7 @@ public class SIPRouteSet
     /// <summary>
     /// Gets the top route
     /// </summary>
+    /// <value></value>
     public SIPRoute TopRoute
     {
         get
@@ -115,6 +117,7 @@ public class SIPRouteSet
     /// <summary>
     /// Gets the bottom route
     /// </summary>
+    /// <value></value>
     public SIPRoute BottomRoute
     {
         get

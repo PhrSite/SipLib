@@ -52,6 +52,7 @@ public class SIPPaiHeader
     /// <summary>
     /// Gets or sets the name field.
     /// </summary>
+    /// <value></value>
     public string Name
     {
         get { return m_userField.Name; }
@@ -61,6 +62,7 @@ public class SIPPaiHeader
     /// <summary>
     /// Gets or sets the SIPURI field
     /// </summary>
+    /// <value></value>
     public SIPURI URI
     {
         get { return m_userField.URI; }
@@ -72,6 +74,7 @@ public class SIPPaiHeader
     /// <summary>
     /// Gets or sets the SIPUserField
     /// </summary>
+    /// <value></value>
     public SIPUserField UserField
     {
         get { return m_userField; }
@@ -96,7 +99,7 @@ public class SIPPaiHeader
     /// </summary>
     /// <param name="PaiHeaderStr">Input string</param>
     /// <returns>Returns a new SIPPaiHeader object</returns>
-    // <exception cref="SIPValidationException"></exception>
+    /// <exception cref="SIPValidationException"></exception>
     public static SIPPaiHeader ParseFromHeader(string PaiHeaderStr)
     {
         try

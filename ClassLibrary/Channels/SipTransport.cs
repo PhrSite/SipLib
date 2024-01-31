@@ -3,11 +3,9 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Core;
-using SipLib.Body;
 using System.Collections.Concurrent;
 using System.Net;
 using SipLib.Transactions;
-using SipLib.SipTransactions;
 
 namespace SipLib.Channels;
 
@@ -35,6 +33,7 @@ public class SipTransport
     /// is handled by a SIP transaction object (a SipTransactionBase derived class). The SIP transaction
     /// layer may pass the request up to the transaction user if required.
     /// </summary>
+    /// <value></value>
     public event SipRequestReceivedDelegate SipRequestReceived = null;
 
     /// <summary>
@@ -42,6 +41,7 @@ public class SipTransport
     /// is handled by a SIP transaction object (a SipTransactionBase derived class). The SIP transaction
     /// layer may pass the response up to the transaction user if required.
     /// </summary>
+    /// <value></value>
     public event SipResponseReceivedDelegate SipResponseReceived = null;
 
     /// <summary>
@@ -49,6 +49,7 @@ public class SipTransport
     /// For received requests, this event is fired after the request is sent to a transaction object or to the
     /// SipTransport user.
     /// </summary>
+    /// <value></value>
     public event LogSipRequestDelegate LogSipRequest = null;
 
     /// <summary>
@@ -56,11 +57,13 @@ public class SipTransport
     /// For received responses, this event is fired after the response is sent to a transaction object or
     /// to the SipTransport user.
     /// </summary>
+    /// <value></value>
     public event LogSipResponseDelegate LogSipResponse = null;
 
     /// <summary>
     /// Event that is fired if this SipTransport object receives an invalid SIP message.
     /// </summary>
+    /// <value></value>
     public event LogInvalidSipMessageDelegate LogInvalidSipMessage = null;
 
     private DateTime m_LastDoTimedEvents = DateTime.Now - TimeSpan.FromMilliseconds(200);
@@ -108,6 +111,7 @@ public class SipTransport
     /// <summary>
     /// Gets the number of active transactions.
     /// </summary>
+    /// <value></value>
     public int TransactionCount
     {
         get

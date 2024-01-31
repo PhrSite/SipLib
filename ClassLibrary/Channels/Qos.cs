@@ -96,7 +96,6 @@ public class Qos
             m_SockHandle = tcpClient.Client.Handle;
             m_FlowId = m_Qos.AddTcpQos(tcpClient, DscpValue, RemIpe);
         }
-
     }
 }
 

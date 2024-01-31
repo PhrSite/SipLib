@@ -35,36 +35,92 @@
 
 namespace SipLib.Core
 {
-
-#pragma warning disable CS1591
     /// <summary>
     /// Enumeration of SIP validation fields
     /// </summary>
     public enum SIPValidationFieldsEnum
     {
+        /// <summary>
+        /// The validation error occurred in an unknown header, field or parameter
+        /// </summary>
         Unknown,
+        /// <summary>
+        /// The validation error occurred in a SIP request message
+        /// </summary>
         Request,
+        /// <summary>
+        /// The validation error occurred in a SIP response message
+        /// </summary>
         Response,
+        /// <summary>
+        /// The validation error occurred in a URI field
+        /// </summary>
         URI,
+        /// <summary>
+        /// The validation error occurred in the SIP headers
+        /// </summary>
         Headers,
+        /// <summary>
+        /// The validation error occurred in the SIP Contact header
+        /// </summary>
         ContactHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP From header
+        /// </summary>
         FromHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP Route header
+        /// </summary>
         RouteHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP To header
+        /// </summary>
         ToHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP Via header
+        /// </summary>
         ViaHeader,
-        NoSIPString,
+        /// <summary>
+        /// The validation error occurred in the SIP Refer-To header
+        /// </summary>
         ReferToHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP P-Asserted-Identity header
+        /// </summary>
         PAssertedIdentityHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP P-Preferred-Identity header
+        /// </summary>
         PPreferredIdentityHeader,
+        /// <summary>
+        /// The validation error occurred in the SIP CSeq header 
+        /// </summary>
         CSeq,           // 10 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP Max-Forwards header
+        /// </summary>
         MaxForwards,    // 10 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP Expires header
+        /// </summary>
         Expires,        // 10 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP version in the first line of a SIP message.
+        /// </summary>
         SipVersion,     // 11 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP Call-ID header
+        /// </summary>
         CallID,         // 11 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP Content-Length header
+        /// </summary>
         ContentLength,  // 15 Nov 22 PHR
+        /// <summary>
+        /// The validation error occurred in the SIP Content-Type header
+        /// </summary>
         ContentType,    // 29 Nov 23 PHR
     }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Exception class for SIP validation errors
@@ -74,11 +130,13 @@ namespace SipLib.Core
         /// <summary>
         /// Specifies the field that is in error
         /// </summary>
+        /// <value></value>
         public SIPValidationFieldsEnum SIPErrorField;
 
         /// <summary>
         /// Specifies the status code
         /// </summary>
+        /// <value></value>
         public SIPResponseStatusCodesEnum SIPResponseErrorCode;
 
         /// <summary>

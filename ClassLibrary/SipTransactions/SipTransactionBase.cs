@@ -34,56 +34,67 @@ public class SipTransactionBase
     /// <summary>
     /// Event that is fired when the transaction receives a SIP request.
     /// </summary>
+    /// <value></value>
     public TransactionRequestReceivedDelegate RequestReceived = null;
 
     /// <summary>
     /// Event that is fired when the transaction receives a SIP response.
     /// </summary>
+    /// <value></value>
     public TransactionResponseReceivedDelegate ResponseReceived = null;
 
     /// <summary>
     /// SIP T1 timer in milliseconds.
     /// </summary>
+    /// <value></value>
     protected int T1IntervalMs = SipTimers.T1;
 
     /// <summary>
     /// Time that the transaction started.
     /// </summary>
+    /// <value></value>
     protected DateTime TransactionStartTime = DateTime.Now;
 
     /// <summary>
     /// Time that the request was sent.
     /// </summary>
+    /// <value></value>
     protected DateTime RequestSentTime;
 
     /// <summary>
     /// Current state of the transaction.
     /// </summary>
+    /// <value></value>
     protected TransactionStateEnum State;
 
     /// <summary>
     /// Time that the transaction entered the current state.
     /// </summary>
+    /// <value></value>
     protected DateTime StateStartTime = DateTime.Now;
 
     /// <summary>
     /// Maximum number of transmission attempts for a request
     /// </summary>
+    /// <value></value>
     protected const int MaxAttempts = 3;
 
     /// <summary>
     /// Number of transmission attempts made so far
     /// </summary>
+    /// <value></value>
     protected int NumAttempts = 0;
 
     /// <summary>
     /// Transport manager to use for sending messages
     /// </summary>
+    /// <value></value>
     protected SipTransport m_transportManager = null;
 
     /// <summary>
     /// Gets the SipTransportManager that is managing this transaction
     /// </summary>
+    /// <value></value>
     protected SipTransport TransportManager
     {
         get { return m_transportManager; }
@@ -92,23 +103,27 @@ public class SipTransactionBase
     /// <summary>
     /// SIPRequest for the transaction.
     /// </summary>
+    /// <value></value>
     public SIPRequest Request = null;
 
     /// <summary>
     /// Method to call when the transaction either completes or times out
     /// </summary>
+    /// <value></value>
     protected SipTransactionCompleteDelegate TransactionComplete = null;
 
     /// <summary>
     /// Endpoint to send the request to if the transaction is a client transaction or the source of a
     /// request if the transaction is a server transaction.
     /// </summary>
+    /// <value></value>
     public IPEndPoint RemoteEndPoint = null;
 
     /// <summary>
     /// The most recent SIPResponse that was sent to a client if this transaction is a server transaction.
     /// Not used for client transactions.
     /// </summary>
+    /// <value></value>
     protected SIPResponse LastSipResponseSent = null;
 
     private string m_TransactionID = null;
@@ -116,6 +131,7 @@ public class SipTransactionBase
     /// <summary>
     /// Gets the TransactionID that uniquely identifies the transaction
     /// </summary>
+    /// <value></value>
     public string TransactionID
     {
         get { return m_TransactionID; }
@@ -125,6 +141,7 @@ public class SipTransactionBase
     /// <summary>
     /// Gets the reason that the transaction was terminated.
     /// </summary>
+    /// <value></value>
     public TransactionTerminationReasonEnum TerminationReason { get; protected set; } = 
         TransactionTerminationReasonEnum.NoResponseReceived;
 
@@ -132,16 +149,19 @@ public class SipTransactionBase
     /// Gets the last response received for a client transaction. Will be null if a response was never
     /// received.
     /// </summary>
+    /// <value></value>
     public SIPResponse LastReceivedResponse { get; protected set; } = null;
 
     /// <summary>
     /// Semaphore to signal when a transaction is completed or terminated.
     /// </summary>
+    /// <value></value>
     protected SemaphoreSlim CompletionSemaphore = new SemaphoreSlim(0);
 
     /// <summary>
     /// Used by derived classes for locking the state variables
     /// </summary>
+    /// <value></value>
     protected object StateLockObj = new object();
 
     /// <summary>

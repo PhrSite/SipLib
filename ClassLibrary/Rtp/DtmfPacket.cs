@@ -14,6 +14,7 @@ public class DtmfPacket
     /// <summary>
     /// Length of a DTMF packet
     /// </summary>
+    /// <value></value>
     public const int DTMF_PACKET_LENGTH = 4;
 
     /// <summary>
@@ -47,6 +48,7 @@ public class DtmfPacket
     /// <summary>
     /// Gets or sets the DTMF event value.
     /// </summary>
+    /// <value></value>
     public DtmfEventEnum Event
     {
         set { m_PacketBytes[EVENT_CODE_INDEX] = (byte)value; }
@@ -60,6 +62,7 @@ public class DtmfPacket
     /// <summary>
     /// Gets or sets the E flag value
     /// </summary>
+    /// <value></value>
     public bool Eflag
     {
         get { return (m_PacketBytes[E_FLAG_INDEX] & E_FLAG_SET_MASK) == E_FLAG_SET_MASK ? true : false; }
@@ -73,6 +76,7 @@ public class DtmfPacket
     /// <summary>
     /// Default DTMF tone volume in dBm.
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_VOLUME_DBM = -13;
     private const int VOLUME_INDEX = 1;
     private const byte VOLUME_MASK = 0x3f;
@@ -81,6 +85,7 @@ public class DtmfPacket
     /// Gets or sets the DTMF tone volume in dBm. The allowable range is from 0 - -63 dBm.
     /// This value defaults to DEFAULT_VOLUME_DBM, which is -13 dBm.
     /// </summary>
+    /// <value></value>
     public int Volume
     {
         get
@@ -105,6 +110,7 @@ public class DtmfPacket
     /// <summary>
     /// Gets or sets the Duration of the DTMF event. The Duration is in RTP packet Timestamp units.
     /// </summary>
+    /// <value></value>
     public ushort Duration
     {
         get

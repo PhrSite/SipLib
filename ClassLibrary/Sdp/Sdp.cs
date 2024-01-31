@@ -8,7 +8,6 @@
     
 using System.Text;
 using System.Net;
-using System.Net.Sockets;
 
 namespace SipLib.Sdp;
 
@@ -21,63 +20,75 @@ public class Sdp
     /// Contains the version number (v) of the SDP protocol. This is expected to be always 0. See Section 5.1
     /// of RFC 4566.
     /// </summary>
+    /// <value></value>
     public int Version = 0;
     /// <summary>
     /// Contains the origin information for the "o" parameter. See Section 5.2 of RFC 4566.
     /// </summary>
+    /// <value></value>
     public Origin Origin = null;
     /// <summary>
     /// Contains the Session Name for the "s" type. parameter Section 5.3 of RFC 4566.
     /// </summary>
+    /// <value></value>
     public string SessionName = "";
 
     /// <summary>
     /// Contains the session information "i" parameter. See Section 5.4 of RFC 4566. This parameter is optional.
     /// </summary>
+    /// <value></value>
     public string SessionInformation = "";
 
     /// <summary>
     /// Contains a URI to more information about the session. This is the "u" parameter. See Section 5.5 of
     /// RFC 4566. This parameter is optional.
     /// </summary>
+    /// <value></value>
     public string Uri = "";
 
     /// <summary>
     /// Contains the e-mail parameter (e) for the session. See Section 5.6 of RFC 4566. This parameter is
     /// optional.
     /// </summary>
+    /// <value></value>
     public string Email = "";
 
     /// <summary>
     /// Contains the phone number (p) parameter for the session. See Section 5.6 of RFC 4566. This parameter
     /// is optional.
     /// </summary>
+    /// <value></value>
     public string PhoneNumber = "";
 
     /// <summary>
     /// Bandwidth parameter (b) for the entire session. See Section 5.8 of RFC 4566.
     /// This parameter is optional. Treating it as a simple string.
     /// </summary>
+    /// <value></value>
     public string Bandwidth = "";
 
     /// <summary>
     /// Timing (t) parameter. See Section 5.9 of RFC 4566.
     /// </summary>
+    /// <value></value>
     public string Timing = "0 0";
 
     /// <summary>
     /// Contains a list of all of the different types of media for a call.
     /// </summary>
+    /// <value></value>
     public List<MediaDescription> Media = new List<MediaDescription>();
 
     /// <summary>
     /// Contains the connecton data for the call.
     /// </summary>
+    /// <value></value>
     public ConnectionData ConnectionData = null;
 
     /// <summary>
     /// Contains the attributes for this media session.
     /// </summary>
+    /// <value></value>
     public List<SdpAttribute> Attributes = new List<SdpAttribute>();
 
     /// <summary>

@@ -30,6 +30,7 @@ public class RttReceiver
     /// <summary>
     /// Event that is fired when at least one character is received
     /// </summary>
+    /// <value></value>
     public event RttCharactersReceivedDelegate RttCharactersReceived = null;
 
     /// <summary>

@@ -6,7 +6,6 @@ using System.Net;
 using SipLib.Channels;
 using SipLib.Core;
 using SipLib.Sdp;
-using SipLib.SipTransactions;
 using SipLib.Transactions;
 
 namespace SipLibUnitTests.SipTransactions;

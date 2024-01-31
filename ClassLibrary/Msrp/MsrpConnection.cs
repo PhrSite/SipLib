@@ -41,6 +41,7 @@ public class MsrpConnection
     /// Returns true if the connection is passive, i.e., this end is the server and listening for connection
     /// requests. Returns false if this end of the connection is the client.
     /// </summary>
+    /// <value></value>
     public bool ConnectionIsPassive { get; private set; } = false;
 
     private Qos m_Qos = new Qos();
@@ -89,6 +90,7 @@ public class MsrpConnection
     /// video recordings.
     /// </para>
     /// </remarks>
+    /// <value></value>
     public int MaxMsrpMessageLength
     {
         get { return m_MaxMsrpMessageLength; }
@@ -110,29 +112,34 @@ public class MsrpConnection
     /// Event that is fired when a complete MSRP message is received. This event is not fired for empty
     /// SEND requests.
     /// </summary>
+    /// <value></value>
     public event MsrpMessageReceivedDelegate MsrpMessageReceived = null;
 
     /// <summary>
     /// This event is fired when a connection is established with the remote endpoint either as a client
     /// or as a server.
     /// </summary>
+    /// <value></value>
     public event MsrpConnectionStatusDelegate MsrpConnectionEstablished = null;
 
     /// <summary>
     /// This event is fired if the MsrpConnection object was unable to connect to the remote endpoint as
     /// a client.
     /// </summary>
+    /// <value></value>
     public event MsrpConnectionStatusDelegate MsrpConnectionFailed = null;
 
     /// <summary>
     /// This event is fired if the remote endpoint rejected a MSRP message sent by the MsrpConnection object
     /// or if there was another problem delivering the message.
     /// </summary>
+    /// <value></value>
     public event MsrpMessageDeliveryFailedDelegate MsrpMessageDeliveryFailed = null;
 
     /// <summary>
     /// Event that is fired when a MSRP REPORT request is received.
     /// </summary>
+    /// <value></value>
     public event ReportReceivedDelegate ReportReceived = null;
 
     /// <summary>

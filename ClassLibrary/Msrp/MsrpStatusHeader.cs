@@ -12,15 +12,18 @@ public class MsrpStatusHeader
     /// <summary>
     /// Contains the namespace field of the Status header. This should always be "000".
     /// </summary>
+    /// <value></value>
     public string Namespace = "000";
     /// <summary>
     /// Contains the status-code field of the Status header. A value of 0 indicates an invalid status.
     /// </summary>
+    /// <value></value>
     public int StatusCode = 0;
     /// <summary>
     /// Contains the comment field of the Status header. The comment field is optional. A value of null
     /// indicates that the comment field is not present.
     /// </summary>
+    /// <value></value>
     public string Comment = null;
 
     /// <summary>

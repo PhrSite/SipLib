@@ -118,7 +118,7 @@ public class ClientTransactions
         Invite.Header.ContentType = "application/sdp";
         Invite.Body = AudioSdp.ToString();
         Invite.Header.ContentLength = Invite.Body.Length;
-        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+        ClientInviteTransaction Cit = Transport.StartClientInvite(Invite, ServerIpe, null, null);
 
         await Cit.WaitForCompletionAsync();
         Assert.True(Cit.TerminationReason == TransactionTerminationReasonEnum.OkReceived,
@@ -167,7 +167,7 @@ public class ClientTransactions
         Invite.Body = AudioSdp.ToString();
         Invite.Header.ContentLength = Invite.Body.Length;
 
-        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+        ClientInviteTransaction Cit = Transport.StartClientInvite(Invite, ServerIpe, null, null);
 
         await Task.Delay(100);
         // Now send a CANCEL request to the server
@@ -219,7 +219,7 @@ public class ClientTransactions
         Invite.Header.ContentType = "application/sdp";
         Invite.Body = AudioSdp.ToString();
         Invite.Header.ContentLength = Invite.Body.Length;
-        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+        ClientInviteTransaction Cit = Transport.StartClientInvite(Invite, ServerIpe, null, null);
 
         // Simulate a network failure or a disconnect by the server
         await Task.Delay(200);
@@ -260,7 +260,7 @@ public class ClientTransactions
         Invite.Header.ContentType = "application/sdp";
         Invite.Body = AudioSdp.ToString();
         Invite.Header.ContentLength = Invite.Body.Length;
-        ClientInviteTransaction Cit = Transport.StartClientInviteTransaction(Invite, ServerIpe, null, null);
+        ClientInviteTransaction Cit = Transport.StartClientInvite(Invite, ServerIpe, null, null);
 
         // Simulate a network failure or a disconnect on the client side
         await Task.Delay(500);

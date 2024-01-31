@@ -26,6 +26,7 @@ public class SipBodyBuilder
     /// <summary>
     /// Contains a list of different contents to add to the body.
     /// </summary>
+    /// <value></value>
     public List<SipBodyContents> ContentsList = new List<SipBodyContents>();
 
     /// <summary>

@@ -131,9 +131,9 @@ public class MsrpMessageUnitTests
         Assert.NotNull(msrpMessage2);
 
         Assert.True(msrpMessage2.ContentType.Contains("multipart") == true, "The ContentType is wrong");
-        //List<SipContentsContainer> contents2 = BinaryBodyParser.ProcessMultiPartContents(msrpMessage2Bytes,
+        //List<SipContentsContainer> contents2 = BodyParser.ProcessMultiPartContents(msrpMessage2Bytes,
         //    msrpMessage2.ContentType);
-        List<MessageContentsContainer> contents2 = BinaryBodyParser.ProcessMultiPartContents(msrpMessage2.Body,
+        List<MessageContentsContainer> contents2 = BodyParser.ProcessMultiPartContents(msrpMessage2.Body,
             msrpMessage2.ContentType);
         Assert.True(contents2.Count == 2, "The contents count is wrong");
 

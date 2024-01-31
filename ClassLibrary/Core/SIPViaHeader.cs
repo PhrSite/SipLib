@@ -93,26 +93,31 @@ public class SIPViaHeader
     /// <summary>
     /// Version parameter
     /// </summary>
+    /// <value></value>
     public string Version = null;
 
     /// <summary>
     /// Transport protocol
     /// </summary>
+    /// <value></value>
     public SIPProtocolsEnum Transport;
 
     /// <summary>
     /// Host portion of the URI
     /// </summary>
+    /// <value></value>
     public string Host = null;
 
     /// <summary>
     /// Port number
     /// </summary>
+    /// <value></value>
     public int Port = 0;
 
     /// <summary>
     /// Gets or sets the branch parameter
     /// </summary>
+    /// <value></value>
     public string Branch
     {
         get
@@ -128,6 +133,7 @@ public class SIPViaHeader
     /// <summary>
     /// IP Address contained in the recevied parameter.
     /// </summary>
+    /// <value></value>
     public string ReceivedFromIPAddress
     {
         get
@@ -143,6 +149,7 @@ public class SIPViaHeader
     /// <summary>
     /// Port contained in the rport parameter.
     /// </summary>
+    /// <value></value>
     public int ReceivedFromPort
     {
         get
@@ -160,15 +167,17 @@ public class SIPViaHeader
         }
         set { ViaParameters.Set(m_rportKey, value.ToString()); }
     }
-    
+
     /// <summary>
     /// Contains the Via header parameters
     /// </summary>
+    /// <value></value>
     public SIPParameters ViaParameters = new SIPParameters(null, m_paramDelimChar);
 
     /// <summary>
     /// This the address placed into the Via header by the User Agent.
     /// </summary>
+    /// <value></value>
     public string ContactAddress
     {
         get
@@ -205,6 +214,7 @@ public class SIPViaHeader
     /// This is the socket the request was received on and is a combination of the Host and Received
     /// fields.
     /// </summary>
+    /// <value></value>
     public string ReceivedFromAddress
     {
         get

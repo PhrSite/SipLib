@@ -81,6 +81,7 @@ public class SenderReport
     /// <summary>
     /// Gets the RTCP header.
     /// </summary>
+    /// <value></value>
     public RtcpHeader Header
     {
         get { return m_Header; }
@@ -89,6 +90,7 @@ public class SenderReport
     /// <summary>
     /// Gets or sets the SSRC of the sender.
     /// </summary>
+    /// <value></value>
     public uint SSRC
     {
         get { return m_SSRC; }
@@ -111,6 +113,7 @@ public class SenderReport
     /// <summary>
     /// Gets the SenderInfo object.
     /// </summary>
+    /// <value></value>
     public SenderInfo SenderInfo
     {
         get { return m_SenderInfo; }
@@ -128,6 +131,7 @@ public class SenderReport
     /// <summary>
     /// Gets the list Report Blocks for this SenderReport.
     /// </summary>
+    /// <value></value>
     public List<ReportBlock> GetReportBlocks
     {
         get { return m_Reports; }

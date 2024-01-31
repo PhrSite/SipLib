@@ -103,6 +103,7 @@ public class SdesItem
     /// <summary>
     /// Gets the SDES item type.
     /// </summary>
+    /// <value></value>
     public SdesItemType ItemType
     {
         get { return m_SdesItemType; }
@@ -110,7 +111,8 @@ public class SdesItem
 
     /// <summary>
     /// Gets the string value of the payload. Returns null if there is no payload. </summary>
-    public String Payload
+    /// <value></value>
+    public string Payload
     {
         get
         {
@@ -125,7 +127,8 @@ public class SdesItem
     /// Gets the total number of bytes in this SDES item. This includes the SDES item byte byte, the length
     /// byte and the payload bytes.
     /// </summary>
-    public Int32 SdesItemLength
+    /// <value></value>
+    public int SdesItemLength
     {
         get { return m_Length + MinSdesItemLength; }
     }

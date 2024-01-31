@@ -14,14 +14,17 @@ public class RocValues
     /// <summary>
     /// Current ROC value.
     /// </summary>
+    /// <value></value>
     public uint Roc = 0;
     /// <summary>
     /// Stores the value of ROC - 1
     /// </summary>
+    /// <value></value>
     public uint RocMinus1 = uint.MaxValue;
     /// <summary>
     /// Stores the value of ROC + 1
     /// </summary>
+    /// <value></value>
     public uint RocPlus1 = 1;
 
     /// <summary>

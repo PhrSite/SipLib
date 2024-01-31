@@ -32,6 +32,7 @@ public class ThreadSafeGenericList<T>
     /// <summary>
     /// Gets the number of items in the list.
     /// </summary>
+    /// <value></value>
     public int Count
     {
         get

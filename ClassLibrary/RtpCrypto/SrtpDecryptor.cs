@@ -317,7 +317,6 @@ public class SrtpDecryptor : SrtpTransformBase
         return Idx;
     }
 
-
     private uint GetMki(byte[] Pckt, int MkiIdx)
     {
         uint Mki = 0;
@@ -339,6 +338,4 @@ public class SrtpDecryptor : SrtpTransformBase
 
         return Mki;
     }
-
-
 }

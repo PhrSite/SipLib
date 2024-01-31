@@ -14,16 +14,19 @@ public class RttUtils
     /// <summary>
     /// Byte Order Marker character
     /// </summary>
+    /// <value></value>
     public const char ByteOrderMarker = (char)0xfeff;
 
     /// <summary>
     /// Unicode line separator character encoded as an UTF-8 byte sequence
     /// </summary>
+    /// <value></value>
     public static byte[] Utf8LineSeparator = { 0xe2, 0x80, 0xa8 };
 
     /// <summary>
     /// String containing a Unicode line separator character.
     /// </summary>
+    /// <value></value>
     public static string strUtf8LineSeparator = Encoding.UTF8.GetString(Utf8LineSeparator);
 
     /// <summary>
@@ -40,29 +43,33 @@ public class RttUtils
     /// <summary>
     /// Default payload type for t140 text
     /// </summary>
+    /// <value></value>
     public const int DefaultT140PayloadType = 98;
 
     /// <summary>
     /// Default payload type for redundant text (red). A value of 0 means that redundancy is not being used.
     /// </summary>
+    /// <value></value>
     public const int DefaultRedundantPayloadType = 99;
 
     /// <summary>
     /// Default number of redundancy levels. A value of 0 indicates that redundancy is not being used.
     /// </summary>
+    /// <value></value>
     public const int DefaultRedundancyLevel = 3;
 
     /// <summary>
     /// Default number of characters per second. A value of 0 specifies that there is no limit to the number
     /// of characters per second that may be sent.
     /// </summary>
+    /// <value></value>
     public const int DefaultCps = 0;
 
     /// <summary>
     /// Defines the attribute for the RTT media block that indicates that a UA is RTT mixer aware as defined
     /// in RFC 9071.
     /// </summary>
+    /// <value></value>
     public const string MixerAttribute = "rtt-mixer";
-
 
 }

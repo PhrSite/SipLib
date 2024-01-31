@@ -64,26 +64,31 @@ public abstract class SIPChannel
     /// Keeps a list of TCP sockets this process is listening on to prevent it establishing TCP
     /// connections to itself.
     /// </summary>
+    /// <value></value>
     public List<string> LocalTCPSockets = new List<string>();
 
     /// <summary>
     /// This is the local SIPURI
     /// </summary>
+    /// <value></value>
     protected SIPURI SipUri = null;
 
     /// <summary>
     /// This is set to true when the main listener thread has been started.
     /// </summary>
+    /// <value></value>
     public bool ChannelStarted = false;
 
     /// <summary>
     /// This is the local SIPEndPoint
     /// </summary>
+    /// <value></value>
     protected SIPEndPoint LocalSIPEndPoint = null;
 
     /// <summary>
     /// Gets the local SIPEndPoint for the SIP channel
     /// </summary>
+    /// <value></value>
     public SIPEndPoint SIPChannelEndPoint
     {
         get { return LocalSIPEndPoint; }
@@ -104,6 +109,7 @@ public abstract class SIPChannel
     /// <summary>
     /// This is the URI to be used for contacting this SIP channel.
     /// </summary>
+    /// <value></value>
     public SIPURI SIPChannelContactURI
     {
         get
@@ -116,11 +122,13 @@ public abstract class SIPChannel
     /// <summary>
     /// If the underlying transport channel is reliable, such as TCP, this will be set to true;
     /// </summary>
+    /// <value></value>
     protected bool m_isReliable;
 
     /// <summary>
     /// If the underlying transport channel is reliable, such as TCP, this will be set to true;
     /// </summary>
+    /// <value></value>
     public bool IsReliable
     {
         get { return m_isReliable; }
@@ -129,24 +137,28 @@ public abstract class SIPChannel
     /// <summary>
     /// True if the channel is using Transport Layer Security (TLS)
     /// </summary>
+    /// <value></value>
     protected bool m_IsTLS;
 
     /// <summary>
     /// Gets the m_IsTLS property. If true then the SIPConnection uses Transport Layer Security (TLS).
     /// </summary>
+    /// <value></value>
     public bool IsTLS
     {
         get { return m_IsTLS; }
     }
 
     /// <summary>
-    /// True if the connection has been close.
+    /// True if the connection has been closed.
     /// </summary>
+    /// <value></value>
     protected bool Closed;
 
     /// <summary>
     /// Delegate (callback function) that gets called when a SIP message is received.
     /// </summary>
+    /// <value></value>
     public SIPMessageReceivedDelegate SIPMessageReceived;
 
     /// <summary>
@@ -189,6 +201,7 @@ public abstract class SIPChannel
     /// remote endpoints IPEndPoint.
     /// </summary>
     /// <returns></returns>
+    /// <value></value>
     protected abstract Dictionary<string, SIPConnection> GetConnectionsList();
 
     /// <summary>

@@ -36,6 +36,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////////
 //	Revised:	7 Nov 22 PHR -- Initial version.
+//              30 Jan 24 PHR
+//                -- Added the SIPHeader Header property.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -62,39 +64,53 @@ public class SIPMessage
     private static string m_CRLF = SIPConstants.CRLF;
 
     /// <summary>
-    /// Contains the entire message as a string.
-    /// </summary>
-    public string RawMessage;
-    /// <summary>
     /// Identifies the type of SIP message -- i.e. a request or a response.
     /// </summary>
+    /// <value></value>
     public SIPMessageTypesEnum SIPMessageType = SIPMessageTypesEnum.Unknown;
     /// <summary>
-    /// Contains the first line of the message. For example: "SIP/2.0 100 Trying"
-    /// or "INVITE sip:1189990001@10.1.221.8 SIP/2.0"
+    /// Contains the first line of the message. For example: "SIP/2.0 100 Trying" or 
+    /// "INVITE sip:1189990001@10.1.221.8 SIP/2.0"
     /// </summary>
-    public string FirstLine;
+    /// <value></value>
+    public string FirstLine = null;
+
     /// <summary>
     /// Contains any array of SIP header lines with one header line per array element.
     /// </summary>
-    public string[] SIPHeaders;
+    /// <value></value>
+    public string[] SIPHeaders = null;
+
     /// <summary>
     /// Contains the entire SIP message body as a string. Set to null if the message does not have a body.
     /// </summary>
-    public string Body;
+    /// <value></value>
+    public string Body = null;
+
     /// <summary>
-    /// Contains the raw byte array containing the entire message.
+    /// Contains the raw byte array containing the entire message. This field is used when parsing a SIP
+    /// request or a SIP response that was received over a SIP network connection. It must not be used when
+    /// creating a new SIPRequest or a SIPResponse locally.
     /// </summary>
-    public byte[] RawBuffer;
+    /// <value></value>
+    public byte[] RawBuffer = null;
 
     /// <summary>
     /// The remote IP socket the message was received from or sent to. 
     /// </summary>
-    public SIPEndPoint RemoteSIPEndPoint;
+    /// <value></value>
+    public SIPEndPoint RemoteSIPEndPoint = null;
     /// <summary>
     /// The local SIP socket the message was received on or sent from. 
     /// </summary>
-    public SIPEndPoint LocalSIPEndPoint;
+    /// <value></value>
+    public SIPEndPoint LocalSIPEndPoint = null;
+
+    /// <summary>
+    /// Contains all headers in the request
+    /// </summary>
+    /// <value></value>
+    public SIPHeader Header = null;
 
     /// <summary>
     /// Parses a byte array containing a SIP message and returns a SIPMessage object.
@@ -104,9 +120,9 @@ public class SIPMessage
     /// <param name="localSIPEndPoint">The local SIP socket the message was received on or sent from.</param>
     /// <param name="remoteSIPEndPoint">The remote IP socket the message was received from or sent to.</param>
     /// <returns>Returns a SIPMessage object if successful. Returns null if the message is not valid.</returns>
-    // <exception cref="ArgumentException">Thrown if the SIP message exceeds that maximum allowable
-    // length defined in: SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH.</exception>
-    // <exception cref="Exception">Thrown if an unexpected error occurs.</exception>
+    /// <exception cref="ArgumentException">Thrown if the SIP message exceeds the maximum allowable
+    /// length defined in: SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH.</exception>
+    /// <exception cref="Exception">Thrown if an unexpected error occurs.</exception>
     public static SIPMessage ParseSIPMessage(byte[] buffer, SIPEndPoint localSIPEndPoint, 
         SIPEndPoint remoteSIPEndPoint)
     {
@@ -143,13 +159,13 @@ public class SIPMessage
     }
 
     /// <summary>
-    /// Parses a byte array containing a SIP message and returns a SIPMessage </summary>
+    /// Parses a string containing a SIP message and returns a SIPMessage </summary>
     /// <param name="message">Input string that contains the entire SIP message.</param>
     /// <param name="localSIPEndPoint">The local SIP socket the message was received on or sent from.</param>
     /// <param name="remoteSIPEndPoint">The remote IP socket the message was received from or sent to.</param>
     /// <returns>Returns a SIPMessage object if successful. Returns null if the message is not valid.</returns>
-    public static SIPMessage ParseSIPMessage(string message, SIPEndPoint 
-        localSIPEndPoint, SIPEndPoint remoteSIPEndPoint)
+    public static SIPMessage ParseSIPMessage(string message, SIPEndPoint localSIPEndPoint, SIPEndPoint 
+        remoteSIPEndPoint)
     {
         try
         {
@@ -157,7 +173,6 @@ public class SIPMessage
             sipMessage.LocalSIPEndPoint = localSIPEndPoint;
             sipMessage.RemoteSIPEndPoint = remoteSIPEndPoint;
 
-            sipMessage.RawMessage = message;
             int endFistLinePosn = message.IndexOf(m_CRLF);
 
             if (endFistLinePosn != -1)

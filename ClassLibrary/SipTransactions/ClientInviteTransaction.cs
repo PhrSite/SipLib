@@ -162,5 +162,4 @@ public class ClientInviteTransaction : SipTransactionBase
 
         return Terminated;
     }
-
 }

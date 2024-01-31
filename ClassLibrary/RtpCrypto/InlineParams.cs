@@ -16,25 +16,30 @@ public class InlineParams
     /// Contains the master key byte array. Must be a valid length for the AES algorithm (16 bytes for AES-128),
     /// (24 bytes for AES-192 or 32 bytes for AES-256).
     /// </summary>
+    /// <value></value>
     public byte[] MasterKey = null;
     /// <summary>
     /// Contains the master salt byte array. Must be 14 bytes in length for SRTP.
     /// </summary>
+    /// <value></value>
     public byte[] MasterSalt = null;
     /// <summary>
     /// Specifies the lifetime of the master key in RTP packets. A value of 0 indicates that the default
     /// lifetime is to be used. Must be an integral power of 2. A value of 0 indicates that the default
     /// lifetime of 2^48 should be used.
     /// </summary>
+    /// <value></value>
     public ulong Lifetime = 0;
     /// <summary>
     /// Specifies the Master Key Identifier (MKI) for the master key. A value of 0 indicates that master key
     /// identifiers are not being used.
     /// </summary>
+    /// <value></value>
     public int MKI = 0;
     /// <summary>
     /// Specifies length in bytes of the MKI in the SRTP or SRTCP packet.
     /// </summary>
+    /// <value></value>
     public int MKI_Length = 0;
 
     /// <summary>

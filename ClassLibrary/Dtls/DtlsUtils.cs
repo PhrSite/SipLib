@@ -80,12 +80,14 @@ public class DtlsUtils
     /// <summary>
     /// The key size in bits when generating random keys for RSA self signed certificates.
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_KEY_SIZE = 2048;
 
     /// <summary>
     /// The key size in bits when generating random keys for ECDSA self signed certificates.
     /// This is the maximum maximum key size for ECDSA keys. 
     /// </summary>
+    /// <value></value>
     public const int DEFAULT_ECDSA_KEY_SIZE = 384;
 
     /// <summary>
@@ -541,7 +543,6 @@ public class DtlsUtils
     /// <param name="issuerName">Issuer name for the certificate. For example: "CN=root"</param>
     /// <param name="privateKey">Private key to use. May be null.</param>
     /// <returns>Returns a new self-signed certificate</returns>
-
     public static X509Certificate2 CreateSelfSignedCert(string subjectName, string issuerName, 
         AsymmetricKeyParameter privateKey)
     {
@@ -856,6 +857,9 @@ public class DtlsUtils
     /// <remarks>Plagiarised from https://github.com/CryptLink/CertBuilder/blob/master/CertBuilder.cs.
     /// NOTE: netstandard2.1+ and netcoreapp3.1+ have x509.CopyWithPrivateKey which will avoid the need to
     /// use the serialize/deserialize from pfx to get from bouncy castle to .NET Core X509 certificates.</remarks>
+    /// <param name="bouncyCert"></param>
+    /// <param name="keyPair"></param>
+    /// <returns>A .NET X509Certificate2 object</returns>
     public static X509Certificate2 ConvertBouncyCert(Org.BouncyCastle.X509.X509Certificate bouncyCert, 
         AsymmetricCipherKeyPair keyPair)
     {
@@ -907,6 +911,8 @@ public class DtlsUtils
     /// class due to https://github.com/bcgit/bc-csharp/issues/160 which prevents the original
     /// version from working on non-Windows platforms.
     /// </summary>
+    /// <param name="privKey"></param>
+    /// <returns></returns>
     public static RSA ToRSA(RsaPrivateCrtKeyParameters privKey)
     {
         return CreateRSAProvider(ToRSAParameters(privKey));
@@ -964,6 +970,7 @@ public class DtlsUtils
     /// Verifies the hash algorithm is supported by the utility functions in this class.
     /// </summary>
     /// <param name="hashAlgorithm">The hash algorithm to check.</param>
+    /// <returns>True if the hash algorithm is supported.</returns>
     public static bool IsHashSupported(string hashAlgorithm)
     {
         switch (hashAlgorithm.ToLower())

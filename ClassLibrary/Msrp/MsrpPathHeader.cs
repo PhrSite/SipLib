@@ -15,6 +15,7 @@ public class MsrpPathHeader
     /// <summary>
     /// Contains a list of MsrpUris. Initialized to an empty list.
     /// </summary>
+    /// <value></value>
     public List<MsrpUri> MsrpUris = new List<MsrpUri>();
 
     /// <summary>

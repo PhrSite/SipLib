@@ -14,11 +14,13 @@ public class RttRedundantBlock
     /// <summary>
     /// Mask for detecting the marker bit in a redundant text block.
     /// </summary>
+    /// <value></value>
     public const byte RTT_MARKER_MASK = 0x80;
 
     /// <summary>
     /// Length of a redundant block header.
     /// </summary>
+    /// <value></value>
     public const int RED_HEADER_LENGTH = 4;
 
     private const int PayloadTypeIndex = 0;
@@ -29,16 +31,19 @@ public class RttRedundantBlock
     /// <summary>
     /// Gets or sets the payload type.
     /// </summary>
+    /// <value></value>
     public byte T140PayloadType { get; set; }
 
     /// <summary>
     /// Gets or sets the timestamp offset value.
     /// </summary>
+    /// <value></value>
     public ushort TimeOffset { get; set; }
 
     /// <summary>
     /// Gets or sets the length of the redundant block.
     /// </summary>
+    /// <value></value>
     public ushort BlockLength { get; set; }
 
     /// <summary>
@@ -97,6 +102,7 @@ public class RttRedundantBlock
     /// <summary>
     /// Gets or sets the payload bytes. The setter also sets the BlockLength property
     /// </summary>
+    /// <value></value>
     public byte[] PayloadBytes
     {
         get { return m_PayloadBytes; } 

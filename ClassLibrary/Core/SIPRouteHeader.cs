@@ -69,6 +69,7 @@ public class SIPRoute
     /// <summary>
     /// Gets or set the host portion of the URI
     /// </summary>
+    /// <value></value>
     public string Host
     {
         get { return m_userField?.URI?.Host; }
@@ -78,6 +79,7 @@ public class SIPRoute
     /// <summary>
     /// Gets the SIPURI from the Route header
     /// </summary>
+    /// <value></value>
     public SIPURI URI
     {
         get { return m_userField?.URI; }
@@ -86,6 +88,7 @@ public class SIPRoute
     /// <summary>
     /// Returns true if using strict routing or false if using loose routing.
     /// </summary>
+    /// <value></value>
     public bool IsStrictRouter
     {
         get { return !m_userField.URI.Parameters.Has(m_looseRouterParameter); }

@@ -80,36 +80,43 @@ public class SIPConnection
     /// <summary>
     /// Stream for the transport
     /// </summary>
+    /// <value></value>
     public Stream SIPStream;
 
     /// <summary>
     /// Remote end point of the connection
     /// </summary>
+    /// <value></value>
     public IPEndPoint RemoteEndPoint;
 
     /// <summary>
     /// Connection/transport protocol
     /// </summary>
+    /// <value></value>
     public SIPProtocolsEnum ConnectionProtocol;
 
     /// <summary>
     /// Connection type
     /// </summary>
+    /// <value></value>
     public SIPConnectionsEnum ConnectionType;
 
     /// <summary>
     /// Records when a SIP packet was last sent or received.
     /// </summary>
+    /// <value></value>
     public DateTime LastTransmission;
 
     /// <summary>
     /// Buffer for receiving a SIP message
     /// </summary>
+    /// <value></value>
     public byte[] SocketBuffer = new byte[2 * MaxSIPTCPMessageSize];
 
     /// <summary>
     /// Index of the end of the SocketBuffer
     /// </summary>
+    /// <value></value>
     public int SocketBufferEndPosition = 0;
 
     private SIPChannel m_owningChannel;
@@ -410,6 +417,7 @@ public class SIPConnection
     /// <summary>
     /// Gets the IPEndpoint that this connection object is listening on.
     /// </summary>
+    /// <value></value>
     public IPEndPoint LocalEndpoint
     {
         get

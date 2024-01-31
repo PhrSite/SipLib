@@ -16,22 +16,27 @@ public static class DscpSettings
     /// <summary>
     /// DSCP value for audio media.
     /// </summary>
+    /// <value></value>
     public static uint AudioDscp = 0x0b;
     /// <summary>
     /// DSCP value for Real Time Text (RTT) media.
     /// </summary>
+    /// <value></value>
     public static uint RTTDscp = 0x07;
     /// <summary>
     /// DSCP value for MSRP media.
     /// </summary>
+    /// <value></value>
     public static uint MSRPDscp = 0x07;
     /// <summary>
     /// DSCP value for for video media.
     /// </summary>
+    /// <value></value>
     public static uint VideoDscp = 0x0f;
     /// <summary>
     /// DSCP value for SIP signaling.
     /// </summary>
+    /// <value></value>
     public static uint SipSignalingDscp = 0x03;
 
     /// <summary>

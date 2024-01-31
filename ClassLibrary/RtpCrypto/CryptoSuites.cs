@@ -12,36 +12,44 @@ public class CryptoSuites
     /// <summary>
     /// See Section 6.2.1 of RFC 4568
     /// </summary>
+    /// <value></value>
     public const string AES_CM_128_HMAC_SHA1_80 = "AES_CM_128_HMAC_SHA1_80";
     /// <summary>
     /// See Section 6.2.2 of RFC 4568
     /// </summary>
+    /// <value></value>
     public const string AES_CM_128_HMAC_SHA1_32 = "AES_CM_128_HMAC_SHA1_32";
     /// <summary>
     /// See Section 6.2.3 of RFC 4568
     /// </summary>
+    /// <value></value>
     public const string F8_128_HMAC_SHA1_80 = "F8_128_HMAC_SHA1_80";
 
     /// <summary>
     /// See Table 1 of RFC 6188
     /// </summary>
+    /// <value></value>
     public const string AES_192_CM_HMAC_SHA1_80 = "AES_192_CM_HMAC_SHA1_80";
     /// <summary>
     /// See Table 2 of RFC 6188
     /// </summary>
+    /// <value></value>
     public const string AES_192_CM_HMAC_SHA1_32 = "AES_192_CM_HMAC_SHA1_32";
     /// <summary>
     /// See Table 3 of RFC 6188
     /// </summary>
+    /// <value></value>
     public const string AES_256_CM_HMAC_SHA1_80 = "AES_256_CM_HMAC_SHA1_80";
     /// <summary>
     /// See Table 4 of RFC 6188
     /// </summary>
+    /// <value></value>
     public const string AES_256_CM_HMAC_SHA1_32 = "AES_256_CM_HMAC_SHA1_32";
 
     /// <summary>
     /// Gets the list of supported SRTP cryptographic algorithms 
     /// </summary>
+    /// <value></value>
     public static List<string> SupportedAlgorithms = new List<string>()
     {
         AES_CM_128_HMAC_SHA1_80,
@@ -117,5 +125,4 @@ public class CryptoSuites
 
         return AuthTagLength;
     }
-
 }

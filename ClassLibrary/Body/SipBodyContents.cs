@@ -12,18 +12,22 @@ public class SipBodyContents
     /// <summary>
     /// Content-Type header value for the contents. This field is required.
     /// </summary>
+    /// <value></value>
     public string ContentType = null;
     /// <summary>
     /// Content-Disposition header value for the contents. This field is optional.
     /// </summary>
+    /// <value></value>
     public string ContentDisposition = null;
     /// <summary>
     /// Content-ID header value for the contents. This field is optional.
     /// </summary>
+    /// <value></value>
     public string ContentID = null;
     /// <summary>
     /// Contains the contents to attach to the SIP request. This field is required.
     /// </summary>
+    /// <value></value>
     public string Contents = null;
 
     /// <summary>
