@@ -32,7 +32,7 @@ namespace SipLib.Dtls;
 /// author Bing SU (nova.su@gmail.com)
 /// author Werner Werner.Dittmann@t-online.de
 /// </summary>
-public class SrtcpTransformer : IPacketTransformer
+internal class SrtcpTransformer : IPacketTransformer
 {
     private int _isLocked = 0;
     private RawPacket packet;

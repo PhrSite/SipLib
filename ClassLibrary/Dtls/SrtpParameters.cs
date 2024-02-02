@@ -30,7 +30,7 @@ namespace SipLib.Dtls;
 /// Structure that defines the DTLS derived key and salt lengths for SRTP. 
 /// See http://tools.ietf.org/html/rfc5764#section-4.1.2
 /// </summary>
-public struct SrtpParameters
+internal struct SrtpParameters
 {
 
     /// <summary>

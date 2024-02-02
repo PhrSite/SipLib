@@ -38,9 +38,11 @@
 //	Revised:	7 Nov 22 PHR -- Initial version.
 //              30 Jan 24 PHR
 //                -- Added the SIPHeader Header property.
+//                -- Made this class the base class for SIPRequest and SIPResponse.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
+using SipLib.Body;
 
 namespace SipLib.Core;
 
@@ -202,6 +204,7 @@ public class SIPMessage
                         sipMessage.Body = message.Substring(endHeaderPosn + 4);
                 }
 
+                sipMessage.RawBuffer = Encoding.UTF8.GetBytes(message);
                 return sipMessage;
             }
             else
@@ -211,5 +214,81 @@ public class SIPMessage
         {
             return null;
         }
+    }
+
+    /// <summary>
+    /// Returns true if this message has a body.
+    /// </summary>
+    /// <value></value>
+    public bool HasBody
+    {
+        get
+        {
+            if (Header.ContentLength > 0)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    private List<MessageContentsContainer> m_ContentsContainer = null;
+
+    /// <summary>
+    /// Gets a string containing the body contents for a specified content type. This method only returns non-binary
+    /// content types.
+    /// </summary>
+    /// <param name="contentType">Specifies the MIME type of the content block to get. For example: 
+    /// "application/sdp". Use the values defined in the ContentTypes class to ensure consistancy.
+    /// This parameter may be a value taken from a message's Content-Type header but it must not include any
+    /// header parameters.</param>
+    /// <returns>Returns a string that contains the body content block. Returns null if the specified 
+    /// content type is not found.</returns>
+    public string GetContentsOfType(string contentType)
+    {
+        if (HasBody == false || RawBuffer == null)
+            return null;
+
+        if (m_ContentsContainer == null)
+            m_ContentsContainer = BodyParser.ParseSipBody(RawBuffer, Header.ContentType);
+
+        if (m_ContentsContainer.Count == 0)
+            return null;
+
+        foreach (MessageContentsContainer Mcc in m_ContentsContainer)
+        {
+            if (Mcc.ContentType.ToLower().Contains(contentType.ToLower()) && Mcc.IsBinaryContents == false)
+                return Mcc.StringContents;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets the MessageContentsContainer containing the body contents for a specified content type.
+    /// </summary>
+    /// <param name="contentType">Specifies the MIME type of the content block to get. For example: 
+    /// "application/sdp". Use the values defined in the ContentTypes class to ensure consistancy.
+    /// This parameter may be a value taken from a message's Content-Type header but it must not include any
+    /// header parameters.</param>
+    /// <returns>Returns a MessageContentsContainer object containing the specified body contents block.
+    /// Returns null if the specified content type is not found.</returns>
+    public MessageContentsContainer GetContentsContainer(string contentType)
+    {
+        if (HasBody == false || RawBuffer == null)
+            return null;
+
+        if (m_ContentsContainer == null)
+            m_ContentsContainer = BodyParser.ParseSipBody(RawBuffer, Header.ContentType);
+
+        if (m_ContentsContainer.Count == 0)
+            return null;
+
+        foreach (MessageContentsContainer Mcc in m_ContentsContainer)
+        {
+            if (Mcc.ContentType.ToLower().Contains(contentType.ToLower()) && Mcc.IsBinaryContents == false)
+                return Mcc;
+        }
+
+        return null;
     }
 }

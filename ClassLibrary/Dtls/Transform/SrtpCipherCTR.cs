@@ -59,7 +59,7 @@ namespace SipLib.Dtls;
 /// SRTPCipherCTR implements SRTP Counter Mode AES Encryption (AES-CM). Counter Mode AES Encryption algorithm is
 /// defined in RFC3711, section 4.1.1.
 /// </summary>
-public class SrtpCipherCTR
+internal class SrtpCipherCTR
 {
     private const int BLKLEN = 16;
     private const int MAX_BUFFER_LENGTH = 10 * 1024;

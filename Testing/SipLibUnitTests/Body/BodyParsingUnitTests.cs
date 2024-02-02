@@ -103,4 +103,42 @@ public class BodyParsingUnitTests
         Assert.True(Contents[8].ContentType == "application/EmergencyCallData.NENA-LocationInfo+xml",
             "The ninth content type is wrong");
     }
+
+    [Fact]
+    public void GetSdp()
+    {
+        byte[] Bytes = GetRawData("InviteAllAdditionalDataByValue1.sip");
+        Assert.NotNull(Bytes);
+        SIPMessage Msg = SIPMessage.ParseSIPMessage(Bytes, null, null);
+        Assert.NotNull(Msg);
+        SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
+        Assert.NotNull(Req);
+
+        string strSdp = Req.GetContentsOfType(SipLib.Body.ContentTypes.Sdp);
+        Assert.True(strSdp != null, "GetContentsOfType() returned null");
+        Sdp sdp = Sdp.ParseSDP(strSdp);
+        Assert.True(sdp != null, "ParseSDP() returned null");
+
+        MediaDescription Audio = sdp.GetMediaType("audio");
+        Assert.True(Audio != null, "Audio media not found");
+
+        Assert.True(Audio.Port == 20014, "The audio port number is wrong");
+    }
+
+    [Fact]
+    public void GetPidf()
+    {
+        byte[] Bytes = GetRawData("InviteAllAdditionalDataByValue1.sip");
+        Assert.NotNull(Bytes);
+        SIPMessage Msg = SIPMessage.ParseSIPMessage(Bytes, null, null);
+        Assert.NotNull(Msg);
+        SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
+        Assert.NotNull(Req);
+
+        string strPidf = Req.GetContentsOfType(SipLib.Body.ContentTypes.Pidf);
+        Assert.True(strPidf != null, "PIDF not found");
+
+        Presence Pres = (Presence)XmlHelper.DeserializeFromString(strPidf, typeof(Presence));
+        Assert.True(Pres != null, "Error deserializing the PIDF-LO Presence document");
+    }
 }

@@ -53,7 +53,6 @@
  * @author Bing SU (nova.su@gmail.com)
  */
 
-using System.IO;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
@@ -62,9 +61,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities;
 
 namespace SipLib.Dtls;
-
-using RtpCrypto;    // 7 Dec 23 PHR -- For Debug Only
-using static SipLib.Dtls.SrtpCipherF8;
 
 /// <summary>
 /// SRTPCryptoContext class is the core class of SRTP implementation. There can be multiple SRTP sources in one 
@@ -76,7 +72,7 @@ using static SipLib.Dtls.SrtpCipherF8;
 /// master keys. And it will invoke certain class to encrypt / decrypt(transform / reversetransform) RTP packets.
 /// It will hold a replay check db and do replay check against incoming packets.
 /// </summary>
-public class SrtpCryptoContext
+internal class SrtpCryptoContext
 {
     /// <summary>
     /// The replay check windows size

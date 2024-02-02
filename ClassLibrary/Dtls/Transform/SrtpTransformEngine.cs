@@ -93,7 +93,7 @@ public class SrtpTransformEngine : ITransformEngine
     /// Gets the default SRTPCryptoContext
     /// </summary>
     /// <returns></returns>
-    public SrtpCryptoContext GetDefaultContext()
+    internal SrtpCryptoContext GetDefaultContext()
     {
         return this.defaultContext;
     }

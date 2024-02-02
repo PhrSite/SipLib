@@ -9,7 +9,7 @@ namespace SipLib.RealTimeText;
 /// <summary>
 /// Provides various helper utility functions and definitions for Real Time Text (RTT, RFC 4103)
 /// </summary>
-public class RttUtils
+internal class RttUtils
 {
     /// <summary>
     /// Byte Order Marker character

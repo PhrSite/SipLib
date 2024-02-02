@@ -9,7 +9,7 @@ namespace SipLib.RealTimeText;
 /// <summary>
 /// Class for representing redundant RTT blocks in an RTP packet. See RFC 4103.
 /// </summary>
-public class RttRedundantBlock
+internal class RttRedundantBlock
 {
     /// <summary>
     /// Mask for detecting the marker bit in a redundant text block.

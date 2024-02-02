@@ -59,7 +59,7 @@ namespace SipLib.Dtls;
 /// SRTPCipherF8 implements SRTP F8 Mode AES Encryption (AES-f8). F8 Mode AES Encryption algorithm is defined in
 /// RFC3711, section 4.1.2.
 /// </summary>
-public class SrtpCipherF8
+internal class SrtpCipherF8
 {
     /// <summary>
     /// AES block size, just a short name.
