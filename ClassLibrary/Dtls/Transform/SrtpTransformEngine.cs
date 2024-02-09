@@ -34,12 +34,12 @@ public class SrtpTransformEngine : ITransformEngine
     /// <summary>
     /// The default SRTPCryptoContext, which will be used to derivate other contexts.
     /// </summary>
-    private SrtpCryptoContext defaultContext;
+    private SrtpCryptoContext? defaultContext;
 
     /// <summary>
     /// The default SRTPCryptoContext, which will be used to derive other contexts.
     /// </summary>
-    private SrtcpCryptoContext defaultContextControl;
+    private SrtcpCryptoContext? defaultContextControl;
 
     /// <summary>
     /// Constructs a SRTPTransformEngine based on given master encryption key, master salt key and SRTP/SRTCP policy.
@@ -93,7 +93,7 @@ public class SrtpTransformEngine : ITransformEngine
     /// Gets the default SRTPCryptoContext
     /// </summary>
     /// <returns></returns>
-    internal SrtpCryptoContext GetDefaultContext()
+    internal SrtpCryptoContext? GetDefaultContext()
     {
         return this.defaultContext;
     }
@@ -102,7 +102,7 @@ public class SrtpTransformEngine : ITransformEngine
     /// Get the default SRTPCryptoContext
     /// </summary>
     /// <returns></returns>
-    public SrtcpCryptoContext GetDefaultContextControl()
+    public SrtcpCryptoContext? GetDefaultContextControl()
     {
         return this.defaultContextControl;
     }

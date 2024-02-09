@@ -132,11 +132,11 @@ public class BodyParser
         List<MessageContentsContainer> RetVal = new List<MessageContentsContainer>();
 
         NameValueCollection Parameters = GetHeaderParameters(ContentType);
-        if (Parameters["boundary"] == null)
+        if (Parameters?["boundary"] == null)
             throw new Exception("There is no boundary parameter for the Content-Type header");
 
         // Get the boundary string and remove any quotes if present.
-        string Bndry = Parameters["boundary"].Replace("\"", "").Trim();
+        string? Bndry = Parameters["boundary"]?.Replace("\"", "").Trim();
 
         //string BoundaryString = CRLF + "--" + Bndry + CRLF;
         // The first boundary string may not necessarily be preceeded by a CRLF in cases where only
@@ -190,7 +190,7 @@ public class BodyParser
                 strLower = Header.ToLower();
                 if (strLower.IndexOf("content-type") >= 0)
                 {
-                    Cc.ContentType = GetHeaderValue(Header);
+                    Cc.ContentType = GetHeaderValue(Header)!;
                     ProcessContentTypeHeaderParameters(Cc);
                 }
                 else if (strLower.IndexOf("content-disposition") >= 0)
@@ -232,7 +232,7 @@ public class BodyParser
                     StringSplitOptions.RemoveEmptyEntries);
                 if (Nv != null && Nv.Length > 0)
                 {
-                    string Val = Nv.Length == 2 ? Nv[1].Trim() : null;
+                    string? Val = Nv.Length == 2 ? Nv[1].Trim() : null;
                     Cc.ContentTypeParams.Add(Nv[0].Trim(), Val);
                 }
             }
@@ -254,7 +254,7 @@ public class BodyParser
                     StringSplitOptions.TrimEntries);
                 if (Nv != null && Nv.Length > 0)
                 {
-                    string Val = Nv.Length == 2 ? Nv[1] : null;
+                    string? Val = Nv.Length == 2 ? Nv[1] : null;
                     Parameters.Add(Nv[0], Val);
                 }
             }
@@ -272,7 +272,7 @@ public class BodyParser
     /// <param name="ContentTransferEncoding">Value of the Content-Transfer-Encoding header.
     /// May be null if not present.</param>
     /// <returns>Returns true if the Content-Type is a known binary type or false if it is not.</returns>
-    public static bool ContentsAreBinary(string ContentType, string ContentTransferEncoding)
+    public static bool ContentsAreBinary(string ContentType, string? ContentTransferEncoding)
     {
         bool RetVal = false;
         if (string.IsNullOrEmpty(ContentTransferEncoding) == false)
@@ -356,9 +356,9 @@ public class BodyParser
         return IdxList;
     }
 
-    private static string GetHeaderValue(string HdrLine)
+    private static string? GetHeaderValue(string HdrLine)
     {
-        string strValue = null;
+        string? strValue = null;
         int Idx = HdrLine.IndexOf(":");
         if (Idx >= 0)
             strValue = HdrLine.Substring(Idx + 1).Trim();

@@ -64,7 +64,7 @@ public class SIPToHeader
     /// Gets or sets the name field of the To header
     /// </summary>
     /// <value></value>
-    public string ToName
+    public string? ToName
     {
         get { return m_userField.Name; }
         set { m_userField.Name = value; }
@@ -74,7 +74,7 @@ public class SIPToHeader
     /// Gets or sets the URI of the To header
     /// </summary>
     /// <value></value>
-    public SIPURI ToURI
+    public SIPURI? ToURI
     {
         get { return m_userField.URI; }
         set { m_userField.URI = value; }
@@ -84,7 +84,7 @@ public class SIPToHeader
     /// Gets or sets the To header tag value
     /// </summary>
     /// <value></value>
-    public string ToTag
+    public string? ToTag
     {
         get { return ToParameters.Get(PARAMETER_TAG); }
         set
@@ -109,13 +109,13 @@ public class SIPToHeader
         set { m_userField.Parameters = value; }
     }
 
-    private SIPUserField m_userField;
+    private SIPUserField? m_userField;
 
     /// <summary>
     /// Gets or sets the SIPUserField for the To header
     /// </summary>
     /// <value></value>
-    public SIPUserField ToUserField
+    public SIPUserField? ToUserField
     {
         get { return m_userField; }
         set { m_userField = value; }
@@ -130,7 +130,7 @@ public class SIPToHeader
     /// <param name="toName">Name field for the To header. Optional</param>
     /// <param name="toURI">SIPURI to build the To header from</param>
     /// <param name="toTag">To header tag. Optional initially.</param>
-    public SIPToHeader(string toName, SIPURI toURI, string toTag)
+    public SIPToHeader(string? toName, SIPURI toURI, string? toTag)
     {
         m_userField = new SIPUserField(toName, toURI, null);
         ToTag = toTag;

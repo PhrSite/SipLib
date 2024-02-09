@@ -11,7 +11,7 @@ namespace SipLib.Rtp;
 public class ReportBlock
 {
     private const int REPORT_BLOCK_LENGTH = 24;
-    private byte[] m_PacketBytes = null;
+    private byte[]? m_PacketBytes = null;
 
     private const int SsrcIdx = 0;
     private const int FractionLostIdx = 4;
@@ -36,7 +36,7 @@ public class ReportBlock
     /// <param name="Bytes">Input byte array containing the ReportBlock data.</param>
     /// <param name="StartIdx">Starting index of the ReportBlock data in the input array.</param>
     /// <returns>Returns a ReportBlock object if successful or null if an error occurred.</returns>
-    public static ReportBlock Parse(byte[] Bytes, int StartIdx)
+    public static ReportBlock? Parse(byte[] Bytes, int StartIdx)
     {
         if (Bytes == null || (Bytes.Length - StartIdx) < REPORT_BLOCK_LENGTH)
             return null;    // Error: Input array null or too short

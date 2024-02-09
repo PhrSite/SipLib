@@ -9,8 +9,8 @@ namespace SipLib.Media;
 /// </summary>
 public class G722Encoder : IAudioEncoder
 {
-    private G722Codec m_Encoder = null;
-    private G722CodecState m_CodecState = null;
+    private G722Codec? m_Encoder = null;
+    private G722CodecState? m_CodecState = null;
 
     /// <summary>
     /// Constructor
@@ -54,9 +54,8 @@ public class G722Encoder : IAudioEncoder
     public byte[] Encode(short[] InputSamples)
     {
         if (m_Encoder == null)
-            return null;
+            return null!;
 
-        // 
         byte[] encodedBytes = new byte[ClockRate];
         int EncodedByteCount;
 

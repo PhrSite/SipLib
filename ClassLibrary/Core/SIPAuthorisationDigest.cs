@@ -107,55 +107,55 @@ public class SIPAuthorisationDigest
     /// Realm value
     /// </summary>
     /// <value></value>
-    public string Realm = null;
+    public string Realm = string.Empty;
 
     /// <summary>
     /// User name value
     /// </summary>
     /// <value></value>
-    public string Username = null;
+    public string Username = string.Empty;
 
     /// <summary>
     /// Password value
     /// </summary>
     /// <value></value>
-    public string Password = null;
+    public string Password = string.Empty;
 
     /// <summary>
     /// Destination URL value
     /// </summary>
     /// <value></value>
-    public string DestinationURL = null;
+    public string DestinationURL = string.Empty;
 
     /// <summary>
     /// URI value
     /// </summary>
     /// <value></value>
-    public string URI = null;
+    public string URI = string.Empty;
 
     /// <summary>
     /// Nonce value
     /// </summary>
     /// <value></value>
-    public string Nonce = null;
+    public string Nonce = string.Empty;
 
     /// <summary>
     /// Request type value
     /// </summary>
     /// <value></value>
-    public string RequestType = null;
+    public string RequestType = string.Empty;
 
     /// <summary>
     ///  Response value
     /// </summary>
     /// <value></value>
-    public string Response = null;
+    public string Response = string.Empty;
 
     /// <summary>
     /// Algorithm value
     /// </summary>
     /// <value></value>
-    public string Algorithhm = null;
+    public string Algorithhm = string.Empty;
 
     /// <summary>
     /// Client nonce (used with WWW-Authenticate and qop=auth).
@@ -171,7 +171,7 @@ public class SIPAuthorisationDigest
     public string Qop = string.Empty;
 
     /// <summary>
-    /// Client nonce count.
+    /// Client nonce Count.
     /// </summary>
     private int NonceCount = 0;
 
@@ -224,8 +224,8 @@ public class SIPAuthorisationDigest
                 Cnonce,
                 Qop,
                 RequestType,
-                null,
-                null);
+                null!,
+                null!);
         }
     }
 
@@ -467,6 +467,6 @@ public class HTTPDigest
         string HA1 = null;
         for (int i = 0 ; i < 16 ; i++)
             HA1 += String.Format("{0:x02}",bHA1[i]);
-        return HA1;
+        return HA1!;
     }
 }

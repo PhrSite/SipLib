@@ -24,7 +24,7 @@ public class MsrpStatusHeader
     /// indicates that the comment field is not present.
     /// </summary>
     /// <value></value>
-    public string Comment = null;
+    public string? Comment = null;
 
     /// <summary>
     /// Constructor
@@ -39,7 +39,7 @@ public class MsrpStatusHeader
     /// <param name="strValue">Input Status header value</param>
     /// <returns>Returns a new MsrpStatusHeader object if successful or null if an error is detected
     /// </returns>
-    public static MsrpStatusHeader ParseStatusHeader(string strValue)
+    public static MsrpStatusHeader? ParseStatusHeader(string strValue)
     {
         MsrpStatusHeader status = new MsrpStatusHeader();
         string[] Fields = strValue.Split(' ', StringSplitOptions.RemoveEmptyEntries);

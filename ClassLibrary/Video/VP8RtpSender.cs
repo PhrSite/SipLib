@@ -16,7 +16,7 @@ public class VP8RtpSender
     private uint m_SSRC = 0;
     private int m_PayloadType = 0;
     private uint m_TimestampIncrement = 0;
-    private RtpSendDelegate RtpSender = null;
+    private RtpSendDelegate? RtpSender = null;
 
     private const uint VP8_CLOCK_RATE = 90000;
     private static Random m_Rnd = new Random();

@@ -325,7 +325,7 @@ public class DtlsUtils
     /// <param name="certificate"></param>
     /// <param name="privateKey"></param>
     /// <returns></returns>
-    public static TlsSignerCredentials LoadSignerCredentials(TlsContext context, IList supportedSignatureAlgorithms,
+    public static TlsSignerCredentials? LoadSignerCredentials(TlsContext context, IList supportedSignatureAlgorithms,
         byte signatureAlgorithm, Certificate certificate, AsymmetricKeyParameter privateKey)
     {
         /*
@@ -363,7 +363,7 @@ public class DtlsUtils
     /// <param name="certResource"></param>
     /// <param name="keyResource"></param>
     /// <returns></returns>
-    public static TlsSignerCredentials LoadSignerCredentials(TlsContext context, IList supportedSignatureAlgorithms,
+    public static TlsSignerCredentials? LoadSignerCredentials(TlsContext context, IList supportedSignatureAlgorithms,
         byte signatureAlgorithm, string certResource, string keyResource)
     {
         Certificate certificate = LoadCertificateChain(new string[] { certResource, "x509-ca.pem" });
@@ -531,7 +531,7 @@ public class DtlsUtils
     /// </summary>
     /// <param name="privateKey">Private key to use. May be null</param>
     /// <returns>Returns a new self-signed certificate</returns>
-    public static X509Certificate2 CreateSelfSignedCert(AsymmetricKeyParameter privateKey = null)
+    public static X509Certificate2 CreateSelfSignedCert(AsymmetricKeyParameter? privateKey = null)
     {
         return CreateSelfSignedCert("CN=localhost", "CN=root", privateKey);
     }
@@ -656,7 +656,7 @@ public class DtlsUtils
     public static (Org.BouncyCastle.X509.X509Certificate certificate, AsymmetricKeyParameter privateKey) 
         CreateSelfSignedBouncyCastleCert()
     {
-        return CreateSelfSignedBouncyCastleCert("CN=localhost", "CN=root", null);
+        return CreateSelfSignedBouncyCastleCert("CN=localhost", "CN=root", null!);
     }
 
     private static (Org.BouncyCastle.X509.X509Certificate certificate, AsymmetricKeyParameter privateKey) 
@@ -721,7 +721,7 @@ public class DtlsUtils
     public static (Org.BouncyCastle.Crypto.Tls.Certificate certificate, AsymmetricKeyParameter privateKey) 
         CreateSelfSignedTlsCert()
     {
-        return CreateSelfSignedTlsCert("CN=localhost", "CN=root", null);
+        return CreateSelfSignedTlsCert("CN=localhost", "CN=root", null!);
     }
 
     /// <summary>

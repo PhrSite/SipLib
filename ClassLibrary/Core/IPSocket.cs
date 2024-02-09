@@ -71,7 +71,7 @@ public class IPSocket
     /// end point.</param>
     /// <returns>Returns true if the string could be successfully parsed as an IPv4 or IPv6 end point. 
     /// False if not.</returns>
-    public static bool TryParseIPEndPoint(string s, out IPEndPoint result)
+    public static bool TryParseIPEndPoint(string s, out IPEndPoint? result)
     {
         int addressLength = s.Length;  // If there's no port then send the entire string to the address parser
         int lastColonPos = s.LastIndexOf(':');

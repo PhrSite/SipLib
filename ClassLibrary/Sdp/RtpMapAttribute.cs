@@ -19,7 +19,7 @@ public class RtpMapAttribute
     /// Specifies the encoding-name parameter. For example: PCMU
     /// </summary>
     /// <value></value>
-    public string EncodingName;
+    public string? EncodingName;
 
     /// <summary>
     /// Specifies the clock rate or sample rate.
@@ -60,7 +60,7 @@ public class RtpMapAttribute
     /// <param name="attrValue">Attribute value string. For example, if the SDP media description has an
     /// attribute line line "a=rtpmap 0 PCMU/8000", then the attribute value string would be "0 PCMU/8000".</param>
     /// <returns>Returns a new RtpMapAttribute object if successful or null if a formatting error is detected.</returns>
-    public static RtpMapAttribute ParseRtpMap(string attrValue)
+    public static RtpMapAttribute? ParseRtpMap(string attrValue)
     {
         RtpMapAttribute rtpMap = new RtpMapAttribute();
         if (string.IsNullOrEmpty(attrValue) == true)
@@ -73,7 +73,7 @@ public class RtpMapAttribute
         if (int.TryParse(attrValue.Substring(0, index), out rtpMap.PayloadType) == false)
             return null;
 
-        string str = attrValue.Substring(index + 1);
+        string? str = attrValue.Substring(index + 1);
         string[] strparams = str.Split('/');
         if (strparams.Length < 2)
             return null;

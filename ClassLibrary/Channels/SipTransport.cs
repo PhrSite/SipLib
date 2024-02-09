@@ -16,7 +16,7 @@ namespace SipLib.Channels;
 public class SipTransport
 {
     private SIPChannel m_SipChannel;
-    private Thread m_Thread = null;
+    private Thread? m_Thread = null;
     private bool m_IsEnding = false;
     private SemaphoreSlim m_Semaphore = new SemaphoreSlim(0, int.MaxValue);
     private const int MAX_WAIT_TIME_MS = 100;
@@ -34,7 +34,7 @@ public class SipTransport
     /// layer may pass the request up to the transaction user if required.
     /// </summary>
     /// <value></value>
-    public event SipRequestReceivedDelegate SipRequestReceived = null;
+    public event SipRequestReceivedDelegate? SipRequestReceived = null;
 
     /// <summary>
     /// Event that is fired when a SIP response is received. This event is not fired if the SIP response
@@ -42,7 +42,7 @@ public class SipTransport
     /// layer may pass the response up to the transaction user if required.
     /// </summary>
     /// <value></value>
-    public event SipResponseReceivedDelegate SipResponseReceived = null;
+    public event SipResponseReceivedDelegate? SipResponseReceived = null;
 
     /// <summary>
     /// Event that is fired for every SIP request that is sent or received by the SipTransport class.
@@ -50,7 +50,7 @@ public class SipTransport
     /// SipTransport user.
     /// </summary>
     /// <value></value>
-    public event LogSipRequestDelegate LogSipRequest = null;
+    public event LogSipRequestDelegate? LogSipRequest = null;
 
     /// <summary>
     /// Event that is fired for every SIP response that is sent or received by the SipTransport class.
@@ -58,13 +58,13 @@ public class SipTransport
     /// to the SipTransport user.
     /// </summary>
     /// <value></value>
-    public event LogSipResponseDelegate LogSipResponse = null;
+    public event LogSipResponseDelegate? LogSipResponse = null;
 
     /// <summary>
     /// Event that is fired if this SipTransport object receives an invalid SIP message.
     /// </summary>
     /// <value></value>
-    public event LogInvalidSipMessageDelegate LogInvalidSipMessage = null;
+    public event LogInvalidSipMessageDelegate? LogInvalidSipMessage = null;
 
     private DateTime m_LastDoTimedEvents = DateTime.Now - TimeSpan.FromMilliseconds(200);
     private const int DoTimedEventsIntervalMs = 100;
@@ -171,7 +171,7 @@ public class SipTransport
     /// <returns>Returns a new ClientInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
     public ClientInviteTransaction StartClientInvite(SIPRequest request, IPEndPoint
-        remoteEndPoint, SipTransactionCompleteDelegate completeDelegate, TransactionResponseReceivedDelegate
+        remoteEndPoint, SipTransactionCompleteDelegate? completeDelegate, TransactionResponseReceivedDelegate
         responseReceivedDelegate)
     {
         if (request.Method != SIPMethodsEnum.INVITE)

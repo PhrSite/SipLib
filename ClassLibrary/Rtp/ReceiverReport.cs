@@ -11,7 +11,7 @@ namespace SipLib.Rtp;
 /// </summary>
 public class ReceiverReport
 {
-    private RtcpHeader m_Header = null;
+    private RtcpHeader? m_Header = null;
     private uint m_Ssrc = 0;
     private int SSRC_LENGTH = 4;
     private int SsrcIdx = 4;
@@ -72,7 +72,7 @@ public class ReceiverReport
     /// <param name="Bytes">Input byte array containing a ReceiverReport.</param>
     /// <param name="StartIdx">Index of the first byte containing the header for the Receiver Report.</param>
     /// <returns>Returns a new ReceiverReport object if successful or null if an error occurred.</returns>
-    public static ReceiverReport Parse(byte[] Bytes, int StartIdx)
+    public static ReceiverReport? Parse(byte[] Bytes, int StartIdx)
     {
         ReceiverReport Rr = new ReceiverReport();
         Rr.m_Header = new RtcpHeader(Bytes, StartIdx);
@@ -104,7 +104,7 @@ public class ReceiverReport
     /// Gets the RTCP header.
     /// </summary>
     /// <value></value>
-    public RtcpHeader Header
+    public RtcpHeader? Header
     {
         get { return m_Header; }
     }

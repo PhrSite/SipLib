@@ -64,13 +64,13 @@ public class SIPRoute
 {
     private static string m_looseRouterParameter = SIPConstants.SIP_LOOSEROUTER_PARAMETER;
     private static char[] m_angles = new char[] { '<', '>' };
-    private SIPUserField m_userField = null;
+    private SIPUserField? m_userField = null;
 
     /// <summary>
     /// Gets or set the host portion of the URI
     /// </summary>
     /// <value></value>
-    public string Host
+    public string? Host
     {
         get { return m_userField?.URI?.Host; }
         set { m_userField.URI.Host = value; }
@@ -80,7 +80,7 @@ public class SIPRoute
     /// Gets the SIPURI from the Route header
     /// </summary>
     /// <value></value>
-    public SIPURI URI
+    public SIPURI? URI
     {
         get { return m_userField?.URI; }
     }
@@ -197,7 +197,7 @@ public class SIPRoute
     /// <returns></returns>
     public override string ToString()
     {
-        return m_userField?.ToString();
+        return m_userField?.ToString()!;
     }
 
     /// <summary>
@@ -206,6 +206,6 @@ public class SIPRoute
     /// <returns></returns>
     public SIPEndPoint ToSIPEndPoint()
     {
-        return URI?.ToSIPEndPoint();
+        return URI?.ToSIPEndPoint()!;
     }
 }

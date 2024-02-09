@@ -41,7 +41,7 @@ public class ByteRangeHeader
     /// <returns>Returns a new ByteRangeHeader object. Returns null if the input string is not a
     /// properly formatted Byte-Range header.
     /// </returns>
-    public static ByteRangeHeader ParseByteRangeHeader(string strValue)
+    public static ByteRangeHeader? ParseByteRangeHeader(string strValue)
     {
         ByteRangeHeader header = new ByteRangeHeader();
         int DashIdx = strValue.IndexOf("-");

@@ -121,7 +121,7 @@ public static class SipUtils
         AckRequest.Header.Vias.PushViaHeader(ViaHeader);
 
         if (Res.Header.RecordRoutes != null && Res.Header.RecordRoutes.Length > 0)
-            AckRequest.Header.Routes = Res.Header.RecordRoutes.Reversed();
+            AckRequest.Header.Routes = Res.Header.RecordRoutes.Reversed()!;
 
         // Use the defaults for Max-Forwards and the Content-Length
         return AckRequest;
@@ -409,7 +409,7 @@ public static class SipUtils
 
         SIPHeader requestHeader = Req.Header;
         okResponse.Header = new SIPHeader(new SIPContactHeader(null, new SIPURI(Req.URI.Scheme, RemIp)),
-            requestHeader.From, requestHeader.To, requestHeader.CSeq, requestHeader.CallId);
+            requestHeader.From!, requestHeader.To!, requestHeader.CSeq, requestHeader.CallId!);
 
         okResponse.Header.To.ToTag = requestHeader.To.ToTag;
         okResponse.Header.CSeqMethod = requestHeader.CSeqMethod;
@@ -513,7 +513,7 @@ public static class SipUtils
         SIPHeader ByeHeader = new SIPHeader(ByeFromHeader, ByeToHeader, CSeqNum, InvReq.Header.CallId);
         ByeHeader.CSeqMethod = CSeqMethod;
         ByeRequest.Header = ByeHeader;
-        ByeRequest.Header.Routes = RouteSet;
+        ByeRequest.Header.Routes = RouteSet!;
         ByeRequest.RemoteSIPEndPoint = RemoteSipEndPoint;
         SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch);
         ByeRequest.Header.Vias.PushViaHeader(ViaHeader);
@@ -556,12 +556,12 @@ public static class SipUtils
         CSeqNum = InvReq.Header.CSeq;
 
         CancelRequest = new SIPRequest(Method, RemoteTarget);
-        SIPHeader Header = new SIPHeader(FromHeader, ToHeader, CSeqNum, InvReq.Header.CallId);
+        SIPHeader Header = new SIPHeader(FromHeader!, ToHeader, CSeqNum, InvReq.Header.CallId!);
         Header.CSeqMethod = CSeqMethod;
         CancelRequest.Header = Header;
-        CancelRequest.Header.Routes = RouteSet;
+        CancelRequest.Header.Routes = RouteSet!;
         CancelRequest.RemoteSIPEndPoint = RemoteSipEndPoint;
-        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch);
+        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch!);
         CancelRequest.Header.Vias.PushViaHeader(ViaHeader);
 
         return CancelRequest;
@@ -575,12 +575,12 @@ public static class SipUtils
     /// URI from the From header.</remarks>
     /// <param name="Hdr">The headers from the INVITE request of the incoming call.</param>
     /// <returns>Returns the URI to send a request to for the call, such as a BYE or CANCEL request.</returns>
-    public static SIPURI GetRemoteSipUri(SIPHeader Hdr)
+    public static SIPURI? GetRemoteSipUri(SIPHeader Hdr)
     {
         SIPRoute Sr = (Hdr.RecordRoutes != null && Hdr.RecordRoutes.Length > 0) ?
             Hdr.RecordRoutes.GetAt(0) : null;
 
-        if (Sr != null && Sr.IsStrictRouter == true && Sr.URI != null)
+        if (Sr != null && Sr.IsStrictRouter == true && Sr.URI! != null!)
         {
             SIPURI Suri = Sr.URI.CopyOf();
             Suri.Parameters.RemoveAll();
@@ -588,8 +588,7 @@ public static class SipUtils
         }
 
         // Is loose routing, check for a URI in the Contact header.
-        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].
-            ContactURI != null)
+        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].ContactURI! != null!)
             return Hdr.Contact[0].ContactURI;
 
         // Still don't have a URI to send to so use the URI in the From header.
@@ -608,12 +607,12 @@ public static class SipUtils
     /// URI from the From header.</remarks>
     /// <param name="InvReq">INVITE request of the incoming call.</param>
     /// <returns>Returns the URI to send a request to for the call, such as a BYE or CANCEL request.</returns>
-    public static SIPURI GetRemoteUri(SIPRequest InvReq)
+    public static SIPURI? GetRemoteUri(SIPRequest InvReq)
     {
         SIPHeader Hdr = InvReq.Header;
         SIPRoute Sr = (Hdr.RecordRoutes != null && Hdr.RecordRoutes.Length > 0) ?
             Hdr.RecordRoutes.GetAt(0) : null;
-        if (Sr != null && Sr.IsStrictRouter == false && Sr.URI != null)
+        if (Sr != null && Sr.IsStrictRouter == false && Sr.URI! != null!)
         {
             SIPURI Suri = Sr.URI.CopyOf();
             Suri.Parameters.RemoveAll();
@@ -621,8 +620,7 @@ public static class SipUtils
         }
 
         // Not loose routing, check for a URI in the Contact header.
-        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].
-            ContactURI != null)
+        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].ContactURI! != null!)
             return Hdr.Contact[0].ContactURI;
 
         // Still don't have a URI to send to so use the URI in the From header.
@@ -658,14 +656,13 @@ public static class SipUtils
         int CSeqNum = LastCSeqNumber += 1;
         LastCSeqNumber = CSeqNum;
         SIPRouteSet RouteSet;
-        SIPEndPoint RemoteEndPoint;
+        SIPEndPoint? RemoteEndPoint;
         if (IncomingCall == true)
         {
             RemoteTarget = InvReq.Header.Contact[0].ContactURI;
-            FromHeader = new SIPFromHeader(InvReq.Header.To.ToName,
-                InvReq.Header.To.ToURI, LocalTag);
+            FromHeader = new SIPFromHeader(InvReq.Header.To.ToName, InvReq.Header.To.ToURI!, LocalTag);
             ToHeader = new SIPToHeader(InvReq.Header.From.FromName,
-                InvReq.Header.From.FromURI, RemoteTag);
+                InvReq.Header.From.FromURI!, RemoteTag);
             RouteSet = InvReq.Header.RecordRoutes;
             RemoteEndPoint = InvReq.RemoteSIPEndPoint;
         }
@@ -679,7 +676,7 @@ public static class SipUtils
             RemoteEndPoint = InviteOkResponse.RemoteSIPEndPoint;
         }
 
-        if (RemoteEndPoint == null)
+        if (RemoteEndPoint! == null!)
         {
             if (RouteSet != null && RouteSet.Length > 0)
                 RemoteEndPoint = RouteSet.TopRoute.ToSIPEndPoint();
@@ -688,13 +685,13 @@ public static class SipUtils
         }
 
         FromHeader.FromTag = LocalTag;
-        Req = new SIPRequest(Method, RemoteTarget);
-        SIPHeader Header = new SIPHeader(FromHeader, ToHeader, CSeqNum, InvReq.Header.CallId);
+        Req = new SIPRequest(Method, RemoteTarget!);
+        SIPHeader Header = new SIPHeader(FromHeader, ToHeader, CSeqNum, InvReq.Header.CallId!);
         Header.CSeqMethod = Method;
         Req.Header = Header;
-        Req.Header.Routes = RouteSet;
+        Req.Header.Routes = RouteSet!;
         Req.RemoteSIPEndPoint = RemoteEndPoint;
-        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint, strBranch);
+        SIPViaHeader ViaHeader = new SIPViaHeader(SipChan.SIPChannelEndPoint!, strBranch);
         Req.Header.Vias.PushViaHeader(ViaHeader);
 
         Header.Contact = new List<SIPContactHeader>();
@@ -709,10 +706,9 @@ public static class SipUtils
     /// <param name="Hdr">SIPHeader containing the Contact header list.</param>
     /// <returns>Returns the SIPURI of the top-most Contact header if there is one or null if there are no
     /// Contact header.</returns>
-    public static SIPURI GetTopContactSipUri(SIPHeader Hdr)
+    public static SIPURI? GetTopContactSipUri(SIPHeader Hdr)
     {
-        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].
-            ContactURI != null)
+        if (Hdr.Contact != null && Hdr.Contact.Count > 0 && Hdr.Contact[0].ContactURI! != null!)
             return Hdr.Contact[0].ContactURI;
         else
             return null;
@@ -840,7 +836,7 @@ public static class SipUtils
     /// <param name="strPurpose">Purpose parameter to search for.</param>
     /// <returns>Returns the header value of the matching Call-Info header. Returns null if there is no
     /// Call-Info header with the specified purpose parameter.</returns>
-    public static string GetCallInfoValueForPurpose(SIPHeader Sh, string strPurpose)
+    public static string? GetCallInfoValueForPurpose(SIPHeader Sh, string strPurpose)
     {
         string Result = null;
         if (Sh.CallInfo == null)
@@ -868,7 +864,7 @@ public static class SipUtils
     /// <param name="strPurpose">Purpose parameter to search for.</param>
     /// <returns>Returns a SIPCallInfoHeader object if the specified Call-Info header was found or null if it
     /// was not.</returns>
-    public static SIPCallInfoHeader GetCallInfoHeaderForPurpose(SIPHeader Sh, string strPurpose)
+    public static SIPCallInfoHeader? GetCallInfoHeaderForPurpose(SIPHeader Sh, string strPurpose)
     {
         SIPCallInfoHeader Result = null;
         if (Sh.CallInfo == null || strPurpose == null)

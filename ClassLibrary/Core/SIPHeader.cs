@@ -70,49 +70,49 @@ public class SIPHeader
     /// Accept header field. See Section 20.1 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Accept = null;
+    public string? Accept = null;
     /// <summary>
     /// Accept-Encoding header field. See Section 20.2 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string AcceptEncoding = null;
+    public string? AcceptEncoding = null;
     /// <summary>
     /// Accept-Language header field. See Section 20.3 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string AcceptLanguage = null;
+    public string? AcceptLanguage = null;
     /// <summary>
     /// Alert-Info header field. See Section 20.4 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string AlertInfo = null;
+    public string? AlertInfo = null;
     /// <summary>
     /// Allow header field. See Section 20.5 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Allow = null;
+    public string? Allow = null;
     /// <summary>
     /// Allow-Events header field. The Allow header field lists the set of 
     /// methods supported by the UA generating the message. See Section 3.3.7 of
     /// RFC 3265.
     /// </summary>
     /// <value></value>
-    public string AllowEvents = null;
+    public string? AllowEvents = null;
     /// <summary>
     /// Authentication-Info header field. See Section 20.6 of RFC 3261
     /// </summary>
     /// <value></value>
-    public string AuthenticationInfo = null;
+    public string? AuthenticationInfo = null;
     /// <summary>
     /// WWW-Authenticate header field. See Section 20.44 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public SIPAuthenticationHeader AuthenticationHeader = null;
+    public SIPAuthenticationHeader? AuthenticationHeader = null;
     /// <summary>
     /// Call-ID header field. See Section 20.8 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string CallId = null;
+    public string? CallId = null;
 
     /// <summary>
     /// Call-Info header field. See Section 20.9 of RFC 3261.
@@ -125,27 +125,27 @@ public class SIPHeader
     /// An empty list indicates that there are no Contact header fiels.
     /// </summary>
     /// <value></value>
-    public List<SIPContactHeader> Contact = new List<SIPContactHeader>();
+    public List<SIPContactHeader>? Contact = new List<SIPContactHeader>();
     /// <summary>
     /// Content-Disposition header field. See Section 20.11 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ContentDisposition = null;
+    public string? ContentDisposition = null;
     /// <summary>
     /// Content-Encoding header field. See Section 20.12 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ContentEncoding = null;
+    public string? ContentEncoding = null;
     /// <summary>
     /// Content-Language header field. See Section 20.13 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ContentLanguage = null;
+    public string? ContentLanguage = null;
     /// <summary>
     /// Content-Type header field. See Section 20.15 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ContentType = null;
+    public string? ContentType = null;
     /// <summary>
     /// Content-Length header field. See Section 20.14 of RFC 3261.
     /// </summary>
@@ -168,17 +168,17 @@ public class SIPHeader
     /// Date header field. See Section 20.17 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Date = null;
+    public string? Date = null;
     /// <summary>
     /// Error-Info header field. See Section 20.18 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ErrorInfo = null;
+    public string? ErrorInfo = null;
     /// <summary>
     /// Event header field. See RFC 3265 and RFC 6665.
     /// </summary>
     /// <value></value>
-    public string Event = null;
+    public string? Event = null;
     /// <summary>
     /// Expires header field. See Section 20.19 of RFC 3261.
     /// </summary>
@@ -188,17 +188,17 @@ public class SIPHeader
     /// From header field. See Section 20.20 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public SIPFromHeader From = null;
+    public SIPFromHeader? From = null;
     /// <summary>
     /// P-Asserted-Identity header field. See RFC 3325.
     /// </summary>
     /// <value></value>
-    public SIPPaiHeader PAssertedIdentity;
+    public SIPPaiHeader? PAssertedIdentity;
     /// <summary>
     /// P-Preferred-Identity header field. See RFC 3325.
     /// </summary>
     /// <value></value>
-    public SIPPpiHeader PPreferredIdentity;
+    public SIPPpiHeader? PPreferredIdentity;
 
     /// <summary>
     /// Contains the header field values of 1 or more Geolocation headers as defined in RFC 6442. 
@@ -211,18 +211,18 @@ public class SIPHeader
     /// value may be either yes or no.
     /// </summary>
     /// <value></value>
-    public string GeolocationRouting = null;
+    public string? GeolocationRouting = null;
     /// <summary>
     /// Contains the header value of a Geolocation-Error header as defined in RFC 6442. The value is
     /// numeric code between 1 and 3 digits long.
     /// </summary>
     /// <value></value>
-    public string GeolocationError = null;
+    public string? GeolocationError = null;
     /// <summary>
     /// In-Reply-To header field. See Section 20.21 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string InReplyTo = null;
+    public string? InReplyTo = null;
     /// <summary>
     /// Min-Expires header field. See Section 20.23 of RFC 3261.
     /// </summary>
@@ -237,27 +237,27 @@ public class SIPHeader
     /// MIME-Version header field. See Section 20.24 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string MIMEVersion = null;
+    public string? MIMEVersion = null;
     /// <summary>
     /// Organization header field. See Section 20.25 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Organization = null;
+    public string?Organization = null;
     /// <summary>
     /// Priority header field. See Section 20.26 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Priority = null;
+    public string? Priority = null;
     /// <summary>
     /// Proxy-Require header field. See Section 20.29 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ProxyRequire = null;
+    public string? ProxyRequire = null;
     /// <summary>
     /// Reason header field. See RFC 3326.
     /// </summary>
     /// <value></value>
-    public string Reason = null;
+    public string? Reason = null;
     /// <summary>
     /// Record-Route header field. See Section 20.30 of RFC 3261.
     /// </summary>
@@ -268,40 +268,40 @@ public class SIPHeader
     /// The Referred-By header field. See RFC 3515.
     /// </summary>
     /// <value></value>
-    public string ReferredBy = null;
+    public string? ReferredBy = null;
 
     /// <summary>
     /// Refer-Sub header field. See RFC 4488. If set to false indicates the implict REFER subscription
     /// should not be created.
     /// </summary>
     /// <value></value>
-    public string ReferSub = null;
+    public string? ReferSub = null;
 
     /// <summary>
     /// Refer-To header field. See RFC 3515.
     /// </summary>
     /// <value></value>
-    public string ReferTo = null;
+    public string? ReferTo = null;
     /// <summary>
     /// Reply-To header field. See Section 20.31 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string ReplyTo = null;
+    public string? ReplyTo = null;
     /// <summary>
     /// Require header field. See Section 20.32 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Require = null;
+    public string? Require = null;
     /// <summary>
     /// Resource-Priority header field. See RFC 4412.
     /// </summary>
     /// <value></value>
-    public string ResourcePriority = null;
+    public string? ResourcePriority = null;
     /// <summary>
     /// Retry-After header field. See Section 20.33 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string RetryAfter = null;
+    public string? RetryAfter = null;
     /// <summary>
     /// Route header field. See Section 20.34 of RFC 3261.
     /// </summary>
@@ -311,42 +311,42 @@ public class SIPHeader
     /// Server header field. See Section 20.35 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Server = null;
+    public string? Server = null;
     /// <summary>
     /// Subject header field. See Section 20.36 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Subject = null;
+    public string? Subject = null;
     /// <summary>
     /// Subscription-State header field. See RFC 3265 and RFC 6665.
     /// </summary>
     /// <value></value>
-    public string SubscriptionState = null;
+    public string? SubscriptionState = null;
     /// <summary>
     /// Supported header field. See Section 20.37 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Supported = null;
+    public string? Supported = null;
     /// <summary>
     /// Timestamp header field. See Section 20.38 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Timestamp = null;
+    public string? Timestamp = null;
     /// <summary>
     /// To header field. See Section 20.39 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public SIPToHeader To = null;
+    public SIPToHeader? To = null;
     /// <summary>
     /// Unsupported header field. See Section 20.40 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Unsupported = null;
+    public string? Unsupported = null;
     /// <summary>
     /// User-Agent header field. See Section 20.41 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string UserAgent = null;
+    public string? UserAgent = null;
     /// <summary>
     /// Via header field. See Section 20.42 of RFC 3261.
     /// </summary>
@@ -356,7 +356,7 @@ public class SIPHeader
     /// Warning header field. See Section 20.43 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string Warning;
+    public string? Warning;
 
     /// <summary>
     /// Holds any unrecognized headers. Each item in the list is the original header line.
@@ -383,7 +383,7 @@ public class SIPHeader
     {
         SIPFromHeader from = SIPFromHeader.ParseFromHeader(fromHeader);
         SIPToHeader to = SIPToHeader.ParseToHeader(toHeader);
-        Initialise(null, from, to, cseq, callId);
+        Initialise(null!, from, to, cseq, callId);
     }
 
     /// <summary>
@@ -416,7 +416,7 @@ public class SIPHeader
     /// empty.</exception>
     public SIPHeader(SIPFromHeader from, SIPToHeader to, int cseq, string callId)
     {
-        Initialise(null, from, to, cseq, callId);
+        Initialise(null!, from, to, cseq, callId);
     }
 
     /// <summary>
@@ -1061,7 +1061,7 @@ public class SIPHeader
     /// </remarks>
     /// <param name="unknownHeaderName">Name of the unknown SIP Header</param>
     /// <returns>Returns null if the header is not found or the complete header line if it exists.</returns>
-    public string GetUnknownHeaderValue(string unknownHeaderName)
+    public string? GetUnknownHeaderValue(string unknownHeaderName)
     {
         if (string.IsNullOrEmpty(unknownHeaderName) == true)
             return null;

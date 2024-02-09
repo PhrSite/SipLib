@@ -15,7 +15,7 @@ public class SenderInfo
     /// <value></value>
     public const int SENDER_INFO_BLOCK_LENGTH = 20;
 
-    private byte[] m_PacketBytes = null;
+    private byte[]? m_PacketBytes = null;
 
     private const int NtpIdx = 0;
     private const int RtpTimestampIdx = 8;
@@ -37,7 +37,7 @@ public class SenderInfo
     /// <param name="Bytes">Input byte array</param>
     /// <param name="StartIdx">Starting index of the SenderInfo data in the input byte array.</param>
     /// <returns>Returns a SenderInfo object if successful or null if an error occurred.</returns>
-    public static SenderInfo Parse(byte[] Bytes, int StartIdx)
+    public static SenderInfo? Parse(byte[] Bytes, int StartIdx)
     {
         SenderInfo Si = new SenderInfo();
         if (Bytes == null || (Bytes.Length - StartIdx) < SENDER_INFO_BLOCK_LENGTH)

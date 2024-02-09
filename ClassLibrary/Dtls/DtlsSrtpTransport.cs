@@ -43,11 +43,11 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
 
     private static readonly Random random = new Random();
 
-    private IPacketTransformer srtpEncoder;
-    private IPacketTransformer srtpDecoder;
-    private IPacketTransformer srtcpEncoder;
-    private IPacketTransformer srtcpDecoder;
-    IDtlsSrtpPeer connection = null;
+    private IPacketTransformer? srtpEncoder = null;
+    private IPacketTransformer? srtpDecoder = null;
+    private IPacketTransformer? srtcpEncoder = null;
+    private IPacketTransformer? srtcpDecoder = null;
+    IDtlsSrtpPeer? connection = null;
 
     /// <summary>The collection of chunks to be written.</summary>
     private BlockingCollection<byte[]> _chunks = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
@@ -56,7 +56,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// Gets or sets the DTLS transport object
     /// </summary>
     /// <value></value>
-    public DtlsTransport Transport { get; private set; }
+    public DtlsTransport? Transport { get; private set; }
 
     /// <summary>
     /// Sets the period in milliseconds that the handshake attempt will timeout after.
@@ -74,13 +74,13 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// Event that is fired when there is data that needs to be sent via UDP
     /// </summary>
     /// <value></value>
-    public Action<byte[]> OnDataReady;
+    public Action<byte[]>? OnDataReady;
 
     /// <summary>
     /// Event that is fired if a DTlS protocol Alert occurs
     /// </summary>
     /// <value></value>
-    public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
+    public event Action<AlertLevelsEnum, AlertTypesEnum, string>? OnAlert;
 
     private System.DateTime _startTime = System.DateTime.MinValue;
     private bool _isClosed = false;
@@ -121,7 +121,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     {
         get
         {
-            return srtpDecoder;
+            return srtpDecoder!;
         }
     }
 
@@ -133,7 +133,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     {
         get
         {
-            return srtpEncoder;
+            return srtpEncoder!;
         }
     }
 
@@ -145,7 +145,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     {
         get
         {
-            return srtcpDecoder;
+            return srtcpDecoder!;
         }
     }
 
@@ -157,7 +157,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     {
         get
         {
-            return srtcpEncoder;
+            return srtcpEncoder!;
         }
     }
 
@@ -196,9 +196,9 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <param name="handshakeError">Set to a string that describes the handshake error. Set to null
     /// if no errors occurred. Will be non-null if this method returns false.</param>
     /// <returns>Returns true if successful or false if a handshake error occurred.</returns>
-    public bool DoHandshake(out string handshakeError)
+    public bool DoHandshake(out string? handshakeError)
     {
-        if (connection.IsClient())
+        if (connection!.IsClient())
         {
             return DoHandshakeAsClient(out handshakeError);
         }
@@ -214,10 +214,10 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <value></value>
     public bool IsClient
     {
-        get { return connection.IsClient(); }
+        get { return connection!.IsClient(); }
     }
 
-    private bool DoHandshakeAsClient(out string handshakeError)
+    private bool DoHandshakeAsClient(out string? handshakeError)
     {
         handshakeError = null;
 
@@ -232,7 +232,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             DtlsClientProtocol clientProtocol = new DtlsClientProtocol(secureRandom);
             try
             {
-                var client = (DtlsSrtpClient)connection;
+                DtlsSrtpClient client = (DtlsSrtpClient)connection!;
                 // Perform the handshake in a non-blocking fashion
                 Transport = clientProtocol.Connect(client, this);
 
@@ -267,7 +267,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                     handshakeError = "unknown";
                     if (excp is Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)
                     {
-                        handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert).Message;
+                        handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)!.Message;
                     }
 
                     //logger.LogWarning(excp, $"DTLS handshake as client failed. {excp.Message}");
@@ -284,7 +284,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
         return false;
     }
 
-    private bool DoHandshakeAsServer(out string handshakeError)
+    private bool DoHandshakeAsServer(out string? handshakeError)
     {
         handshakeError = null;
 
@@ -299,7 +299,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             DtlsServerProtocol serverProtocol = new DtlsServerProtocol(secureRandom);
             try
             {
-                var server = (DtlsSrtpServer)connection;
+                DtlsSrtpServer server = (DtlsSrtpServer)connection!;
 
                 // Perform the handshake in a non-blocking fashion
                 Transport = serverProtocol.Accept(server, this);
@@ -333,7 +333,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                     handshakeError = "unknown";
                     if (excp is Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)
                     {
-                        handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert).Message;
+                        handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)!.Message;
                     }
 
                     //logger.LogWarning(excp, $"DTLS handshake as server failed. {excp.Message}");
@@ -356,7 +356,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     public Certificate GetRemoteCertificate()
     {
-        return connection.GetRemoteCertificate();
+        return connection!.GetRemoteCertificate();
     }
 
     /// <summary>
@@ -365,7 +365,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected byte[] GetMasterServerKey()
     {
-        return connection.GetSrtpMasterServerKey();
+        return connection!.GetSrtpMasterServerKey();
     }
 
     /// <summary>
@@ -375,7 +375,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
 
     protected byte[] GetMasterServerSalt()
     {
-        return connection.GetSrtpMasterServerSalt();
+        return connection!.GetSrtpMasterServerSalt();
     }
 
     /// <summary>
@@ -384,7 +384,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected byte[] GetMasterClientKey()
     {
-        return connection.GetSrtpMasterClientKey();
+        return connection!.GetSrtpMasterClientKey();
     }
 
 
@@ -394,7 +394,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected byte[] GetMasterClientSalt()
     {
-        return connection.GetSrtpMasterClientSalt();
+        return connection!.GetSrtpMasterClientSalt();
     }
 
     /// <summary>
@@ -403,7 +403,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected SrtpPolicy GetSrtpPolicy()
     {
-        return connection.GetSrtpPolicy();
+        return connection!.GetSrtpPolicy();
     }
 
     /// <summary>
@@ -412,7 +412,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected SrtpPolicy GetSrtcpPolicy()
     {
-        return connection.GetSrtcpPolicy();
+        return connection!.GetSrtcpPolicy();
     }
 
     /// <summary>
@@ -421,7 +421,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected IPacketTransformer GenerateRtpEncoder()
     {
-        return GenerateTransformer(connection.IsClient(), true);
+        return GenerateTransformer(connection!.IsClient(), true);
     }
 
 
@@ -432,7 +432,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     protected IPacketTransformer GenerateRtpDecoder()
     {
         //Generate the reverse result of "GenerateRtpEncoder"
-        return GenerateTransformer(!connection.IsClient(), true);
+        return GenerateTransformer(!connection!.IsClient(), true);
     }
 
     /// <summary>
@@ -442,7 +442,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     protected IPacketTransformer GenerateRtcpEncoder()
     {
         var isClient = connection is DtlsSrtpClient;
-        return GenerateTransformer(connection.IsClient(), false);
+        return GenerateTransformer(connection!.IsClient(), false);
     }
 
     /// <summary>
@@ -452,7 +452,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     protected IPacketTransformer GenerateRtcpDecoder()
     {
         //Generate the reverse result of "GenerateRctpEncoder"
-        return GenerateTransformer(!connection.IsClient(), false);
+        return GenerateTransformer(!connection!.IsClient(), false);
     }
 
     /// <summary>
@@ -465,7 +465,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     protected IPacketTransformer GenerateTransformer(bool isClient, bool isRtp)
     {
-        SrtpTransformEngine engine = null;
+        SrtpTransformEngine? engine = null;
         if (!isClient)
         {
             engine = new SrtpTransformEngine(GetMasterServerKey(), GetMasterServerSalt(), GetSrtpPolicy(), GetSrtcpPolicy());
@@ -495,7 +495,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns></returns>
     public byte[] UnprotectRTP(byte[] packet, int offset, int length)
     {
-        lock (this.srtpDecoder)
+        lock (this.srtpDecoder!)
         {
             return this.srtpDecoder.ReverseTransform(packet, offset, length);
         }
@@ -510,7 +510,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns>Returns the encrypted RTP packet</returns>
     public byte[] ProtectRTP(byte[] packet, int offset, int length)
 {
-        lock (this.srtpEncoder)
+        lock (this.srtpEncoder!)
         {
             return this.srtpEncoder.Transform(packet, offset, length);
         }
@@ -525,7 +525,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns>Returns the decrypted RTCP packet</returns>
     public byte[] UnprotectRTCP(byte[] packet, int offset, int length)
     {
-        lock (this.srtcpDecoder)
+        lock (this.srtcpDecoder!)
         {
             return this.srtcpDecoder.ReverseTransform(packet, offset, length);
         }
@@ -540,7 +540,7 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     /// <returns>Returns the encrypted RTCP packet</returns>
     public byte[] ProtectRTCP(byte[] packet, int offset, int length)
     {
-        lock (this.srtcpEncoder)
+        lock (this.srtcpEncoder!)
         {
             return this.srtcpEncoder.Transform(packet, offset, length);
         }

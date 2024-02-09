@@ -113,7 +113,7 @@ public class SdpAttribute
                     }
 
                     if (RetVal.Params.ContainsKey(strParamName) == true)
-                        RetVal.Params[strParamName] = strParamValue;
+                        RetVal.Params[strParamName] = strParamValue!;
                     else
                         RetVal.Params.Add(strParamName, strParamValue);
                 } // end foreach
@@ -207,7 +207,7 @@ public class SdpAttribute
     /// <param name="strValue">Output. Value of the parameter. This may be null or empty if the named
     /// parameter is not found or if the parameter has no associated value.</param>
     /// <returns>Returns true if the parameter named in strParameter is found or false if it is not.</returns>
-    public bool GetAttributeParameter(string strParamName, ref string strValue)
+    public bool GetAttributeParameter(string strParamName, ref string? strValue)
     {
         bool Success = false;
         strValue = null;

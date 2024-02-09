@@ -55,7 +55,7 @@ public class SIPEndPoint
     /// The network address for the SIP end point. IPv4 and IPv6 are supported.
     /// </summary>
     /// <value></value>
-    public IPAddress Address { get; private set; }
+    public IPAddress? Address { get; private set; }
 
     /// <summary>
     /// The network port for the SIP end point.
@@ -69,13 +69,13 @@ public class SIPEndPoint
     /// possible to ensure responses or subsequent request can re-use the same connection.
     /// </summary>
     /// <value></value>
-    public string ConnectionID { get; set; }
+    public string? ConnectionID { get; set; }
 
     /// <summary>
     /// If set represents the SIP channel ID that this SIP end point was created from.
     /// </summary>
     /// <value></value>
-    public string ChannelID { get; set; }
+    public string? ChannelID { get; set; }
 
     private SIPEndPoint() { }
 
@@ -118,8 +118,8 @@ public class SIPEndPoint
     /// </param>
     /// <param name="connectionID">Optional. For connection oriented protocols the unique ID of the
     /// connection. For connectionless protocols should be set to null.</param>
-    public SIPEndPoint(SIPProtocolsEnum protocol, IPEndPoint endPoint, string channelID,
-        string connectionID) : this(protocol, endPoint.Address, endPoint.Port, channelID, connectionID)
+    public SIPEndPoint(SIPProtocolsEnum protocol, IPEndPoint endPoint, string? channelID,
+        string? connectionID) : this(protocol, endPoint.Address, endPoint.Port, channelID, connectionID)
     { }
 
     /// <summary>
@@ -132,7 +132,7 @@ public class SIPEndPoint
     /// </param>
     /// <param name="connectionID">Optional. For connection oriented protocols the unique ID of the
     /// connection. For connectionless protocols should be set to null.</param>
-    public SIPEndPoint(SIPProtocolsEnum protocol, IPAddress address, int port, string channelID, string 
+    public SIPEndPoint(SIPProtocolsEnum protocol, IPAddress address, int port, string? channelID, string? 
         connectionID)
     {
         Protocol = protocol;
@@ -168,7 +168,7 @@ public class SIPEndPoint
     /// </summary>
     /// <param name="sipEndPointStr">The string to parse to extract the SIP end point.</param>
     /// <returns>If successful a SIPEndPoint object or null otherwise.</returns>
-    public static SIPEndPoint ParseSIPEndPoint(string sipEndPointStr)
+    public static SIPEndPoint? ParseSIPEndPoint(string sipEndPointStr)
     {
         if (sipEndPointStr.IsNullOrBlank())
             return null;
@@ -182,11 +182,8 @@ public class SIPEndPoint
         else
         {
             SIPURI sipUri = SIPURI.ParseSIPURIRelaxed(sipEndPointStr);
-            SIPEndPoint sipEndPoint = sipUri.ToSIPEndPoint();
-            if (sipEndPoint != null)
-                return sipEndPoint;
-            else
-                return null;
+            SIPEndPoint? sipEndPoint = sipUri.ToSIPEndPoint();
+            return sipEndPoint;
         }
     }
 
@@ -196,7 +193,7 @@ public class SIPEndPoint
     /// <param name="sipEndPointStr">Input string</param>
     /// <returns>Returns a new SIPEndPoint object if successful. Return null if an error occurred.
     /// </returns>
-    public static SIPEndPoint TryParse(string sipEndPointStr)
+    public static SIPEndPoint? TryParse(string sipEndPointStr)
     {
         try
         {
@@ -275,9 +272,9 @@ public class SIPEndPoint
     /// </summary>
     /// <param name="obj">Another SIPEndPoint object</param>
     /// <returns>Returns true if they are equal of false if they are not.</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        return AreEqual(this, (SIPEndPoint)obj);
+        return AreEqual(this, (SIPEndPoint)obj!);
     }
 
     /// <summary>
@@ -346,7 +343,7 @@ public class SIPEndPoint
         if (mapIpv4ToIpv6 && Address.AddressFamily == AddressFamily.InterNetwork)
             return new IPEndPoint(Address.MapToIPv6(), Port);
         else
-            return new IPEndPoint(Address, Port);
+            return new IPEndPoint(Address!, Port);
     }
 
     /// <summary>

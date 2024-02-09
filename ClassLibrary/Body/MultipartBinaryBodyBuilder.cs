@@ -85,8 +85,8 @@ public class MultipartBinaryBodyBuilder
         StringBuilder sb = new StringBuilder();
         for (int i=0; i < Scc.ContentTypeParams.Count; i++)
         {
-            string pname = Scc.ContentTypeParams.GetKey(i);
-            string pval = Scc.ContentTypeParams.Get(i);
+            string? pname = Scc.ContentTypeParams.GetKey(i);
+            string? pval = Scc.ContentTypeParams.Get(i);
             if (string.IsNullOrEmpty(pval) == true)
                 sb.Append($"{pname}");
             else

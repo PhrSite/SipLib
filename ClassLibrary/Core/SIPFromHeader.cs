@@ -61,9 +61,9 @@ public class SIPFromHeader
     /// Gets or sets the name field of the From header value
     /// </summary>
     /// <value></value>
-    public string FromName
+    public string? FromName
     {
-        get { return m_userField.Name; }
+        get { return m_userField?.Name; }
         set { m_userField.Name = value; }
     }
 
@@ -71,7 +71,7 @@ public class SIPFromHeader
     /// Gets or sets the SIPURI portion of the From header value
     /// </summary>
     /// <value></value>
-    public SIPURI FromURI
+    public SIPURI? FromURI
     {
         get { return m_userField.URI; }
         set { m_userField.URI = value; }
@@ -81,7 +81,7 @@ public class SIPFromHeader
     /// Gets or sets the From tag parameter value
     /// </summary>
     /// <value></value>
-    public string FromTag
+    public string? FromTag
     {
         get { return FromParameters.Get(PARAMETER_TAG); }
         set
@@ -129,7 +129,7 @@ public class SIPFromHeader
     /// <param name="fromTag">From header tag parameter</param>
     public SIPFromHeader(string fromName, SIPURI fromURI, string fromTag)
     {
-        m_userField = new SIPUserField(fromName, fromURI, null);
+        m_userField = new SIPUserField(fromName, fromURI, null!);
         FromTag = fromTag;
     }
 

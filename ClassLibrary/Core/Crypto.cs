@@ -204,7 +204,7 @@ public class Crypto
         m_randomProvider.GetBytes(myKey);
         string sessionID = null;
         myKey.ToList().ForEach(b => sessionID += b.ToString("x2"));
-        return sessionID;
+        return sessionID!;
     }
 
     /// <summary>
@@ -234,6 +234,6 @@ public class Crypto
         byte[] hash = GetSHAHash(values);
         string hashStr = null;
         hash.ToList().ForEach(b => hashStr += b.ToString("x2"));
-        return hashStr;
+        return hashStr!;
     }
 }

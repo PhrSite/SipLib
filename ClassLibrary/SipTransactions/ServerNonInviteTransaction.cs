@@ -13,7 +13,7 @@ namespace SipLib.Transactions;
 /// </summary>
 public class ServerNonInviteTransaction : SipTransactionBase
 {
-    private SIPResponse m_InitialResponse = null;
+    private SIPResponse? m_InitialResponse = null;
     private DateTime m_TimerJStartTime = DateTime.MinValue;
 
     /// <summary>

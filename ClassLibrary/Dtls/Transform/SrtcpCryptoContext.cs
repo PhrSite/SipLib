@@ -54,7 +54,7 @@ public class SrtcpCryptoContext
     /// <summary>
     /// Master key identifier
     /// </summary>
-    private byte[] mki;
+    private byte[]? mki = null;
 
     /// <summary>
     /// Index received so far
@@ -74,41 +74,41 @@ public class SrtcpCryptoContext
     /// <summary>
     /// Master encryption key
     /// </summary>
-    private byte[] masterKey;
+    private byte[]? masterKey = null;
 
     /// <summary>
     /// Master encryption salt
     /// </summary>
-    private byte[] masterSalt;
+    private byte[]? masterSalt = null;
 
     /// <summary>
     /// Derived session encryption key
     /// </summary>
-    private byte[] encKey;
+    private byte[]? encKey = null;
 
     /// <summary>
     /// Derived session authentication key
     /// </summary>
-    private byte[] authKey;
+    private byte[]? authKey = null;
 
     /// <summary>
     /// Derived session salting key
     /// </summary>
-    private byte[] saltKey;
+    private byte[]? saltKey = null;
 
     /// <summary>
     /// Encryption / Authentication policy for this session
     /// </summary>
-    private SrtpPolicy policy;
+    private SrtpPolicy? policy;
 
     /// <summary>
     /// The HMAC object we used to do packet authentication
     /// </summary>
-    private IMac mac;             // used for various HMAC computations
+    private IMac? mac;             // used for various HMAC computations
 
     // The symmetric cipher engines we need here
-    private IBlockCipher cipher = null;
-    private IBlockCipher cipherF8 = null; // used inside F8 mode only
+    private IBlockCipher? cipher = null;
+    private IBlockCipher? cipherF8 = null; // used inside F8 mode only
 
     // implements the counter cipher mode for RTP according to RFC 3711
     private SrtpCipherCTR cipherCtr = new SrtpCipherCTR();
@@ -116,7 +116,7 @@ public class SrtcpCryptoContext
     // Here some fields that a allocated here or in constructor. The methods
     // use these fields to avoid too many new operations
 
-    private byte[] tagStore;
+    private byte[]? tagStore;
     private byte[] ivStore = new byte[16];
     private byte[] rbStore = new byte[4];
 
@@ -396,7 +396,7 @@ public class SrtcpCryptoContext
         * IV    XX XX XX XX XX XX XX XX XX XX XX XX XX XX 00 00
         *        0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
         */
-        ivStore[0] = saltKey[0];
+        ivStore[0] = saltKey![0];
         ivStore[1] = saltKey[1];
         ivStore[2] = saltKey[2];
         ivStore[3] = saltKey[3];
@@ -449,7 +449,7 @@ public class SrtcpCryptoContext
         ivStore[7] = (byte)index;
 
         // The fixed header follows and fills the rest of the IV
-        MemoryStream buf = pkt.GetBuffer();
+        MemoryStream? buf = pkt.GetBuffer();
         buf.Position = 0;
         buf.Read(ivStore, 8, 8);
 
@@ -533,7 +533,7 @@ public class SrtcpCryptoContext
     {
         for (int i = 0; i < 14; i++)
         {
-            ivStore[i] = masterSalt[i];
+            ivStore[i] = masterSalt![i];
         }
         ivStore[7] ^= label;
         ivStore[14] = ivStore[15] = 0;
@@ -549,10 +549,10 @@ public class SrtcpCryptoContext
         ComputeIv(label);
 
         KeyParameter encryptionKey = new KeyParameter(masterKey);
-        cipher.Init(true, encryptionKey);
+        cipher!.Init(true, encryptionKey);
         Arrays.Fill(masterKey, (byte)0);
 
-        cipherCtr.GetCipherStream(cipher, encKey, policy.EncKeyLength, ivStore);
+        cipherCtr.GetCipherStream(cipher, encKey!, policy.EncKeyLength, ivStore);
 
         if (authKey != null)
         {
@@ -624,9 +624,8 @@ public class SrtcpCryptoContext
     /// <returns>Returns a new SRTPCryptoContext with all relevant data set.</returns>
     public SrtcpCryptoContext DeriveContext(long ssrc)
     {
-        SrtcpCryptoContext pcc = null;
-        pcc = new SrtcpCryptoContext(ssrc, masterKey,
-                masterSalt, policy);
+        SrtcpCryptoContext? pcc = null;
+        pcc = new SrtcpCryptoContext(ssrc, masterKey!, masterSalt!, policy);
         return pcc;
     }
 }

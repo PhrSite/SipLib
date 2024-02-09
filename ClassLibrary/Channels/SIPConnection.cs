@@ -125,13 +125,13 @@ public class SIPConnection
     /// <summary>
     /// Fired when a complete SIP message is received
     /// </summary>
-    public event SIPMessageReceivedDelegate SIPMessageReceived;
+    public event SIPMessageReceivedDelegate? SIPMessageReceived;
     /// <summary>
     /// Fired when the SIP socket gets disconnected
     /// </summary>
-    public event SIPConnectionDisconnectedDelegate SIPSocketDisconnected;
+    public event SIPConnectionDisconnectedDelegate? SIPSocketDisconnected;
 
-    private Qos m_Qos;
+    private Qos? m_Qos;
 
     /// <summary>
     /// Class for managing a bi-directional SIP connection. This class is used by the steam based
@@ -239,7 +239,7 @@ public class SIPConnection
     /// <param name="bytesSkipped">Number of bytes skipped.</param>
     /// <returns>A byte array holding a full SIP message or if no full SIP messages are avialble null.
     /// </returns>
-    private static byte[] ProcessReceive(byte[] receiveBuffer, int start, int length, out int bytesSkipped)
+    private static byte[]? ProcessReceive(byte[] receiveBuffer, int start, int length, out int bytesSkipped)
     {
         // NAT keep-alives can be interspersed between SIP messages. Treat any non-letter character at
         // the start of a receive as a non SIP transmission and skip over it.
@@ -418,7 +418,7 @@ public class SIPConnection
     /// Gets the IPEndpoint that this connection object is listening on.
     /// </summary>
     /// <value></value>
-    public IPEndPoint LocalEndpoint
+    public IPEndPoint? LocalEndpoint
     {
         get
         {
@@ -430,7 +430,7 @@ public class SIPConnection
     }
 
     private bool m_IsEnding = false;
-    private Thread m_ReadThread = null;
+    private Thread? m_ReadThread = null;
 
     /// <summary>
     /// Sets up a dedicated thread for doing synchronous reads.

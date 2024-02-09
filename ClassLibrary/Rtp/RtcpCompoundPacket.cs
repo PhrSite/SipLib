@@ -49,7 +49,7 @@ public class RtcpCompoundPacket
     /// </summary>
     /// <param name="Bytes">Input received byte array.</param>
     /// <returns>Returns a new RtcpCompoundPacket objedt if successful or null if an error occurred</returns>
-    public static RtcpCompoundPacket Parse(byte[] Bytes)
+    public static RtcpCompoundPacket? Parse(byte[] Bytes)
     {
         RtcpCompoundPacket Rcp = new RtcpCompoundPacket();
         if (Bytes.Length < RtcpHeader.HeaderLength)
@@ -111,7 +111,7 @@ public class RtcpCompoundPacket
     /// <returns>Returns a byte array. Return null if there are no Sender Reports, Receiver Reports, SDES 
     /// packets or BYE packets to send.
     /// </returns>
-    public byte[] ToByteArray()
+    public byte[]? ToByteArray()
     {
         if (SenderReports.Count == 0 && ReceiverReports.Count == 0)
             return null;

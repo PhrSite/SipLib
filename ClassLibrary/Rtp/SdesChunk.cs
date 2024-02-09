@@ -35,7 +35,7 @@ public class SdesChunk
     /// <param name="Bytes">Input byte array</param>
     /// <param name="StartIdx">Index of the first byte of the SdesChunk object.</param>
     /// <returns>Returns a SdesChunk object or null if an error occurred.</returns>
-    public static SdesChunk Parse(byte[] Bytes, int StartIdx)
+    public static SdesChunk? Parse(byte[] Bytes, int StartIdx)
     {
         SdesChunk Sc = new SdesChunk();
         if (Bytes.Length - StartIdx < MinSdesChunkLength)

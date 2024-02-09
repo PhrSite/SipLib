@@ -68,7 +68,7 @@ public class MsrpUri
     /// <param name="uriString">Input string</param>
     /// <returns>Returns a new MsrpUri object if successful or null if the input string does not
     /// represent a valid MSRP URI</returns>
-    public static MsrpUri ParseMsrpUri(string uriString)
+    public static MsrpUri? ParseMsrpUri(string uriString)
     {
         MsrpUri msrpUri = new MsrpUri();
 

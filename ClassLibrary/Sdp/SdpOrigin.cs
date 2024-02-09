@@ -41,7 +41,7 @@ public class Origin
     /// IP address. May be an IPv4, an IPv6 address or a fully qualified domain name.
     /// </summary>
     /// <value></value>
-    public string Address = null;
+    public string? Address = null;
 
     private static Random m_Random = new Random();
     private static string NewSessionId()

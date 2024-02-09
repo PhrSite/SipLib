@@ -70,12 +70,12 @@ public class SIPContactHeader
     //'\r', ' ' };	// Characters that can delimit a SIP URI, supposed to be > 
     //but it is sometimes missing.
 
-    private string RawHeader = null;
+    private string? RawHeader = null;
 
     /// <summary>
     /// Gets or sets the Contact name field
     /// </summary>
-    public string ContactName
+    public string? ContactName
     {
         get { return m_userField.Name; }
         set { m_userField.Name = value; }
@@ -84,7 +84,7 @@ public class SIPContactHeader
     /// <summary>
     /// Gets or sets the Contact URI field
     /// </summary>
-    public SIPURI ContactURI
+    public SIPURI? ContactURI
     {
         get { return m_userField.URI; }
         set { m_userField.URI = value; }
@@ -124,13 +124,13 @@ public class SIPContactHeader
     /// <summary>
     /// Gets or sets the Q value parameter
     /// </summary>
-    public string Q
+    public string? Q
     {
         get { return ContactParameters.Get(QVALUE_PARAMETER_KEY); }
         set { ContactParameters.Set(QVALUE_PARAMETER_KEY, string.Empty); }
     }
 
-    private SIPUserField m_userField;
+    private SIPUserField? m_userField;
 
     private SIPContactHeader()
     { }
@@ -140,9 +140,9 @@ public class SIPContactHeader
     /// </summary>
     /// <param name="contactName">Name value for the Contact header value. Optional</param>
     /// <param name="contactURI">Contact header URI</param>
-    public SIPContactHeader(string contactName, SIPURI contactURI)
+    public SIPContactHeader(string? contactName, SIPURI contactURI)
     {
-        m_userField = new SIPUserField(contactName, contactURI, null);
+        m_userField = new SIPUserField(contactName, contactURI, null!);
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public class SIPContactHeader
     /// <param name="contactHeaderStr">Input Contact header value</param>
     /// <returns>Returns a a list containg one or more SIPContactHeader objects</returns>
     // <exception cref="SIPValidationException"></exception>
-    public static List<SIPContactHeader> ParseContactHeader(string contactHeaderStr)
+    public static List<SIPContactHeader>? ParseContactHeader(string contactHeaderStr)
     {
         try
         {
@@ -207,7 +207,7 @@ public class SIPContactHeader
     public static List<SIPContactHeader> CreateSIPContactList(SIPURI sipURI)
     {
         List<SIPContactHeader> contactHeaderList = new List<SIPContactHeader>();
-        contactHeaderList.Add(new SIPContactHeader(null, sipURI));
+        contactHeaderList.Add(new SIPContactHeader(null!, sipURI));
 
         return contactHeaderList;
     }

@@ -72,7 +72,7 @@ public class SIPViaSet
     /// Gets the top-most SIPViaHeader
     /// </summary>
     /// <value></value>
-    public SIPViaHeader TopViaHeader
+    public SIPViaHeader? TopViaHeader
     {
         get
         {
@@ -87,7 +87,7 @@ public class SIPViaSet
     /// Gets the SIPViaHeader at the bottom of the Via set
     /// </summary>
     /// <value></value>
-    public SIPViaHeader BottomViaHeader
+    public SIPViaHeader? BottomViaHeader
     {
         get
         {
@@ -167,6 +167,6 @@ public class SIPViaSet
             }
         }
 
-        return viaStr;
+        return viaStr!;
     }
 }

@@ -58,7 +58,7 @@ public class RttParameters
     /// <param name="mediaDescription">Input SDP media description. The media type must be "text"
     /// for RTT.</param>
     /// <returns>Returns a new RttParameters object. Returns null if a parsing error occurred.</returns>
-    public static RttParameters FromMediaDescription(MediaDescription mediaDescription)
+    public static RttParameters? FromMediaDescription(MediaDescription mediaDescription)
     {
         if (mediaDescription.MediaType != "text")
             return null;
@@ -145,7 +145,7 @@ public class RttParameters
             }
 
             SdpAttribute FmtpAttribute = new SdpAttribute("fmtp", strRedPt);
-            FmtpAttribute.Params.Add(Sb.ToString(), null);
+            FmtpAttribute.Params.Add(Sb.ToString(), null!);
             mediaDescription.Attributes.Add (FmtpAttribute);
         }
 
@@ -157,7 +157,7 @@ public class RttParameters
         }
 
         if (RttMixerAware == true)
-            mediaDescription.Attributes.Add(new SdpAttribute("rtt-mixer", null));
+            mediaDescription.Attributes.Add(new SdpAttribute("rtt-mixer", null!));
 
         return mediaDescription;
     }

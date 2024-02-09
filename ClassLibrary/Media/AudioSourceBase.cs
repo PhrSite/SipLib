@@ -21,7 +21,7 @@ public class AudioSourceBase
     private int m_TelephoneEventClockRate = 8000;
 
     private RtpChannel m_RtpChannel;
-    private IAudioEncoder m_AudioEncoder = null;
+    private IAudioEncoder? m_AudioEncoder = null;
     private uint m_SamplesPerPacket;
 
     private const int PACKET_TIME_MS = 20;
@@ -42,7 +42,7 @@ public class AudioSourceBase
     /// <value></value>
     protected AudioSourceStateEnum AudioSourceState = AudioSourceStateEnum.Stopped;
 
-    private HighResolutionTimer m_HighResolutionTimer = null;
+    private HighResolutionTimer? m_HighResolutionTimer = null;
 
     /// <summary>
     /// Constructor
@@ -105,9 +105,9 @@ public class AudioSourceBase
         Timestamp = m_Timestamp;
     }
 
-    private Timer m_Timer = null;
+    private Timer? m_Timer = null;
 
-    private void OnTimerElapsed(object state)
+    private void OnTimerElapsed(object? state)
     {
         if (AudioSourceState != AudioSourceStateEnum.Playing)
             return;
@@ -127,7 +127,7 @@ public class AudioSourceBase
     {
         short[] NewSamples = new short[m_SamplesPerPacket];
         GetNextAudioSamples(NewSamples);
-        byte[] PayloadBytes = m_AudioEncoder.Encode(NewSamples);
+        byte[] PayloadBytes = m_AudioEncoder!.Encode(NewSamples);
         RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH + PayloadBytes.Length);
         rtpPacket.SSRC = m_SSRC;
         rtpPacket.SequenceNumber = m_SequenceNumber;

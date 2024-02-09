@@ -35,13 +35,13 @@ public class SipTransactionBase
     /// Event that is fired when the transaction receives a SIP request.
     /// </summary>
     /// <value></value>
-    public TransactionRequestReceivedDelegate RequestReceived = null;
+    public TransactionRequestReceivedDelegate? RequestReceived = null;
 
     /// <summary>
     /// Event that is fired when the transaction receives a SIP response.
     /// </summary>
     /// <value></value>
-    public TransactionResponseReceivedDelegate ResponseReceived = null;
+    public TransactionResponseReceivedDelegate? ResponseReceived = null;
 
     /// <summary>
     /// SIP T1 timer in milliseconds.
@@ -89,13 +89,13 @@ public class SipTransactionBase
     /// Transport manager to use for sending messages
     /// </summary>
     /// <value></value>
-    protected SipTransport m_transportManager = null;
+    protected SipTransport? m_transportManager = null;
 
     /// <summary>
     /// Gets the SipTransportManager that is managing this transaction
     /// </summary>
     /// <value></value>
-    protected SipTransport TransportManager
+    protected SipTransport? TransportManager
     {
         get { return m_transportManager; }
     }
@@ -104,35 +104,35 @@ public class SipTransactionBase
     /// SIPRequest for the transaction.
     /// </summary>
     /// <value></value>
-    public SIPRequest Request = null;
+    public SIPRequest? Request = null;
 
     /// <summary>
     /// Method to call when the transaction either completes or times out
     /// </summary>
     /// <value></value>
-    protected SipTransactionCompleteDelegate TransactionComplete = null;
+    protected SipTransactionCompleteDelegate? TransactionComplete = null;
 
     /// <summary>
     /// Endpoint to send the request to if the transaction is a client transaction or the source of a
     /// request if the transaction is a server transaction.
     /// </summary>
     /// <value></value>
-    public IPEndPoint RemoteEndPoint = null;
+    public IPEndPoint? RemoteEndPoint = null;
 
     /// <summary>
     /// The most recent SIPResponse that was sent to a client if this transaction is a server transaction.
     /// Not used for client transactions.
     /// </summary>
     /// <value></value>
-    protected SIPResponse LastSipResponseSent = null;
+    protected SIPResponse? LastSipResponseSent = null;
 
-    private string m_TransactionID = null;
+    private string? m_TransactionID = null;
 
     /// <summary>
     /// Gets the TransactionID that uniquely identifies the transaction
     /// </summary>
     /// <value></value>
-    public string TransactionID
+    public string? TransactionID
     {
         get { return m_TransactionID; }
         protected set { m_TransactionID = value; }
@@ -150,7 +150,7 @@ public class SipTransactionBase
     /// received.
     /// </summary>
     /// <value></value>
-    public SIPResponse LastReceivedResponse { get; protected set; } = null;
+    public SIPResponse? LastReceivedResponse { get; protected set; } = null;
 
     /// <summary>
     /// Semaphore to signal when a transaction is completed or terminated.
@@ -199,7 +199,7 @@ public class SipTransactionBase
     /// <param name="Request">Request relating to the transaction</param>
     /// <param name="Response">Response that was received. May be null if a response was never received</param>
     /// <param name="RemoteEndPoint">Remote endpoint for the transaction.</param>
-    protected void NotifyTransactionUser(SIPRequest Request, SIPResponse Response, IPEndPoint RemoteEndPoint)
+    protected void NotifyTransactionUser(SIPRequest Request, SIPResponse? Response, IPEndPoint RemoteEndPoint)
     {
         TransactionComplete?.Invoke(Request, Response, RemoteEndPoint, TransportManager, this);
         CompletionSemaphore.Release();

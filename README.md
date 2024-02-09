@@ -51,6 +51,7 @@ Or, you can install it from the Visual Studio GUI.
 # External Dependancies
 The SipLib class library uses the following NuGet package.
 1. Portable.BouncyCastle
+2. Microsoft.Extensions.Logging
 
 # Project Structure
 
@@ -64,6 +65,7 @@ This directory contains the project files for the SipLib project and the followi
 | Collections | Contains thread-safe generic collection classes that are not provided by the .NET class libraries |
 | Core | Core classes for building and parsing SIP messages. |
 | Dtls | Classes required to support encryption and decryption of media (audio, video and Real Time Text) using the Datagram Transport Layer Security  DTLS specified in RFC 5763 and RFC 5764. |
+| Logging | Contains a static class called SipLogger that the classes in this class library can use for logging application messages. |
 | Media | Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722. |
 | Msrp | Message Session Relay Protocol (MSRP, see RFC 4975) related classes. |
 | Network | Contains a utility helper class for performing network protocol related functions. |

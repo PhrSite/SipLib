@@ -87,7 +87,7 @@ internal class SrtpCryptoContext
     /// <summary>
     /// Master key identifier
     /// </summary>
-    private byte[] mki;
+    private byte[]? mki = null;
 
     /// <summary>
     /// Roll-Over-Counter, see RFC3711 section 3.2.1 for detailed description
@@ -119,47 +119,47 @@ internal class SrtpCryptoContext
     /// <summary>
     /// Master encryption key
     /// </summary>
-    private byte[] masterKey;
+    private byte[]? masterKey = null;
 
     /// <summary>
     /// Master salting key
     /// </summary>
-    private byte[] masterSalt;
+    private byte[]? masterSalt = null;
 
     /// <summary>
     /// Derived session encryption key
     /// </summary>
-    private byte[] encKey;
+    private byte[]? encKey = null;
 
     /// <summary>
     /// Derived session authentication key
     /// </summary>
-    private byte[] authKey;
+    private byte[]? authKey = null;
 
     /// <summary>
     /// Derived session salting key
     /// </summary>
-    private byte[] saltKey;
+    private byte[]? saltKey = null;
 
     /// <summary>
     /// Encryption / Authentication policy for this session
     /// </summary>
-    SrtpPolicy policy;
+    SrtpPolicy? policy;
 
     /// <summary>
     /// The HMAC object we used to do packet authentication
     /// </summary>
-    private IMac mac;
+    private IMac? mac;
 
     /// <summary>
     /// The symmetric cipher engines we need here
     /// </summary>
-    private IBlockCipher cipher = null;
+    private IBlockCipher? cipher = null;
 
     /// <summary>
     /// Used inside F8 mode only
     /// </summary>
-    private IBlockCipher cipherF8 = null;
+    private IBlockCipher? cipherF8 = null;
 
     /// <summary>
     /// Implements the counter cipher mode for RTP according to RFC 3711
@@ -169,7 +169,7 @@ internal class SrtpCryptoContext
     /// <summary>
     /// Temp store.
     /// </summary>
-    private byte[] tagStore;
+    private byte[]? tagStore;
 
     /// <summary>
     /// Temp store.

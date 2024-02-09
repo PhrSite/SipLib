@@ -81,7 +81,7 @@ public class SIPRequest : SIPMessage
     /// Request URI
     /// </summary>
     /// <value></value>
-    public SIPURI URI = null;
+    public SIPURI? URI = null;
 
     private SIPRequest()
     {
@@ -248,7 +248,7 @@ public class SIPRequest : SIPMessage
     /// <param name="errorField">Identifies the header field that is not valid</param>
     /// <param name="errorMessage">Explanation of the error.</param>
     /// <returns>Returns true if the SIPMessage is valid.</returns>
-    public bool IsValid(out SIPValidationFieldsEnum errorField, out string errorMessage)
+    public bool IsValid(out SIPValidationFieldsEnum errorField, out string? errorMessage)
     {
         errorField = SIPValidationFieldsEnum.Unknown;
         errorMessage = null;

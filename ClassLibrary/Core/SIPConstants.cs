@@ -837,7 +837,7 @@ public static class SIPEscape
     /// </summary>
     /// <param name="escapedString"></param>
     /// <returns></returns>
-    public static string SIPURIUserUnescape(string escapedString)
+    public static string? SIPURIUserUnescape(string escapedString)
     {
         string result;
         if (string.IsNullOrEmpty(escapedString) == false)

@@ -31,7 +31,7 @@ public class SrtpEncryptor : SrtpTransformBase
     /// <returns>Returns an encrypted packet if encryption is being used. Returns the original packet
     /// if encryption is not being used. Returns null if an error is detected and the Error property value
     /// will indicate the type of error..</returns>
-    public byte[] EncryptRtpPacket(byte[] Pckt)
+    public byte[]? EncryptRtpPacket(byte[] Pckt)
     {
         byte[] EncryptedPckt = null;
         if (Pckt == null || Pckt.Length < RtpPacket.MIN_PACKET_LENGTH)
@@ -103,7 +103,7 @@ public class SrtpEncryptor : SrtpTransformBase
     /// <returns>Returns the encrypted RTCP packet if encryption is being used. Returns the original
     /// input packet if encryption is not being used. Returns null if an error occurs and the Error property
     /// value will indicate the type of error..</returns>
-    public byte[] EncryptRtcpPacket(byte[] Pckt)
+    public byte[]? EncryptRtcpPacket(byte[] Pckt)
     {
         if (m_Context == null)
             // Not using encryption, just return the input packet.

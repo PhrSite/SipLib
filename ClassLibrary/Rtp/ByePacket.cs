@@ -11,9 +11,9 @@ namespace SipLib.Rtp;
 /// </summary>
 public class ByePacket
 {
-    private RtcpHeader m_Header;
+    private RtcpHeader? m_Header;
     private List<uint> m_SsrcList = new List<uint>();
-    private string m_Reason = null;
+    private string? m_Reason = null;
 
     /// <summary>
     /// Constructor
@@ -28,7 +28,7 @@ public class ByePacket
     /// <param name="Bytes">Received input byte array</param>
     /// <param name="StartIdx">Start index of the ByePacket in the array</param>
     /// <returns>Returns a new ByePacket or null if a parsing error occurred</returns>
-    public static ByePacket Parse(byte[] Bytes, int StartIdx)
+    public static ByePacket? Parse(byte[] Bytes, int StartIdx)
     {
         ByePacket Bp = new ByePacket();
         if (StartIdx + RtcpHeader.HeaderLength > Bytes.Length)
@@ -71,7 +71,7 @@ public class ByePacket
     /// Gets the reason for the BYE packet. Returns null if this packet is not valid.
     /// </summary>
     /// <value></value>
-    public string Reason
+    public string? Reason
     {
         get { return m_Reason; }
     }
@@ -90,7 +90,7 @@ public class ByePacket
     /// Gets the RtcpHeader for this packet.
     /// </summary>
     /// <value></value>
-    public RtcpHeader Header
+    public RtcpHeader? Header
     {
         get { return m_Header; }
     }

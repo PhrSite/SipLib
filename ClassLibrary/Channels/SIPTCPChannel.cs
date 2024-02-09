@@ -92,26 +92,26 @@ public class SIPTCPChannel : SIPChannel
 
     private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
     
-    private TcpListener m_tcpServerListener;
+    private TcpListener? m_tcpServerListener;
     private Dictionary<string, SIPConnection> m_connectedSockets = new Dictionary<string, SIPConnection>();
 
     // List of sockets that are in the process of being connected to. Need to avoid SIP re-transmits
     // initiating multiple connect attempts.
     private List<string> m_connectingSockets = new List<string>();
     
-    private Thread m_ListenerThread = null;
+    private Thread? m_ListenerThread = null;
 
     /// <summary>
     /// Fired if the TCP connection request to a remote endpoint failed.
     /// </summary>
     /// <value></value>
-    public event SipConnectionFailedDelegate SIPConnectionFailed = null;
+    public event SipConnectionFailedDelegate? SIPConnectionFailed = null;
 
     /// <summary>
     /// Fired if the TCP connection gets disconnected
     /// </summary>
     /// <value></value>
-    public event SipConnectionFailedDelegate SIPConnectionDisconnected = null;
+    public event SipConnectionFailedDelegate? SIPConnectionDisconnected = null;
 
     /// <summary>
     /// Constructs a new SIPTCPChannel and initializes the connection.
@@ -119,7 +119,7 @@ public class SIPTCPChannel : SIPChannel
     /// <param name="endPoint">Local IPEndPoint to listen on.</param>
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This parameter
     /// defaults to null.</param>
-    public SIPTCPChannel(IPEndPoint endPoint, string User = null)
+    public SIPTCPChannel(IPEndPoint endPoint, string? User = null)
     {
         LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, endPoint);
         m_isReliable = true;
@@ -151,9 +151,9 @@ public class SIPTCPChannel : SIPChannel
 
             if (LocalSIPEndPoint.Port == 0)
                 LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, (IPEndPoint)m_tcpServerListener.
-                    Server.LocalEndPoint);
+                    Server.LocalEndPoint!);
 
-            LocalTCPSockets.Add(((IPEndPoint)m_tcpServerListener.Server.LocalEndPoint).ToString());
+            LocalTCPSockets.Add(((IPEndPoint)m_tcpServerListener.Server.LocalEndPoint!).ToString());
 
             m_ListenerThread = new Thread(AcceptConnections);
             m_ListenerThread.IsBackground = true;
@@ -222,12 +222,12 @@ public class SIPTCPChannel : SIPChannel
 
     private void ReceiveCallback(IAsyncResult ar)
     {
-        SIPConnection sipTCPConnection = (SIPConnection)ar.AsyncState;
+        SIPConnection sipTCPConnection = (SIPConnection)ar.AsyncState!;
 
         int bytesRead = 0;
         try
         {
-            if (sipTCPConnection.SIPStream.CanRead == true)
+            if (sipTCPConnection?.SIPStream.CanRead == true)
             {
                 bytesRead = sipTCPConnection.SIPStream.EndRead(ar);
 
@@ -402,7 +402,7 @@ public class SIPTCPChannel : SIPChannel
         try
         {
             SIPConnection sipTCPConnection = (SIPConnection)ar.AsyncState;
-            sipTCPConnection.SIPStream.EndWrite(ar);
+            sipTCPConnection?.SIPStream.EndWrite(ar);
         }
         catch (Exception) { }
     }
@@ -413,7 +413,7 @@ public class SIPTCPChannel : SIPChannel
     /// <param name="dstEndPoint">IPEndPoint to send the message to.</param>
     /// <param name="buffer">Message to send.</param>
     /// <param name="serverCertificateName">Not used. May be null.</param>
-    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string serverCertificateName)
+    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string? serverCertificateName)
     {
         // Just ignore the cert. name for TCP.
         Send(dstEndPoint, buffer);
@@ -421,12 +421,12 @@ public class SIPTCPChannel : SIPChannel
 
     private void EndConnect(IAsyncResult ar)
     {
-         IPEndPoint dstEndPoint = null;
+         IPEndPoint? dstEndPoint = null;
 
         try
         {
             LockCollections();
-            object[] stateObj = (object[])ar.AsyncState;
+            object[] stateObj = (object[])ar.AsyncState!;
             TcpClient tcpClient = (TcpClient)stateObj[0];
             dstEndPoint = (IPEndPoint)stateObj[1];
             byte[] buffer = (byte[])stateObj[2];

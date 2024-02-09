@@ -89,13 +89,13 @@ public class SIPTLSChannel : SIPChannel
     private const int MAX_TLS_CONNECTIONS = 1000;
     private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
 
-    private TcpListener m_tlsServerListener;
+    private TcpListener? m_tlsServerListener;
     private Dictionary<string, SIPConnection> m_connectedSockets = new Dictionary<string, SIPConnection>();
     // List of connecting sockets to avoid SIP re-transmits initiating multiple connect attempts.
     private List<string> m_connectingSockets = new List<string>();
 
     private X509Certificate2 m_serverCertificate;
-    private Thread m_ListenerThread = null;
+    private Thread? m_ListenerThread = null;
     private X509CertificateCollection m_CertCollection;
     private bool m_UseMutualAuth;
 
@@ -103,13 +103,13 @@ public class SIPTLSChannel : SIPChannel
     /// Fired if the TCP connection request to a remote endpoint failed.
     /// </summary>
     /// <value></value>
-    public event SipConnectionFailedDelegate SIPConnectionFailed = null;
+    public event SipConnectionFailedDelegate? SIPConnectionFailed = null;
 
     /// <summary>
     /// Fired if the TCP connection gets disconnected
     /// </summary>
     /// <value></value>
-    public event SipConnectionFailedDelegate SIPConnectionDisconnected = null;
+    public event SipConnectionFailedDelegate? SIPConnectionDisconnected = null;
 
     /// <summary>
     /// Constructs a new SIPTLSChannel and initializes it.
@@ -120,7 +120,7 @@ public class SIPTLSChannel : SIPChannel
     /// parameter defaults to null.</param>
     /// <param name="UseMutualAuth">If true then use mutual TLS authentication. This parameter defaults
     /// to true.</param>
-    public SIPTLSChannel(X509Certificate2 serverCertificate, IPEndPoint endPoint, string User = null,
+    public SIPTLSChannel(X509Certificate2 serverCertificate, IPEndPoint endPoint, string? User = null,
         bool UseMutualAuth = true)
     {
         if (serverCertificate == null)
@@ -165,16 +165,16 @@ public class SIPTLSChannel : SIPChannel
     {
         try
         {
-            m_tlsServerListener = new TcpListener(LocalSIPEndPoint.GetIPEndPoint());
+            m_tlsServerListener = new TcpListener(LocalSIPEndPoint!.GetIPEndPoint());
             m_tlsServerListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
                 true);
             m_tlsServerListener.Start(MAX_TLS_CONNECTIONS);
 
             if (LocalSIPEndPoint.Port == 0)
                 LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tls, (IPEndPoint)m_tlsServerListener.
-                    Server.LocalEndPoint);
+                    Server.LocalEndPoint!);
 
-            LocalTCPSockets.Add(((IPEndPoint)m_tlsServerListener.Server.LocalEndPoint).ToString());
+            LocalTCPSockets.Add(((IPEndPoint)m_tlsServerListener.Server.LocalEndPoint!).ToString());
 
             m_ListenerThread = new Thread(AcceptConnections);
             m_ListenerThread.IsBackground = true;
@@ -194,7 +194,7 @@ public class SIPTLSChannel : SIPChannel
         ChannelStarted = true;
         try
         {
-            Thread.CurrentThread.Name = ACCEPT_THREAD_NAME + LocalSIPEndPoint.Port;
+            Thread.CurrentThread.Name = ACCEPT_THREAD_NAME + LocalSIPEndPoint!.Port;
 
             while (!Closed)
             {
@@ -204,15 +204,14 @@ public class SIPTLSChannel : SIPChannel
                     tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
                         true);
 
-                    IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
+                    IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint!;
 
                     SslStream sslStream;
                     if (m_UseMutualAuth == false)
                         sslStream = new SslStream(tcpClient.GetStream(), false);
                     else
                         sslStream = new SslStream(tcpClient.GetStream(), false, new 
-                            RemoteCertificateValidationCallback(
-                            ValidateRemoteCertificate), null);
+                            RemoteCertificateValidationCallback(ValidateRemoteCertificate!), null);
 
                     SIPConnection sipTLSConnection = new SIPConnection(this, tcpClient, sslStream,
                         remoteEndPoint, SIPProtocolsEnum.tls, SIPConnectionsEnum.Listener);
@@ -243,7 +242,7 @@ public class SIPTLSChannel : SIPChannel
         try
         {
             LockCollections();
-            SIPConnection sipTLSConnection = (SIPConnection)ar.AsyncState;
+            SIPConnection sipTLSConnection = (SIPConnection)ar.AsyncState!;
             SslStream sslStream = (SslStream)sipTLSConnection.SIPStream;
 
             sslStream.EndAuthenticateAsServer(ar);
@@ -330,7 +329,7 @@ public class SIPTLSChannel : SIPChannel
     /// <param name="dstEndPoint">IPEndPoint to send the message to.</param>
     /// <param name="buffer">Message to send.</param>
     /// <param name="serverCertificateName">Name of the remote endpoint's X.509 certificate.</param>
-    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string serverCertificateName)
+    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string? serverCertificateName)
     {
         Exception Excpt = null;
         if (buffer == null)
@@ -378,7 +377,7 @@ public class SIPTLSChannel : SIPChannel
 
                 if (Excpt != null)
                 {   // Remove the connected socket so that a new one will be created on a subsequent retry.
-                    sipTLSClient.SIPStream.Close();
+                    sipTLSClient?.SIPStream?.Close();
                     m_connectedSockets.Remove(dstEndPoint.ToString());
                 }
             }
@@ -398,7 +397,7 @@ public class SIPTLSChannel : SIPChannel
                         Socket, SocketOptionName.ReuseAddress, true);
 
                     // Use a random local port
-                    IPEndPoint LocIpe = new IPEndPoint(LocalSIPEndPoint.Address, 0); 
+                    IPEndPoint LocIpe = new IPEndPoint(LocalSIPEndPoint!.Address!, 0); 
                     tcpClient.Client.Bind(LocIpe);
 
                     m_connectingSockets.Add(dstEndPoint.ToString());
@@ -422,7 +421,7 @@ public class SIPTLSChannel : SIPChannel
     {
         try
         {
-            SIPConnection sipConnection = (SIPConnection)ar.AsyncState;
+            SIPConnection sipConnection = (SIPConnection)ar.AsyncState!;
             sipConnection.SIPStream.EndWrite(ar);
         }
         catch (Exception)
@@ -432,13 +431,13 @@ public class SIPTLSChannel : SIPChannel
 
     private void EndConnect(IAsyncResult ar)
     {
-        object[] stateObj = (object[])ar.AsyncState;
+        object[] stateObj = (object[])ar.AsyncState!;
         TcpClient tcpClient = (TcpClient)stateObj[0];
         IPEndPoint dstEndPoint = (IPEndPoint)stateObj[1];
         byte[] buffer = (byte[])stateObj[2];
         string serverCN = (string)stateObj[3];
 
-        Exception Excpt = null;
+        Exception? Excpt = null;
 
         try
         {
@@ -450,7 +449,7 @@ public class SIPTLSChannel : SIPChannel
             else
             {
                 tcpClient.EndConnect(ar);
-                SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteCertificate, null);
+                SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteCertificate!, null);
                 SIPConnection callerConnection = new SIPConnection(this, tcpClient, sslStream, dstEndPoint,
                     SIPProtocolsEnum.tls, SIPConnectionsEnum.Caller);
 
@@ -494,7 +493,7 @@ public class SIPTLSChannel : SIPChannel
         try
         {
             LockCollections();
-            object[] stateObj = (object[])ar.AsyncState;
+            object[] stateObj = (object[])ar.AsyncState!;
             TcpClient tcpClient = (TcpClient)stateObj[0];
             IPEndPoint dstEndPoint = (IPEndPoint)stateObj[1];
             byte[] buffer = (byte[])stateObj[2];
@@ -547,7 +546,7 @@ public class SIPTLSChannel : SIPChannel
     /// </summary>
     /// <param name="strRemoteEp">String version of the IP endpoint of the connection.</param>
     /// <returns>Returns null if there is no remote certificate available.</returns>
-    public override X509Certificate2 GetRemoteCertificate2(string strRemoteEp)
+    public override X509Certificate2? GetRemoteCertificate2(string strRemoteEp)
     {
         X509Certificate2 RemoteCert = null;
         lock (m_connectedSockets)
@@ -574,7 +573,7 @@ public class SIPTLSChannel : SIPChannel
     /// </summary>
     /// <param name="strRemoteEp">String version of the IP endpoint of the connection.</param>
     /// <returns>Returns null if there is no remote certificate available.</returns>
-    public override X509Certificate GetRemoteCertificate(string strRemoteEp)
+    public override X509Certificate? GetRemoteCertificate(string strRemoteEp)
     {
         X509Certificate RemoteCert = null;
         lock (m_connectedSockets)

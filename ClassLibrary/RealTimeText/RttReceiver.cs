@@ -31,7 +31,7 @@ public class RttReceiver
     /// Event that is fired when at least one character is received
     /// </summary>
     /// <value></value>
-    public event RttCharactersReceivedDelegate RttCharactersReceived = null;
+    public event RttCharactersReceivedDelegate? RttCharactersReceived = null;
 
     /// <summary>
     /// Constructor
@@ -161,7 +161,7 @@ public class RttReceiver
             {
                 if (RedundantBlocks[i].BlockLength > 0 && RedundantBlocks[i].PayloadBytes != null)
                 {
-                    str = Encoding.UTF8.GetString(RedundantBlocks[i].PayloadBytes);
+                    str = Encoding.UTF8.GetString(RedundantBlocks[i].PayloadBytes!);
                     // The oldest redundant data is sent first.
                     strNewText = str + strNewText;
                 }

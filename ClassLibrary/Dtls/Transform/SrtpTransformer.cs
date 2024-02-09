@@ -170,7 +170,7 @@ public class SrtpTransformer : IPacketTransformer
                 result = rawPacket.GetData();
             }
 
-            return result;
+            return result!;
         }
         finally
         {

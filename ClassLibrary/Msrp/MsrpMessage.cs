@@ -28,14 +28,14 @@ public class MsrpMessage
     /// Request line for the message. This will be null if the MessageType is not MessageType.Request
     /// </summary>
     /// <value></value>
-    public string RequestLine { get; set; } = null;
+    public string? RequestLine { get; set; } = null;
 
     /// <summary>
     /// Contains the request methode type (SEND or REPORT) if MessageType == MsrpMessageType.Request.
     /// Set to null otherwise.
     /// </summary>
     /// <value></value>
-    public string RequestMethod { get; set; } = null;
+    public string? RequestMethod { get; set; } = null;
 
     /// <summary>
     /// Response code for the message. Valid if the MessageType is MessageType.Response
@@ -47,31 +47,31 @@ public class MsrpMessage
     /// Text or comment describing the ResponseCode. Optional.
     /// </summary>
     /// <value></value>
-    public string ResponseText { get; set; } = null;
+    public string? ResponseText { get; set; } = null;
 
     /// <summary>
     /// Message-ID header value.
     /// </summary>
     /// <value></value>
-    public string MessageID { get; set; } = null;
+    public string? MessageID { get; set; } = null;
     /// <summary>
     /// Content-Type header value. A value of null indicates that there was no Content-Type header in the
     /// message.
     /// </summary>
-    public string ContentType { get; set; } = null;
+    public string? ContentType { get; set; } = null;
 
     /// <summary>
     /// Success-Report header value. A value of null indicates that a Success-Report header was not
     /// provided.
     /// </summary>
     /// <value></value>
-    public string SuccessReport { get; set; } = null;
+    public string? SuccessReport { get; set; } = null;
 
     /// <summary>
     /// Failure-Report header value. A value of null indicates that Failure-Report header was not provided.
     /// </summary>
     /// <value></value>
-    public string FailureReport { get; set; } = null;
+    public string? FailureReport { get; set; } = null;
 
     /// <summary>
     /// Byte-Range header. Initialized to a new ByteRangeHeader object.
@@ -83,33 +83,33 @@ public class MsrpMessage
     /// Status header. A null value indicates that a Status header is not present
     /// </summary>
     /// <value></value>
-    public MsrpStatusHeader Status { get; set; } = null;
+    public MsrpStatusHeader? Status { get; set; } = null;
 
     /// <summary>
     /// To-Path header. Initialized to a new MsrpPathHeader object.
     /// </summary>
     /// <value></value>
-    public MsrpPathHeader ToPath { get; set; } = new MsrpPathHeader();
+    public MsrpPathHeader? ToPath { get; set; } = new MsrpPathHeader();
 
     /// <summary>
     /// From-Path header. Initialized to a new MsrpPathHeadr object.
     /// </summary>
     /// <value></value>
-    public MsrpPathHeader FromPath { get; set; } = new MsrpPathHeader();
+    public MsrpPathHeader? FromPath { get; set; } = new MsrpPathHeader();
 
     /// <summary>
     /// Use-Nickname header value. See RFC 7701. This header value contains a quoted (using double
     /// quotation marks) nickname.
     /// </summary>
     /// <value></value>
-    public string UseNickname { get; set; } = null;
+    public string? UseNickname { get; set; } = null;
 
     /// <summary>
     /// Contains the binary byte array containing the message contents. Null indicates that there are
     /// no contents for the message.
     /// </summary>
     /// <value></value>
-    public byte[] Body = null;
+    public byte[]? Body = null;
 
     /// <summary>
     /// Gets or sets the completion status for this MSRP message
@@ -140,7 +140,7 @@ public class MsrpMessage
     /// <param name="bytes">Bytes of the complete MSRP message or a MSRP message chunk. The byte
     /// array includes the end-line.</param>
     /// <returns>Returns a new MsrpMessage object or null if a parsing error occurred.</returns>
-    public static MsrpMessage ParseMsrpMessage(byte[] bytes)
+    public static MsrpMessage? ParseMsrpMessage(byte[] bytes)
     {
         MsrpMessage msrpMessage = new MsrpMessage();
 
@@ -265,7 +265,7 @@ public class MsrpMessage
                     msrpMessage.FailureReport = HeaderValue;
                     break;
                 case "Byte-Range":
-                    msrpMessage.ByteRange = ByteRangeHeader.ParseByteRangeHeader(HeaderValue);
+                    msrpMessage.ByteRange = ByteRangeHeader.ParseByteRangeHeader(HeaderValue)!;
                     break;
                 case "Status":
                     msrpMessage.Status = MsrpStatusHeader.ParseStatusHeader(HeaderValue);
@@ -294,8 +294,7 @@ public class MsrpMessage
     /// properly formatted.</param>
     /// <param name="HeaderValue">Output header value. Will be set to null if the header line is not
     /// properly formatted. </param>
-    private static void GetHeaderAndValue(string HeaderLine, out string HeaderName, out string
-        HeaderValue)
+    private static void GetHeaderAndValue(string HeaderLine, out string? HeaderName, out string? HeaderValue)
     {
         HeaderName = null;
         HeaderValue = null;
@@ -402,7 +401,7 @@ public class MsrpMessage
     /// </summary>
     /// <returns>Returns the Content-Type header value after removing any header parameters if there
     /// are any. Return null if there is no Content-Type header value.</returns>
-    public string GetContentType()
+    public string? GetContentType()
     {
         if (ContentType == null)
             return null;

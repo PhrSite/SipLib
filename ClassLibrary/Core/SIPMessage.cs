@@ -75,19 +75,19 @@ public class SIPMessage
     /// "INVITE sip:1189990001@10.1.221.8 SIP/2.0"
     /// </summary>
     /// <value></value>
-    public string FirstLine = null;
+    public string? FirstLine = null;
 
     /// <summary>
     /// Contains any array of SIP header lines with one header line per array element.
     /// </summary>
     /// <value></value>
-    public string[] SIPHeaders = null;
+    public string[]? SIPHeaders = null;
 
     /// <summary>
     /// Contains the entire SIP message body as a string. Set to null if the message does not have a body.
     /// </summary>
     /// <value></value>
-    public string Body = null;
+    public string? Body = null;
 
     /// <summary>
     /// Contains the raw byte array containing the entire message. This field is used when parsing a SIP
@@ -95,24 +95,24 @@ public class SIPMessage
     /// creating a new SIPRequest or a SIPResponse locally.
     /// </summary>
     /// <value></value>
-    public byte[] RawBuffer = null;
+    public byte[]? RawBuffer = null;
 
     /// <summary>
     /// The remote IP socket the message was received from or sent to. 
     /// </summary>
     /// <value></value>
-    public SIPEndPoint RemoteSIPEndPoint = null;
+    public SIPEndPoint? RemoteSIPEndPoint = null;
     /// <summary>
     /// The local SIP socket the message was received on or sent from. 
     /// </summary>
     /// <value></value>
-    public SIPEndPoint LocalSIPEndPoint = null;
+    public SIPEndPoint? LocalSIPEndPoint = null;
 
     /// <summary>
     /// Contains all headers in the request
     /// </summary>
     /// <value></value>
-    public SIPHeader Header = null;
+    public SIPHeader? Header = null;
 
     /// <summary>
     /// Parses a byte array containing a SIP message and returns a SIPMessage object.
@@ -125,7 +125,7 @@ public class SIPMessage
     /// <exception cref="ArgumentException">Thrown if the SIP message exceeds the maximum allowable
     /// length defined in: SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH.</exception>
     /// <exception cref="Exception">Thrown if an unexpected error occurs.</exception>
-    public static SIPMessage ParseSIPMessage(byte[] buffer, SIPEndPoint localSIPEndPoint, 
+    public static SIPMessage? ParseSIPMessage(byte[] buffer, SIPEndPoint localSIPEndPoint, 
         SIPEndPoint remoteSIPEndPoint)
     {
         string message = null;											  
@@ -166,7 +166,7 @@ public class SIPMessage
     /// <param name="localSIPEndPoint">The local SIP socket the message was received on or sent from.</param>
     /// <param name="remoteSIPEndPoint">The remote IP socket the message was received from or sent to.</param>
     /// <returns>Returns a SIPMessage object if successful. Returns null if the message is not valid.</returns>
-    public static SIPMessage ParseSIPMessage(string message, SIPEndPoint localSIPEndPoint, SIPEndPoint 
+    public static SIPMessage? ParseSIPMessage(string message, SIPEndPoint? localSIPEndPoint, SIPEndPoint? 
         remoteSIPEndPoint)
     {
         try
@@ -231,7 +231,7 @@ public class SIPMessage
         }
     }
 
-    private List<MessageContentsContainer> m_ContentsContainer = null;
+    private List<MessageContentsContainer>? m_ContentsContainer = null;
 
     /// <summary>
     /// Gets a string containing the body contents for a specified content type. This method only returns non-binary
@@ -243,7 +243,7 @@ public class SIPMessage
     /// header parameters.</param>
     /// <returns>Returns a string that contains the body content block. Returns null if the specified 
     /// content type is not found.</returns>
-    public string GetContentsOfType(string contentType)
+    public string? GetContentsOfType(string contentType)
     {
         if (HasBody == false || RawBuffer == null)
             return null;
@@ -272,7 +272,7 @@ public class SIPMessage
     /// header parameters.</param>
     /// <returns>Returns a MessageContentsContainer object containing the specified body contents block.
     /// Returns null if the specified content type is not found.</returns>
-    public MessageContentsContainer GetContentsContainer(string contentType)
+    public MessageContentsContainer? GetContentsContainer(string contentType)
     {
         if (HasBody == false || RawBuffer == null)
             return null;

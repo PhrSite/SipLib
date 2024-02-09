@@ -40,7 +40,7 @@ public class ByteBufferInfo
     /// </param>
     /// <returns>The start position in the buffer of the requested string or -1 if not found.</returns>
     public static int GetStringPosition(byte[] buffer, int startPosition, int endPosition, string find,
-        string end)
+        string? end)
     {
         if (buffer == null || buffer.Length == 0 || find == null)
             return -1;
@@ -204,7 +204,7 @@ public class ByteBufferInfo
     /// <param name="SecondPattern">The second byte array</param>
     /// <returns>Returns a new byte array if there is one between the FirstPattern and the
     /// SecondPattern or null if the FirstPattern and the SecondPattern are not found</returns>
-    public static byte[] ExtractDelimitedByteArray(byte[] SrcArray, int StartIndex, byte[] FirstPattern,
+    public static byte[]? ExtractDelimitedByteArray(byte[] SrcArray, int StartIndex, byte[] FirstPattern,
         byte[] SecondPattern)
     {
         byte[] DstArray = null;

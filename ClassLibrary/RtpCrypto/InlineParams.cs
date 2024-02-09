@@ -17,12 +17,12 @@ public class InlineParams
     /// (24 bytes for AES-192 or 32 bytes for AES-256).
     /// </summary>
     /// <value></value>
-    public byte[] MasterKey = null;
+    public byte[]? MasterKey = null;
     /// <summary>
     /// Contains the master salt byte array. Must be 14 bytes in length for SRTP.
     /// </summary>
     /// <value></value>
-    public byte[] MasterSalt = null;
+    public byte[]? MasterSalt = null;
     /// <summary>
     /// Specifies the lifetime of the master key in RTP packets. A value of 0 indicates that the default
     /// lifetime is to be used. Must be an integral power of 2. A value of 0 indicates that the default
@@ -54,7 +54,7 @@ public class InlineParams
     /// suite.</param>
     /// <returns>Returns a new InlineParameters object if the input is valid or null if the input is not
     /// valid.</returns>
-    public static InlineParams Parse(string Inline, int KeyLength)
+    public static InlineParams? Parse(string Inline, int KeyLength)
     {
         bool Success = true;
         InlineParams Ilp = new InlineParams();

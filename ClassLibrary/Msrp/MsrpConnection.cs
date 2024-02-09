@@ -21,13 +21,14 @@ public class MsrpConnection
     private const int DEFAULT_READ_BUFFER_LENGTH = 4096;
     private const int CHUNK_SIZE = 2048;
 
-    private TcpListener m_TcpListener = null;
-    private TcpClient m_TcpClient;
-    private MsrpUri m_RemoteMsrpUri = null;
-    private MsrpUri m_LocalMsrpUri = null;
-    private X509Certificate2 m_Certificate = null;
+    private TcpListener? m_TcpListener = null;
+    private TcpClient? m_TcpClient;
+    private MsrpUri? m_RemoteMsrpUri = null;
+    private MsrpUri? m_LocalMsrpUri = null;
+    private X509Certificate2? m_Certificate = null;
 
-    private Stream m_NetworkStream = null;
+    private Stream? m_NetworkStream = null;
+
     /// <summary>
     /// Absolute maximum size of a MSRP transaction (chunk) message.
     /// </summary>
@@ -51,7 +52,7 @@ public class MsrpConnection
     private ConcurrentQueue<MsrpMessage> m_ResponseTransmitQueue = new ConcurrentQueue<MsrpMessage>();
     private SemaphoreSlim m_TransmitTaskSemaphore = new SemaphoreSlim(0, int.MaxValue);
     private CancellationTokenSource m_TokenSource = new CancellationTokenSource();
-    private MsrpMessage m_ResponseMessage = null;
+    private MsrpMessage? m_ResponseMessage = null;
     private bool m_Started = false;
 
     /// <summary>
@@ -113,34 +114,34 @@ public class MsrpConnection
     /// SEND requests.
     /// </summary>
     /// <value></value>
-    public event MsrpMessageReceivedDelegate MsrpMessageReceived = null;
+    public event MsrpMessageReceivedDelegate? MsrpMessageReceived = null;
 
     /// <summary>
     /// This event is fired when a connection is established with the remote endpoint either as a client
     /// or as a server.
     /// </summary>
     /// <value></value>
-    public event MsrpConnectionStatusDelegate MsrpConnectionEstablished = null;
+    public event MsrpConnectionStatusDelegate? MsrpConnectionEstablished = null;
 
     /// <summary>
     /// This event is fired if the MsrpConnection object was unable to connect to the remote endpoint as
     /// a client.
     /// </summary>
     /// <value></value>
-    public event MsrpConnectionStatusDelegate MsrpConnectionFailed = null;
+    public event MsrpConnectionStatusDelegate? MsrpConnectionFailed = null;
 
     /// <summary>
     /// This event is fired if the remote endpoint rejected a MSRP message sent by the MsrpConnection object
     /// or if there was another problem delivering the message.
     /// </summary>
     /// <value></value>
-    public event MsrpMessageDeliveryFailedDelegate MsrpMessageDeliveryFailed = null;
+    public event MsrpMessageDeliveryFailedDelegate? MsrpMessageDeliveryFailed = null;
 
     /// <summary>
     /// Event that is fired when a MSRP REPORT request is received.
     /// </summary>
     /// <value></value>
-    public event ReportReceivedDelegate ReportReceived = null;
+    public event ReportReceivedDelegate? ReportReceived = null;
 
     /// <summary>
     /// Creates a client MsrpConnection object. Call this method to create a client that connects to a
@@ -348,7 +349,7 @@ public class MsrpConnection
                 GetIPEndPoint());
             if (m_LocalMsrpUri.uri.Scheme == SIPSchemesEnum.msrps)
             {
-                SslStream sslStream = new SslStream(m_TcpClient.GetStream(), false, ValidateServerCertificate, null);
+                SslStream sslStream = new SslStream(m_TcpClient.GetStream(), false, ValidateServerCertificate!, null);
                 m_NetworkStream = sslStream;
                 if (m_Certificate == null)
                     sslStream.BeginAuthenticateAsClient("*", AuthenticateAsClientCallback, this);
@@ -638,12 +639,12 @@ public class MsrpConnection
                             NumTransmitAttempts += 1;
                             if (NumTransmitAttempts <= MAX_TRANSMIT_RETRIES)
                             {
-                                await SendBytes(RequestBytes);
+                                await SendBytes(RequestBytes!);
                                 RequestSentTime = DateTime.Now;
                             }
                             else
                             {   // Too many attempts
-                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri, 481,
+                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri!, 481,
                                     "Timeout");
 
                                 // Give up on the current request
@@ -662,12 +663,12 @@ public class MsrpConnection
                             NumTransmitAttempts += 1;
                             if (NumTransmitAttempts <= MAX_TRANSMIT_RETRIES)
                             {   // Try again
-                                await SendBytes(RequestBytes);
+                                await SendBytes(RequestBytes!);
                                 RequestSentTime = DateTime.Now;
                             }
                             else
                             {   // Too many attempts
-                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri, 481,
+                                MsrpMessageDeliveryFailed?.Invoke(CurrentRequest, m_RemoteMsrpUri!, 481,
                                     "Timeout");
 
                                 // Give up on the current request
@@ -725,7 +726,7 @@ public class MsrpConnection
     /// method. This parameter is optional. If pressent then the SEND request will include a
     /// Success-Report header with a value of "yes" so that the remote endpoint will generate a
     /// success report.</param>
-    public void SendMsrpMessage(string ContentType, byte[] Contents, string messageID = null)
+    public void SendMsrpMessage(string? ContentType, byte[]? Contents, string? messageID = null)
     {
         string MessageID;
         bool RequestSuccessReport = false;

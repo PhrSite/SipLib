@@ -31,7 +31,7 @@ public class SrtpDecryptor : SrtpTransformBase
     /// <returns>Returns the decrypted version of the encrypted input packet if encryption is being
     /// used. Returns the original input packet if encryption is not being used. Returns null if
     /// an error is detected and the Error property value will indicate the type of error.</returns>
-    public byte[] DecryptRtpPacket(byte[] Pckt)
+    public byte[]? DecryptRtpPacket(byte[] Pckt)
     {
         if (Pckt == null || Pckt.Length < RtpPacket.MIN_PACKET_LENGTH)
         {
@@ -145,7 +145,7 @@ public class SrtpDecryptor : SrtpTransformBase
     /// <returns>Returns the decrypted version of the encrypted input packet if encryption is being
     /// used. Returns the original input packet if encryption is not being used. Returns null if
     /// an error is detected and the Error property value will indicate the type of error.</returns>
-    public byte[] DecryptRtcpPacket(byte[] Pckt)
+    public byte[]? DecryptRtcpPacket(byte[] Pckt)
     {
         if (Pckt == null || Pckt.Length < RtcpHeader.RTCP_HEADER_LENGTH)
         {

@@ -73,7 +73,7 @@ public class SIPResponse : SIPMessage
     /// SIP version number
     /// </summary>
     /// <value></value>
-    public string SIPVersion = null;
+    public string? SIPVersion = null;
 
     /// <summary>
     /// Response status enumeration
@@ -91,7 +91,7 @@ public class SIPResponse : SIPMessage
     /// Response reason phrase
     /// </summary>
     /// <value></value>
-    public string ReasonPhrase = null;
+    public string? ReasonPhrase = null;
 
     /// <summary>
     /// Constructor
@@ -106,7 +106,7 @@ public class SIPResponse : SIPMessage
     /// <param name="reasonPhrase">Reason phrase.</param>
     /// <param name="localSIPEndPoint">Local endpoint that is sending or receiving the SIP
     /// response message.</param>
-    public SIPResponse(SIPResponseStatusCodesEnum responseType, string reasonPhrase, SIPEndPoint localSIPEndPoint)
+    public SIPResponse(SIPResponseStatusCodesEnum responseType, string? reasonPhrase, SIPEndPoint localSIPEndPoint)
     {
         SIPVersion = m_sipVersion;
         StatusCode = (int)responseType;

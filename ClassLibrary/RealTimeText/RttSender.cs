@@ -22,15 +22,15 @@ public delegate void RttRtpSendDelegate(RtpPacket rtpPckt);
 /// </summary>
 public class RttSender
 {
-    private RttParameters m_Params = null;
-    private RttRtpSendDelegate Sender = null;
+    private RttParameters? m_Params = null;
+    private RttRtpSendDelegate? Sender = null;
 
     private ConcurrentQueue<string> m_Messages = new ConcurrentQueue<string>();
 
     private CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
 
     private SemaphoreSlim m_SendSemaphore = new SemaphoreSlim(0, int.MaxValue);
-    private Task m_SenderTask = null;
+    private Task? m_SenderTask = null;
     private List<RttRedundantBlock> m_RedundantBlocks;
 
     private ushort m_SequenceNumber = 0;
@@ -115,7 +115,7 @@ public class RttSender
         m_SendSemaphore.Release();      // Signal the sender task to wake up
     }
 
-    private string DequeueMessage()
+    private string? DequeueMessage()
     {
         string message = null;
         m_Messages.TryDequeue(out message);

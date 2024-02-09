@@ -53,7 +53,7 @@ public class SIPPpiHeader
     /// Gets or sets the name field
     /// </summary>
     /// <value></value>
-    public string Name
+    public string? Name
     {
         get { return m_userField.Name; }
         set { m_userField.Name = value; }
@@ -63,7 +63,7 @@ public class SIPPpiHeader
     /// Gets or sets the SIPURI field
     /// </summary>
     /// <value></value>
-    public SIPURI URI
+    public SIPURI? URI
     {
         get { return m_userField.URI; }
         set { m_userField.URI = value; }
@@ -91,7 +91,7 @@ public class SIPPpiHeader
     /// <param name="PpiURI">SIPURI object to build the PPI header from</param>
     public SIPPpiHeader(string PpiName, SIPURI PpiURI)
     {
-        m_userField = new SIPUserField(PpiName, PpiURI, null);
+        m_userField = new SIPUserField(PpiName, PpiURI, null!);
     }
 
     /// <summary>

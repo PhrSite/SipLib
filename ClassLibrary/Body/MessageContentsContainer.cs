@@ -27,31 +27,31 @@ public class MessageContentsContainer
     /// header.
     /// </summary>
     /// <value></value>
-    public string ContentDispositon = null;
+    public string? ContentDispositon = null;
     /// <summary>
     /// Contains the Content-ID header value. Will be null if there is none.
     /// </summary>
     /// <value></value>
-    public string ContentID = null;
+    public string? ContentID = null;
 
     /// <summary>
     /// Contains the Content-Transfer-Encoding header value. Will be null if there is none.
     /// </summary>
     /// <value></value>
-    public string ContentTransferEncoding = null;
+    public string? ContentTransferEncoding = null;
 
     /// <summary>
     /// Contains the string value of the Content-Length header. Will be null if there is none.
     /// Optional for contents blocks in a message where the Contents-Type is multipart/mixed.
     /// </summary>
     /// <value></value>
-    public string ContentLength = null;
+    public string? ContentLength = null;
 
     /// <summary>
     /// Contains the message body contents as a string. Not null if IsBinaryContents is false.
     /// </summary>
     /// <value></value>
-    public string StringContents = null;
+    public string? StringContents = null;
 
     /// <summary>
     /// Contains a collection of parameters from the Content-Type header.
@@ -68,5 +68,5 @@ public class MessageContentsContainer
     /// Contains the raw binary data. Will be non-null if IsBinaryContents is true.
     /// </summary>
     /// <value></value>
-    public byte[] BinaryContents = null;
+    public byte[]? BinaryContents = null;
 }

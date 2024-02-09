@@ -96,9 +96,9 @@ public class SIPParameters
     /// </summary>
     /// <param name="sipString">Input string containing the parameters</param>
     /// <param name="delimiter">Delimeter to use for parsing</param>
-    public SIPParameters(string sipString, char delimiter)
+    public SIPParameters(string? sipString, char delimiter)
     {
-        Initialise(sipString, delimiter);
+        Initialise(sipString!, delimiter);
     }
 
     private void Initialise(string sipString, char delimiter)
@@ -122,7 +122,7 @@ public class SIPParameters
     /// <param name="quotedString">Input quoted string</param>
     /// <param name="delimiter">Delimeter to use. For example ','</param>
     /// <returns>Returns a string array containing the name value pairs</returns>
-    public static string[] GetKeyValuePairsFromQuoted(string quotedString, char delimiter)
+    public static string[]? GetKeyValuePairsFromQuoted(string quotedString, char delimiter)
     {
         try
         {
@@ -244,12 +244,12 @@ public class SIPParameters
     /// </summary>
     /// <param name="name">Name of the parameter (key)</param>
     /// <param name="value">Value of the parameter</param>
-    public void Set(string name, string value)
+    public void Set(string name, string? value)
     {
         if (m_dictionary.ContainsKey(name))
-            m_dictionary[name] = value;
+            m_dictionary[name] = value!;
         else
-            m_dictionary.Add(name, value);
+            m_dictionary.Add(name, value!);
     }
 
     /// <summary>
@@ -258,7 +258,7 @@ public class SIPParameters
     /// <param name="name">Name of the parameter</param>
     /// <returns>Returns the value of the parameter. Returns null if the dictionary is empty
     /// or if the parameter is not in the dictionary.</returns>
-    public string Get(string name)
+    public string? Get(string name)
     {
         if (m_dictionary != null)
         {
@@ -308,7 +308,7 @@ public class SIPParameters
     /// Gets an array of all parameter names (keys)
     /// </summary>
     /// <returns>Returns an array of all parameter names or null if the dictionary is empty</returns>
-    public string[] GetKeys()
+    public string[]? GetKeys()
     {
         if (m_dictionary == null || m_dictionary.Count == 0)
             return null;
@@ -400,9 +400,9 @@ public class SIPParameters
     /// <param name="obj">Input SIPParameters object</param>
     /// <returns>Returns true if the input SIPParameters object is equal to this one or false if it
     /// is not.</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        return AreEqual(this, (SIPParameters)obj);
+        return AreEqual(this, (SIPParameters)obj!);
     }
 
     /// <summary>

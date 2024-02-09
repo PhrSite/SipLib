@@ -45,7 +45,7 @@ namespace SipLib.Dtls
             mClient.ServerCertificate = serverCertificate;
         }
 
-        public virtual TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
+        public virtual TlsCredentials? GetClientCredentials(CertificateRequest certificateRequest)
         {
             byte[] certificateTypes = certificateRequest.CertificateTypes;
             if (certificateTypes == null || !Arrays.Contains(certificateTypes, ClientCertificateType.rsa_sign))
@@ -60,7 +60,7 @@ namespace SipLib.Dtls
                 mClient.mPrivateKey);
         }
 
-        public TlsCredentials GetClientCredentials(TlsContext context, CertificateRequest certificateRequest)
+        public TlsCredentials? GetClientCredentials(TlsContext context, CertificateRequest certificateRequest)
         {
             return GetClientCredentials(certificateRequest);
         }
@@ -72,8 +72,8 @@ namespace SipLib.Dtls
     public class DtlsSrtpClient : DefaultTlsClient, IDtlsSrtpPeer
     {
 
-        internal Certificate mCertificateChain = null;
-        internal AsymmetricKeyParameter mPrivateKey = null;
+        internal Certificate? mCertificateChain = null;
+        internal AsymmetricKeyParameter? mPrivateKey = null;
 
         internal TlsClientContext TlsContext
         {
@@ -84,7 +84,7 @@ namespace SipLib.Dtls
         /// Contains the Org.BouncyCastle.Crypto.Tls.TlsSession
         /// </summary>
         /// <value></value>
-        protected internal TlsSession mSession;
+        protected internal TlsSession? mSession;
 
         /// <summary>
         /// Gets or sets a flag to indicate whether or not to force the use of the extended MasterSecret.
@@ -103,7 +103,7 @@ namespace SipLib.Dtls
         /// Gets the fingerprint of the X.509 certificate used by this client
         /// </summary>
         /// <value></value>
-        public RTCDtlsFingerprint Fingerprint { get; private set; }
+        public RTCDtlsFingerprint? Fingerprint { get; private set; } = null;
 
         private UseSrtpData clientSrtpData;
 
@@ -112,7 +112,7 @@ namespace SipLib.Dtls
         private byte[] srtpMasterServerKey;
         private byte[] srtpMasterClientSalt;
         private byte[] srtpMasterServerSalt;
-        private byte[] masterSecret = null;
+        private byte[]? masterSecret = null;
 
         // Policies
         private SrtpPolicy srtpPolicy;
@@ -122,12 +122,12 @@ namespace SipLib.Dtls
         /// Event that is fired when an Alert is received from the server during the DTLS handshake
         /// </summary>
         /// <value></value>
-        public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
+        public event Action<AlertLevelsEnum, AlertTypesEnum, string>? OnAlert;
 
         /// <summary>
         /// Constructor. Creates a self-signed certificate.
         /// </summary>
-        public DtlsSrtpClient() : this(null, null, null)
+        public DtlsSrtpClient() : this(null!, null!, null!)
         {
         }
 
@@ -166,10 +166,10 @@ namespace SipLib.Dtls
         /// <param name="certificateChain"></param>
         /// <param name="privateKey"></param>
         public DtlsSrtpClient(Certificate certificateChain, AsymmetricKeyParameter privateKey) :
-            this(certificateChain, privateKey, null)
+            this(certificateChain, privateKey, null!)
         {
         }
-
+        
         /// <summary>
         /// Constructor
         /// </summary>
@@ -203,7 +203,7 @@ namespace SipLib.Dtls
             mCertificateChain = certificateChain;
 
             //Generate FingerPrint
-            var certificate = mCertificateChain.GetCertificateAt(0);
+            var certificate = mCertificateChain!.GetCertificateAt(0);
             Fingerprint = certificate != null ? DtlsUtils.Fingerprint(certificate) : null;
         }
 
@@ -211,7 +211,7 @@ namespace SipLib.Dtls
         /// Constructor
         /// </summary>
         /// <param name="clientSrtpData"></param>
-        public DtlsSrtpClient(UseSrtpData clientSrtpData) : this(null, null, clientSrtpData)
+        public DtlsSrtpClient(UseSrtpData clientSrtpData) : this(null!, null!, clientSrtpData)
         { }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace SipLib.Dtls
         /// <returns></returns>
         protected byte[] GetKeyingMaterial(int length)
         {
-            return GetKeyingMaterial(ExporterLabel.dtls_srtp, null, length);
+            return GetKeyingMaterial(ExporterLabel.dtls_srtp, null!, length);
         }
 
         /// <summary>
@@ -515,7 +515,7 @@ namespace SipLib.Dtls
         /// <returns></returns>
         public override TlsSession GetSessionToResume()
         {
-            return this.mSession;
+            return this.mSession!;
         }
 
         /// <summary>

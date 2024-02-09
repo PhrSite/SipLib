@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 public class Qos
 {
     private bool m_IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-    private WindowsQos m_Qos = null;
+    private WindowsQos? m_Qos = null;
     private int m_FlowId = 0;
     private IntPtr m_SockHandle = IntPtr.Zero;
 

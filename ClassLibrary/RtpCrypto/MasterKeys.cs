@@ -36,14 +36,14 @@ public class MasterKeys
     /// used.
     /// </summary>
     /// <value></value>
-    public byte[] MasterKey;
+    public byte[]? MasterKey;
 
     /// <summary>
     /// Contains the bytes of the master salt. The length will always be 14 bytes for the AES-CM and AES-f8
     /// encryption algorithms.
     /// </summary>
     /// <value></value>
-    public byte[] MasterSalt;
+    public byte[]? MasterSalt;
 
     /// <summary>
     /// Number of RTP packets that have been sent using this master key.

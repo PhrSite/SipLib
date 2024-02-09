@@ -66,8 +66,8 @@ public class SIPUDPChannel : SIPChannel
     private const string THREAD_NAME = "sipchanneludp-";
     private const int SIO_UDP_CONNRESET = -1744830452;
 
-    private UdpClient m_sipConn = null;
-    private Qos m_Qos;
+    private UdpClient? m_sipConn = null;
+    private Qos? m_Qos;
 
     /// <summary>
     /// Constructs a new SIPUDPChannel.
@@ -75,7 +75,7 @@ public class SIPUDPChannel : SIPChannel
     /// <param name="endPoint">Local IPEndpoint to listen on.</param>
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This
     /// parameter is optional and defaults to null.</param>
-    public SIPUDPChannel(IPEndPoint endPoint, string User = null)
+    public SIPUDPChannel(IPEndPoint endPoint, string? User = null)
     {
         LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.udp, endPoint);
         Initialise();
@@ -218,7 +218,7 @@ public class SIPUDPChannel : SIPChannel
     /// <param name="dstEndPoint">IPEndPoint to send the message to.</param>
     /// <param name="buffer">Message to send.</param>
     /// <param name="serverCertificateName">Not used. May be null.</param>
-    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string serverCertificateName)
+    public override void Send(IPEndPoint dstEndPoint, byte[] buffer, string? serverCertificateName)
     {
         Send(dstEndPoint, buffer);
     }
@@ -239,7 +239,7 @@ public class SIPUDPChannel : SIPChannel
     /// <returns></returns>
     protected override Dictionary<string, SIPConnection> GetConnectionsList()
     {
-        return null;
+        return new Dictionary<string, SIPConnection>();
     }
 
     /// <summary>

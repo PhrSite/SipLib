@@ -71,7 +71,7 @@ public abstract class SIPChannel
     /// This is the local SIPURI
     /// </summary>
     /// <value></value>
-    protected SIPURI SipUri = null;
+    protected SIPURI? SipUri = null;
 
     /// <summary>
     /// This is set to true when the main listener thread has been started.
@@ -83,13 +83,13 @@ public abstract class SIPChannel
     /// This is the local SIPEndPoint
     /// </summary>
     /// <value></value>
-    protected SIPEndPoint LocalSIPEndPoint = null;
+    protected SIPEndPoint? LocalSIPEndPoint = null;
 
     /// <summary>
     /// Gets the local SIPEndPoint for the SIP channel
     /// </summary>
     /// <value></value>
-    public SIPEndPoint SIPChannelEndPoint
+    public SIPEndPoint? SIPChannelEndPoint
     {
         get { return LocalSIPEndPoint; }
     }
@@ -99,10 +99,10 @@ public abstract class SIPChannel
     /// of all derived classes.
     /// </summary>
     /// <param name="User">Specifies the User part of the SIPURI. This may be null.</param>
-    protected void SetupContactURI(string User)
+    protected void SetupContactURI(string? User)
     {
         SIPSchemesEnum Sse = IsTLS == true ? SIPSchemesEnum.sips : SIPSchemesEnum.sip;
-        SipUri = new SIPURI(Sse, LocalSIPEndPoint);
+        SipUri = new SIPURI(Sse, LocalSIPEndPoint!);
         SipUri.User = User;
     }
 
@@ -115,7 +115,7 @@ public abstract class SIPChannel
         get
         {
             //return LocalSIPEndPoint.ToString();
-            return SipUri;
+            return SipUri!;
         }
     }
 
@@ -159,7 +159,7 @@ public abstract class SIPChannel
     /// Delegate (callback function) that gets called when a SIP message is received.
     /// </summary>
     /// <value></value>
-    public SIPMessageReceivedDelegate SIPMessageReceived;
+    public SIPMessageReceivedDelegate? SIPMessageReceived = null;
 
     /// <summary>
     /// Sends a SIP message to the specified destination IPEndPoint
@@ -182,7 +182,7 @@ public abstract class SIPChannel
     /// <param name="destinationEndPoint">Destination to send the message to</param>
     /// <param name="buffer">Byte array containing the SIP message</param>
     /// <param name="serverCertificateName">Name of the server's X.509 certificate</param>
-    public abstract void Send(IPEndPoint destinationEndPoint, byte[] buffer, string serverCertificateName);
+    public abstract void Send(IPEndPoint destinationEndPoint, byte[] buffer, string? serverCertificateName);
 
     /// <summary>
     /// Closes the connection
@@ -225,7 +225,7 @@ public abstract class SIPChannel
                 {
                     try
                     {
-                        SIPConnection inactiveConnection = null;
+                        SIPConnection? inactiveConnection = null;
                         Dictionary<string, SIPConnection> connections = GetConnectionsList();
 
                         lock (connections)
@@ -294,7 +294,7 @@ public abstract class SIPChannel
     /// </summary>
     /// <param name="strRemoteEp">String version of the IP endpoint of the connection.</param>
     /// <returns>Returns null if there is no remote certificate available.</returns>
-    public virtual X509Certificate2 GetRemoteCertificate2(string strRemoteEp)
+    public virtual X509Certificate2? GetRemoteCertificate2(string strRemoteEp)
     {
         return null;
     }
@@ -305,7 +305,7 @@ public abstract class SIPChannel
     /// </summary>
     /// <param name="strRemoteEp">String version of the IP endpoint of the connection.</param>
     /// <returns>Returns null if there is no remote certificate available.</returns>
-    public virtual X509Certificate GetRemoteCertificate(string strRemoteEp)
+    public virtual X509Certificate? GetRemoteCertificate(string strRemoteEp)
     {
         return null;
     }

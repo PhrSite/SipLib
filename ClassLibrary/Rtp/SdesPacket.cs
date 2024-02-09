@@ -9,7 +9,7 @@ namespace SipLib.Rtp;
 /// </summary>
 public class SdesPacket
 {
-    private RtcpHeader m_Header = null;
+    private RtcpHeader? m_Header = null;
     private List<SdesChunk> m_SdesChunks = new List<SdesChunk>();
 
     private SdesPacket()
@@ -23,7 +23,7 @@ public class SdesPacket
     /// <param name="Bytes">Input byte array</param>
     /// <param name="StartIdx">Stating index of the SdesPacket data in the input byte array</param>
     /// <returns>Returns a SdesPacket object if successful or null if an error occurred</returns>
-    public static SdesPacket Parse(byte[] Bytes, int StartIdx)
+    public static SdesPacket? Parse(byte[] Bytes, int StartIdx)
     {
         SdesPacket Sp = new SdesPacket();
         if ((Bytes.Length - StartIdx) < RtcpHeader.HeaderLength)
@@ -94,7 +94,7 @@ public class SdesPacket
     /// Gets the RTCP header.
     /// </summary>
     /// <value></value>
-    public RtcpHeader Header
+    public RtcpHeader? Header
     {
         get { return m_Header; }
     }

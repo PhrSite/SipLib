@@ -83,7 +83,7 @@ internal class RttRedundantBlock
         m_PayloadBytes = Payload;
     }
 
-    private byte[] m_PayloadBytes = null;
+    private byte[]? m_PayloadBytes = null;
 
     /// <summary>
     /// Returns a byte array containing the formatted redundant payload header. Call this method after 
@@ -103,12 +103,12 @@ internal class RttRedundantBlock
     /// Gets or sets the payload bytes. The setter also sets the BlockLength property
     /// </summary>
     /// <value></value>
-    public byte[] PayloadBytes
+    public byte[]? PayloadBytes
     {
         get { return m_PayloadBytes; } 
         set
         {
-            m_PayloadBytes = value;
+            m_PayloadBytes = value!;
             if (m_PayloadBytes != null)
                 BlockLength = Convert.ToUInt16(m_PayloadBytes.Length & 0xffff);
             else

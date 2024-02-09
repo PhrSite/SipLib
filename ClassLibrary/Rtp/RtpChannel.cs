@@ -53,48 +53,48 @@ public delegate void DtlsHandshakeFailedDelegate(bool IsServer, IPEndPoint remot
 /// </summary>
 public class RtpChannel
 {
-    private IPEndPoint m_localRtpEndPoint = null;
-    private IPEndPoint m_localRtcpEndPoint = null;
-    private IPEndPoint m_remoteRtpEndpoint = null;
-    private IPEndPoint m_remoteRtcpEndpoint = null;
+    private IPEndPoint? m_localRtpEndPoint = null;
+    private IPEndPoint? m_localRtcpEndPoint = null;
+    private IPEndPoint? m_remoteRtpEndpoint = null;
+    private IPEndPoint? m_remoteRtcpEndpoint = null;
 
-    private string m_mediaType = null;
+    private string? m_mediaType = null;
     private bool m_Incoming = false;
 
-    private UdpClient m_RtpUdpClient = null;
-    private UdpClient m_RtcpUdpClient = null;
-    private Qos m_RtpQos = null;
-    private Qos m_RtcpQos = null;
+    private UdpClient? m_RtpUdpClient = null;
+    private UdpClient? m_RtcpUdpClient = null;
+    private Qos? m_RtpQos = null;
+    private Qos? m_RtcpQos = null;
 
     private bool m_RtcpEnabled = false;
-    private string m_CNAME = null;
+    private string? m_CNAME = null;
     private uint m_SSRC = 0;
 
     private bool m_IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-    private SrtpEncryptor m_srtpEncryptor = null;
-    private SrtpDecryptor m_srtpDecryptor = null;
+    private SrtpEncryptor? m_srtpEncryptor = null;
+    private SrtpDecryptor? m_srtpDecryptor = null;
     private bool m_IsDtlsSrtp = false;
     private bool m_IsSdesSrtp = false;
 
-    private RtpReceiveStatisticsManager m_RtpReceiveStaticsManager = null;
-    private RtpSentStatisticsManager m_RtpSentStaticsManager = null;
-    private Timer m_RtcpTimer = null;
+    private RtpReceiveStatisticsManager? m_RtpReceiveStaticsManager = null;
+    private RtpSentStatisticsManager? m_RtpSentStaticsManager = null;
+    private Timer? m_RtcpTimer = null;
     private const double RTCP_TIMER_INTERVAL_MS = 5000;
     private const int AUDIO_SAMPLE_RATE = 8000;
     private const int AUDIO_PACKETS_PER_SECOND = 50;
     private const int RTT_SAMPLE_RATE = 1000;
     private const int RTT_PACKETS_PER_SECOND = 0;   // Because its not a constant
 
-    private static Certificate m_SelfSigned = null;
-    private static AsymmetricKeyParameter m_AsymmetricKeyParameter = null;
-    private static string m_CertificateFingerprint = null;
+    private static Certificate? m_SelfSigned = null;
+    private static AsymmetricKeyParameter? m_AsymmetricKeyParameter = null;
+    private static string? m_CertificateFingerprint = null;
 
     /// <summary>
     /// Gets the fingerprint of the self-signed X.509 certificate that will be used for DTLS-SRTP.
     /// The certificate is a required SDP attribute for calls that offer or answer DTLS-SRTP media encryption.
     /// </summary>
     /// <value></value>
-    public static string CertificateFingerprint
+    public static string? CertificateFingerprint
     {
         get
         {
@@ -113,31 +113,31 @@ public class RtpChannel
     /// Event that is fired when a RTP media packet has been received by this RtpChannel
     /// </summary>
     /// <value></value>
-    public event RtpPacketReceivedDelegate RtpPacketReceived = null;
+    public event RtpPacketReceivedDelegate? RtpPacketReceived = null;
 
     /// <summary>
     /// Event that is fired when a RTP packet has been sent by this RtpChannel
     /// </summary>
     /// <value></value>
-    public event RtpPacketSentDelegate RtpPacketSent = null;
+    public event RtpPacketSentDelegate? RtpPacketSent = null;
 
     /// <summary>
     /// Event that is fired when a RTCP packet is received.
     /// </summary>
     /// <value></value>
-    public event RtcpPacketReceivedDelegate RtcpPacketReceived = null;
+    public event RtcpPacketReceivedDelegate? RtcpPacketReceived = null;
 
     /// <summary>
     /// Event that is fired when this class sends an RTCP packet.
     /// </summary>
     /// <value></value>
-    public event RtcpPacketSentDelegate RtcpPacketSent = null;
+    public event RtcpPacketSentDelegate? RtcpPacketSent = null;
 
     /// <summary>
     /// Event that is fired fired if the DTLS-SRTP handshake failed
     /// </summary>
     /// <value></value>
-    public event DtlsHandshakeFailedDelegate DtlsHandshakeFailed = null;
+    public event DtlsHandshakeFailedDelegate? DtlsHandshakeFailed = null;
 
     private static Random m_Random = new Random();
 
@@ -213,7 +213,7 @@ public class RtpChannel
     /// <returns>Returns a (RtpChannel, string) tuple. If the RtpChannel return value is null then an error
     /// was detected and the string return value will contain an explanation of the error. If the RtpChannel
     /// return value is not null then the string return value will be null.</returns>
-    public static (RtpChannel, string) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
+    public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
         Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string CNAME)
     {
         if (OfferedMd.MediaType != AnsweredMd.MediaType)
@@ -315,7 +315,7 @@ public class RtpChannel
         return (rtpChannel, null);
     }
 
-    private static CryptoAttribute GetSelectedCryptoAttibute(List<CryptoAttribute> OfferedCryptoAttributes,
+    private static CryptoAttribute? GetSelectedCryptoAttibute(List<CryptoAttribute> OfferedCryptoAttributes,
         string cryptoSuiteName)
     {
         CryptoAttribute cryptoAttribute = null;
@@ -367,30 +367,30 @@ public class RtpChannel
             }
         }
 
-        return new IPEndPoint(iPAddress, port);
+        return new IPEndPoint(iPAddress!, port);
     }
 
     private void CreateUdpEndPoints()
     {
-        m_RtpUdpClient = new UdpClient(m_localRtpEndPoint);
+        m_RtpUdpClient = new UdpClient(m_localRtpEndPoint!);
         if (m_IsWindows == true)
             SIPUDPChannel.DisableConnectionReset(m_RtpUdpClient);
 
         m_RtpQos = new Qos();
-        m_RtpQos.SetUdpDscp(m_RtpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType));
+        m_RtpQos.SetUdpDscp(m_RtpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType!));
 
-        m_RtcpUdpClient = new UdpClient(m_localRtcpEndPoint);
+        m_RtcpUdpClient = new UdpClient(m_localRtcpEndPoint!);
         if (m_IsWindows == true)
             SIPUDPChannel.DisableConnectionReset(m_RtcpUdpClient);
 
         m_RtcpQos = new Qos();
-        m_RtcpQos.SetUdpDscp(m_RtcpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType));
+        m_RtcpQos.SetUdpDscp(m_RtcpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType!));
     }
 
     private bool m_IsListening = false;
     private bool m_ThreadsEnding = false;
-    private Thread m_RtpListenerThread = null;
-    private Thread m_RtcpListenerThread = null;
+    private Thread? m_RtpListenerThread = null;
+    private Thread? m_RtcpListenerThread = null;
 
     /// <summary>
     /// Starts the listener threads for RTP and RTCP.
@@ -420,15 +420,15 @@ public class RtpChannel
         HandshakeThread.Start();
     }
 
-    private DtlsSrtpTransport m_DtlsTransport = null;
+    private DtlsSrtpTransport? m_DtlsTransport = null;
 
     private void DtlsClientHandshakeThread()
     {
         DtlsSrtpClient dtlsClient = new DtlsSrtpClient(m_SelfSigned, m_AsymmetricKeyParameter);
         DtlsSrtpTransport dtlsClientTransport = new DtlsSrtpTransport(dtlsClient);
         dtlsClientTransport.TimeoutMilliseconds = 1000;
-        UdpClient udpClient = new UdpClient(m_localRtpEndPoint);
-        DtlsClientUdpTransport dtlsClientUdpTransport = new DtlsClientUdpTransport(udpClient, m_remoteRtpEndpoint,
+        UdpClient udpClient = new UdpClient(m_localRtpEndPoint!);
+        DtlsClientUdpTransport dtlsClientUdpTransport = new DtlsClientUdpTransport(udpClient, m_remoteRtpEndpoint!,
             dtlsClientTransport);
         Task<bool> clientTask = Task.Run<bool>(() => dtlsClientTransport.DoHandshake(out _));
         bool Result = clientTask.Result;
@@ -500,7 +500,7 @@ public class RtpChannel
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnRtcpTimerExpired(object sender, ElapsedEventArgs e)
+    private void OnRtcpTimerExpired(object? sender, ElapsedEventArgs? e)
     {
         if (m_ThreadsEnding == true)
             return;

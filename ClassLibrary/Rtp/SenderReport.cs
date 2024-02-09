@@ -9,8 +9,8 @@ namespace SipLib.Rtp;
 /// </summary>
 public class SenderReport
 {
-    private RtcpHeader m_Header = null;
-    private SenderInfo m_SenderInfo = null;
+    private RtcpHeader? m_Header = null;
+    private SenderInfo? m_SenderInfo = null;
     private List<ReportBlock> m_Reports = new List<ReportBlock>();
     private const int SSRCIdx = 4;
     private const int SenderInfoIdx = 8;
@@ -21,7 +21,7 @@ public class SenderReport
     /// </summary>
     /// <param name="Bytes">Input byte array</param>
     /// <returns>Returns a SenderReport object if successful or null if an error occurred.</returns>
-    public static SenderReport Parse(byte[] Bytes)
+    public static SenderReport? Parse(byte[] Bytes)
     {
         return Parse(Bytes, 0);
     }
@@ -32,7 +32,7 @@ public class SenderReport
     /// <param name="Bytes">Input byte array</param>
     /// <param name="StartIdx">Starting index of the SenderReport data in the input byte array</param>
     /// <returns>Returns a SenderReport object if successful or null if an error occurred.</returns>
-    public static SenderReport Parse(byte[] Bytes, int StartIdx)
+    public static SenderReport? Parse(byte[] Bytes, int StartIdx)
     {
         int MinSenderReportLength = RtcpHeader.RTCP_HEADER_LENGTH + 4 + SenderInfo.SENDER_INFO_BLOCK_LENGTH;
         if (Bytes.Length - StartIdx < MinSenderReportLength)
@@ -82,7 +82,7 @@ public class SenderReport
     /// Gets the RTCP header.
     /// </summary>
     /// <value></value>
-    public RtcpHeader Header
+    public RtcpHeader? Header
     {
         get { return m_Header; }
     }
@@ -114,7 +114,7 @@ public class SenderReport
     /// Gets the SenderInfo object.
     /// </summary>
     /// <value></value>
-    public SenderInfo SenderInfo
+    public SenderInfo? SenderInfo
     {
         get { return m_SenderInfo; }
     }

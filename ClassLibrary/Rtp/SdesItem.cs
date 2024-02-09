@@ -52,7 +52,7 @@ public class SdesItem
 {
     private SdesItemType m_SdesItemType;
     private int m_Length = 0;
-    private byte[] m_Payload = null;
+    private byte[]? m_Payload = null;
 
     private const int MinSdesItemLength = 2;
     private const int SdesTypeIdx = 0;
@@ -69,7 +69,7 @@ public class SdesItem
     /// <param name="Bytes">Input byte array containing the SdesItem data to parse</param>
     /// <param name="StartIdx">Starting index in the input array</param>
     /// <returns>Returns an SdesItem if successful or null if an error occurred</returns>
-    public static SdesItem Parse(byte[] Bytes, int StartIdx)
+    public static SdesItem? Parse(byte[] Bytes, int StartIdx)
     {
         SdesItem Si = new SdesItem();
         if (Bytes.Length - StartIdx < MinSdesItemLength)
@@ -112,7 +112,7 @@ public class SdesItem
     /// <summary>
     /// Gets the string value of the payload. Returns null if there is no payload. </summary>
     /// <value></value>
-    public string Payload
+    public string? Payload
     {
         get
         {
@@ -137,7 +137,7 @@ public class SdesItem
     /// Converts this SdesItem to a byte array for loading it into a SDES chunk.
     /// </summary>
     /// <returns>Returns the byte array for this object. Returns null if there is no payload.</returns>
-    public byte[] ToByteArray()
+    public byte[]? ToByteArray()
     {
         if (m_Payload == null || m_Length == 0)
             return null;

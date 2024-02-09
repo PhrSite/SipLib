@@ -155,7 +155,7 @@ public interface IDtlsSrtpPeer
     /// Event that will be fired when a protocol handshake alert is received or raised
     /// </summary>
     /// <value></value>
-    event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
+    event Action<AlertLevelsEnum, AlertTypesEnum, string>? OnAlert;
     /// <summary>
     /// Returns true if use of the extended master secret is to be forced
     /// </summary>
@@ -208,10 +208,10 @@ public interface IDtlsSrtpPeer
 /// </summary>
 public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
 {
-    Certificate mCertificateChain = null;
-    AsymmetricKeyParameter mPrivateKey = null;
+    Certificate? mCertificateChain = null;
+    AsymmetricKeyParameter? mPrivateKey = null;
 
-    private RTCDtlsFingerprint mFingerPrint;
+    private RTCDtlsFingerprint? mFingerPrint;
 
     /// <summary>
     /// Gets or sets a flag to indicate whether or not to force the use of the extended MasterSecret.
@@ -224,7 +224,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// Gets the client's X.509 certificate
     /// </summary>
     /// <value></value>
-    public Certificate ClientCertificate { get; private set; }
+    public Certificate? ClientCertificate { get; private set; }
 
     // the server response to the client handshake request
     // http://tools.ietf.org/html/rfc5764#section-4.1.1
@@ -235,7 +235,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     private byte[] srtpMasterServerKey;
     private byte[] srtpMasterClientSalt;
     private byte[] srtpMasterServerSalt;
-    byte[] masterSecret = null;
+    byte[]? masterSecret = null;
 
     // Policies
     private SrtpPolicy srtpPolicy;
@@ -247,12 +247,12 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// This event is fired if an Alert message was received during the DTLS protocol handshake
     /// </summary>
     /// <value></value>
-    public event Action<AlertLevelsEnum, AlertTypesEnum, string> OnAlert;
+    public event Action<AlertLevelsEnum, AlertTypesEnum, string>? OnAlert;
 
     /// <summary>
     /// Constructor. Creates a self-signed certificate.
     /// </summary>
-    public DtlsSrtpServer() : this((Certificate)null, null)
+    public DtlsSrtpServer() : this((Certificate)null!, null!)
     {
     }
 
@@ -312,7 +312,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// Gets the fingerprint for the certificate.
     /// </summary>
     /// <value></value>
-    public RTCDtlsFingerprint Fingerprint
+    public RTCDtlsFingerprint? Fingerprint
     {
         get
         {
@@ -324,7 +324,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// Gets the private key for the certificate.
     /// </summary>
     /// <value></value>
-    public AsymmetricKeyParameter PrivateKey
+    public AsymmetricKeyParameter? PrivateKey
     {
         get
         {
@@ -336,7 +336,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// Gets the certificate change containing the certificate
     /// </summary>
     /// <value></value>
-    public Certificate CertificateChain
+    public Certificate? CertificateChain
     {
         get
         {
@@ -552,7 +552,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
         //Copy master Secret (will be inaccessible after this call)
         masterSecret = new byte[mContext.SecurityParameters.MasterSecret != null ? mContext.SecurityParameters.
             MasterSecret.Length : 0];
-        Buffer.BlockCopy(mContext.SecurityParameters.MasterSecret, 0, masterSecret, 0, masterSecret.Length);
+        Buffer.BlockCopy(mContext.SecurityParameters.MasterSecret!, 0, masterSecret, 0, masterSecret.Length);
 
         //Prepare Srtp Keys (we must to it here because master key will be cleared after that)
         PrepareSrtpSharedSecret();
@@ -573,7 +573,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <returns></returns>
     protected override TlsSignerCredentials GetECDsaSignerCredentials()
     {
-        return DtlsUtils.LoadSignerCredentials(mContext, mCertificateChain, mPrivateKey, new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.ecdsa));
+        return DtlsUtils.LoadSignerCredentials(mContext, mCertificateChain!, mPrivateKey!, new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.ecdsa));
     }
 
     /// <summary>
@@ -582,7 +582,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <returns></returns>
     protected override TlsEncryptionCredentials GetRsaEncryptionCredentials()
     {
-        return DtlsUtils.LoadEncryptionCredentials(mContext, mCertificateChain, mPrivateKey);
+        return DtlsUtils.LoadEncryptionCredentials(mContext, mCertificateChain!, mPrivateKey!);
     }
 
     /// <summary>
@@ -611,11 +611,11 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
 
             if (signatureAndHashAlgorithm == null)
             {
-                return null;
+                return null!;
             }
         }
 
-        return DtlsUtils.LoadSignerCredentials(mContext, mCertificateChain, mPrivateKey, signatureAndHashAlgorithm);
+        return DtlsUtils.LoadSignerCredentials(mContext, mCertificateChain!, mPrivateKey!, signatureAndHashAlgorithm!);
     }
 
     /// <summary>
@@ -683,7 +683,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <returns></returns>
     protected byte[] GetKeyingMaterial(int length)
     {
-        return GetKeyingMaterial(ExporterLabel.dtls_srtp, null, length);
+        return GetKeyingMaterial(ExporterLabel.dtls_srtp, null!, length);
     }
 
     /// <summary>
@@ -774,7 +774,7 @@ public class DtlsSrtpServer : DefaultTlsServer, IDtlsSrtpPeer
     /// <returns></returns>
     public Certificate GetRemoteCertificate()
     {
-        return ClientCertificate;
+        return ClientCertificate!;
     }
 
     /// <summary>

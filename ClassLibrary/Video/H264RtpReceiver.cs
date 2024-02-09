@@ -11,7 +11,7 @@ namespace SipLib.Video;
 /// </summary>
 public class H264RtpReceiver
 {
-    H264Depacketiser m_Depacketiser = null;
+    H264Depacketiser? m_Depacketiser = null;
 
     /// <summary>
     /// Constructor
@@ -27,7 +27,7 @@ public class H264RtpReceiver
     /// <param name="rtpPacket">RTP packet to process</param>
     /// <returns>Returns a byte array containing a complete H264 access unit frame when a full frame
     /// has been received. Returns null if a full frame is not ready yet.</returns>
-    public byte[] ProcessRtpPacket(RtpPacket rtpPacket)
+    public byte[]? ProcessRtpPacket(RtpPacket rtpPacket)
     {
         int markerBit = rtpPacket.Marker == true ? 1 : 0;
         MemoryStream frameStream = m_Depacketiser.ProcessRTPPayload(rtpPacket.Payload, rtpPacket.SequenceNumber, 

@@ -26,7 +26,7 @@ public class Sdp
     /// Contains the origin information for the "o" parameter. See Section 5.2 of RFC 4566.
     /// </summary>
     /// <value></value>
-    public Origin Origin = null;
+    public Origin? Origin = null;
     /// <summary>
     /// Contains the Session Name for the "s" type. parameter Section 5.3 of RFC 4566.
     /// </summary>
@@ -83,7 +83,7 @@ public class Sdp
     /// Contains the connecton data for the call.
     /// </summary>
     /// <value></value>
-    public ConnectionData ConnectionData = null;
+    public ConnectionData? ConnectionData = null;
 
     /// <summary>
     /// Contains the attributes for this media session.
@@ -203,26 +203,26 @@ public class Sdp
                         sdp.Origin = Origin.ParseOrigin(strValue);
                         break;
                     case "t":
-                        sdp.Timing = strValue;
+                        sdp.Timing = strValue!;
                         break;
                     case "s":
-                        sdp.SessionName = strValue;
+                        sdp.SessionName = strValue!;
                         break;
                     case "i":
-                        sdp.SessionInformation = strValue;
+                        sdp.SessionInformation = strValue!;
                         break;
                     case "u":
-                        sdp.Uri = strValue;
+                        sdp.Uri = strValue!;
                         break;
                     case "e":
-                        sdp.Email = strValue;
+                        sdp.Email = strValue!;
                         break;
                     case "p":
-                        sdp.PhoneNumber = strValue;
+                        sdp.PhoneNumber = strValue!;
                         break;
                     case "b":
                         if (sdp.Media.Count == 0)
-                            sdp.Bandwidth = strValue;
+                            sdp.Bandwidth = strValue!;
                         else
                         {
                             if (strValue.StartsWith("CT:") == true)
@@ -352,7 +352,7 @@ public class Sdp
     /// <param name="strType">Type of media such as audio, video, text, etc..</param>
     /// <returns>Returns the SepMediaDescription object if the specified type of media is present or null if
     /// it is not.</returns>
-    public MediaDescription GetMediaType(string strType)
+    public MediaDescription? GetMediaType(string strType)
     {
         MediaDescription RetVal = null;
         foreach (MediaDescription Med in Media)
@@ -434,7 +434,7 @@ public class Sdp
     /// <param name="Port">Port number to send the audio to. This output will contain the port number to
     /// if this method returns true or it will be set to 0 if this function returns false.</param>
     /// <returns>Returns true if the audio media type is present and valid. Else returns null.</returns>
-    public bool GetAudioConnectionData(ref string strIpAddr, ref int Port)
+    public bool GetAudioConnectionData(ref string? strIpAddr, ref int Port)
     {
         strIpAddr = null;
         Port = 0;
@@ -459,7 +459,7 @@ public class Sdp
         return true;
     }
 
-    private string GetValueOfNameValuePair(string Input, char Sep)
+    private string? GetValueOfNameValuePair(string Input, char Sep)
     {
         if (string.IsNullOrEmpty(Input) == true)
             return null;
@@ -477,7 +477,7 @@ public class Sdp
     /// <param name="strAttr">Name of the attribute to search for.</param>
     /// <returns>Returns a SdpAttribute for the named attribute if it is found or null if the named attribute
     /// is not present.</returns>
-    public SdpAttribute GetNamedAttribute(string strAttr)
+    public SdpAttribute? GetNamedAttribute(string strAttr)
     {
         SdpAttribute RetVal = null;
         foreach (SdpAttribute Sa in Attributes)
@@ -569,7 +569,7 @@ public class Sdp
     /// <param name="Smd">The SDP Media Description block for the media to get the IP address for.</param>
     /// <returns>Returns an IPAddress. Returns null if there was no address specified in the session or
     /// media levels.</returns>
-    public static IPAddress GetMediaIPAddr(Sdp Sdp, MediaDescription Smd)
+    public static IPAddress? GetMediaIPAddr(Sdp Sdp, MediaDescription Smd)
     {
         IPAddress RetVal = null;
         if (Smd.ConnectionData != null)
@@ -588,7 +588,7 @@ public class Sdp
     /// <param name="Smd">The SDP Media Description block for the media to get the IP address for.</param>
     /// <returns>Returns an IPAddress. Returns null if there was no address specified in the session or
     /// media levels.</returns>
-    public static IPEndPoint GetMediaEndPoint(Sdp Sdp, MediaDescription Smd)
+    public static IPEndPoint? GetMediaEndPoint(Sdp Sdp, MediaDescription Smd)
     {
         IPAddress MediaIpAddr = Sdp.GetMediaIPAddr(Sdp, Smd);
         if (MediaIpAddr == null)

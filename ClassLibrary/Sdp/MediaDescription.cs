@@ -46,7 +46,7 @@ public class MediaDescription
     /// session.
     /// </summary>
     /// <value></value>
-    public ConnectionData ConnectionData = null;
+    public ConnectionData? ConnectionData = null;
 
     /// <summary>
     /// Specifies the bandwidth limit for the media in kilo-bits per second. This is comes from or generates
@@ -122,7 +122,7 @@ public class MediaDescription
     /// <param name="strMd">Input string containing the lines of an SDP media description block. The
     /// first line must contain an m= line</param>
     /// <returns>Returns a new MediaDescription object of successful or null if an error is detected.</returns>
-    public static MediaDescription ParseMediaDescriptionString(string strMd)
+    public static MediaDescription? ParseMediaDescriptionString(string strMd)
     {
         MediaDescription Md = null;
         if (string.IsNullOrEmpty(strMd) == true)
@@ -185,7 +185,7 @@ public class MediaDescription
         return Md;
     }
 
-    private static string GetValueOfNameValuePair(string Input, char Sep)
+    private static string? GetValueOfNameValuePair(string Input, char Sep)
     {
         if (string.IsNullOrEmpty(Input) == true)
             return null;
@@ -261,7 +261,7 @@ public class MediaDescription
     /// <param name="strAttr">Name of the attribute to search for.</param>
     /// <returns>Returns a SdpAttribute for the named attribute if it is found or null if the named
     /// attribute is not present.</returns>
-    public SdpAttribute GetNamedAttribute(String strAttr)
+    public SdpAttribute? GetNamedAttribute(String strAttr)
     {
         SdpAttribute RetVal = null;
         foreach (SdpAttribute Sa in Attributes)
@@ -418,7 +418,7 @@ public class MediaDescription
     /// </summary>
     /// <param name="strCodecName">Codec or encoding name</param>
     /// <returns>Returns the RtpMapAttribute object if found or null if not found</returns>
-    public RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
+    public RtpMapAttribute? GetRtpMapForCodecType(string strCodecName)
     {
         RtpMapAttribute rtpMap = null;
         foreach (RtpMapAttribute rtpMapAttribute in RtpMapAttributes)
@@ -439,7 +439,7 @@ public class MediaDescription
     /// </summary>
     /// <param name="payloadType">Specifies the payload type to look for</param>
     /// <returns>Returns the RtpMapAttribute object if successful or null if it is not present</returns>
-    public RtpMapAttribute GetRtpMapForPayloadType(int payloadType)
+    public RtpMapAttribute? GetRtpMapForPayloadType(int payloadType)
     {
         RtpMapAttribute rtpMap = null;
         foreach (RtpMapAttribute rtpAttr in  RtpMapAttributes)
@@ -459,7 +459,7 @@ public class MediaDescription
     /// </summary>
     /// <param name="strFormatNumber">String representation of the media format number to look for.</param>
     /// <returns>Returns the SdpAttribute object or null if its not found.</returns>
-    public SdpAttribute GetFmtpForFormatNumber(string strFormatNumber)
+    public SdpAttribute? GetFmtpForFormatNumber(string strFormatNumber)
     {
         SdpAttribute RetVal = null;
         foreach (SdpAttribute Sa in Attributes)
@@ -483,7 +483,7 @@ public class MediaDescription
     /// <param name="Port">RTP port number to use.</param>
     /// <returns>Returns a new MediaDescription object or null if the video media block does not contain
     /// an offer of H264 media.</returns>
-    public MediaDescription BuildH264AnswerSmd(int Port)
+    public MediaDescription? BuildH264AnswerSmd(int Port)
     {
         MediaDescription AnsSmd = null;
 

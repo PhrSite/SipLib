@@ -43,7 +43,7 @@ public class H264Depacketiser
     /// <returns>Returns a MemoryStream containing a complete H264 access unit frame when one is ready. Use
     /// the ToArray() method to get the byte array containing the complete frame. Returns null if
     /// a full frame is not ready yet.</returns>
-    public MemoryStream ProcessRTPPayload(byte[] rtpPayload, ushort seqNum, uint timestamp, int markbit,
+    public MemoryStream? ProcessRTPPayload(byte[] rtpPayload, ushort seqNum, uint timestamp, int markbit,
         out bool isKeyFrame)
     {
         List<byte[]> nal_units = ProcessRTPPayloadAsNals(rtpPayload, seqNum, timestamp, markbit, out isKeyFrame);
@@ -83,14 +83,14 @@ public class H264Depacketiser
         return null;
     }
 
-    private List<byte[]> ProcessRTPPayloadAsNals(byte[] rtpPayload, ushort seqNum, uint timestamp, int markbit,
+    private List<byte[]>? ProcessRTPPayloadAsNals(byte[] rtpPayload, ushort seqNum, uint timestamp, int markbit,
         out bool isKeyFrame)
     {
         List<byte[]> nal_units = ProcessH264Payload(rtpPayload, seqNum, timestamp, markbit, out isKeyFrame);
         return nal_units;
     }
 
-    private List<byte[]> ProcessH264Payload(byte[] rtp_payload, ushort seqNum, uint rtp_timestamp, 
+    private List<byte[]>? ProcessH264Payload(byte[] rtp_payload, ushort seqNum, uint rtp_timestamp, 
         int rtp_marker, out bool isKeyFrame)
     {
         if (previous_timestamp != rtp_timestamp && previous_timestamp > 0)

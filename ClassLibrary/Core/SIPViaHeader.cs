@@ -94,7 +94,7 @@ public class SIPViaHeader
     /// Version parameter
     /// </summary>
     /// <value></value>
-    public string Version = null;
+    public string? Version = null;
 
     /// <summary>
     /// Transport protocol
@@ -106,7 +106,7 @@ public class SIPViaHeader
     /// Host portion of the URI
     /// </summary>
     /// <value></value>
-    public string Host = null;
+    public string? Host = null;
 
     /// <summary>
     /// Port number
@@ -118,11 +118,11 @@ public class SIPViaHeader
     /// Gets or sets the branch parameter
     /// </summary>
     /// <value></value>
-    public string Branch
+    public string? Branch
     {
         get
         {
-            if (ViaParameters != null && ViaParameters.Has(m_branchKey))
+            if (ViaParameters! != null! && ViaParameters.Has(m_branchKey))
                 return ViaParameters.Get(m_branchKey);
             else
                 return null;
@@ -134,11 +134,11 @@ public class SIPViaHeader
     /// IP Address contained in the recevied parameter.
     /// </summary>
     /// <value></value>
-    public string ReceivedFromIPAddress
+    public string? ReceivedFromIPAddress
     {
         get
         {
-            if (ViaParameters != null && ViaParameters.Has(m_receivedKey))
+            if (ViaParameters! != null! && ViaParameters.Has(m_receivedKey))
                 return ViaParameters.Get(m_receivedKey);
             else
                 return null;
@@ -154,7 +154,7 @@ public class SIPViaHeader
     {
         get
         {
-            if (ViaParameters != null && ViaParameters.Has(m_rportKey))
+            if (ViaParameters! != null! && ViaParameters.Has(m_rportKey))
             {
                 string rportVal = ViaParameters.Get(m_rportKey);
                 if (string.IsNullOrEmpty(rportVal) == false)
@@ -172,7 +172,7 @@ public class SIPViaHeader
     /// Contains the Via header parameters
     /// </summary>
     /// <value></value>
-    public SIPParameters ViaParameters = new SIPParameters(null, m_paramDelimChar);
+    public SIPParameters? ViaParameters = new SIPParameters(null, m_paramDelimChar);
 
     /// <summary>
     /// This the address placed into the Via header by the User Agent.
@@ -215,7 +215,7 @@ public class SIPViaHeader
     /// fields.
     /// </summary>
     /// <value></value>
-    public string ReceivedFromAddress
+    public string? ReceivedFromAddress
     {
         get
         {
@@ -431,10 +431,8 @@ public class SIPViaHeader
     public new string ToString()
     {
         string sipViaHeader = SIPHeaders.SIP_HEADER_VIA + ": " +
-            this.Version + "/" + this.Transport.ToString().ToUpper() + " " +
-            ContactAddress;
-        sipViaHeader += (ViaParameters != null && ViaParameters.Count > 0) ?
-            ViaParameters.ToString() : null;
+            this.Version + "/" + this.Transport.ToString().ToUpper() + " " + ContactAddress;
+        sipViaHeader += (ViaParameters! != null! && ViaParameters.Count > 0) ? ViaParameters.ToString() : null;
 
         return sipViaHeader;
     }

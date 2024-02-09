@@ -45,13 +45,13 @@ public class CryptoAttribute
     /// "SRTP_FEC". Optional. Set to null if it is not specified.
     /// </summary>
     /// <value></value>
-    public string FEC_ORDER = null;
+    public string? FEC_ORDER = null;
     /// <summary>
     /// Specifies the fec-key session parameter. The value depends upon the FEC scheme being used. Optional.
     /// Set to null if it is not specified.
     /// </summary>
     /// <value></value>
-    public string FEC_KEY = null;
+    public string? FEC_KEY = null;
     /// <summary>
     /// Specifies the Window Size Hint used for replay detection. This session parameter is optional. The
     /// minimum value is 64. A value of -1 indicates that the field has not been set.
@@ -66,7 +66,7 @@ public class CryptoAttribute
     /// </summary>
     /// <param name="strCrypto">Input containing the value portion of a crypto SDP attribute.</param>
     /// <returns>Returns a new CryptoAttribute object if successful or null if an error occurred.</returns>
-    public static CryptoAttribute Parse(string strCrypto)
+    public static CryptoAttribute? Parse(string strCrypto)
     {
         if (string.IsNullOrEmpty(strCrypto) == true)
             return null;

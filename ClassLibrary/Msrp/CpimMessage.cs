@@ -20,7 +20,7 @@ public class CpimMessage
     /// Gets or sets the From header. Required.
     /// </summary>
     /// <value></value>
-    public SIPUserField From { get; set; }
+    public SIPUserField? From { get; set; }
 
     /// <summary>
     /// Gets or sets a list of To header fields. Initialized to an empty list. The list
@@ -40,13 +40,13 @@ public class CpimMessage
     /// text/plain.
     /// </summary>
     /// <value></value>
-    public string ContentType { get; set; } = null;
+    public string? ContentType { get; set; } = null;
 
     /// <summary>
     /// Gets or set the Content-ID header value. Optional.
     /// </summary>
     /// <value></value>
-    public string ContentID { get; set; } = null;
+    public string? ContentID { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the a list of Subject header values. Optional. Initialized to an empty list.
@@ -65,7 +65,7 @@ public class CpimMessage
     /// Gets or sets the value of the Require header field. Optional.
     /// </summary>
     /// <value></value>
-    public string Require { get; set; } = null;
+    public string? Require { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the list of Name Space (NS) headers. Optional. Initialized to an empty string.
@@ -84,7 +84,7 @@ public class CpimMessage
     /// Gets or sets the contents (body) of the message.
     /// </summary>
     /// <value></value>
-    public byte[] Body { get; set; } = null;
+    public byte[]? Body { get; set; } = null;
 
     /// <summary>
     /// Default constructor
@@ -98,7 +98,7 @@ public class CpimMessage
     /// </summary>
     /// <param name="cpimBytes">Input message</param>
     /// <returns>Returns a new CpimMessage object if successful or null is a parsing error occurred</returns>
-    public static CpimMessage ParseCpimBytes(byte[] cpimBytes)
+    public static CpimMessage? ParseCpimBytes(byte[] cpimBytes)
     {
         CpimMessage cpimMessage = null;
 

@@ -30,7 +30,7 @@ public class MsrpPathHeader
     /// </summary>
     /// <param name="HeaderValue">Input header string value</param>
     /// <returns>Returns a new MsrpPathHeader if successful or null if an error is detected</returns>
-    public static MsrpPathHeader ParseMsrpPathHeader(string HeaderValue)
+    public static MsrpPathHeader? ParseMsrpPathHeader(string HeaderValue)
     {
         MsrpPathHeader pathHeader = new MsrpPathHeader();
         if (string.IsNullOrEmpty(HeaderValue))

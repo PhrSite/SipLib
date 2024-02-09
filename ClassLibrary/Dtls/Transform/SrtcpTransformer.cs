@@ -124,7 +124,7 @@ internal class SrtcpTransformer : IPacketTransformer
     /// <returns></returns>
     public byte[] ReverseTransform(byte[] pkt)
     {
-        return ReverseTransform(pkt, 0, pkt.Length);
+        return ReverseTransform(pkt, 0, pkt.Length)!;
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ internal class SrtcpTransformer : IPacketTransformer
             {
                 result = packet.GetData();
             }
-            return result;
+            return result!;
         }
         finally
         {

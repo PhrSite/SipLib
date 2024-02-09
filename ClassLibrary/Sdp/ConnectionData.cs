@@ -27,11 +27,11 @@ public class ConnectionData
     /// Contains the IP address portion of a c= SDP line. May be an IPv4 or an IPv6 address
     /// </summary>
     /// <value></value>
-    public IPAddress Address = null;
+    public IPAddress? Address = null;
 
     /// <summary>
     /// Contains the number of IP addresses if the Address is a multicast address.
-    /// A value of 0 indicates that the address count field is not present.
+    /// A value of 0 indicates that the address Count field is not present.
     /// </summary>
     /// <value></value>
     public int AddressCount = 0;
@@ -84,7 +84,7 @@ public class ConnectionData
         int Idx;
         Idx = strAddrField.IndexOf("/");
         if (Idx >= 0)
-            // Strip out the TTL and/or address count fields from the IP address
+            // Strip out the TTL and/or address Count fields from the IP address
             strAddress = strAddrField.Remove(Idx);
         else
             strAddress = strAddrField;
@@ -93,7 +93,7 @@ public class ConnectionData
             throw new ArgumentException("The IP address in the SDP connection " +
                 "data line is not valid", "strConnectionData");
 
-        // Get the TTL and address count fields if present
+        // Get the TTL and address Count fields if present
         string[] strAry = strAddrField.Split('/', StringSplitOptions.RemoveEmptyEntries);
         if (strAry.Length >= 2)
         {
@@ -104,7 +104,7 @@ public class ConnectionData
                     int.TryParse(strAry[2], out Cd.AddressCount);
             }
             else
-                // Its an IPv6 address and there is no TTL, so get the address count
+                // Its an IPv6 address and there is no TTL, so get the address Count
                 int.TryParse(strAry[1], out Cd.AddressCount);
         }
 
@@ -139,13 +139,13 @@ public class ConnectionData
             if (TTL != -1)
             {
                 strRetValue += "/" + TTL.ToString();
-                // For IPv4, if there is a TTL then there may be an address count
+                // For IPv4, if there is a TTL then there may be an address Count
                 if (AddressCount != 0)
                     strRetValue += "/" + AddressCount.ToString();
             }
         }
         else if (Address.AddressFamily == AddressFamily.InterNetworkV6)
-        {    // There is no TTL field for IPv6, but there may be an address count
+        {    // There is no TTL field for IPv6, but there may be an address Count
             if (AddressCount != 0)
                 strRetValue += "/" + AddressCount.ToString();
         }

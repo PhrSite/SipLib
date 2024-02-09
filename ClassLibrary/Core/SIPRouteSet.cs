@@ -103,7 +103,7 @@ public class SIPRouteSet
     /// Gets the top route
     /// </summary>
     /// <value></value>
-    public SIPRoute TopRoute
+    public SIPRoute? TopRoute
     {
         get
         {
@@ -118,7 +118,7 @@ public class SIPRouteSet
     /// Gets the bottom route
     /// </summary>
     /// <value></value>
-    public SIPRoute BottomRoute
+    public SIPRoute? BottomRoute
     {
         get
         {
@@ -171,7 +171,7 @@ public class SIPRouteSet
     /// Removes the top route and returns it
     /// </summary>
     /// <returns>Returns the top route or null if the route set is empty</returns>
-    public SIPRoute PopRoute()
+    public SIPRoute? PopRoute()
     {
         SIPRoute route = null;
 
@@ -199,7 +199,7 @@ public class SIPRouteSet
     /// Reverses the order of the route set
     /// </summary>
     /// <returns>Returns a new SIPRouteSet</returns>
-    public SIPRouteSet Reversed()
+    public SIPRouteSet? Reversed()
     {
         if (m_sipRoutes != null && m_sipRoutes.Count > 0)
         {
@@ -251,6 +251,6 @@ public class SIPRouteSet
             }
         }
 
-        return routeStr;
+        return routeStr!;
     }
 }

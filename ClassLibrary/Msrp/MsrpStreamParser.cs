@@ -36,7 +36,7 @@ public class MsrpStreamParser
 
     private int m_MsrpPatternIndex = 0;
 
-    private byte[] m_EndLineBytePattern = null;
+    private byte[]? m_EndLineBytePattern = null;
 
     // The bytes to collect after the end line pattern is detected are the continuation flag byte ($, + or #),
     // CR and LF.
@@ -111,7 +111,7 @@ public class MsrpStreamParser
         }
         else if (m_ParsingState == ParsingStateEnum.EndLineSearch)
         {
-            index = FindEndLinePattern(m_MessageBuffer, m_CurrentLength - 1, m_EndLineBytePattern);
+            index = FindEndLinePattern(m_MessageBuffer, m_CurrentLength - 1, m_EndLineBytePattern!);
             if (index > 0)
             {   // The end line pattern was found
                 m_ParsingState = ParsingStateEnum.EndLineFound;
@@ -169,7 +169,7 @@ public class MsrpStreamParser
     /// </summary>
     /// <returns>Returns a byte array containing the full MSRP message transaction. Returns null
     /// if this method is not called immediately after ProcessByte() returns true.</returns>
-    public byte[] GetMessageBytes()
+    public byte[]? GetMessageBytes()
     {
         byte[] MessageBytes = null;
         int MessageLength = m_CurrentLength - m_MsrpPatternIndex;

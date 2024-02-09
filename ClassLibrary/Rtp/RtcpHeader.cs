@@ -38,7 +38,7 @@ public class RtcpHeader
     /// <value></value>
     public const int RTCP_HEADER_LENGTH = 4;
 
-    private byte[] m_PacketBytes = null;
+    private byte[]? m_PacketBytes = null;
     /// <summary>
     /// The first byte contains the V, P, Count fields.
     /// </summary>

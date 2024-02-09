@@ -14,13 +14,13 @@ public class RTCDtlsFingerprint
     /// <summary>
     /// One of the hash function algorithms defined in the 'Hash function Textual Names' registry.
     /// </summary>
-    public string algorithm;
+    public string? algorithm;
 
     /// <summary>
     /// The value of the certificate fingerprint in lower-case hex string as expressed utilising 
     /// the syntax of 'fingerprint' in [RFC4572] Section 5.
     /// </summary>
-    public string value;
+    public string? value;
 
     /// <summary>
     /// Converts this object to a string that can be used for the value of the SDP fingerprint attribute
@@ -29,7 +29,7 @@ public class RTCDtlsFingerprint
     public override string ToString()
     {
         // FireFox wasn't happy unless the fingerprint hash was in upper case.
-        return $"{algorithm} {value.ToUpper()}";
+        return $"{algorithm} {value!.ToUpper()}";
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class RTCDtlsFingerprint
     /// <param name="str">The string to parse from.</param>
     /// <param name="fingerprint">If successful a fingerprint object.</param>
     /// <returns>True if a fingerprint was successfully parsed. False if not.</returns>
-    public static bool TryParse(string str, out RTCDtlsFingerprint fingerprint)
+    public static bool TryParse(string str, out RTCDtlsFingerprint? fingerprint)
     {
         fingerprint = null;
 

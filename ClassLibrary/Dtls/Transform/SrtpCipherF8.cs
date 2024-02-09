@@ -75,11 +75,11 @@ internal class SrtpCipherF8
         /// <summary>
         /// </summary>
         /// <value></value>
-        public byte[] S;
+        public byte[]? S;
         /// <summary>
         /// </summary>
         /// <value></value>
-        public byte[] ivAccent;
+        public byte[]? ivAccent;
         /// <summary>
         /// </summary>
         /// <value></value>

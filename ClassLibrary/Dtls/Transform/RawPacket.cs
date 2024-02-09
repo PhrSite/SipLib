@@ -231,7 +231,7 @@ public class RawPacket
     /// Gets the RTP payload (bytes) of this RTP packet.
     /// </summary>
     /// <returns></returns>
-    public byte[] GetPayload()
+    public byte[]? GetPayload()
     {
         return ReadRegion(GetHeaderLength(), GetPayloadLength());
     }
@@ -355,7 +355,7 @@ public class RawPacket
     /// <param name="off">Offset to the region to be read</param>
     /// <param name="len">Length of the region to be read</param>
     /// <returns></returns>
-    public byte[] ReadRegion(int off, int len)
+    public byte[]? ReadRegion(int off, int len)
     {
         this.buffer.Position = 0;
         if (off < 0 || len <= 0 || off + len > this.buffer.Length)

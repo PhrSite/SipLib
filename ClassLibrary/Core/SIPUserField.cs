@@ -61,13 +61,13 @@ public class SIPUserField
     /// Name portion of the user field for a header
     /// </summary>
     /// <value></value>
-    public string Name = null;
+    public string? Name = null;
 
     /// <summary>
     /// SIPURI portion of the header user field
     /// </summary>
     /// <value></value>
-    public SIPURI URI = null;
+    public SIPURI? URI = null;
 
     /// <summary>
     /// Header parameters
@@ -88,7 +88,7 @@ public class SIPUserField
     /// <param name="uri">A valid SIPURI.</param>
     /// <param name="paramsAndHeaders">A string containing the parameters and
     /// embedded headers. Optional.</param>
-    public SIPUserField(string name, SIPURI uri, string paramsAndHeaders)
+    public SIPUserField(string? name, SIPURI uri, string? paramsAndHeaders)
     {
         Name = name;
         URI = uri;
@@ -102,7 +102,7 @@ public class SIPUserField
     /// <param name="userFieldStr">Input string</param>
     /// <returns>Returns a new SIPUserField object if successful or null if a parsing error occurred.
     /// </returns>
-    public static SIPUserField TryParseSIPUserField(string userFieldStr)
+    public static SIPUserField? TryParseSIPUserField(string userFieldStr)
     {
         SIPUserField Suf = null;
         try
@@ -195,7 +195,7 @@ public class SIPUserField
             if (Name != null)
                 userFieldStr = "\"" + Name + "\" ";
 
-            if (URI == null)
+            if (URI! == null!)
                 throw new NullReferenceException("The URI field is null");
 
             userFieldStr += "<" + URI.ToString() + ">" + Parameters.ToString();
@@ -221,7 +221,7 @@ public class SIPUserField
         if (Name != null)
             userFieldStr = Name + " ";
 
-        if (URI == null)
+        if (URI! == null!)
             throw new NullReferenceException("The URI field is null");
 
         userFieldStr += "<" + URI.ToString() + ">" + Parameters.ToString();
@@ -243,7 +243,7 @@ public class SIPUserField
             if (Name != null)
                 userFieldStr = "\"" + Name + "\" ";
 
-            if (URI == null)
+            if (URI! == null!)
                 throw new NullReferenceException("The URI field is null");
 
             userFieldStr += "<" + URI.ToParameterlessString() + ">";
@@ -264,7 +264,7 @@ public class SIPUserField
     {
         SIPUserField copy = new SIPUserField();
         copy.Name = Name;
-        if (URI == null)
+        if (URI! == null!)
             copy.URI = null;
         else
             copy.URI = URI.CopyOf();

@@ -53,24 +53,24 @@ public class SIPReplacesParameter
     /// SIP Call-ID of the call
     /// </summary>
     /// <value></value>
-    public string CallID;
+    public string? CallID;
     /// <summary>
     /// Tag from the To header
     /// </summary>
     /// <value></value>
-    public string ToTag;
+    public string? ToTag;
     /// <summary>
     /// Tag from the From header
     /// </summary>
     /// <value></value>
-    public string FromTag;
+    public string? FromTag;
 
     /// <summary>
     /// Parses a string into a SIPReplacesParameter
     /// </summary>
     /// <param name="replaces">Input string</param>
     /// <returns>Returns a new SIPReplacesParameter or null if an error occurred</returns>
-    public static SIPReplacesParameter Parse(string replaces)
+    public static SIPReplacesParameter? Parse(string replaces)
     {
         Match callIDMatch = Regex.Match(replaces, "^(?<callid>.*?);");
         if (replaces.IndexOf(';') != -1)

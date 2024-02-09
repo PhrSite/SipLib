@@ -99,7 +99,7 @@ public static class TypeExtensions
     /// <param name="endDelimeter">The character to end the slice on. The first instance of the 
     /// character found is used.</param>
     /// <returns>A slice of the input string or null if the slice is not possible.</returns>
-    public static string Slice(this string s, char startDelimiter, char endDelimeter)
+    public static string? Slice(this string s, char startDelimiter, char endDelimeter)
     {
         if (String.IsNullOrEmpty(s))
             return null;

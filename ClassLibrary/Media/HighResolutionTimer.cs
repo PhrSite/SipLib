@@ -25,7 +25,7 @@ public class HighResolutionTimer
     /// Event that is fired when the timer expires.
     /// </summary>
     /// <value></value>
-    public event HighResolutionTimerDelegate TimerExpired = null;
+    public event HighResolutionTimerDelegate? TimerExpired = null;
 
     /// <summary>
     /// Constructor.
@@ -38,7 +38,7 @@ public class HighResolutionTimer
     }
 
     private bool m_IsEnding = false;
-    private Thread m_Thread;
+    private Thread? m_Thread;
 
     /// <summary>
     /// Starts the timer.

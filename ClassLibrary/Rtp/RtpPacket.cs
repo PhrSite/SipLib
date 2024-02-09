@@ -15,7 +15,7 @@ public class RtpPacket
     /// <value></value>
     public const int MIN_PACKET_LENGTH = 12;
 
-    private byte[] m_PacketBytes = null;
+    private byte[]? m_PacketBytes = null;
 
     /// <summary>
     /// Constructs a RTP packet containing only a RTP packet header without a payload.
@@ -108,7 +108,7 @@ public class RtpPacket
     private const int CsrcMask = 0x0f;
 
     /// <summary>
-    /// Gets or sets the CSRC count.
+    /// Gets or sets the CSRC Count.
     /// </summary>
     /// <value></value>
     public int CsrcCount
@@ -133,7 +133,7 @@ public class RtpPacket
     /// Gets a list of CSRCs (contributing source identifiers) for this RTP packet.
     /// </summary>
     /// <value></value>
-    public List<uint> CSRCs
+    public List<uint>? CSRCs
     {
         get
         {
@@ -188,7 +188,7 @@ public class RtpPacket
     /// <exception cref="ArgumentException">Thrown by if the input packet is longer than the allocated payload
     /// length for this RTP packet.</exception>
     /// <value></value>
-    public byte[] Payload
+    public byte[]? Payload
     {
         get
         {
@@ -327,7 +327,7 @@ public class RtpPacket
     /// <returns>Returns null if there is no payload or a new byte array containing the payload bytes if there
     /// is a payload for the RTP packet.
     /// </returns>
-    public byte[] GetPayloadBytes()
+    public byte[]? GetPayloadBytes()
     {
         int Len = PayloadLength;
         if (Len <= 0)
@@ -365,7 +365,7 @@ public class RtpPacket
     /// Gets the entire packet byte array
     /// </summary>
     /// <value></value>
-    public byte[] PacketBytes
+    public byte[]? PacketBytes
     {
         get { return m_PacketBytes; }
     }

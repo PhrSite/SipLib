@@ -359,7 +359,7 @@ public static class SRtpUtils
     /// <param name="Input">Input string containing the name/value.</param>
     /// <param name="Sep">Separator character such as '=' or ':'</param>
     /// <returns>Returns the value portion or null if the input string is not in the proper format.</returns>
-    public static string GetValueOfNameValuePair(string Input, char Sep)
+    public static string? GetValueOfNameValuePair(string Input, char Sep)
     {
         if (string.IsNullOrEmpty(Input) == true)
             return null;
@@ -420,7 +420,7 @@ public static class SRtpUtils
     /// <param name="strInput">Input string.</param>
     /// <returns>Returns the delimited string. Returns null if the delimiters are not present or the extracted
     /// string length is zero.</returns>
-    public static string ExtractDelimStr(char D1, char D2, string strInput)
+    public static string? ExtractDelimStr(char D1, char D2, string strInput)
     {
         string strRetVal = null;
         int IdxD1 = strInput.IndexOf(D1);

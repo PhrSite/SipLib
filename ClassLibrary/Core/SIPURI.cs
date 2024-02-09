@@ -60,13 +60,13 @@ public class SIPURI
     /// User portion of the URI
     /// </summary>
     /// <value></value>
-    public string User;
+    public string? User;
 
     /// <summary>
     /// Host portion of the URI.
     /// </summary>
     /// <value></value>
-    public string Host;
+    public string? Host;
 
     /// <summary>
     /// URI parameters
@@ -100,10 +100,10 @@ public class SIPURI
                 return SIPProtocolsEnum.tls;
             else
             {
-                if (Parameters != null && Parameters.Has(m_uriParamTransportKey))
+                if (Parameters.Has(m_uriParamTransportKey))
                 {
-                    if (SIPProtocolsType.IsAllowedProtocol(Parameters.Get(m_uriParamTransportKey)))
-                        return SIPProtocolsType.GetProtocolType(Parameters.Get(m_uriParamTransportKey));
+                    if (SIPProtocolsType.IsAllowedProtocol(Parameters.Get(m_uriParamTransportKey)!))
+                        return SIPProtocolsType.GetProtocolType(Parameters.Get(m_uriParamTransportKey)!);
                 }
 
                 return m_defaultSIPTransport;
@@ -114,7 +114,7 @@ public class SIPURI
             if (value == SIPProtocolsEnum.udp)
             {
                 Scheme = SIPSchemesEnum.sip;
-                if (Parameters != null && Parameters.Has(m_uriParamTransportKey))
+                if (Parameters.Has(m_uriParamTransportKey))
                     Parameters.Remove(m_uriParamTransportKey);
             }
             else
@@ -135,7 +135,7 @@ public class SIPURI
 
             // First expression is for IPv6 addresses with a port.
             // Second expression is for IPv4 addresses and hostnames with a port.
-            if (Host.Contains("]:") ||
+            if (Host!.Contains("]:") ||
                 (Host.IndexOf(':') != -1 && Host.IndexOf(':') == Host.LastIndexOf(':')))
                 canonicalAddress += Host;
             else
@@ -156,7 +156,7 @@ public class SIPURI
         {
             //rj2: colon might be IPv6 delimiter, not port delimiter, check first against IPv6 with Port
             //notation, and then the occurrence of multiple colon
-            if (Host.IndexOf("]:") > 0)
+            if (Host!.IndexOf("]:") > 0)
                 return Host.Substring(0, Host.IndexOf("]:") + 1);
             //if there are multiple colon, it's IPv6 without port, else IPv4 with port
             else if (Host.IndexOf(':') > 0 && Host.IndexOf(':') != Host.LastIndexOf(':'))
@@ -184,7 +184,7 @@ public class SIPURI
     /// Gets the maddr parameter or null if it is not present
     /// </summary>
     /// <value></value>
-    public string MAddr
+    public string? MAddr
     {
         get
         {
@@ -199,13 +199,13 @@ public class SIPURI
     /// Gets the port portion of the host address or null if it is not present
     /// </summary>
     /// <value></value>
-    public string HostPort
+    public string? HostPort
     {
         get
         {
             //rj2: colon might be IPv6 delimiter, not port delimiter, check first against IPv6 with
             //Port notation, and then the occurrence of multiple colon
-            if (Host.IndexOf("]:") > 0)
+            if (Host!.IndexOf("]:") > 0)
                 return Host.Substring(Host.IndexOf("]:") + 2);
             //if there are multiple colon, it's IPv6 without port, else IPv4 with port
             else if (Host.IndexOf(':') > 0 && Host.IndexOf(':') != Host.LastIndexOf(':'))
@@ -221,11 +221,16 @@ public class SIPURI
     /// Gets the un-escapted user part of the URI or null if there is no user part.
     /// </summary>
     /// <value></value>
-    public string UnescapedUser
+    public string? UnescapedUser
     {
         get
         {
-            return (User.IsNullOrBlank()) ? User : SIPEscape.SIPURIUserUnescape(User);
+            //return (User.IsNullOrBlank()) ? User : SIPEscape.SIPURIUserUnescape(User);
+            if (string.IsNullOrEmpty(User))
+                return User;
+            else
+                return SIPEscape.SIPURIUserUnescape(User);
+
         }
     }
 
@@ -460,7 +465,7 @@ public class SIPURI
     /// </summary>
     /// <param name="partialURI">Input string which may be a partial URI</param>
     /// <returns>Returns a new SIPURI object or null if a parsing error occurred.</returns>
-    public static SIPURI ParseSIPURIRelaxed(string partialURI)
+    public static SIPURI? ParseSIPURIRelaxed(string partialURI)
     {
         if (partialURI == null || partialURI.Trim().Length == 0)
         {
@@ -488,12 +493,12 @@ public class SIPURI
     /// <param name="uriStr">Input string</param>
     /// <param name="uri">Output SIPURI object. Set to a valid SIPURI object if successful</param>
     /// <returns>Returns true if successful or false if an error occurred.</returns>
-    public static bool TryParse(string uriStr, out SIPURI uri)
+    public static bool TryParse(string uriStr, out SIPURI? uri)
     {
         try
         {
             uri = ParseSIPURIRelaxed(uriStr);
-            return (uri != null);
+            return (uri! != null!);
         }
         catch
         {
@@ -519,7 +524,7 @@ public class SIPURI
 
             uriStr = (User != null) ? uriStr + User + USER_HOST_SEPARATOR + Host : uriStr + Host;
 
-            if (Parameters != null && Parameters.Count > 0)
+            if (Parameters.Count > 0)
             {
                 uriStr += Parameters.ToString();
             }
@@ -529,13 +534,13 @@ public class SIPURI
             //    m_uriParamTransportKey))
             // 22 Jul 23 PHR -- Don't want a transport parameter added if the this URI is for msrp or
             // msrps
-            if (Scheme != SIPSchemesEnum.sips && Protocol != SIPProtocolsEnum.udp && !Parameters.Has(
+            if (Scheme != SIPSchemesEnum.sips && Protocol != SIPProtocolsEnum.udp && !Parameters!.Has(
                 m_uriParamTransportKey) && Scheme != SIPSchemesEnum.msrp && Scheme != 
                 SIPSchemesEnum.msrps && Scheme != SIPSchemesEnum.msrp)
                 uriStr += PARAM_TAG_DELIMITER + m_uriParamTransportKey + TAG_NAME_VALUE_SEPERATOR + 
                     Protocol.ToString();
 
-            if (Headers != null && Headers.Count > 0)
+            if (Headers.Count > 0)
             {
                 string headerStr = Headers.ToString();
                 uriStr += HEADER_START_DELIMITER + headerStr.Substring(1);
@@ -592,9 +597,9 @@ public class SIPURI
     /// </summary>
     /// <returns>Returns a SIPEndPoint object if the SIPURI represents an endpoint or
     /// null if it does not (for example: urn:service:sos)</returns>
-    public SIPEndPoint ToSIPEndPoint()
+    public SIPEndPoint? ToSIPEndPoint()
     {
-        if (IPSocket.TryParseIPEndPoint(Host, out var ipEndPoint))
+        if (IPSocket.TryParseIPEndPoint(Host!, out var ipEndPoint))
         {
             if (ipEndPoint.Port != 0)
             {
@@ -648,9 +653,9 @@ public class SIPURI
     /// </summary>
     /// <param name="obj">SIPURI object to test</param>
     /// <returns>Returns true if the input SIPURI is equal to this one</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        return AreEqual(this, (SIPURI)obj);
+        return AreEqual(this, (SIPURI)obj!);
     }
 
     /// <summary>
@@ -695,10 +700,8 @@ public class SIPURI
     public override int GetHashCode()
     {
         int RetVal = CanonicalAddress.GetHashCode();
-        if (Parameters != null) 
-            RetVal += Parameters.GetHashCode();
-        if (Headers != null)
-            RetVal += Headers.GetHashCode();
+        RetVal += Parameters.GetHashCode();
+        RetVal += Headers.GetHashCode();
         return RetVal;
     }
 
@@ -736,15 +739,15 @@ public class SIPURI
     /// <param name="uri">The SIP URI to mangle.</param>
     /// <param name="receivedOn">The IP end point that the SIP message was received from.</param>
     /// <returns>A new SIP URI if mangling took place. Null if no mangling occurred.</returns>
-    public static SIPURI Mangle(SIPURI uri, IPEndPoint receivedOn)
+    public static SIPURI? Mangle(SIPURI uri, IPEndPoint receivedOn)
     {
-        if (uri != null && receivedOn != null && IPAddress.TryParse(uri.HostAddress, out var ipv4Host))
+        if (receivedOn != null && IPAddress.TryParse(uri.HostAddress, out var ipv4Host))
         {
 
             if (ipv4Host.IsPrivate() && !IPAddress.Equals(ipv4Host, receivedOn.Address))
             {
                 var mangledURI = uri.CopyOf();
-                mangledURI.Host = mangledURI.Host.Replace(mangledURI.Host, receivedOn.ToString());
+                mangledURI.Host = mangledURI.Host!.Replace(mangledURI.Host, receivedOn.ToString());
                 return mangledURI;
             }
         }
