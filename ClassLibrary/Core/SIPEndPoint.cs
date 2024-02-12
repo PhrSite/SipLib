@@ -21,8 +21,11 @@
 //  Revised:    15 Nov 22 PHR -- Added from sipsorcery. This version supports IPv6.
 //                -- Fixed code formatting
 //                -- Added documentation comments
+//              12 Feb 24 PHR
+//                -- Replaced SIPURI.ParseSIPURIRelaxed() with ParseSIPURI()
 /////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.Msrp;
 using System.Net;
 using System.Net.Sockets;
 
@@ -181,8 +184,17 @@ public class SIPEndPoint
             return ParseSerialisedSIPEndPoint(sipEndPointStr);
         else
         {
-            SIPURI sipUri = SIPURI.ParseSIPURIRelaxed(sipEndPointStr);
-            SIPEndPoint? sipEndPoint = sipUri.ToSIPEndPoint();
+            SIPURI? sipUri = null;
+            try
+            {
+                sipUri = SIPURI.ParseSIPURI(sipEndPointStr);
+            }
+            catch (SIPValidationException)
+            {
+                return null;
+            }
+            
+            SIPEndPoint? sipEndPoint = sipUri?.ToSIPEndPoint();
             return sipEndPoint;
         }
     }

@@ -43,7 +43,7 @@ namespace SipLibUnitTests.Core
         [Fact]
         public void HostOnlyParseTest()
         {
-            string sipEndPointStr = "10.0.0.100";
+            string sipEndPointStr = "udp:10.0.0.100";
             SIPEndPoint sipEndPoint = SIPEndPoint.ParseSIPEndPoint(sipEndPointStr);
 
             Assert.True(sipEndPoint.Protocol == SIPProtocolsEnum.udp, "The SIPEndPoint protocol was incorrectly parsed.");
@@ -67,7 +67,7 @@ namespace SipLibUnitTests.Core
         [Fact]
         public void HostAndPortParseTest()
         {
-            string sipEndPointStr = "10.0.0.100:5065";
+            string sipEndPointStr = "udp:10.0.0.100:5065";
             SIPEndPoint sipEndPoint = SIPEndPoint.ParseSIPEndPoint(sipEndPointStr);
 
             Assert.True(sipEndPoint.Protocol == SIPProtocolsEnum.udp, "The SIPEndPoint protocol was incorrectly parsed.");
@@ -78,7 +78,7 @@ namespace SipLibUnitTests.Core
         [Fact]
         public void HostAndTransportParseTest()
         {
-            string sipEndPointStr = "10.0.0.100;transport=tcp";
+            string sipEndPointStr = "sip:10.0.0.100;transport=tcp";
             SIPEndPoint sipEndPoint = SIPEndPoint.ParseSIPEndPoint(sipEndPointStr);
 
             Assert.True(sipEndPoint.Protocol == SIPProtocolsEnum.tcp, "The SIPEndPoint protocol was incorrectly parsed.");
@@ -123,7 +123,7 @@ namespace SipLibUnitTests.Core
         public void EqualityTestTLSHostTest()
         {
             SIPEndPoint sipEP1 = SIPEndPoint.ParseSIPEndPoint("sips:10.0.0.100");
-            SIPEndPoint sipEP2 = SIPEndPoint.ParseSIPEndPoint("10.0.0.100:5061;transport=tls");
+            SIPEndPoint sipEP2 = SIPEndPoint.ParseSIPEndPoint("sips:10.0.0.100:5061;transport=tls");
 
             Assert.True(sipEP1 == sipEP2, "The SIP end points should have been detected as equal.");
         }

@@ -112,7 +112,7 @@ public class SIPMessage
     /// Contains all headers in the request
     /// </summary>
     /// <value></value>
-    public SIPHeader? Header = null;
+    public SIPHeader? Header = new SIPHeader();
 
     /// <summary>
     /// Parses a byte array containing a SIP message and returns a SIPMessage object.

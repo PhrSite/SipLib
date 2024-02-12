@@ -52,4 +52,11 @@ public class PortRange
     /// Number of ports to allocate
     /// </summary>
     public int Count { get; set; }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public PortRange()
+    {
+    }
 }

@@ -21,8 +21,11 @@
 //                -- Added code in ParseSIPURI to format the user part of the URI
 //                   for tel: URIs.
 //                -- Added documentation comments
-//              21 Jul 23 -- Fixed the handling of the // characters for the http,
-//                https, msrp, msrps, ws, wss schemes.
+//              21 Jul 23 PHR
+//                -- Fixed the handling of the // characters for the http,
+//                   https, msrp, msrps, ws, wss schemes.
+//              12 Feb 24 PHR
+//                -- Removed ParseSIPURIRelaxed()
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -461,33 +464,6 @@ public class SIPURI
     }
 
     /// <summary>
-    /// Parses a string into a SIPURI object using relaxed parsing rules.
-    /// </summary>
-    /// <param name="partialURI">Input string which may be a partial URI</param>
-    /// <returns>Returns a new SIPURI object or null if a parsing error occurred.</returns>
-    public static SIPURI? ParseSIPURIRelaxed(string partialURI)
-    {
-        if (partialURI == null || partialURI.Trim().Length == 0)
-        {
-            return null;
-        }
-        else
-        {
-            string regexSchemePattern = "^(" + SIPSchemesEnum.sip + "|" + SIPSchemesEnum.sips + "):";
-
-            if (Regex.Match(partialURI, regexSchemePattern + @"\S+").Success)
-            {
-                // The partial uri is already valid.
-                return SIPURI.ParseSIPURI(partialURI);
-            }
-            else
-                // The partial URI is missing the scheme.
-                return SIPURI.ParseSIPURI(m_defaultSIPScheme.ToString() + SCHEME_ADDR_SEPARATOR.ToString() + 
-                    partialURI);
-        }
-    }
-
-    /// <summary>
     /// Tests to see if a string can be parsed into a SIPURI object.
     /// </summary>
     /// <param name="uriStr">Input string</param>
@@ -497,7 +473,8 @@ public class SIPURI
     {
         try
         {
-            uri = ParseSIPURIRelaxed(uriStr);
+            //uri = ParseSIPURIRelaxed(uriStr);
+            uri = ParseSIPURI(uriStr);
             return (uri! != null!);
         }
         catch
