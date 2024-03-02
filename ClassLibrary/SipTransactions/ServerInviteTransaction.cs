@@ -195,9 +195,13 @@ public class ServerInviteTransaction : SipTransactionBase
                 {   // For TCP and TLS, the value for Timer I is 0 milliseconds, so just terminate the
                     // transaction.
                     State = TransactionStateEnum.Terminated;
-                    // Not necessary to notify the transaction user
                     Terminated = true;
                 }
+
+                // Not necessary to notify the transaction user, but in some cases the transaction user
+                // needs the final ACK request. For example: An offerless INVITE where the client provides
+                // its SDP in the ACK request.
+                TransactionComplete?.Invoke(Request, LastSipResponseSent, RemoteEndPoint, TransportManager, this);
             }
         }
 

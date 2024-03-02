@@ -48,6 +48,8 @@
 //          -- Modified to use m_Qos.SetUdpDscp()
 //          31 Aug 23 PHR
 //          -- Made the Send() method thread-safe.
+//          16 Feb 24 PHR
+//          -- Removed the Dispose() method because its not used.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -67,7 +69,7 @@ public class SIPUDPChannel : SIPChannel
     private const int SIO_UDP_CONNRESET = -1744830452;
 
     private UdpClient? m_sipConn = null;
-    private Qos? m_Qos;
+    private Qos? m_Qos = null;
 
     /// <summary>
     /// Constructs a new SIPUDPChannel.
@@ -113,17 +115,6 @@ public class SIPUDPChannel : SIPChannel
         catch (Exception)
         {
             throw;
-        }
-    }
-
-    private void Dispose(bool disposing)
-    {
-        try
-        {
-            this.Close();
-        }
-        catch (Exception)
-        {
         }
     }
 
@@ -247,6 +238,9 @@ public class SIPUDPChannel : SIPChannel
     /// </summary>
     public override void Close()
     {
+        if (Closed == true)
+            return;
+
         try
         {
             m_Qos.Shutdown();

@@ -77,7 +77,7 @@ public class SipBodyBuilder
     /// <param name="content">Sting containing the content to add to the message body. Required.</param>
     /// <param name="contentID">Value of the Content-ID header. Optional, may be null.</param>
     /// <param name="contentDisposition">Value of the Content-Disposition header. Optional, may be null.</param>
-    public void AddContent(string contentType, string content, string contentID, string contentDisposition)
+    public void AddContent(string contentType, string content, string? contentID, string? contentDisposition)
     {
         SipBodyContents Sbc = new SipBodyContents()
         {

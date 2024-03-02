@@ -47,18 +47,19 @@ public class CryptoSuites
     public const string AES_256_CM_HMAC_SHA1_32 = "AES_256_CM_HMAC_SHA1_32";
 
     /// <summary>
-    /// Gets the list of supported SRTP cryptographic algorithms 
+    /// Gets the list of supported SRTP cryptographic algorithms. This list is ordered from most preferred
+    /// (most secure) to least preferred.
     /// </summary>
     /// <value></value>
     public static List<string> SupportedAlgorithms = new List<string>()
     {
+        AES_256_CM_HMAC_SHA1_80,
+        AES_256_CM_HMAC_SHA1_32,
+        AES_192_CM_HMAC_SHA1_80,
+        AES_192_CM_HMAC_SHA1_32,
         AES_CM_128_HMAC_SHA1_80,
         AES_CM_128_HMAC_SHA1_32,
         F8_128_HMAC_SHA1_80,
-        AES_192_CM_HMAC_SHA1_80,
-        AES_192_CM_HMAC_SHA1_32,
-        AES_256_CM_HMAC_SHA1_80,
-        AES_256_CM_HMAC_SHA1_32,
     };
 
     /// <summary>

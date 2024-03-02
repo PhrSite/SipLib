@@ -6,6 +6,7 @@
 //             -- Added RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
 /////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.RtpCrypto;
 using System.Text;
 
 namespace SipLib.Sdp;
@@ -219,7 +220,7 @@ public class MediaDescription
     {
         MediaType = strMediaType;
         Port = iPort;
-        Transport = "TCP";
+        Transport = "RTP/AVP";
 
         if (payloadTypes.Count == 0)
         {	// Error, but default to something
@@ -261,7 +262,7 @@ public class MediaDescription
     /// <param name="strAttr">Name of the attribute to search for.</param>
     /// <returns>Returns a SdpAttribute for the named attribute if it is found or null if the named
     /// attribute is not present.</returns>
-    public SdpAttribute? GetNamedAttribute(String strAttr)
+    public SdpAttribute? GetNamedAttribute(string strAttr)
     {
         SdpAttribute RetVal = null;
         foreach (SdpAttribute Sa in Attributes)
@@ -295,6 +296,24 @@ public class MediaDescription
     }
 
     /// <summary>
+    /// Gets a list of the CryptoAttributes in this MediaDescription.
+    /// </summary>
+    /// <returns>Returns a list of the crypto attributes for SDES-SRTP in this MediaDescription. The return
+    /// value will not be null but it may be empty.</returns>
+    public List<CryptoAttribute> GetCryptoAttributes()
+    {
+        List<CryptoAttribute> cryptoAttributes = new List<CryptoAttribute>();
+        List<SdpAttribute> sdpAttributes = GetNamedAttributes("crypto");
+        foreach (SdpAttribute Sa in sdpAttributes)
+        {
+            CryptoAttribute cryptoAttribute = CryptoAttribute.Parse(Sa.Value);
+            cryptoAttributes.Add(cryptoAttribute);
+        }
+
+        return cryptoAttributes;
+    }
+
+    /// <summary>
     /// Removes all instances of a named SDP attribute.
     /// </summary>
     /// <param name="Attr">Name of the SDP attribute to remove.</param>
@@ -314,10 +333,9 @@ public class MediaDescription
     /// <summary>
     /// Determines if its necessary to use DTLS-SRTP to negotiate encryption keys and algorithms.
     /// </summary>
-    /// <param name="Sdp">Media session that this MediaDescription belong to.</param>
     /// <param name="SetType">SetupType to use in the answer to the offered SetupType.</param>
     /// <returns>Returns true if DTLS-SRTP is required.</returns>
-    public bool UsingDtlsSrtp(Sdp Sdp, out SetupType SetType)
+    public bool UsingDtlsSrtp(out SetupType SetType)
     {
         bool IsDtlsSrtp = false;
         SetType = SetupType.active;
@@ -326,8 +344,6 @@ public class MediaDescription
         {   // Encryption using DTLS-SRTP has been offerred.
             IsDtlsSrtp = true;
             SdpAttribute SetupAttr = GetNamedAttribute("setup");
-            if (SetupAttr == null)
-                SetupAttr = GetNamedAttribute("setup");
 
             if (SetupAttr != null)
             {
@@ -340,6 +356,18 @@ public class MediaDescription
         }
 
         return IsDtlsSrtp;
+    }
+
+    /// <summary>
+    /// Returns true if this MediaDescription object is for SDES-SRTP media encryption.
+    /// </summary>
+    /// <returns></returns>
+    public bool UsingSdesSrtp()
+    {
+        if (GetNamedAttribute("crypto") != null)
+            return true;
+        else
+            return false;
     }
 
     /// <summary>
@@ -518,10 +546,14 @@ public class MediaDescription
     public override string ToString()
     {
         StringBuilder Sb = new StringBuilder(1024);
-        Sb.AppendFormat("m={0} {1} {2}", MediaType, Port.ToString(),
-            Transport);
-        foreach (int Pt in PayloadTypes)
-            Sb.AppendFormat(" {0}", Pt);
+        Sb.AppendFormat("m={0} {1} {2}", MediaType, Port.ToString(), Transport);
+        if (PayloadTypes.Count > 0)
+        {
+            foreach (int Pt in PayloadTypes)
+                Sb.AppendFormat(" {0}", Pt);
+        }
+        else
+            Sb.Append(" *");    // Special case -- for MSRP the Payload type is always *
 
         Sb.Append("\r\n");
 

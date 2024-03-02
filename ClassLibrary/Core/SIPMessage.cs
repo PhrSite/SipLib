@@ -39,6 +39,11 @@
 //              30 Jan 24 PHR
 //                -- Added the SIPHeader Header property.
 //                -- Made this class the base class for SIPRequest and SIPResponse.
+//              1 Mar 24 PHR
+//                -- Added the GetBodyContents() method.
+//                -- Changed RawBuffer from public to internal
+//                -- Changed string[] SIPHeaders from public to internal
+//                -- Changed FirstLine from public to internal
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -75,13 +80,13 @@ public class SIPMessage
     /// "INVITE sip:1189990001@10.1.221.8 SIP/2.0"
     /// </summary>
     /// <value></value>
-    public string? FirstLine = null;
+    internal string? FirstLine = null;
 
     /// <summary>
     /// Contains any array of SIP header lines with one header line per array element.
     /// </summary>
     /// <value></value>
-    public string[]? SIPHeaders = null;
+    internal string[]? SIPHeaders = null;
 
     /// <summary>
     /// Contains the entire SIP message body as a string. Set to null if the message does not have a body.
@@ -95,7 +100,7 @@ public class SIPMessage
     /// creating a new SIPRequest or a SIPResponse locally.
     /// </summary>
     /// <value></value>
-    public byte[]? RawBuffer = null;
+    internal byte[]? RawBuffer = null;
 
     /// <summary>
     /// The remote IP socket the message was received from or sent to. 
@@ -290,5 +295,20 @@ public class SIPMessage
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Gets a list of all of the contents of the body for this SIPMessage.
+    /// </summary>
+    /// <returns>Returns a list of contents. If the list is empty then there are not body contents.</returns>
+    public List<MessageContentsContainer> GetBodyContents()
+    {
+        if (HasBody == false || RawBuffer == null)
+            return new List<MessageContentsContainer>(); ;
+
+        if (m_ContentsContainer == null)
+            m_ContentsContainer = BodyParser.ParseSipBody(RawBuffer, Header.ContentType);
+
+        return m_ContentsContainer;
     }
 }

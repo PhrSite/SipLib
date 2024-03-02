@@ -129,6 +129,7 @@ public class AudioSourceBase
         GetNextAudioSamples(NewSamples);
         byte[] PayloadBytes = m_AudioEncoder!.Encode(NewSamples);
         RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH + PayloadBytes.Length);
+        rtpPacket.PayloadType = m_AudioPayloadType;
         rtpPacket.SSRC = m_SSRC;
         rtpPacket.SequenceNumber = m_SequenceNumber;
         rtpPacket.Timestamp = m_Timestamp;

@@ -66,6 +66,8 @@
 //          -- Modified LockCollections() and UnlockCollections() to use a single
 //             lock object
 //          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
+//          16 Feb 24 PHR
+//          -- Removed the Dispose() method because its not used.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -120,7 +122,7 @@ public class SIPTLSChannel : SIPChannel
     /// parameter defaults to null.</param>
     /// <param name="UseMutualAuth">If true then use mutual TLS authentication. This parameter defaults
     /// to true.</param>
-    public SIPTLSChannel(X509Certificate2 serverCertificate, IPEndPoint endPoint, string? User = null,
+    public SIPTLSChannel(X509Certificate2? serverCertificate, IPEndPoint endPoint, string? User = null,
         bool UseMutualAuth = true)
     {
         if (serverCertificate == null)
@@ -686,17 +688,6 @@ public class SIPTLSChannel : SIPChannel
             m_connectedSockets.Clear();
             m_connectingSockets.Clear();
             UnlockCollections();
-        }
-    }
-
-    private void Dispose(bool disposing)
-    {
-        try
-        {
-            this.Close();
-        }
-        catch (Exception)
-        {
         }
     }
 }

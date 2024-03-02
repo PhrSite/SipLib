@@ -301,8 +301,8 @@ public class SIPTortureTests
         Assert.NotNull(Msg);
         SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
         Assert.NotNull(Req);
-        List<MessageContentsContainer> Scc = BodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
-            ContentType);
+        List<MessageContentsContainer> Scc = Req.GetBodyContents();
+
         Assert.True(Scc.Count == 2, "The SIP contents count is incorrect");
 
         Assert.True(Scc[0].IsBinaryContents == true, "The contents are not binary for the first " +

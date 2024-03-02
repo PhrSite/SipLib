@@ -8,6 +8,10 @@
     
 using System.Text;
 using System.Net;
+using SipLib.RtpCrypto;
+using System.Runtime;
+using SipLib.Core;
+using SipLib.Msrp;
 
 namespace SipLib.Sdp;
 
@@ -287,8 +291,8 @@ public class Sdp
     /// </summary>
     /// <param name="strSdp">Contains a SDP SIP body part.</param>
     /// <returns>Returns a new Sdp object.</returns>
-    // <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
-    // <exception cref="Exception">Thrown if an unexpected error occurs</exception>
+    /// <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
+    /// <exception cref="Exception">Thrown if an unexpected error occurs</exception>
     public static Sdp ParseSDP(string strSdp)
     {
         if (string.IsNullOrEmpty(strSdp) == true)
@@ -596,4 +600,286 @@ public class Sdp
         else 
             return new IPEndPoint(MediaIpAddr, Smd.Port);
     }
+
+    /// <summary>
+    /// Builds an Sdp object to send as the answered Sdp in responsed to the offered Sdp
+    /// </summary>
+    /// <param name="OfferedSdp">SDP that was offered</param>
+    /// <param name="address">IP address to be used for transport of all media</param>
+    /// <param name="AnswerSettings">Settings that determine how to build the answered SDP</param>
+    /// <returns>Returns the SDP to send to the client that offered the SDP</returns>
+    public static Sdp BuildAnswerSdp(Sdp OfferedSdp, IPAddress address, SdpAnswerSettings AnswerSettings)
+    {
+        Sdp AnswerSdp = new Sdp(address, AnswerSettings.UserName);
+        foreach (MediaDescription Md in OfferedSdp.Media)
+        {
+            switch (Md.MediaType)
+            {
+                case "audio":
+                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings));
+                    break;
+                case "video":
+                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings));
+                    break;
+                case "text":    // Real Time Text
+                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings));
+                    break;
+                case "message": // MSRP
+                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings));
+                    break;
+                default:        // Unknown media type, reject it
+                    MediaDescription UnknownMd = new MediaDescription(Md.MediaType, 0, Md.PayloadTypes);
+                    AnswerSdp.Media.Add(UnknownMd);
+                    break;
+            }
+        }
+
+        return AnswerSdp;
+    }
+
+    private static MediaDescription GetAudioAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings
+        Settings)
+    {
+        MediaDescription? AnsMd = null;
+
+        if (Settings.EnableAudio == false)
+        {
+            AnsMd = new MediaDescription("audio", 0, OfferedMd.PayloadTypes);
+            return AnsMd;
+        }
+
+        RtpMapAttribute? SupportedRma = FindSupportedCodec(OfferedMd, Settings.SupportedAudioCodecs);
+        if (SupportedRma == null)
+        {
+            AnsMd = new MediaDescription("audio", 0, OfferedMd.PayloadTypes);
+            return AnsMd;    // Error: No supported codecs offerred
+        }
+
+        RtpMapAttribute AnsRma = new RtpMapAttribute(SupportedRma.PayloadType, SupportedRma.EncodingName!,
+            SupportedRma.ClockRate);
+        List<int> PayloadTypes = new List<int>();
+        PayloadTypes.Add(AnsRma.PayloadType);
+        AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextAudioPort, PayloadTypes);
+        AnsMd.Transport = OfferedMd.Transport;
+
+        // TODO: Get any fmtp attribute(s) for the media codec selected
+
+        // Test to see if telephone-event is offerred. If it is then answer with it
+        RtpMapAttribute? OfferedTelephoneEvent = OfferedMd.GetRtpMapForCodecType("telephone-event");
+        if (OfferedTelephoneEvent != null)
+        {
+            AnsMd.PayloadTypes.Add(OfferedTelephoneEvent.PayloadType);
+            AnsMd.RtpMapAttributes.Add(OfferedTelephoneEvent);
+            SdpAttribute? TelFmtpAttr = OfferedMd.GetFmtpForFormatNumber(OfferedTelephoneEvent.
+                PayloadType.ToString());
+            if (TelFmtpAttr != null)
+                AnsMd.Attributes.Add(TelFmtpAttr);
+        }
+
+        SdpAttribute? LabelAttr = OfferedMd.GetNamedAttribute("label");
+        if (LabelAttr != null)
+            AnsMd.Attributes.Add(LabelAttr);
+
+        HandleOfferedEncryption(OfferedMd, AnsMd, Settings);
+
+        return AnsMd;
+    }
+
+    private static MediaDescription GetVideoAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings Settings)
+    {
+        MediaDescription? AnsMd = null;
+        if (Settings.EnableVideo == false)
+        {
+            AnsMd = new MediaDescription("video", 0, OfferedMd.PayloadTypes);
+            return AnsMd;
+        }
+
+        RtpMapAttribute? SupportedRma = FindSupportedCodec(OfferedMd, Settings.SupportedVideoCodecs);
+        if (SupportedRma == null)
+        {
+            AnsMd = new MediaDescription("video", 0, OfferedMd.PayloadTypes);
+            return AnsMd;    // Error: No supported codecs offerred
+        }
+
+        RtpMapAttribute AnsRma = new RtpMapAttribute(SupportedRma.PayloadType, SupportedRma.EncodingName!,
+            SupportedRma.ClockRate);
+        List<int> PayloadTypes = new List<int>();
+        PayloadTypes.Add(AnsRma.PayloadType);
+        AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextVideoPort, PayloadTypes);
+        AnsMd.Transport = OfferedMd.Transport;
+
+        SdpAttribute? VideoFmtpAttr = OfferedMd.GetFmtpForFormatNumber(SupportedRma.PayloadType.ToString());
+        if (VideoFmtpAttr != null)
+            AnsMd.Attributes.Add(VideoFmtpAttr);
+
+        SdpAttribute? LabelAttr = OfferedMd.GetNamedAttribute("label");
+        if (LabelAttr != null)
+            AnsMd.Attributes.Add(LabelAttr);
+
+        HandleOfferedEncryption(OfferedMd, AnsMd, Settings);
+
+        return AnsMd;
+    }
+
+    private static MediaDescription GetRttAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
+        Settings)
+    {
+        MediaDescription? AnsMd = null;
+        if (Settings.EnableRtt == false)
+        {
+            AnsMd = new MediaDescription("text", 0, OfferedMd.PayloadTypes);
+            return AnsMd;
+        }
+
+        AnsMd = new MediaDescription("text", Settings.PortManager.NextRttPort, OfferedMd.PayloadTypes);
+        AnsMd.Transport = OfferedMd.Transport;
+        foreach (int PayloadType in OfferedMd.PayloadTypes)
+        {
+            RtpMapAttribute? Rma = OfferedMd.GetRtpMapForPayloadType(PayloadType);
+            if (Rma != null)
+                AnsMd.RtpMapAttributes.Add(Rma);
+        }
+
+        RtpMapAttribute? redRtpMapAttribute = OfferedMd.GetRtpMapForCodecType("red");
+        if (redRtpMapAttribute != null)
+        {
+            SdpAttribute? fmtpAttr = OfferedMd.GetFmtpForFormatNumber(redRtpMapAttribute.PayloadType.
+                ToString());
+            if (fmtpAttr != null)
+                AnsMd.Attributes.Add(fmtpAttr);
+        }
+
+        SdpAttribute? LabelAttr = OfferedMd.GetNamedAttribute("label");
+        if (LabelAttr != null)
+            AnsMd.Attributes.Add(LabelAttr);
+
+        HandleOfferedEncryption(OfferedMd, AnsMd, Settings);
+
+        return AnsMd;
+    }
+
+    private static MediaDescription GetMsrpAnswerMediaDescription(MediaDescription OfferedMd, IPAddress Address,
+        SdpAnswerSettings Settings)
+    {
+        MediaDescription? AnsMd = null;
+        if (Settings.EnableMsrp == false)
+        {
+            AnsMd = new MediaDescription("message", 0, new List<int>());
+            return AnsMd;
+        }
+
+        AnsMd = new MediaDescription("message", Settings.PortManager.NextMsrpPort, OfferedMd.PayloadTypes);
+        AnsMd.Transport = OfferedMd.Transport;
+        AnsMd.Attributes.Add(new SdpAttribute("accept-types", "message/cpim text/plain"));
+
+        SdpAttribute? LabelAttr = OfferedMd.GetNamedAttribute("label");
+        if (LabelAttr != null)
+            AnsMd.Attributes.Add(LabelAttr);
+
+        // Handle the setup attribute if there is one
+        SdpAttribute? SetupAttr = OfferedMd.GetNamedAttribute("setup");
+        SetupType AnsSetup;
+        if (SetupAttr != null)
+        {
+            if (SetupAttr.Value == "actpass" || SetupAttr.Value == "passive")
+                // Become the active element
+                AnsSetup = SetupType.active;
+            else
+                AnsSetup = SetupType.passive;
+
+        }
+        else
+            AnsSetup = SetupType.passive;
+
+        AnsMd.AddSetupAttribute(AnsSetup);
+
+        SIPSchemesEnum scheme;
+        if (AnsMd.Transport.IndexOf("TLS") >= 0)
+            scheme = SIPSchemesEnum.msrps;
+
+        else
+            scheme = SIPSchemesEnum.msrp;
+
+        MsrpUri msrpUri = new MsrpUri(scheme, Settings.UserName, Address, AnsMd.Port);
+        AnsMd.Attributes.Add(new SdpAttribute("path", msrpUri.ToString()));
+
+        return AnsMd;
+    }
+
+
+    private static RtpMapAttribute? FindSupportedCodec(MediaDescription OfferedMd, List<string> SupportedCodecNames)
+    {
+        RtpMapAttribute? Result = null;
+        foreach (string CodecName in SupportedCodecNames)
+        {
+            foreach (RtpMapAttribute rma in OfferedMd.RtpMapAttributes)
+            {
+                if (rma.EncodingName == CodecName)
+                {
+                    Result = rma;
+                    break;
+                }
+            }
+
+            if (Result != null)
+                break;
+        }
+
+        return Result;
+    }
+
+    private static void HandleOfferedEncryption(MediaDescription OfferedMediaDescription, MediaDescription 
+        AnswerMediaDescription, SdpAnswerSettings Settings)
+    {
+        if (OfferedMediaDescription.UsingDtlsSrtp(out SetupType Setup) == true)
+        {
+            SdpUtils.AddDtlsSrtp(AnswerMediaDescription, Settings.Fingerprint);
+            SetupType AnsSetup;
+            if (Setup == SetupType.passive)
+                AnsSetup = SetupType.active;
+            else if (Setup == SetupType.active)
+                AnsSetup = SetupType.passive;
+            else
+                AnsSetup = SetupType.active;
+            AnswerMediaDescription.AddSetupAttribute(AnsSetup);
+        }
+        else if (OfferedMediaDescription.UsingSdesSrtp() == true)
+        {   // Negotiate the crypto suite to answer with
+            string? AnswerCryptoSuite = GetAnswerCryptoSuite(OfferedMediaDescription);
+            if (AnswerCryptoSuite != null)
+            {
+                CryptoContext Cc1 = new CryptoContext(AnswerCryptoSuite);
+                CryptoAttribute Ca1 = Cc1.ToCryptoAttribute();
+                Ca1.Tag = 1;
+                AnswerMediaDescription.Attributes.Add(new SdpAttribute("crypto", Ca1.ToString()));
+            }
+        }
+    }
+
+    private static string? GetAnswerCryptoSuite(MediaDescription OfferedMediaDescription)
+    {
+        string? strCryptoSuite = null;
+        List<CryptoAttribute> offerredCryptoAttributes = OfferedMediaDescription.GetCryptoAttributes();
+        if (offerredCryptoAttributes.Count == 0)
+            return null;
+
+        foreach (string cryptoSuite in CryptoSuites.SupportedAlgorithms)
+        {
+            foreach (CryptoAttribute cryptoAttribute in offerredCryptoAttributes)
+            {
+                if (cryptoAttribute.CryptoSuite == cryptoSuite)
+                {
+                    strCryptoSuite = cryptoSuite;
+                    break;
+                }
+            }
+
+            if (strCryptoSuite != null)
+                break;
+        }
+
+        return strCryptoSuite;
+    }
+
+
 }

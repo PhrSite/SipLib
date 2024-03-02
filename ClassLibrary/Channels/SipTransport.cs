@@ -237,7 +237,7 @@ public class SipTransport
     /// <returns>Returns a new ServerInviteTransaction object.</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
     public ServerInviteTransaction StartServerInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint,
-        SipTransactionCompleteDelegate completeDelegate, SIPResponse ResponseToSend)
+        SipTransactionCompleteDelegate? completeDelegate, SIPResponse ResponseToSend)
     {
         if (request.Method != SIPMethodsEnum.INVITE)
             throw new ArgumentException("The request must be an INVITE");
@@ -418,10 +418,11 @@ public class SipTransport
     }
 
     /// <summary>
-    /// Sends a SIP response message on the SIPChannel
+    /// Sends a SIP response message on the SIPChannel. This method fires the LogSipResponse event
+    /// for NG9-1-1 event logging.
     /// </summary>
-    /// <param name="Response"></param>
-    /// <param name="DestEp"></param>
+    /// <param name="Response">SIP response message to send</param>
+    /// <param name="DestEp">Destination IPEndPoint to send the message to.</param>
     public void SendSipResponse(SIPResponse Response, IPEndPoint DestEp)
     {
         lock (m_SendLock)
@@ -430,5 +431,16 @@ public class SipTransport
         }
 
         LogSipResponse?.Invoke(Response, DestEp, true, this);
+    }
+
+    /// <summary>
+    /// Sends a SIP response message on the SIPChannel. This method fires the LogSipResponse event
+    /// for NG9-1-1 event logging.
+    /// </summary>
+    /// <param name="Response">SIP response message to send</param>
+    /// <param name="DestEp">Destination SIPEndPoint to send the message to.</param>
+    public void SendSipResponse(SIPResponse Response, SIPEndPoint DestEp)
+    {
+        SendSipResponse(Response, DestEp.GetIPEndPoint());
     }
 }

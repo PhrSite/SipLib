@@ -70,6 +70,8 @@
 //          -- Modified LockCollections() and UnlockCollections() to use a single
 //             lock object
 //          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
+//          16 Feb 24 PHR
+//          -- Removed the Dispose() method because its not used.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -501,17 +503,6 @@ public class SIPTCPChannel : SIPChannel
             m_connectedSockets.Clear();
             m_connectingSockets.Clear();
             UnlockCollections();
-        }
-    }
-
-    private void Dispose(bool disposing)
-    {
-        try
-        {
-            this.Close();
-        }
-        catch (Exception)
-        {
         }
     }
 }

@@ -49,8 +49,7 @@ public class BodyParsingUnitTests
         SIPRequest Req = SIPRequest.ParseSIPRequest(Msg);
         Assert.NotNull(Req);
 
-        List<MessageContentsContainer> Contents = BodyParser.ParseSipBody(Req.RawBuffer, Req.Header.
-            ContentType);
+        List<MessageContentsContainer> Contents = Req.GetBodyContents();
         Assert.NotNull(Contents);
 
         Assert.True(Contents.Count == 9, "The number of contents blocks is wrong");

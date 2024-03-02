@@ -90,6 +90,14 @@ public class RtpChannel
     private static string? m_CertificateFingerprint = null;
 
     /// <summary>
+    /// Gets the media type for this RtpChannel
+    /// </summary>
+    public string MediaType
+    {
+        get { return m_mediaType!; }
+    }
+
+    /// <summary>
     /// Gets the fingerprint of the self-signed X.509 certificate that will be used for DTLS-SRTP.
     /// The certificate is a required SDP attribute for calls that offer or answer DTLS-SRTP media encryption.
     /// </summary>

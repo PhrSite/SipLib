@@ -149,7 +149,7 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a basic MediaDescription object for offerring Real Time Text (RTT) media.
+    /// Creates a basic MediaDescription object for offering Real Time Text (RTT) media.
     /// </summary>
     /// <param name="Port">Specifies the UDP port number that RTT will be sent and received on</param>
     /// <returns>Returns a new MediaDescription object.</returns>
