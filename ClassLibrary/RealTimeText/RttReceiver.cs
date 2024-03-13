@@ -181,6 +181,7 @@ public class RttReceiver
     /// <summary>
     /// The SSRC or CSRC of the source of the most recent characters. Taken from the RTP packet.
     /// </summary>
+    /// <value></value>
     public uint Ssrc { private set; get; } = 0;
 
     private List<RttRedundantBlock> GetRedundantBlocks(byte[] TextBytes, ref int CurrentIndex)

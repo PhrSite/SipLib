@@ -46,4 +46,12 @@ public class G722Decoder : IAudioDecoder
         return Samples;
     }
 
+    /// <summary>
+    /// Gets the sample rate in samples/second.
+    /// </summary>
+    public int SampleRate
+    {
+        get { return 16000; }
+    }
+
 }

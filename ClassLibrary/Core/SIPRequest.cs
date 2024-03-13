@@ -40,8 +40,11 @@
 //                -- Removed the private string UnknownMethod field
 //                -- Removed public bool IsLoop()
 //                -- Added SIPMessage as the base class
+//              8 Mar 24 PHR
+//                -- Added GetQueueUri()
 /////////////////////////////////////////////////////////////////////////////////////
 
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Text;
 
@@ -318,5 +321,23 @@ public class SIPRequest : SIPMessage
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Gets the URI of the queue (destination) that the request is addressed to. This is the URI of the
+    /// topmost Route header if a route set is available, or the request URI (RURI) if there are no
+    /// Route headers.
+    /// </summary>
+    /// <returns>Returns the URI of the destination queue.</returns>
+    public string GetQueueUri()
+    {
+        string queueUri = string.Empty;
+        if (Header.Routes != null && Header.Routes.Length > 0)
+            // Use the first (top-most) Route header.
+            queueUri = Header.Routes.GetAt(0).URI.ToParameterlessString();
+        else
+            queueUri = URI.ToParameterlessString();
+
+        return queueUri;
     }
 }

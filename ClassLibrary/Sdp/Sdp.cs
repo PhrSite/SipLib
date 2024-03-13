@@ -9,7 +9,6 @@
 using System.Text;
 using System.Net;
 using SipLib.RtpCrypto;
-using System.Runtime;
 using SipLib.Core;
 using SipLib.Msrp;
 

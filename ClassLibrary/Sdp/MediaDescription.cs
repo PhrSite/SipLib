@@ -387,6 +387,39 @@ public class MediaDescription
     }
 
     /// <summary>
+    /// Gets the value of the setup attribute.
+    /// </summary>
+    /// <returns></returns>
+    public SetupType GetSetupTypeAttributeValue()
+    {
+        SetupType setupType = SetupType.unknown;
+        string strSetup = GetAttributeValue("setup");
+        if (string.IsNullOrEmpty(strSetup) == true)
+            return SetupType.unknown;
+
+        switch (strSetup)
+        {
+            case "active":
+                setupType = SetupType.active;
+                break;
+            case "passive":
+                setupType = SetupType.passive;
+                break;
+            case "actpass":
+                setupType = SetupType.actpass;
+                break;
+            case "holdcon":
+                setupType = SetupType.unknown;  // Not supported  
+                break;
+            default:
+                setupType = SetupType.unknown;
+                break;
+        }
+
+        return setupType;
+    }
+
+    /// <summary>
     /// Determines if the media description has an attribute that specifies the media state. The media
     /// state attributes are inactive, sendrecv, recvonly and sendonly.
     /// </summary>

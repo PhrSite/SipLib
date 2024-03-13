@@ -21,4 +21,9 @@ public interface IAudioDecoder
     /// </summary>
     void CloseDecoder();
 
+    /// <summary>
+    /// Gets the sample rate in samples/second
+    /// </summary>
+    int SampleRate { get; }
+
 }

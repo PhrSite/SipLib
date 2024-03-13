@@ -27,6 +27,10 @@ public enum SetupType
     /// The endpoint does not want the connection to be established for the time 
     /// being. This option is not currently supported.
     /// </summary>
-    holdcon
+    holdcon,
+    /// <summary>
+    /// The endpoint did not specify a setup type or the provided attribute value is unknow or not supported
+    /// </summary>
+    unknown,
 
 }

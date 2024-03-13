@@ -10,6 +10,7 @@ using System.Net;
 
 using SipLib.Channels;
 using SipLib.Core;
+using SipLib.Sdp;
 using System.Net.Security;
 using System.Collections.Concurrent;
 
@@ -210,10 +211,97 @@ public class MsrpConnection
     }
 
     /// <summary>
+    /// Creates a MsrpConnection from the offered and answered SDP.
+    /// </summary>
+    /// <param name="OfferedSdp">The offered SDP from the INVITE request.</param>
+    /// <param name="OfferedMd">The offered MediaDescription for MSRP ("message") media</param>
+    /// <param name="AnsweredSdp">The answered SDP from the OK response.</param>
+    /// <param name="AnsweredMd">The answered MediaDescription for MSRP ("message") media</param>
+    /// <param name="IsIncoming">If true then its an incoming call. Else its an outgoing call</param>
+    /// <param name="LocalCert">X.509 certificate to use for MSRP over TLS (MSRPS)</param>
+    /// <returns>Returns a tuple containing a MsrpConnection object and a string. If the returned MsrpConnection
+    /// object is null, then the will contain an error message explaining why the MsrpConnection could no be
+    /// created.</returns>
+    public static (MsrpConnection?, string?) CreateFromSdp(Sdp OfferedSdp, MediaDescription OfferedMd,
+        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool IsIncoming, X509Certificate2 LocalCert)
+    {
+        MsrpConnection? connection = null;
+
+        MsrpUri LocalMsrpUri;
+        MsrpUri RemoteMsrpUri;
+
+        MsrpUri? OfferedMsrpUri = GetPathMsrpUri(OfferedMd);
+        if (OfferedMsrpUri == null)
+            return (null, "The offered MsrpUri is not valid");
+
+        MsrpUri? AnsweredMsrpUri = GetPathMsrpUri(AnsweredMd);
+        if (AnsweredMsrpUri == null)
+            return (null, "The answered MsrpUri is not valid");
+
+        SetupType OfferedSetupType = OfferedMd.GetSetupTypeAttributeValue();
+        SetupType AnsweredSetupType = AnsweredMd.GetSetupTypeAttributeValue();
+
+        if (IsIncoming == true)
+        {
+            LocalMsrpUri = AnsweredMsrpUri;
+            RemoteMsrpUri = OfferedMsrpUri;
+        }
+        else
+        {
+            LocalMsrpUri = OfferedMsrpUri;
+            RemoteMsrpUri = AnsweredMsrpUri;
+        }
+
+        bool IsServer = true;
+        if (OfferedSetupType == SetupType.unknown || AnsweredSetupType == SetupType.unknown)
+        {
+            if (IsIncoming == true)
+                IsServer = true;
+            else
+                IsServer = false;
+        }
+        else
+        {
+            if (IsIncoming == true)
+            {
+                if (AnsweredSetupType == SetupType.active)
+                    IsServer = false;
+                else
+                    IsServer = true;
+            }
+            else
+            {
+                if (AnsweredSetupType == SetupType.passive)
+                    IsServer = false;
+                else
+                    IsServer = true;
+            }
+        }
+
+        if (IsServer == true)
+            connection = MsrpConnection.CreateAsServer(LocalMsrpUri, RemoteMsrpUri, LocalCert);
+        else
+            connection = MsrpConnection.CreateAsClient(LocalMsrpUri, RemoteMsrpUri, LocalCert);
+
+        return (connection, null);
+    }
+
+    private static MsrpUri? GetPathMsrpUri(MediaDescription Md)
+    {
+        MsrpUri? msrpUri = null;
+        string strPathAttr = Md.GetAttributeValue("path");
+        if (string.IsNullOrEmpty(strPathAttr) == true)
+            return null;
+
+        msrpUri = MsrpUri.ParseMsrpUri(strPathAttr);
+        return msrpUri;
+    }
+
+    /// <summary>
     /// Starts the server listening for connection requests. Call this method after calling the CreateAsServer()
     /// method.
     /// </summary>
-    // <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public void StartListening()
     {
         if (m_TcpListener == null || ConnectionIsPassive == false)
@@ -615,8 +703,15 @@ public class MsrpConnection
                         m_ResponseMessage = null;
                         RequestBytes = CurrentRequest.ToByteArray();
                         await SendBytes(RequestBytes);
-                        RequestSentTime = DateTime.Now;
-                        NumTransmitAttempts = 1;
+                        if (CurrentRequest.RequestMethod == "REPORT")
+                        {   // Don't expect a response to a REPORT request.
+                            CurrentRequest = null;
+                        }
+                        else
+                        {
+                            RequestSentTime = DateTime.Now;
+                            NumTransmitAttempts = 1;
+                        }
                     }
                 }
                 else
@@ -657,7 +752,7 @@ public class MsrpConnection
                     }
                     else
                     {   // Test for a timeout condition
-                        TimeSpan Ts = RequestSentTime - DateTime.Now;
+                        TimeSpan Ts = DateTime.Now - RequestSentTime;
                         if (Ts.TotalMilliseconds > TRANSMIT_TIMEOUT_MS)
                         {   // A timeout occurred
                             NumTransmitAttempts += 1;
