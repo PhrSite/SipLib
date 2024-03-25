@@ -26,6 +26,10 @@
 //                   https, msrp, msrps, ws, wss schemes.
 //              12 Feb 24 PHR
 //                -- Removed ParseSIPURIRelaxed()
+//              25 Mar 24 PHR
+//                -- Added a special test for urn scheme SIPURIs to handle the possibility
+//                   of multiple ":" characters in the host portion so as not to
+//                   confuse the host for an IPv6 address.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -407,6 +411,11 @@ public class SIPURI
                         else
                         {
                             sipURI.Host = uriHostPortion;
+                            // 25 Mar 25 PHR
+                            // If the scheme is urn, then everything to the right of urn: is considered the host
+                            if (sipURI.Scheme == SIPSchemesEnum.urn)
+                                return sipURI;
+
                             // 21 Jul 23 PHR -- In case the scheme is http, msrp, ws, etc.
                             sipURI.Host = sipURI.Host.Replace("//", "");
                         }

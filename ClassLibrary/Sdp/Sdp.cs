@@ -11,6 +11,7 @@ using System.Net;
 using SipLib.RtpCrypto;
 using SipLib.Core;
 using SipLib.Msrp;
+using System.Net.Mime;
 
 namespace SipLib.Sdp;
 
@@ -752,6 +753,10 @@ public class Sdp
         if (LabelAttr != null)
             AnsMd.Attributes.Add(LabelAttr);
 
+        SdpAttribute RttMixerAttr = OfferedMd.GetNamedAttribute("rtt-mixer");
+        if (RttMixerAttr != null)
+            AnsMd.Attributes.Add(new SdpAttribute("rtt-mixer", null!));
+
         HandleOfferedEncryption(OfferedMd, AnsMd, Settings);
 
         return AnsMd;
@@ -769,7 +774,7 @@ public class Sdp
 
         AnsMd = new MediaDescription("message", Settings.PortManager.NextMsrpPort, OfferedMd.PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
-        AnsMd.Attributes.Add(new SdpAttribute("accept-types", "message/cpim text/plain"));
+        AnsMd.Attributes.Add(new SdpAttribute("accept-types", "message/CPIM text/plain"));
 
         SdpAttribute? LabelAttr = OfferedMd.GetNamedAttribute("label");
         if (LabelAttr != null)
@@ -795,9 +800,16 @@ public class Sdp
         SIPSchemesEnum scheme;
         if (AnsMd.Transport.IndexOf("TLS") >= 0)
             scheme = SIPSchemesEnum.msrps;
-
         else
             scheme = SIPSchemesEnum.msrp;
+
+        // See RFC 7701 Multi-Party Chat using MSRP
+        SdpAttribute chatAttr = OfferedMd.GetNamedAttribute("chatroom");
+        if (chatAttr != null)
+        {
+            if (string.IsNullOrEmpty(chatAttr.Value) == false && chatAttr.Value.Contains("private-messages") == true)
+                AnsMd.Attributes.Add(new SdpAttribute("chatroom", "private-messages"));
+        }
 
         MsrpUri msrpUri = new MsrpUri(scheme, Settings.UserName, Address, AnsMd.Port);
         AnsMd.Attributes.Add(new SdpAttribute("path", msrpUri.ToString()));
@@ -880,5 +892,23 @@ public class Sdp
         return strCryptoSuite;
     }
 
-
+    /// <summary>
+    /// Returns a display name for the associated media type name.
+    /// </summary>
+    /// <param name="mediaTypeName">Media type name. Should be one of "audio", "video", "message" or
+    /// "text".</param>
+    /// <returns>Return a name for displaying.</returns>
+    public static string MediaTypeToDisplayString(string mediaTypeName)
+    {
+        if (mediaTypeName == "audio")
+            return "Audio";
+        else if (mediaTypeName == "video")
+            return "Video";
+        else if (mediaTypeName == "message")
+            return "MSRP";
+        else if (mediaTypeName == "text")
+            return "RTT";
+        else
+            return "Unknown";
+    }
 }

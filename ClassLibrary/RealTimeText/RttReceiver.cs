@@ -11,21 +11,31 @@ namespace SipLib.RealTimeText;
 /// Delegate type for the RttCharactersReceived event of the RttReceiver class.
 /// </summary>
 /// <param name="RxChars">Received text.</param>
-/// <param name="Ssrc">SSRC or CSRC of the source of the text from the RTP packet</param>
-public delegate void RttCharactersReceivedDelegate(string RxChars, uint Ssrc);
+/// <param name="Source">Identifies the source of the received characters</param>
+public delegate void RttCharactersReceivedDelegate(string RxChars, string Source);
 
 /// <summary>
 /// This class handles Real Time Protocol (RTP) packets containing Real Time Text (RTT, RFC 4103)
 /// and notifies the user of this class when complete messages are available. A complete message may 
 /// be one character or several characters.
+/// <para>
 /// This class handles RTT redundancy as specified in Section 4.2 of RFC 4103 and is capable of recovering
 /// the original message even if there are dropped RTP packets.
+/// </para>
+/// <para>This class supports receiving characters from a mixer-aware remote endpoint as described in
+/// RFC 9071 RTP-Mixer Formatting of Multiparty Real-Time Text.
+/// </para>
 /// </summary>
 public class RttReceiver
 {
     private RttParameters m_Params;
     private bool m_FirstPacketReceived = false;
     private ushort m_RtpSeq = 0;
+
+    private RtpChannel? m_RtpChannel = null;
+    private Dictionary<uint, string>? m_Contributors = null;
+
+    private string m_Source = "Caller";
 
     /// <summary>
     /// Event that is fired when at least one character is received
@@ -34,12 +44,67 @@ public class RttReceiver
     public event RttCharactersReceivedDelegate? RttCharactersReceived = null;
 
     /// <summary>
-    /// Constructor
+    /// Constructor. This constructor is for testing only. Use the constructor that takes a RtpChannel
+    /// parameter for actual application.
     /// </summary>
     /// <param name="rttParams">RTT session parameters from the SDP media description block.</param>
     public RttReceiver(RttParameters rttParams)
     {
         m_Params = rttParams;
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="rttParams">RTT session parameters from the SDP media description block.</param>
+    /// <param name="rtpChannel">RtpChannel for RTT that this object will receive RTP packets from</param>
+    /// <param name="source">Identifies the remote source that will be sending characters</param>
+    public RttReceiver(RttParameters rttParams, RtpChannel rtpChannel, string source)
+    {
+        m_Params = rttParams;
+        m_RtpChannel = rtpChannel;
+        m_RtpChannel.RtpPacketReceived += ProcessRtpPacket;
+        m_RtpChannel.RtcpPacketReceived += ProcessRtcpPacket;
+        m_Source = source;
+    }
+
+    /// <summary>
+    /// Retrieves the names of each conference member so that the characters received can be associated
+    /// with the name of the sender.
+    /// </summary>
+    /// <param name="rtcpCompoundPacket"></param>
+    private void ProcessRtcpPacket(RtcpCompoundPacket rtcpCompoundPacket)
+    {
+        Dictionary<uint, string> csrcs = new Dictionary<uint, string>();
+        foreach (SdesPacket sdesPacket in rtcpCompoundPacket.SdesPackets)
+        {
+            foreach (SdesChunk chunk in sdesPacket.Chunks)
+            {
+                foreach (SdesItem item in chunk.Items)
+                {
+                    if (item.ItemType == SdesItemType.NAME)
+                    {
+                        if (csrcs.ContainsKey(chunk.SSRC) == false)
+                            csrcs.Add(chunk.SSRC, item.Payload);
+                    }
+                }
+            }
+
+            m_Contributors = csrcs;
+        }
+    }
+
+    private string GetSource(uint ssrc)
+    {
+        if (m_Contributors == null || m_Contributors.Count == 0)
+            return m_Source;
+        else
+        {
+            if (m_Contributors.ContainsKey(ssrc) == true)
+                return m_Contributors[ssrc];
+            else
+                return m_Source;
+        }
     }
 
     /// <summary>
@@ -60,6 +125,8 @@ public class RttReceiver
             Ssrc = rtpPacket.SSRC;
         else
             Ssrc = rtpPacket.GetCSRC(0);
+
+        string source = GetSource(Ssrc);
 
         if (m_FirstPacketReceived == false)
         {
@@ -94,7 +161,7 @@ public class RttReceiver
             strNewText = Encoding.UTF8.GetString(TextBytes);
             if (strNewText != RttUtils.ByteOrderMarker.ToString())
                 // Notify the user that at least one character has been received
-                RttCharactersReceived?.Invoke(strNewText, Ssrc);
+                RttCharactersReceived?.Invoke(strNewText, source);
             // Else ignore the Byte Order Marker (BOM)
             return;
         }
@@ -174,7 +241,7 @@ public class RttReceiver
                 return;     // Ignore the BOM character
 
             // Notify the user that at least one character has been received
-            RttCharactersReceived?.Invoke(strNewText, Ssrc);
+            RttCharactersReceived?.Invoke(strNewText, source);
         }
     }
 
@@ -192,8 +259,7 @@ public class RttReceiver
 
         while (Done == false)
         {
-            if ((TextBytes[CurrentIndex] & RttRedundantBlock.RTT_MARKER_MASK) ==
-                RttRedundantBlock.RTT_MARKER_MASK)
+            if ((TextBytes[CurrentIndex] & RttRedundantBlock.RTT_MARKER_MASK) == RttRedundantBlock.RTT_MARKER_MASK)
             {   // This is the start of a new header block.
                 Rrb = new RttRedundantBlock(TextBytes, CurrentIndex);
                 CurrentIndex += RttRedundantBlock.RED_HEADER_LENGTH;

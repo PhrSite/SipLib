@@ -43,6 +43,17 @@ public class SIPURIUnitTest
         Assert.True(UrnUri.ToString() == "urn:service:sos");
     }
 
+    [Fact]
+    public void ParseUrn2()
+    {
+        string strUrn = "urn:nena:uid:callid:e3e1b72433674313b4bcb4801183acb6:PsapSimulator.NgTest.net";
+        SIPURI urnUri = SIPURI.ParseSIPURI(strUrn);
+        Assert.NotNull(urnUri);
+        Assert.True(urnUri.Scheme == SIPSchemesEnum.urn);
+        Assert.True(urnUri.Host == "nena:uid:callid:e3e1b72433674313b4bcb4801183acb6:PsapSimulator.NgTest.net", 
+            "The host portion is wrong");
+    }
+
     // 16 Nov 22 PHR
     /// <summary>
     /// Tests parsing of a tel: URI

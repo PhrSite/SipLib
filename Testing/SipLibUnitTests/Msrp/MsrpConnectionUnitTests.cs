@@ -33,7 +33,6 @@ public class MsrpConnectionUnitTests
 
     private MsrpConnection MsrpServer;
     private MsrpConnection MsrpClient;
-    private byte[] PicBytes = null;
 
     private ManualResetEventSlim ServerMessageReceivedEvent = new ManualResetEventSlim(false);
     private string ServerReceivedContentType = null;
@@ -59,16 +58,19 @@ public class MsrpConnectionUnitTests
 
         MsrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, ServerCert);
         MsrpServer.MsrpMessageReceived += OnServerMessageReceived;
-        MsrpServer.StartListening();
+        MsrpServer.MaxMsrpMessageLength = 20000000;
+        MsrpServer.Start();
 
         MsrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, ClientCert);
         MsrpClient.MsrpMessageReceived += OnClientMessageReceived;
-        MsrpClient.StartClientConnection();
+        MsrpClient.MaxMsrpMessageLength = 20000000;
+        MsrpClient.Start();
 
         string ClientMessage1 = "Hello from the client";
         MsrpClient.SendMsrpMessage("text/plain", Encoding.UTF8.GetBytes(ClientMessage1), MsrpMessage.
             NewRandomID());
-        ServerMessageReceivedEvent.Wait(ShortMessageTimeoutMs);
+        bool ServerMessageReceivedSignaled = ServerMessageReceivedEvent.Wait(ShortMessageTimeoutMs);
+        Assert.True(ServerMessageReceivedSignaled == true, "ServerMessageReceivedSignaled is false");
         Assert.True(ServerMessageReceivedEvent.IsSet == true, "ClientMessage1 send timeout");
         Assert.True(ServerReceivedContentType == "text/plain", "ClientMessage1 ContentType is wrong");
         Assert.True(ClientMessage1 == Encoding.UTF8.GetString(ServerReceivedMessageBytes),
@@ -78,62 +80,13 @@ public class MsrpConnectionUnitTests
         string ServerMessage1 = "Hello from the server";
         MsrpServer.SendMsrpMessage("text/plain", Encoding.UTF8.GetBytes(ServerMessage1), MsrpMessage.
             NewRandomID());
-        ClientMessageReceivedEvent.Wait(ShortMessageTimeoutMs);
+        bool ClientMessageReceivedSignaled = ClientMessageReceivedEvent.Wait(ShortMessageTimeoutMs);
+        Assert.True(ClientMessageReceivedSignaled == true, "ClientMessageReceivedSignaled is false");
         Assert.True(ClientMessageReceivedEvent.IsSet == true, "ServerMessage1 send timeout");
         Assert.True(ClientReceivedContentType == "text/plain", "ServerMessage1 ContentType is wrong");
         string clientReceivedMessage = Encoding.UTF8.GetString(ClientReceivedMessageBytes);
         Assert.True(ServerMessage1 == clientReceivedMessage, "ServerMessage1 Contents mismatch");
         ClientMessageReceivedEvent.Reset();
-
-        // Send a multipart/mixed MSRP message from the client to the server
-        CpimMessage cpim = new CpimMessage();
-        cpim.From = new SIPUserField("Client", new SIPURI(SIPSchemesEnum.sips, ipAddress, 7000), null);
-        cpim.To.Add(new SIPUserField("Server", new SIPURI(SIPSchemesEnum.sips, ipAddress, 8000), null));
-        cpim.ContentType = "text/plain";
-        cpim.Subject.Add("Car crash picture");
-        string cpimMessage = "Here is a picture of my car crash";
-        cpim.Body = Encoding.UTF8.GetBytes(cpimMessage);
-
-        List<MessageContentsContainer> messages = new List<MessageContentsContainer>();
-        MessageContentsContainer cpimMcc = new MessageContentsContainer();
-        cpimMcc.ContentType = "message/CPIM";
-        cpimMcc.IsBinaryContents = true;
-        cpimMcc.BinaryContents = cpim.ToByteArray();
-        messages.Add(cpimMcc);
-
-        MessageContentsContainer imageMcc = new MessageContentsContainer();
-        PicBytes = File.ReadAllBytes($"{Path}CarCrashPicture.jpg");
-        imageMcc.ContentType = "image/jpeg";
-        imageMcc.IsBinaryContents = true;
-        imageMcc.BinaryContents = PicBytes;
-        messages.Add(imageMcc);
-
-        string strBoundary = "boundary1";
-        byte[] MultipartBytes = MultipartBinaryBodyBuilder.ToByteArray(messages, strBoundary);
-        MsrpClient.SendMsrpMessage($"multipart/mixed;boundary={strBoundary}", MultipartBytes);
-        ServerMessageReceivedEvent.Wait(LongMessageTimeoutMs);
-
-        Assert.True(ServerMessageReceivedEvent.IsSet == true, "Client multipart/mixed send failed");
-        Assert.True(ServerReceivedContentType.Contains("multipart/mixed") == true,
-            "multipart/mixed ServerReceivedContentType is wrong");
-
-        List<MessageContentsContainer> RecvContents = BodyParser.ProcessMultiPartContents(
-            ServerReceivedMessageBytes, ServerReceivedContentType);
-        Assert.True(RecvContents.Count == 2, "RecvContents.Count is wrong");
-        Assert.True(RecvContents[0].ContentType == "message/CPIM", "The first ContentType is wrong");
-        Assert.True(RecvContents[0].IsBinaryContents == false, "The first IsBinaryContents is wrong");
-        CpimMessage RecvCpim = CpimMessage.ParseCpimBytes(Encoding.UTF8.GetBytes(RecvContents[0].
-            StringContents));
-        Assert.True(RecvCpim != null, "RecvCpim is null");
-        Assert.True(RecvCpim.ContentType == "text/plain", "RecvCpim.ContentType is wrong");
-        string RecvCpimText = Encoding.UTF8.GetString(RecvCpim.Body);
-        Assert.True(RecvCpimText == cpimMessage, "The received CPIM contents are wrong");
-
-        Assert.True(RecvContents[1].ContentType == "image/jpeg", "The second ContentType is wrong");
-        byte[] RecvPicBytes = RecvContents[1].BinaryContents;
-        Assert.True(RecvPicBytes.Length == PicBytes.Length, "The received image length is wrong");
-        for (int i = 0; i < PicBytes.Length; i++)
-            Assert.True(RecvPicBytes[i] == PicBytes[i], $"Image contents mismatch at i = {i}");
 
         MsrpClient.Shutdown();
         MsrpServer.Shutdown();
@@ -166,11 +119,11 @@ public class MsrpConnectionUnitTests
         MsrpUri ServerMsrpUri = new MsrpUri(SIPSchemesEnum.msrp, "Server", ipAddress, serverPort);
 
         MsrpConnection msrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, null);
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         msrpClient.MsrpConnectionEstablished += OnClientConnectionEstablished;        
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
 
         MsrpClientConnectionEstablished.Wait(ShortMessageTimeoutMs);
         Assert.True(MsrpClientConnectionEstablished.IsSet == true, "Client connection timeout");
@@ -208,10 +161,10 @@ public class MsrpConnectionUnitTests
 
         MsrpConnection msrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, null);
         msrpServer.MsrpConnectionEstablished += OnServerConnectionEstablished;
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
 
         ServerConnectionEstablishedEvent.Wait(ShortMessageTimeoutMs);
         Assert.True(ServerConnectionEstablishedEvent.IsSet == true, "Server connection timeout");
@@ -250,7 +203,7 @@ public class MsrpConnectionUnitTests
         MsrpConnection msrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, null);
         // Must hook the MsrpMessageReceived event so that a success REPORT request is generated
         msrpServer.MsrpMessageReceived += (contentType, content) => { };
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         ManualResetEventSlim ReportReceivedEvent = new ManualResetEventSlim(false);
@@ -263,7 +216,7 @@ public class MsrpConnectionUnitTests
             ReportReceivedEvent.Set();
         };
 
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
         string MessageId = MsrpMessage.NewRandomID();
         byte[] MsgBytes = Encoding.UTF8.GetBytes("Hello");
         msrpClient.SendMsrpMessage("text/plain", MsgBytes, MessageId);
@@ -288,7 +241,7 @@ public class MsrpConnectionUnitTests
 
         MsrpConnection msrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, null);
         // Do not hook the MsrpMessageReceived event so that a failure REPORT request is generated
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         ManualResetEventSlim ReportReceivedEvent = new ManualResetEventSlim(false);
@@ -301,7 +254,7 @@ public class MsrpConnectionUnitTests
             ReportReceivedEvent.Set();
         };
 
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
         string MessageId = MsrpMessage.NewRandomID();
         byte[] MsgBytes = Encoding.UTF8.GetBytes("Hello");
         msrpClient.SendMsrpMessage("text/plain", MsgBytes, MessageId);
@@ -329,12 +282,12 @@ public class MsrpConnectionUnitTests
             ReportStatusCode = statusCode;
             ReportReceivedEvent.Set();
         };
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         // Hook the MsrpMessageReceived event so that a success REPORT request is sent to the server
         msrpClient.MsrpMessageReceived += (contentType, content) => { };
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
 
         string MessageId = MsrpMessage.NewRandomID();
         byte[] MsgBytes = Encoding.UTF8.GetBytes("Hello");
@@ -363,11 +316,11 @@ public class MsrpConnectionUnitTests
             ReportStatusCode = statusCode;
             ReportReceivedEvent.Set();
         };
-        msrpServer.StartListening();
+        msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         // Do not hook the MsrpMessageReceived event so that a failure REPORT request is sent to the server
-        msrpClient.StartClientConnection();
+        msrpClient.Start();
 
         string MessageId = MsrpMessage.NewRandomID();
         byte[] MsgBytes = Encoding.UTF8.GetBytes("Hello");

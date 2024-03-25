@@ -71,7 +71,7 @@ public class MsrpConnection
     /// Gets or sets the maximum MSRP message transaction (chunk) length for receiving long MSRP messages.
     /// This represents the absolute maximum of a single MSRP SEND request message chunk, not the maximum
     /// size of a MSRP message that is properly chunked. The setter for this property must be called before
-    /// calling the StartListening() or the StartClientConnection() methods.
+    /// calling the Start() method.
     /// <para> 
     /// This property does not affect the maximum MSRP message length if a sender follows the chunking rules
     /// set forth in RFC 4975.
@@ -147,7 +147,7 @@ public class MsrpConnection
     /// <summary>
     /// Creates a client MsrpConnection object. Call this method to create a client that connects to a
     /// remote endpoint that listens as a server. After calling this method, hook the events and then
-    /// call the StartClientConnection() method when ready to connect.
+    /// call the Start() method when ready to connect.
     /// </summary>
     /// <param name="LocalMsrpUri">MsrpUri of the local endpoint. The host portion of the URI must
     /// be a valid IPEndPoint object.</param>
@@ -173,9 +173,12 @@ public class MsrpConnection
     /// Start the connection request to the remote endpoint server. Only use this method after calling
     /// the CreateAsClient() method.
     /// </summary>
-    // <exception cref="InvalidOperationException"></exception>
-    public void StartClientConnection()
+    /// <exception cref="InvalidOperationException">Thrown if this method is called for a MSRP server</exception>
+    private void StartClientConnection()
     {
+        if (m_Started == true)
+            return;
+
         if (m_TcpClient == null || ConnectionIsPassive == true)
             throw new InvalidOperationException("This method can only be called for client connections");
 
@@ -185,8 +188,40 @@ public class MsrpConnection
     }
 
     /// <summary>
+    /// Starts the server listening for connection requests. Call this method after calling the CreateAsServer()
+    /// method.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if this method is called for a MSRP client.</exception>
+    private void StartListening()
+    {
+        if (m_Started == true)
+            return;
+
+        if (m_TcpListener == null || ConnectionIsPassive == false)
+            throw new InvalidOperationException("This method can only be used for MSRP servers");
+
+        m_Started = true;
+        m_TcpListener.Start();
+        m_TcpListener.BeginAcceptTcpClient(AcceptCallback, m_TcpListener);
+    }
+
+    /// <summary>
+    /// Starts the connection process as a MSRP client or as a MSRP server depending upon the configuration.
+    /// </summary>
+    public void Start()
+    {
+        if (m_Started == true)
+            return;
+
+        if (ConnectionIsPassive == true)
+            StartListening();
+        else
+            StartClientConnection();
+    }
+
+    /// <summary>
     /// Creates a new MsrpConnection object that listens for MSRP connection requests as a server.
-    /// After calling this method, hook the events and then call the StartListening() method.
+    /// After calling this method, hook the events and then call the Start() method.
     /// </summary>
     /// <param name="LocalMsrpUri">Specifies the MsrpUri that the server listens on. The host portion of
     /// the URI must be a valid IPEndPoint.</param>
@@ -295,21 +330,6 @@ public class MsrpConnection
 
         msrpUri = MsrpUri.ParseMsrpUri(strPathAttr);
         return msrpUri;
-    }
-
-    /// <summary>
-    /// Starts the server listening for connection requests. Call this method after calling the CreateAsServer()
-    /// method.
-    /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
-    public void StartListening()
-    {
-        if (m_TcpListener == null || ConnectionIsPassive == false)
-            throw new InvalidOperationException("This method can only be used for MSRP servers");
-
-        m_Started = true;
-        m_TcpListener.Start();
-        m_TcpListener.BeginAcceptTcpClient(AcceptCallback, m_TcpListener);
     }
 
     /// <summary>
