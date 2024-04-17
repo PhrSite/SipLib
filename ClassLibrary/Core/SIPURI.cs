@@ -33,7 +33,6 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
-using System.Text.RegularExpressions;
 
 namespace SipLib.Core;
 
@@ -241,8 +240,12 @@ public class SIPURI
         }
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     private SIPURI()
-    { }
+    {
+    }
 
     /// <summary>
     /// Constructs a new SIPURI from the user, host and parameters and headers strings.

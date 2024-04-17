@@ -4,44 +4,20 @@
 
 namespace SipLib.Video;
 
-using SipLib.Rtp;
-
-/// <summary>
-/// Delegate type for a function that sends an RTP packet. Used for the H264RtpSender class when
-/// an RTP packet needs to be sent.
-/// </summary>
-/// <param name="rtpPckt">RTP packet to send</param>
-public delegate void RtpSendDelegate(RtpPacket rtpPckt);
-
 /// <summary>
 /// Class that processes H264 encoded access units and packetizes H264 NAL units into RTP packets so the
 /// H264 encoded data can be sent over the network.
 /// </summary>
-public class H264RtpSender
+public class H264RtpSender : VideoRtpSender
 {
-    private ushort m_SequenceNumber = 0;
-    private uint m_Timestamp = 0;
-    private uint m_SSRC = 0;
-    private int m_PayloadType = 0;
-    private uint m_TimestampIncrement = 0;
-    private RtpSendDelegate? RtpSender = null;
-
-    private const uint H264_CLOCK_RATE = 90000;
-    private static Random m_Rnd = new Random();
-    private const int MAX_RTP_PAYLOAD = 1200;
-
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="payloadType">RTP payload number to use</param>
     /// <param name="frameRate">Video frame rate in frames per second</param>
     /// <param name="sender">Delegate to use to send RTP packets.</param>
-    public H264RtpSender(int payloadType, uint frameRate, RtpSendDelegate sender)
+    public H264RtpSender(int payloadType, uint frameRate, RtpSendDelegate sender) : base(payloadType, frameRate, sender)
     {
-        m_PayloadType = payloadType;
-        m_TimestampIncrement = H264_CLOCK_RATE / frameRate;
-        RtpSender = sender;
-        m_SSRC = Convert.ToUInt32(m_Rnd.Next());
     }
 
     // See https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.264-201602-S!!PDF-E&type=items 
@@ -52,9 +28,9 @@ public class H264RtpSender
     /// in RTP packets.
     /// </summary>
     /// <param name="accessUnit">Input H264 access unit</param>
-    public void ProcessH264Frame(byte[] accessUnit)
+    public override void SendEncodedFrame(byte[] accessUnit)
     {
-        foreach (var nal in H264Packetiser.ParseNals(accessUnit))
+        foreach (H264Packetiser.H264Nal nal in H264Packetiser.ParseNals(accessUnit))
         {
             SendH264Nal(nal.NAL, nal.IsLast);
         }
@@ -99,20 +75,6 @@ public class H264RtpSender
         }
 
         if (isLastNal)
-            m_Timestamp += m_TimestampIncrement;
-    }
-
-    private void SendRtpPacket(byte[] payload, bool markerBit)
-    {
-        RtpPacket rtpPacket = new RtpPacket(payload.Length);
-        rtpPacket.SSRC = m_SSRC;
-        rtpPacket.SequenceNumber = m_SequenceNumber;
-        rtpPacket.Timestamp = m_Timestamp;
-        rtpPacket.Marker = markerBit;
-        rtpPacket.PayloadType = m_PayloadType;
-        rtpPacket.Payload = payload;
-        RtpSender?.Invoke(rtpPacket);
-
-        m_SequenceNumber += 1;
+            Timestamp += TimestampIncrement;
     }
 }
