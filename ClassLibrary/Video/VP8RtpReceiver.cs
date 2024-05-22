@@ -8,7 +8,7 @@ using SipLib.Rtp;
 /// <summary>
 /// Class for processing RTP packets containing VP8 encode video frames.
 /// </summary>
-public class VP8RtpReceiver
+public class VP8RtpReceiver : VideoRtpReceiver
 {
     private int _currVideoFramePosn = 0;
 
@@ -21,7 +21,7 @@ public class VP8RtpReceiver
     /// <param name="rtpPacket">Input RTP packet</param>
     /// <returns>Returns a complete video frame containing VP8 encoded video data when a full frame is
     /// ready. Returns null if a full frame is not ready yet.</returns>
-    public byte[]? ProcessRtpPacket(RtpPacket rtpPacket)
+    public override byte[]? ProcessRtpPacket(RtpPacket rtpPacket)
     {
         byte[] payload = rtpPacket.Payload;
         if (_currVideoFramePosn + payload.Length >= _maxFrameSize)

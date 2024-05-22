@@ -706,6 +706,7 @@ public class Sdp
         List<int> PayloadTypes = new List<int>();
         PayloadTypes.Add(AnsRma.PayloadType);
         AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextVideoPort, PayloadTypes);
+        AnsMd.RtpMapAttributes.Add(AnsRma);
         AnsMd.Transport = OfferedMd.Transport;
 
         SdpAttribute? VideoFmtpAttr = OfferedMd.GetFmtpForFormatNumber(SupportedRma.PayloadType.ToString());
