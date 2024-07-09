@@ -589,7 +589,7 @@ public class SIPHeaders
 /// <summary>
 /// Definitions for various SIP header parameter names
 /// </summary>
-public class SIPHeaderAncillary
+internal class SIPHeaderAncillary
 {
     // Header parameters used in the core SIP protocol.
     /// <value></value>
@@ -616,7 +616,7 @@ public class SIPHeaderAncillary
 /// <summary>
 /// Authorization Headers
 /// </summary>
-public class AuthHeaders
+internal class AuthHeaders
 {
     /// <value></value>
     public const string AUTH_DIGEST_KEY = "Digest";
@@ -643,7 +643,7 @@ public class AuthHeaders
 }
 
 /// <summary>
-/// 
+/// Enumeration of all of the methods for a SIP request.
 /// </summary>
 public enum SIPMethodsEnum
 {

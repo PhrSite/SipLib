@@ -44,8 +44,6 @@
 //                -- Added GetQueueUri()
 /////////////////////////////////////////////////////////////////////////////////////
 
-using Org.BouncyCastle.Ocsp;
-using System;
 using System.Text;
 
 namespace SipLib.Core;
@@ -63,7 +61,7 @@ namespace SipLib.Core;
 // </bnf>
 
 /// <summary>
-/// Class for a SIP request message
+/// Class for a SIP request message.
 /// </summary>
 public class SIPRequest : SIPMessage
 {

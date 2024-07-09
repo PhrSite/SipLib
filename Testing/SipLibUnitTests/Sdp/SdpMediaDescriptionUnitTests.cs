@@ -2,7 +2,9 @@
 //  File: SdpMediaDescriptionUnitTests.cs                           19 Nov 22 PHR
 //////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.Media;
 using SipLib.Sdp;
+using System.Net;
 
 namespace SipLibUnitTests.Sdp;
 
@@ -85,5 +87,31 @@ public class SdpMediaDescriptionUnitTests
         Assert.True(rtpMapAttribute.EncodingName == encodingName, $"EncodingName for PayloadType = {payloadType} is wrong");
         Assert.True(rtpMapAttribute.ClockRate == clockRate, $"ClockRate for codec type = {payloadType} is wrong");
         Assert.True(rtpMapAttribute.Channels == channels, $"Channels for codec type = {payloadType} is wrong");
+    }
+
+    [Fact]
+    public void TestBuildAudioAnswerSdp()
+    {
+        List<string> SupportedAudioCodecs = new List<string>() {"PCMU", "PCMA" };
+        List<string> SupportedVideoCodecs = new List<string>() { "H264" };
+        MediaPortSettings portSettings = new MediaPortSettings();
+        string fingerprint = "ab:cd:ef:12:34:56:78:90";     // A dummy value
+        MediaPortManager Mpm = new MediaPortManager(portSettings);
+
+        SdpAnswerSettings AnswerSettings = new SdpAnswerSettings(SupportedAudioCodecs, SupportedVideoCodecs,
+            "TestServer", fingerprint, Mpm);
+
+        // Creates a MediaDescription for audio with payload types of 0 and 101 (PCMU and telephone-event).
+        SipLib.Sdp.Sdp OfferedSdp = SdpUtils.BuildSimpleAudioSdp(IPAddress.Parse("192.168.1.80"), 5000, "Remote");
+        SipLib.Sdp.Sdp AnsweredSdp = SipLib.Sdp.Sdp.BuildAnswerSdp(OfferedSdp, IPAddress.Parse("192.168.1.79"),
+            AnswerSettings);
+        Assert.True(AnsweredSdp != null, "The AnsweredSdp is null");
+        MediaDescription AnsAudioMd = AnsweredSdp.GetMediaType("audio");
+        Assert.True(AnsAudioMd != null, "The answered audio media description is null");
+        RtpMapAttribute AnsAudioRtpMapAttr = AnsAudioMd.GetRtpMapForPayloadType(0);
+        Assert.True(AnsAudioRtpMapAttr != null, "The answered RtpMapAttribute for payload type 0 is null");
+
+        RtpMapAttribute AnsTelEventRtpMap = AnsAudioMd.GetRtpMapForPayloadType(101);
+        Assert.True(AnsTelEventRtpMap != null, "The answered RtpMapAttribute for payload type 101 is null");
     }
 }

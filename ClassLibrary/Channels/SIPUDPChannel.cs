@@ -33,7 +33,7 @@
 #endregion
 
 /////////////////////////////////////////////////////////////////////////////////////
-// Revised: 8 Nov PHR Initial version
+// Revised: 8 Nov 22 PHR Initial version
 //          -- Increased the RX buffer size to 2 MB for better performance.
 //          -- Changed the void Send(IPEndPoint dstEndPoint, byte[] buffer, string
 //             serverCertificateName) method so that it calls the Send(IPEndPoint
@@ -66,6 +66,11 @@ namespace SipLib.Channels;
 public class SIPUDPChannel : SIPChannel
 {
     private const string THREAD_NAME = "sipchanneludp-";
+
+    /// <summary>
+    /// See the first answer at: https://stackoverflow.com/questions/5199026/c-sharp-async-udp-listener-socketexception
+    /// See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6m/udp-comms-and-connection-reset-problem
+    /// </summary>
     private const int SIO_UDP_CONNRESET = -1744830452;
 
     private UdpClient? m_sipConn = null;
@@ -90,6 +95,17 @@ public class SIPUDPChannel : SIPChannel
     /// if the platform is Windows.
     /// </summary>
     /// <param name="Client">UdpClient to disable SocketExceptions on.</param>
+    /// <remarks>
+    /// <para>
+    /// The SocketExceptions only occur on Windows.
+    /// </para>
+    /// <para>
+    /// See the first answer at: https://stackoverflow.com/questions/5199026/c-sharp-async-udp-listener-socketexception
+    /// </para>
+    /// <para>
+    /// See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6m/udp-comms-and-connection-reset-problem
+    /// </para>
+    /// </remarks>
     public static void DisableConnectionReset(UdpClient Client)
     {
         Client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null);
@@ -218,7 +234,7 @@ public class SIPUDPChannel : SIPChannel
     /// Gets the connection status.
     /// </summary>
     /// <param name="remoteEndPoint">Endpoint to test.</param>
-    /// <returns>Always returns true for UDP because it is not a connected transport protocol.</returns>
+    /// <returns>Always returns true for UDP because UDP is not a connected transport protocol.</returns>
     public override bool IsConnectionEstablished(IPEndPoint remoteEndPoint)
     {
         return true;
@@ -227,7 +243,7 @@ public class SIPUDPChannel : SIPChannel
     /// <summary>
     /// Not used for UDP.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Returns an empty Dictionary object for UDP because UDP is not a connected transport protocol.</returns>
     protected override Dictionary<string, SIPConnection> GetConnectionsList()
     {
         return new Dictionary<string, SIPConnection>();

@@ -60,7 +60,7 @@ namespace SipLib.Core;
 // </bnf>
 
 /// <summary>
-/// Represents an entire SIP message.
+/// Represents an entire SIP message. This is the base class for the SIPRequest and the SIPResponse classes.
 /// </summary>
 public class SIPMessage
 {		

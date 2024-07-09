@@ -40,27 +40,30 @@ using System.Runtime.Serialization;
 
 namespace SipLib.Core;
 
-/// <bnf>
-/// Contact        =  ("Contact" / "m" ) HCOLON ( STAR / (contact-param *(COMMA contact-param)))
-/// contact-param  =  (name-addr / addr-spec) *(SEMI contact-params)
-/// name-addr      =  [ display-name ] LAQUOT addr-spec RAQUOT
-/// addr-spec      =  SIP-URI / SIPS-URI / absoluteURI
-/// display-name   =  *(token LWS)/ quoted-string
-///
-/// contact-params     =  c-p-q / c-p-expires / contact-extension
-/// c-p-q              =  "q" EQUAL qvalue
-/// c-p-expires        =  "expires" EQUAL delta-seconds
-/// contact-extension  =  generic-param
-/// delta-seconds      =  1*DIGIT
-/// generic-param  =  token [ EQUAL gen-value ]
-/// gen-value      =  token / host / quoted-string
-/// </bnf>
+// <bnf>
+// Contact        =  ("Contact" / "m" ) HCOLON ( STAR / (contact-param *(COMMA contact-param)))
+// contact-param  =  (name-addr / addr-spec) *(SEMI contact-params)
+// name-addr      =  [ display-name ] LAQUOT addr-spec RAQUOT
+// addr-spec      =  SIP-URI / SIPS-URI / absoluteURI
+// display-name   =  *(token LWS)/ quoted-string
+//
+// contact-params     =  c-p-q / c-p-expires / contact-extension
+// c-p-q              =  "q" EQUAL qvalue
+// c-p-expires        =  "expires" EQUAL delta-seconds
+// contact-extension  =  generic-param
+// delta-seconds      =  1*DIGIT
+// generic-param  =  token [ EQUAL gen-value ]
+// gen-value      =  token / host / quoted-string
+// </bnf>
+
+/// <summary>
+/// Class for building or parsing a SIP Contact header. See Section 20.10 and page 228 of RFC 3261.  
+/// </summary>
 /// <remarks>
 /// The Contact header only has parameters, no headers. Parameters of from ...;
 /// name=value;name2=value2
 /// Specific parameters: q, expires.
 /// </remarks>
-[DataContract]
 public class SIPContactHeader
 {
     private const string EXPIRES_PARAMETER_KEY = "expires";

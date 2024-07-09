@@ -605,7 +605,8 @@ public class Sdp
     /// Builds an Sdp object to send as the answered Sdp in responsed to the offered Sdp
     /// </summary>
     /// <param name="OfferedSdp">SDP that was offered</param>
-    /// <param name="address">IP address to be used for transport of all media</param>
+    /// <param name="address">IP address to be used for transport of all media. This address is used in the
+    /// "c=" line of the SDP.</param>
     /// <param name="AnswerSettings">Settings that determine how to build the answered SDP</param>
     /// <returns>Returns the SDP to send to the client that offered the SDP</returns>
     public static Sdp BuildAnswerSdp(Sdp OfferedSdp, IPAddress address, SdpAnswerSettings AnswerSettings)
@@ -661,6 +662,7 @@ public class Sdp
         PayloadTypes.Add(AnsRma.PayloadType);
         AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextAudioPort, PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
+        AnsMd.RtpMapAttributes.Add(AnsRma);
 
         // TODO: Get any fmtp attribute(s) for the media codec selected
 

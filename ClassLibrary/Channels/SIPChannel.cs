@@ -114,7 +114,6 @@ public abstract class SIPChannel
     {
         get
         {
-            //return LocalSIPEndPoint.ToString();
             return SipUri!;
         }
     }
@@ -123,7 +122,7 @@ public abstract class SIPChannel
     /// If the underlying transport channel is reliable, such as TCP, this will be set to true;
     /// </summary>
     /// <value></value>
-    protected bool m_isReliable;
+    internal bool m_isReliable;
 
     /// <summary>
     /// If the underlying transport channel is reliable, such as TCP, this will be set to true;
@@ -138,10 +137,10 @@ public abstract class SIPChannel
     /// True if the channel is using Transport Layer Security (TLS)
     /// </summary>
     /// <value></value>
-    protected bool m_IsTLS;
+    internal bool m_IsTLS;
 
     /// <summary>
-    /// Gets the m_IsTLS property. If true then the SIPConnection uses Transport Layer Security (TLS).
+    /// If true then the SIPConnection uses Transport Layer Security (TLS).
     /// </summary>
     /// <value></value>
     public bool IsTLS
@@ -198,7 +197,7 @@ public abstract class SIPChannel
 
     /// <summary>
     /// Gets reference to the dictionary of the connections. The string is the string version of the
-    /// remote endpoints IPEndPoint.
+    /// remote endpoint's IPEndPoint.
     /// </summary>
     /// <returns></returns>
     /// <value></value>

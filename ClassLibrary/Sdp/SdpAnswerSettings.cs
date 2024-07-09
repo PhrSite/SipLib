@@ -67,7 +67,7 @@ public class SdpAnswerSettings
     public string Fingerprint { get; set; }
 
     /// <summary>
-    /// MediaPortManager to use use for allocation of media ports.
+    /// MediaPortManager to use for allocation of media ports.
     /// </summary>
     /// <value></value>
     public MediaPortManager PortManager { get; set; }
@@ -78,7 +78,7 @@ public class SdpAnswerSettings
     /// <param name="AudioCodecs">List of supported audio codecs</param>
     /// <param name="VideoCodecs">List of supported video codecs</param>
     /// <param name="userName">User name to use for the session owner and MSRP URI in the media descriptions</param>
-    /// <param name="fingerprint">Fingerprint of the self-signed X.509 certificate that that will be used for DTLS-SDES keying
+    /// <param name="fingerprint">Fingerprint of the self-signed X.509 certificate that will be used for DTLS-SDES keying
     /// material negotiation</param>
     /// <param name="portManager">MediaPortManager to use use for allocation of media ports.</param>
     public SdpAnswerSettings(List<string> AudioCodecs, List<string> VideoCodecs, string userName, string fingerprint, 

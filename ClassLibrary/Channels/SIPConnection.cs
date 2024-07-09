@@ -51,7 +51,7 @@ using SipLib.Core;
 namespace SipLib.Channels;
 
 /// <summary>
-/// Enumeration for the type of the SIP connection
+/// Enumeration for the type of the SIP connection type.
 /// </summary>
 public enum SIPConnectionsEnum
 {
@@ -81,10 +81,10 @@ public class SIPConnection
     /// Stream for the transport
     /// </summary>
     /// <value></value>
-    public Stream SIPStream;
+    internal Stream SIPStream;
 
     /// <summary>
-    /// Remote end point of the connection
+    /// Remote endpoint of the connection
     /// </summary>
     /// <value></value>
     public IPEndPoint RemoteEndPoint;
@@ -92,17 +92,17 @@ public class SIPConnection
     /// <summary>
     /// Connection/transport protocol
     /// </summary>
-    /// <value></value>
+    /// <value>For example: udp, tcp, tls, ws, wss.</value>
     public SIPProtocolsEnum ConnectionProtocol;
 
     /// <summary>
     /// Connection type
     /// </summary>
-    /// <value></value>
+    /// <value>The available connection types are Listener or Caller</value>
     public SIPConnectionsEnum ConnectionType;
 
     /// <summary>
-    /// Records when a SIP packet was last sent or received.
+    /// Contains the time when a SIP packet was last sent or received.
     /// </summary>
     /// <value></value>
     public DateTime LastTransmission;
@@ -111,13 +111,13 @@ public class SIPConnection
     /// Buffer for receiving a SIP message
     /// </summary>
     /// <value></value>
-    public byte[] SocketBuffer = new byte[2 * MaxSIPTCPMessageSize];
+    internal byte[] SocketBuffer = new byte[2 * MaxSIPTCPMessageSize];
 
     /// <summary>
     /// Index of the end of the SocketBuffer
     /// </summary>
     /// <value></value>
-    public int SocketBufferEndPosition = 0;
+    internal int SocketBufferEndPosition = 0;
 
     private SIPChannel m_owningChannel;
     private TcpClient _tcpClient;
@@ -165,7 +165,7 @@ public class SIPConnection
     /// <param name="bytesRead">The number of bytes that were read into the receive buffer.</param>
     /// <returns>True if the receive was processed correctly, false if the socket returned 0 bytes or was
     /// disconnected.</returns>
-    public bool SocketReadCompleted(int bytesRead)
+    internal bool SocketReadCompleted(int bytesRead)
     {
         try
         {
@@ -287,7 +287,7 @@ public class SIPConnection
     /// <param name="end">The position in the buffer to stop the search at.
     /// </param>
     /// <returns>Returns the content length. May be 0 or greater than 0.</returns>
-    public static int GetContentLength(byte[] buffer, int start, int end)
+    internal static int GetContentLength(byte[] buffer, int start, int end)
     {
         if (buffer == null || start > end || buffer.Length < end)
             return 0;
@@ -377,7 +377,7 @@ public class SIPConnection
     /// <summary>
     /// Closes the connection
     /// </summary>
-    public void Close()
+    internal void Close()
     {
         Monitor.Enter(m_CloseLock);
 
@@ -435,7 +435,7 @@ public class SIPConnection
     /// <summary>
     /// Sets up a dedicated thread for doing synchronous reads.
     /// </summary>
-    public void StartSynchronousRead()
+    internal void StartSynchronousRead()
     {
         if (m_ReadThread != null)
             return;     // Already reading
