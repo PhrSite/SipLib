@@ -72,6 +72,9 @@
 //          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
 //          16 Feb 24 PHR
 //          -- Removed the Dispose() method because its not used.
+//          16 Jul 24 PHR
+//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Removed MAX_TCP_CONNECTIONS from the call to TcpListener.Start()
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -88,9 +91,6 @@ public class SIPTCPChannel : SIPChannel
 {
     private const string ACCEPT_THREAD_NAME = "siptcp-";
     private const string PRUNE_THREAD_NAME = "siptcpprune-";
-
-    // Maximum number of connections for the TCP listener.
-    private const int MAX_TCP_CONNECTIONS = 1000;
 
     private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
     
@@ -149,7 +149,7 @@ public class SIPTCPChannel : SIPChannel
             m_tcpServerListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.
                 ReuseAddress, true);
 
-            m_tcpServerListener.Start(MAX_TCP_CONNECTIONS);
+            m_tcpServerListener.Start();
 
             if (LocalSIPEndPoint.Port == 0)
                 LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, (IPEndPoint)m_tcpServerListener.
@@ -162,8 +162,7 @@ public class SIPTCPChannel : SIPChannel
             m_ListenerThread.Priority = ThreadPriority.AboveNormal;
             m_ListenerThread.Start();
 
-            ThreadPool.QueueUserWorkItem(delegate { PruneConnections(
-                PRUNE_THREAD_NAME + LocalSIPEndPoint.Port); });
+            ThreadPool.QueueUserWorkItem(delegate { PruneConnections(PRUNE_THREAD_NAME + LocalSIPEndPoint.Port); });
         }
         catch (Exception)
         {
@@ -171,6 +170,9 @@ public class SIPTCPChannel : SIPChannel
         }
     }
 
+    /// <summary>
+    /// This thread loop runs until the TCP server listener is closed.
+    /// </summary>
     private void AcceptConnections()
     {
         ChannelStarted = true;
@@ -178,18 +180,25 @@ public class SIPTCPChannel : SIPChannel
         {
             Thread.CurrentThread.Name = ACCEPT_THREAD_NAME + LocalSIPEndPoint.Port;
 
-            while (!Closed)
+            while (Closed == false)
             {
                 try
                 {
                     TcpClient tcpClient = m_tcpServerListener.AcceptTcpClient();
+
                     LockCollections();
-                    if (!Closed)
+                    if (Closed == false)
                     {
+                        IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
+                        if (AcceptConnection != null && AcceptConnection(SIPProtocolsEnum.tcp, remoteEndPoint) == false)
+                        {
+                            tcpClient.Close();
+                            continue;
+                        }
+
                         tcpClient.Client.SetSocketOption(SocketOptionLevel.
                             Socket, SocketOptionName.ReuseAddress, true);
                         tcpClient.LingerState = new LingerOption(false, 0);
-                        IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
 
                         SIPConnection sipTCPConnection = new SIPConnection(this, tcpClient, tcpClient.
                             GetStream(), remoteEndPoint, SIPProtocolsEnum.tcp, SIPConnectionsEnum.Listener);

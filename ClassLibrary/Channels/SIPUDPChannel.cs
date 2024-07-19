@@ -50,6 +50,9 @@
 //          -- Made the Send() method thread-safe.
 //          16 Feb 24 PHR
 //          -- Removed the Dispose() method because its not used.
+//          16 Jul 24 PHR
+//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Added checking for MAX_UDP_PAYLOAD_BYTES
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -75,6 +78,9 @@ public class SIPUDPChannel : SIPChannel
 
     private UdpClient? m_sipConn = null;
     private Qos? m_Qos = null;
+
+    // Allows 8 bytes for the UDP header and 20 bytes for the IP (IPv4) header
+    private const int MAX_UDP_PAYLOAD_BYTES = ushort.MaxValue - 8 - 20;
 
     /// <summary>
     /// Constructs a new SIPUDPChannel.
@@ -180,6 +186,11 @@ public class SIPUDPChannel : SIPChannel
                 }
                 else
                 {
+                    // There is no concept of a connection for UDP so allow the user to decide whether or not
+                    // to accept each UDP packet that is received.
+                    if (AcceptConnection != null && AcceptConnection(SIPProtocolsEnum.udp, inEndPoint) == false)
+                        continue;
+
                     SIPMessageReceived?.Invoke(this, new SIPEndPoint(SIPProtocolsEnum.udp, inEndPoint),
                         buffer);
                 }
@@ -197,9 +208,14 @@ public class SIPUDPChannel : SIPChannel
     /// <param name="destinationEndPoint">IPEndPoint to send the message to.
     /// </param>
     /// <param name="message">Input message to send.</param>
+    /// <exception cref="ArgumentException">Thrown if the SIP message is longer than that allowed by UDP</exception>
     public override void Send(IPEndPoint destinationEndPoint, string message)
     {
         byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
+        if (messageBuffer.Length > MAX_UDP_PAYLOAD_BYTES)
+            throw new ArgumentException($"SIP message UDP packet too long. Allowed length = {MAX_UDP_PAYLOAD_BYTES}, " +
+                $"Actual Length = {messageBuffer.Length}. Destination = {destinationEndPoint.ToString()}");
+
         Send(destinationEndPoint, messageBuffer);
     }
 
@@ -211,8 +227,13 @@ public class SIPUDPChannel : SIPChannel
     /// </summary>
     /// <param name="destinationEndPoint">IPEndPoint to send the message to.</param>
     /// <param name="buffer">Message to send.</param>
+    /// <exception cref="ArgumentException">Thrown if the SIP message is longer than that allowed by UDP</exception>
     public override void Send(IPEndPoint destinationEndPoint, byte[] buffer)
     {
+        if (buffer.Length > MAX_UDP_PAYLOAD_BYTES)
+            throw new ArgumentException($"SIP message UDP packet too long. Allowed length = {MAX_UDP_PAYLOAD_BYTES}, " +
+                $"Actual Length = {buffer.Length}. Destination = {destinationEndPoint.ToString()}");
+
         lock (m_SendLockObj)
         {
             m_sipConn.Send(buffer, buffer.Length, destinationEndPoint);

@@ -34,6 +34,9 @@
 
 /////////////////////////////////////////////////////////////////////////////////////
 //	Revised:	7 Nov 22 PHR -- Initial version. Added documentation comments
+//              9 Jul 24 PHR
+//              -- Changed LocalTCPSockets from public to protected.
+//              -- Changed PRUNE_NOTRANSMISSION_MINUTES from 70 to 180 minutes.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -45,27 +48,40 @@ using SipLib.Core;
 namespace SipLib.Channels;
 
 /// <summary>
-/// Base class for all SIP channels.
+/// Base class for all SIP channel classes.
 /// </summary>
 public abstract class SIPChannel
 {
     // Wait this long before starting the prune checks, there will be no connections to prune initially
-    // and the CPU is needed elsewhere.
+    // and the CPU is needed elsewhere. Units are milliseconds.
     private const int INITIALPRUNE_CONNECTIONS_DELAY = 60000;
 
-    // The period at which to prune the connections.
+    // The period at which to prune the connections. Units are milliseconds.
     private const int PRUNE_CONNECTIONS_INTERVAL = 60000;
 
     // The number of minutes after which if no transmissions are sent or received a connection will be
     // pruned.
-    private const int PRUNE_NOTRANSMISSION_MINUTES = 70;
+    private const int PRUNE_NOTRANSMISSION_MINUTES = 180;
+
+    /// <summary>
+    /// <para>
+    /// Delegate function that can be provided by the user of a SIPConnection derived class to determine
+    /// whether or not to accept a SIP connection request. The function should return true to accept a connection
+    /// request or false to refuse it.
+    /// </para>
+    /// <para>
+    /// If this delegate member is null then all connection requests will be received regardless of where they
+    /// came from.
+    /// </para>
+    /// </summary>
+    public AcceptConnectionDelegate? AcceptConnection = null;
 
     /// <summary>
     /// Keeps a list of TCP sockets this process is listening on to prevent it establishing TCP
-    /// connections to itself.
+    /// connections to itself. This is used only for TCP and TLS.
     /// </summary>
     /// <value></value>
-    public List<string> LocalTCPSockets = new List<string>();
+    protected List<string> LocalTCPSockets = new List<string>();
 
     /// <summary>
     /// This is the local SIPURI

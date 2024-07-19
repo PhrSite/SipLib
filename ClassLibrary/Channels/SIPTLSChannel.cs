@@ -68,6 +68,24 @@
 //          -- Added the SIPConnectonFailed and the SIPConnectionDisconnected events
 //          16 Feb 24 PHR
 //          -- Removed the Dispose() method because its not used.
+//          10 Jul 24 PHR
+//          -- Changed ValidateRemoteCertificate() to ValidateRemoteClientCertificate()
+//             and added ValidateRemoteServerCertificate()
+//          -- Modified the call to SslStream.BeginAuthenticateAsServer() to use
+//             SslProtocols.None instead of SslProtocols.Tls12 so that the highest
+//             level of TLS available will be used.
+//          -- Modified the call to SslStream.BeginAuthenticateAsClient() to use
+//             SslProtocols.None instead of SslProtocols.Tls12 so that the highest
+//             level of TLS available will be used.
+//          16 Jul 24 PHR
+//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Added support for the AcceptClientCertificate delegate.
+//          -- Removed the outer try/catch block around the while loop in the
+//             AcceptConnections() function because it is not needed.
+//          -- Modified EneAuthenticateAsServer() to check for the presence of a
+//             remote client certificate when mutual authentication is enabled. If
+//             a remote client certificate is missing the the connection is rejected.
+//          -- Removed MAX_TLS_CONNECTIONS from the call to TcpListener.Start().
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -87,8 +105,6 @@ public class SIPTLSChannel : SIPChannel
     private const string ACCEPT_THREAD_NAME = "siptls-";
     private const string PRUNE_THREAD_NAME = "siptlsprune-";
 
-    // Maximum number of connections for the TLS listener.
-    private const int MAX_TLS_CONNECTIONS = 1000;
     private static int MaxSIPTCPMessageSize = SIPConstants.SIP_MAXIMUM_RECEIVE_LENGTH;
 
     private TcpListener? m_tlsServerListener;
@@ -112,6 +128,19 @@ public class SIPTLSChannel : SIPChannel
     /// </summary>
     /// <value></value>
     public event SipConnectionFailedDelegate? SIPConnectionDisconnected = null;
+
+    /// <summary>
+    /// <para>
+    /// Delegate function that is called to allow the user of the SIPTLSChannel class to decide whether or
+    /// not to accept the connection based on the X.509 client certificate provided by the client. The function
+    /// should return true to allow the connection or false to reject the connection.
+    /// </para>
+    /// <para>
+    /// If this delegate member is null then all connection requests will be accepted regardless of the certificate
+    /// provided by the client.
+    /// </para>
+    /// </summary>
+    public AcceptClientCertificateDelegate? AcceptClientCertificate = null;
 
     /// <summary>
     /// Constructs a new SIPTLSChannel and initializes it.
@@ -170,7 +199,7 @@ public class SIPTLSChannel : SIPChannel
             m_tlsServerListener = new TcpListener(LocalSIPEndPoint!.GetIPEndPoint());
             m_tlsServerListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
                 true);
-            m_tlsServerListener.Start(MAX_TLS_CONNECTIONS);
+            m_tlsServerListener.Start();
 
             if (LocalSIPEndPoint.Port == 0)
                 LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tls, (IPEndPoint)m_tlsServerListener.
@@ -191,51 +220,49 @@ public class SIPTLSChannel : SIPChannel
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void AcceptConnections()
     {
         ChannelStarted = true;
-        try
+        Thread.CurrentThread.Name = ACCEPT_THREAD_NAME + LocalSIPEndPoint!.Port;
+
+        while (Closed == false)
         {
-            Thread.CurrentThread.Name = ACCEPT_THREAD_NAME + LocalSIPEndPoint!.Port;
-
-            while (!Closed)
+            try
             {
-                try
+                TcpClient tcpClient = m_tlsServerListener.AcceptTcpClient();
+                IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint!;
+
+                if (AcceptConnection != null && AcceptConnection(SIPProtocolsEnum.tcp, remoteEndPoint) == false)
                 {
-                    TcpClient tcpClient = m_tlsServerListener.AcceptTcpClient();
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
-                        true);
+                    tcpClient.Close();
+                    continue;
+                }
 
-                    IPEndPoint remoteEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint!;
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-                    SslStream sslStream;
-                    if (m_UseMutualAuth == false)
-                        sslStream = new SslStream(tcpClient.GetStream(), false);
-                    else
-                        sslStream = new SslStream(tcpClient.GetStream(), false, new 
-                            RemoteCertificateValidationCallback(ValidateRemoteCertificate!), null);
+                SslStream sslStream;
+                if (m_UseMutualAuth == false)
+                    sslStream = new SslStream(tcpClient.GetStream(), false);
+                else
+                    sslStream = new SslStream(tcpClient.GetStream(), false, new 
+                        RemoteCertificateValidationCallback(ValidateRemoteClientCertificate!));
 
-                    SIPConnection sipTLSConnection = new SIPConnection(this, tcpClient, sslStream,
-                        remoteEndPoint, SIPProtocolsEnum.tls, SIPConnectionsEnum.Listener);
+                SIPConnection sipTLSConnection = new SIPConnection(this, tcpClient, sslStream,
+                    remoteEndPoint, SIPProtocolsEnum.tls, SIPConnectionsEnum.Listener);
 
-                    if (m_UseMutualAuth == false)
-                        sslStream.BeginAuthenticateAsServer(m_serverCertificate, 
-                            EndAuthenticateAsServer, sipTLSConnection);
-                    else
-                        sslStream.BeginAuthenticateAsServer(m_serverCertificate,
-                        true, System.Security.Authentication.SslProtocols.Tls12,
+                if (m_UseMutualAuth == false)
+                    sslStream.BeginAuthenticateAsServer(m_serverCertificate, EndAuthenticateAsServer, sipTLSConnection);
+                else
+                    sslStream.BeginAuthenticateAsServer(m_serverCertificate, true, System.Security.Authentication.SslProtocols.None,
                         false, EndAuthenticateAsServer, sipTLSConnection);
-                }
-                catch (Exception)
-                {   // An exception normally occurs when shutting down this 
-                    // SIPChannel object so just ignore it. The reason for the
-                    // exception is that a blocking call has been canceled.
-                }
             }
-        }
-        catch (Exception)
-        {   
-            //throw excp;
+            catch (Exception)
+            {   // An exception normally occurs when shutting down this SIPChannel object so just ignore it.
+                // The reason for the exception is that a blocking call has been canceled.
+            }
         }
     }
 
@@ -247,15 +274,26 @@ public class SIPTLSChannel : SIPChannel
             SIPConnection sipTLSConnection = (SIPConnection)ar.AsyncState!;
             SslStream sslStream = (SslStream)sipTLSConnection.SIPStream;
 
+            // 16 Jul 24 PHR
+            if (m_UseMutualAuth == true)
+            {   // If a TLS client does not provide an X.509 certificate then ValidateRemoteClientCertificate()
+                // is not called by the .NET network stack. It is necessary to check for the presence of a
+                // remote client certificate here if mutual authentication is enabled.
+                if (sslStream.RemoteCertificate == null)
+                {   // Reject the connection request.
+                    sipTLSConnection.Close();   // Closes the TcpClient
+                    sslStream.Close();
+                    return;
+                }
+            }
+
             sslStream.EndAuthenticateAsServer(ar);
 
             // Set timeouts for the read and write to 5 seconds.
             sslStream.ReadTimeout = 5000;
             sslStream.WriteTimeout = 5000;
 
-            string strRemEp = sipTLSConnection.RemoteEndPoint.ToString();
-            m_connectedSockets.Add(strRemEp, sipTLSConnection);
-
+            m_connectedSockets.Add(sipTLSConnection.RemoteEndPoint.ToString(), sipTLSConnection);
             sipTLSConnection.SIPSocketDisconnected += SIPTLSSocketDisconnected;
             sipTLSConnection.SIPMessageReceived += SIPTLSMessageReceived;
 
@@ -317,7 +355,6 @@ public class SIPTLSChannel : SIPChannel
     /// <summary>
     /// Sends a byte array
     /// </summary>
-    /// <remarks>Must already be connected to the remote endpoint in order to use this method.</remarks>
     /// <param name="dstEndPoint">IPEndPoint to send the message to.</param>
     /// <param name="buffer">Message to send.</param>
     public override void Send(IPEndPoint dstEndPoint, byte[] buffer)
@@ -355,8 +392,7 @@ public class SIPTLSChannel : SIPChannel
 
                 try
                 {
-                    if (sipTLSClient.SIPStream != null && sipTLSClient.
-                        SIPStream.CanWrite)
+                    if (sipTLSClient.SIPStream != null && sipTLSClient.SIPStream.CanWrite)
                     {
                         sipTLSClient.SIPStream.Write(buffer, 0, buffer.Length);
                         sipTLSClient.SIPStream.Flush();
@@ -451,7 +487,7 @@ public class SIPTLSChannel : SIPChannel
             else
             {
                 tcpClient.EndConnect(ar);
-                SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteCertificate!, null);
+                SslStream sslStream = new SslStream(tcpClient.GetStream(), false, ValidateRemoteServerCertificate!);
                 SIPConnection callerConnection = new SIPConnection(this, tcpClient, sslStream, dstEndPoint,
                     SIPProtocolsEnum.tls, SIPConnectionsEnum.Caller);
 
@@ -460,7 +496,7 @@ public class SIPTLSChannel : SIPChannel
                        { tcpClient, dstEndPoint, buffer, callerConnection });
                 else
                     sslStream.BeginAuthenticateAsClient(serverCN, m_CertCollection,
-                       System.Security.Authentication.SslProtocols.Tls12, false, EndAuthenticateAsClient,
+                       System.Security.Authentication.SslProtocols.None, false, EndAuthenticateAsClient,
                        new object[] { tcpClient, dstEndPoint, buffer, callerConnection });
             }
         }
@@ -629,20 +665,28 @@ public class SIPTLSChannel : SIPChannel
         }
     }
 
-    private void SIPTLSMessageReceived(SIPChannel channel, SIPEndPoint 
-        remoteEndPoint, byte[] buffer)
+    private void SIPTLSMessageReceived(SIPChannel channel, SIPEndPoint remoteEndPoint, byte[] buffer)
     {
         SIPMessageReceived?.Invoke(channel, remoteEndPoint, buffer);
     }
 
-    // Accepts all certificates. Always returns true.
-    private bool ValidateRemoteCertificate(
+    // Accepts all certificates from a server. Always returns true.
+    private bool ValidateRemoteServerCertificate(
         object sender,
         X509Certificate certificate,
         X509Chain chain,
         SslPolicyErrors sslPolicyErrors)
     {
         return true;
+    }
+
+    private bool ValidateRemoteClientCertificate(object sender, X509Certificate certificate, X509Chain chain,
+        SslPolicyErrors sslPolicyErrors)
+    {
+        if (AcceptClientCertificate == null)
+            return true;
+        else
+            return AcceptClientCertificate(certificate, chain, sslPolicyErrors);
     }
 
     /// <summary>
