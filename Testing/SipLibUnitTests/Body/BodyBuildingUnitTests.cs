@@ -40,7 +40,7 @@ public class BodyBuildingUnitTests
     [Fact]
     public void TestAddSdp()
     {
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, ReqUri, ReqUri, null, localSipUri, "Test");
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, ReqUri, ReqUri, null, localSipUri, "Test");
         Sdp OfferedSdp = new Sdp(m_LocalIp, "Test");
         OfferedSdp.Media.Add(SdpUtils.CreateAudioMediaDescription(6000));
 
@@ -62,7 +62,7 @@ public class BodyBuildingUnitTests
     [Fact]
     public void TestAddSdpAndPidf()
     {
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, ReqUri, ReqUri, null, localSipUri, "Test");
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, ReqUri, ReqUri, null, localSipUri, "Test");
         Sdp OfferedSdp = new Sdp(m_LocalIp, "Test");
         OfferedSdp.Media.Add(SdpUtils.CreateAudioMediaDescription(6000));
 

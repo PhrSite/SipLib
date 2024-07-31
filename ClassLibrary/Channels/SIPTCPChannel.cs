@@ -118,15 +118,18 @@ public class SIPTCPChannel : SIPChannel
     /// <summary>
     /// Constructs a new SIPTCPChannel and initializes the connection.
     /// </summary>
-    /// <param name="endPoint">Local IPEndPoint to listen on.</param>
+    /// <param name="localIPEndPoint">Local IPEndPoint to listen on.</param>
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This parameter
     /// defaults to null.</param>
-    public SIPTCPChannel(IPEndPoint endPoint, string? User = null)
+    /// <param name="acceptConnection">User provided callback function that can determine whether or not to
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    public SIPTCPChannel(IPEndPoint localIPEndPoint, string? User = null, AcceptConnectionDelegate? acceptConnection = null)
     {
-        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, endPoint);
+        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, localIPEndPoint);
+        AcceptConnection = acceptConnection;
         m_isReliable = true;
-        Initialise();
         SetupContactURI(User);
+        Initialise();
     }
 
     private object m_CollectionLock = new object();

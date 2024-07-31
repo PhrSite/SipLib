@@ -5,9 +5,9 @@
 using SipLib.Core;
 using System.Collections.Concurrent;
 using System.Net;
-using SipLib.Transactions;
+using SipLib.Channels;
 
-namespace SipLib.Channels;
+namespace SipLib.Transactions;
 
 /// <summary>
 /// This class manages sending and receiving SIP messages on a single SIPChannel. It also manages SIP
@@ -143,11 +143,13 @@ public class SipTransport
     /// <param name="completeDelegate">Notification callback. Called when the transaction is completed or
     /// terminated. May be null if a notification is not required.</param>
     /// <param name="FinalResponseTimeoutMs">Number of milliseconds to wait for a final response.
-    /// This corresponds to Timer F shown in Figure 6 of RFC 3261.</param>
+    /// This corresponds to Timer F shown in Figure 6 of RFC 3261. The default value is 32,000 milliseconds 
+    /// (64 * T1, where T1 is 500 ms).</param>
     /// <returns>Returns a new ClientNonInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
     public ClientNonInviteTransaction StartClientNonInviteTransaction(SIPRequest request, IPEndPoint
-        remoteEndPoint, SipTransactionCompleteDelegate completeDelegate, int FinalResponseTimeoutMs)
+        remoteEndPoint, SipTransactionCompleteDelegate? completeDelegate, int FinalResponseTimeoutMs =
+        SipTimers.T1_TIMER_DEFAULT * 64)
     {
         if (request.Method == SIPMethodsEnum.INVITE)
             throw new ArgumentException("This method cannot be used for client INVITE transactions");
@@ -171,7 +173,7 @@ public class SipTransport
     /// <returns>Returns a new ClientInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is not an INVITE</exception>
     public ClientInviteTransaction StartClientInvite(SIPRequest request, IPEndPoint
-        remoteEndPoint, SipTransactionCompleteDelegate? completeDelegate, TransactionResponseReceivedDelegate
+        remoteEndPoint, SipTransactionCompleteDelegate? completeDelegate, TransactionResponseReceivedDelegate?
         responseReceivedDelegate)
     {
         if (request.Method != SIPMethodsEnum.INVITE)
@@ -195,7 +197,7 @@ public class SipTransport
     /// needs to be informed of provisional responses (ex. 180 Ringing or 183 Session Progress)</param>
     /// <returns>Returns a ClientInviteTransaction that contains the results of the transaction</returns>
     public async Task<ClientInviteTransaction> StartClientInviteAsync(SIPRequest request, IPEndPoint
-        remoteEndPoint, TransactionResponseReceivedDelegate responseReceivedDelegate)
+        remoteEndPoint, TransactionResponseReceivedDelegate? responseReceivedDelegate)
     {
         ClientInviteTransaction Cit = StartClientInvite(request, remoteEndPoint, null, responseReceivedDelegate);
         await Cit.WaitForCompletionAsync();

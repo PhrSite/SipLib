@@ -15,46 +15,12 @@ namespace SipLib.Core;
 /// </summary>
 public static class SipUtils
 {
-    /// <summary>
-    /// Creates a new SIPRequest containing all the basic headers such as: From, To, Via, Contact and
-    /// CSeq.
-    /// </summary>
-    /// <param name="Method">SIP method of the request.</param>
-    /// <param name="reqUri">Request URI. May be the same as the ToSipUri or it may be different.</param>
-    /// <param name="ToSipUri">To URI.</param>
-    /// <param name="ToDisplayName">Display name for the To header. Optional, may be null.</param>
-    /// <param name="FromSipUri">From URI. A From-Tag is automatically created</param>
-    /// <param name="FromDisplayName">Display name for the From header. Optional, may be null.</param>
-    /// <returns>Returns a new SIPRequest object.</returns>
-    public static SIPRequest CreateBasicRequest(SIPMethodsEnum Method, SIPURI reqUri, SIPURI ToSipUri,
-        string ToDisplayName, SIPURI FromSipUri, string FromDisplayName)
-    {
-        SIPRequest Req = new SIPRequest(Method, reqUri);
-        SIPToHeader To = new SIPToHeader(ToDisplayName, ToSipUri, null);
-        SIPFromHeader From = new SIPFromHeader(FromDisplayName, FromSipUri, CallProperties.CreateNewTag());
-
-        Req.LocalSIPEndPoint = FromSipUri.ToSIPEndPoint();
-        SIPHeader Header = new SIPHeader(From, To, Crypto.GetRandomInt(100, int.MaxValue / 2),
-            CallProperties.CreateNewCallId());
-        Header.From.FromTag = CallProperties.CreateNewTag();
-
-        Header.Contact = new List<SIPContactHeader>();
-        Header.Contact.Add(new SIPContactHeader(FromSipUri.User, FromSipUri));
-        Header.CSeqMethod = Method;
-        Req.Header = Header;
-
-        SIPViaHeader ViaHeader = new SIPViaHeader(FromSipUri.ToSIPEndPoint().GetIPEndPoint(), CallProperties.
-            CreateBranchId(), FromSipUri.Protocol);
-        Header.Vias.PushViaHeader(ViaHeader);
-
-        return Req;
-    }
 
     /// <summary>
     /// Builds a SIP response message. A simple response is something like 100 Trying, 180 Ringing, or 
     /// 404 Not Found that does not have a message body.
     /// </summary>
-    /// <param name="Sr">he SIP request to respond to.</param>
+    /// <param name="Sr">The SIP request to respond to.</param>
     /// <param name="ReasonPhrase">The response reason text. Required. Must not be empty or null.</param>
     /// <param name="sipChannel">Contains transport information. Must be the SIPChannel on which the
     /// request message was received.</param>
@@ -63,7 +29,7 @@ public static class SipUtils
     /// </param>
     /// <returns>Returns a SIPResponse that can be sent.</returns>
     public static SIPResponse BuildResponse(SIPRequest Sr, SIPResponseStatusCodesEnum StatCode, 
-        string ReasonPhrase, SIPChannel sipChannel, string SipUserName)
+        string ReasonPhrase, SIPChannel sipChannel, string? SipUserName)
     {
         SIPResponse Resp = new SIPResponse(StatCode, ReasonPhrase, sipChannel.SIPChannelEndPoint);
 

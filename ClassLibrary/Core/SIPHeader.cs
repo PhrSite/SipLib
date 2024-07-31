@@ -242,7 +242,7 @@ public class SIPHeader
     /// Organization header field. See Section 20.25 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string?Organization = null;
+    public string? Organization = null;
     /// <summary>
     /// Priority header field. See Section 20.26 of RFC 3261.
     /// </summary>

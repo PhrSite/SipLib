@@ -79,7 +79,8 @@
 //             level of TLS available will be used.
 //          16 Jul 24 PHR
 //          -- Added support for the AcceptionConnectionDelegate.
-//          -- Added support for the AcceptClientCertificate delegate.
+//          -- Added support for the AcceptClientCertificate and AcceptServerCertificate
+//             delegates.
 //          -- Removed the outer try/catch block around the while loop in the
 //             AcceptConnections() function because it is not needed.
 //          -- Modified EneAuthenticateAsServer() to check for the presence of a
@@ -140,19 +141,46 @@ public class SIPTLSChannel : SIPChannel
     /// provided by the client.
     /// </para>
     /// </summary>
-    public AcceptClientCertificateDelegate? AcceptClientCertificate = null;
+    /// <value>A user provided function that allows the user of the SIPTLSChannel class to decide whether
+    /// or not to accept a client request based on the X.509 certificate provided by the remote client.</value>
+    private AcceptCertificateDelegate? AcceptClientCertificate = null;
+
+    /// <summary>
+    /// <para>
+    /// Delegate function that is called to allow the user of the SIPTLSChannel class to decide whether or not
+    /// to accept the connection based on the X.509 server certificate provided by the remote server when
+    /// connecting as a client. The function should return true to allow the connection or false to cancel the
+    /// connection.
+    /// </para>
+    /// <para>
+    /// If this delegate member is null then all connection requests to all servers be allowed regardless of the certificate
+    /// provided by the server.
+    /// </para>
+    /// </summary>
+    /// <value>A user provided function that allows the user of the SIPTLSChannel class to decided whether
+    /// or not to proceed with the connection request to a remote server based on the X.509 certificate
+    /// provided by the remote server.</value>
+    private AcceptCertificateDelegate? AcceptServerCertificate = null;
 
     /// <summary>
     /// Constructs a new SIPTLSChannel and initializes it.
     /// </summary>
     /// <param name="serverCertificate">Server X.509 certificate to use</param>
-    /// <param name="endPoint">Local IPEndPoint to listen on </param>
+    /// <param name="localIPEndPoint">Local IPEndPoint to listen on </param>
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This
     /// parameter defaults to null.</param>
     /// <param name="UseMutualAuth">If true then use mutual TLS authentication. This parameter defaults
     /// to true.</param>
-    public SIPTLSChannel(X509Certificate2? serverCertificate, IPEndPoint endPoint, string? User = null,
-        bool UseMutualAuth = true)
+    /// <param name="acceptConnection">User provided callback function that can determine whether or not to
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    /// <param name="acceptClientCertificate">User provided callback function that can determine whether or
+    /// not to accept a connection from a client based on the client's X.509 certificate. Defaults to  null.</param>
+    /// <param name="acceptServerCertificate">User provided callback function that can determine whether or
+    /// not to allow a connection to a server base on the server's X.509 certificate. Defaults to null.</param>
+    public SIPTLSChannel(X509Certificate2? serverCertificate, IPEndPoint localIPEndPoint, string? User = null,
+        bool UseMutualAuth = true, AcceptConnectionDelegate? acceptConnection = null,
+        AcceptCertificateDelegate? acceptClientCertificate = null, 
+        AcceptCertificateDelegate? acceptServerCertificate = null)
     {
         if (serverCertificate == null)
         {
@@ -160,13 +188,11 @@ public class SIPTLSChannel : SIPChannel
                 "certificate must be supplied for a SIP TLS channel.");
         }
 
-        if (endPoint == null)
-        {
-            throw new ArgumentNullException("endPoint", "An IP end point must " +
-                "be supplied for a SIP TLS channel.");
-        }
+        AcceptConnection = acceptConnection;
+        AcceptClientCertificate = acceptClientCertificate;
+        AcceptServerCertificate = acceptServerCertificate;
 
-        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tls, endPoint);
+        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tls, localIPEndPoint);
         m_isReliable = true;
         m_IsTLS = true;
         m_serverCertificate = serverCertificate;
@@ -176,8 +202,8 @@ public class SIPTLSChannel : SIPChannel
         m_CertCollection = new X509CertificateCollection(CertArray);
         m_UseMutualAuth = UseMutualAuth;
 
-        Initialise();
         SetupContactURI(User);
+        Initialise();
     }
 
     private object m_CollectionLock = new object();
@@ -670,14 +696,16 @@ public class SIPTLSChannel : SIPChannel
         SIPMessageReceived?.Invoke(channel, remoteEndPoint, buffer);
     }
 
-    // Accepts all certificates from a server. Always returns true.
     private bool ValidateRemoteServerCertificate(
         object sender,
         X509Certificate certificate,
         X509Chain chain,
         SslPolicyErrors sslPolicyErrors)
     {
-        return true;
+        if (AcceptServerCertificate == null)
+            return true;
+        else
+            return AcceptServerCertificate(certificate, chain, sslPolicyErrors);
     }
 
     private bool ValidateRemoteClientCertificate(object sender, X509Certificate certificate, X509Chain chain,

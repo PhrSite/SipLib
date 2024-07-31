@@ -57,7 +57,9 @@ public class ClientInviteTransaction : SipTransactionBase
     public override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
     {
         bool Terminated = false;
-        ResponseReceived?.Invoke(Response, remoteEndPoint, this);
+        if (Response.StatusCode > 100 &&  Response.StatusCode < 200)
+            // Notify the transaction user of provisional responses except 100 Trying
+            ResponseReceived?.Invoke(Response, remoteEndPoint, this);
 
         lock (StateLockObj)
         {
@@ -69,7 +71,6 @@ public class ClientInviteTransaction : SipTransactionBase
                     State = TransactionStateEnum.Proceeding;
                     StateStartTime = DateTime.Now;
                 }
-
                 // Else, its OK to ignore provisional responses when not in the Calling state.
             }
             else if (Response.StatusCode >= 200 && Response.StatusCode <= 299)

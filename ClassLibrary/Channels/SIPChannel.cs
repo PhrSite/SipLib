@@ -74,7 +74,7 @@ public abstract class SIPChannel
     /// came from.
     /// </para>
     /// </summary>
-    public AcceptConnectionDelegate? AcceptConnection = null;
+    protected AcceptConnectionDelegate? AcceptConnection = null;
 
     /// <summary>
     /// Keeps a list of TCP sockets this process is listening on to prevent it establishing TCP

@@ -85,14 +85,17 @@ public class SIPUDPChannel : SIPChannel
     /// <summary>
     /// Constructs a new SIPUDPChannel.
     /// </summary>
-    /// <param name="endPoint">Local IPEndpoint to listen on.</param>
+    /// <param name="localIPEndPoint">Local IPEndpoint to listen on.</param>
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This
     /// parameter is optional and defaults to null.</param>
-    public SIPUDPChannel(IPEndPoint endPoint, string? User = null)
+    /// <param name="acceptConnection">User provided callback function that can determine whether or not to
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    public SIPUDPChannel(IPEndPoint localIPEndPoint, string? User = null, AcceptConnectionDelegate? acceptConnection = null)
     {
-        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.udp, endPoint);
-        Initialise();
+        LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.udp, localIPEndPoint);
         SetupContactURI(User);
+        AcceptConnection = acceptConnection;
+        Initialise();
     }
 
     /// <summary>

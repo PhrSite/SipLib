@@ -15,9 +15,11 @@ public static class SdpUtils
     /// <summary>
     /// Builds an Sdp for offering G.711 audio.
     /// </summary>
-    /// <param name="iPAddress">Local IP address</param>
+    /// <param name="iPAddress">IP address that the remote endpoint should send audio to. Audio data must also be
+    /// send from this address.</param>
     /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
-    /// <param name="UaName">User agent or server name</param>
+    /// <param name="UaName">User agent or server name to used for the origin name (o=). Also used to create
+    /// a unique name for the audio session.</param>
     /// <returns>Returns an Sdp object with an audio media description</returns>
     public static Sdp BuildSimpleAudioSdp(IPAddress iPAddress, int Port, string UaName)
     {

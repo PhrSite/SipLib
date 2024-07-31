@@ -10,11 +10,16 @@ namespace SipLib.Transactions;
 public static class SipTimers
 {
     /// <summary>
+    /// Default value for the SIP T1 timer
+    /// </summary>
+    public const int T1_TIMER_DEFAULT = 500;
+
+    /// <summary>
     /// Value of the SIP defined timer T1 in milliseconds and is the time for the first retransmit.
     /// Should not need to be adjusted in normal circumstances.
     /// </summary>
     /// <value></value>
-    public static int T1 = 500;
+    public static int T1 = T1_TIMER_DEFAULT;
 
     /// <summary>
     /// Value of the SIP defined timer T2 in milliseconds and is the maximum time between retransmits.

@@ -63,7 +63,7 @@ public delegate void SipResponseReceivedDelegate(SIPResponse sipResponse, SIPEnd
 /// </param>
 /// <param name="sipTransport">SipTransport that called this method.</param>
 /// <param name="Transaction">Transaction that completed.</param>
-public delegate void SipTransactionCompleteDelegate(SIPRequest sipRequest, SIPResponse sipResponse,
+public delegate void SipTransactionCompleteDelegate(SIPRequest sipRequest, SIPResponse? sipResponse,
     IPEndPoint remoteEndPoint, SipTransport sipTransport, SipTransactionBase Transaction);
 
 /// <summary>
@@ -118,12 +118,12 @@ public delegate bool AcceptConnectionDelegate(SIPProtocolsEnum protocol, IPEndPo
 /// Delegate definition for a function that a SIPTLSChannel user can provide to determine whether or not to allow
 /// a connection given a client's X.509 certificate.
 /// </summary>
-/// <param name="certificate">X509Certificated object that was received from the TLS client during the connection
+/// <param name="certificate">X509Certificated object that was received from the TLS client or TLS server during the connection
 /// handshake process. May be null if the client did not provide a certificate.</param>
 /// <param name="chain">Certificate chain for the X.509 certificate that was received. May be null if an X.509
 /// client certificate was not sent.</param>
 /// <param name="sslPolicyErrors">Contains the SSL (TLS) policy errors that were detected by the underlying OS
 /// for the certificate that was received. May be null if qn X.509 certificate was not sent.</param>
 /// <returns>Return true to accept the connection request or false to reject the connection request.</returns>
-public delegate bool AcceptClientCertificateDelegate(X509Certificate? certificate, X509Chain? chain,
+public delegate bool AcceptCertificateDelegate(X509Certificate? certificate, X509Chain? chain,
     SslPolicyErrors? sslPolicyErrors);

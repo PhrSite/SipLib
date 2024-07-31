@@ -184,7 +184,7 @@ public class SipTransactionBase
     /// <param name="transactionComplete">Notification callback. May be null if a notification is
     /// not required..</param>
     /// <param name="TransportManager">SipTransportManager that is managing this transaction</param>
-    public SipTransactionBase(SIPRequest request, IPEndPoint remoteEndPoint, SipTransactionCompleteDelegate
+    public SipTransactionBase(SIPRequest request, IPEndPoint remoteEndPoint, SipTransactionCompleteDelegate?
         transactionComplete, SipTransport TransportManager)
     {
         Request = request;
@@ -328,7 +328,7 @@ public enum TransactionTerminationReasonEnum
     NoResponseReceived,
 
     /// <summary>
-    /// A 200 OK or other 2XX response was reveived
+    /// A 200 OK or other 2XX response was received
     /// </summary>
     OkReceived,
 

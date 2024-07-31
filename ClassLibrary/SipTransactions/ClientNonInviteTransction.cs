@@ -32,7 +32,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
     /// <param name="TransportManager">SipTransportManager that is managing this transaction</param>
     /// <param name="finalResponseTimeoutMs">Number of milliseconds to wait for a final response.
     /// This corresponds to Timer F shown in Figure 6 of RFC 3261.</param>
-    public ClientNonInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint, SipTransactionCompleteDelegate
+    public ClientNonInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint, SipTransactionCompleteDelegate?
         transactionComplete, SipTransport TransportManager, int finalResponseTimeoutMs) :
         base(request, remoteEndPoint, transactionComplete, TransportManager)
     {

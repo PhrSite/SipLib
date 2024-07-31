@@ -39,7 +39,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest OptionsReq = SipUtils.CreateBasicRequest(SIPMethodsEnum.OPTIONS, reqUri, ServerUri,
+        SIPRequest OptionsReq = SIPRequest.CreateBasicRequest(SIPMethodsEnum.OPTIONS, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
 
         ClientNonInviteTransaction Cnit = Transport.StartClientNonInviteTransaction(OptionsReq, ServerIpe,
@@ -75,7 +75,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest OptionsReq = SipUtils.CreateBasicRequest(SIPMethodsEnum.OPTIONS, reqUri, ServerUri,
+        SIPRequest OptionsReq = SIPRequest.CreateBasicRequest(SIPMethodsEnum.OPTIONS, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
         ClientNonInviteTransaction Cnit = Transport.StartClientNonInviteTransaction(OptionsReq, ServerIpe,
             null, 500);
@@ -112,7 +112,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
         Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
         Invite.Header.ContentType = "application/sdp";
@@ -160,7 +160,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
         Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
         Invite.Header.ContentType = "application/sdp";
@@ -213,7 +213,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
         Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
         Invite.Header.ContentType = "application/sdp";
@@ -254,7 +254,7 @@ public class ClientTransactions
         Transport.Start();
 
         SIPURI reqUri = SIPURI.ParseSIPURI("urn:service:sos");
-        SIPRequest Invite = SipUtils.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
+        SIPRequest Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, reqUri, ServerUri,
             null, ClientChannel.SIPChannelContactURI, null);
         Sdp AudioSdp = SdpUtils.BuildSimpleAudioSdp(ipAddress, 6000, "Client");
         Invite.Header.ContentType = "application/sdp";

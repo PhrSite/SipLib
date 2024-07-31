@@ -42,6 +42,8 @@
 //                -- Added SIPMessage as the base class
 //              8 Mar 24 PHR
 //                -- Added GetQueueUri()
+//              23 Jul 24 PHR
+//                -- Added CreateBasicRequest().
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -118,6 +120,41 @@ public class SIPRequest : SIPMessage
          Method = method;
          URI = uri;
          SIPVersion = m_sipFullVersion;
+    }
+
+    /// <summary>
+    /// Creates a new SIPRequest containing all the basic headers: From, To, Via, Contact, Call-ID,
+    /// Max-Forwards, Content-Length and CSeq.
+    /// </summary>
+    /// <param name="Method">SIP method of the request.</param>
+    /// <param name="reqUri">Request URI. May be the same as the ToSipUri or it may be different.</param>
+    /// <param name="ToSipUri">To URI.</param>
+    /// <param name="ToDisplayName">Display name for the To header. Optional, may be null.</param>
+    /// <param name="FromSipUri">From URI. A From-Tag is automatically created</param>
+    /// <param name="FromDisplayName">Display name for the From header. Optional, may be null.</param>
+    /// <returns>Returns a new SIPRequest object.</returns>
+    public static SIPRequest CreateBasicRequest(SIPMethodsEnum Method, SIPURI reqUri, SIPURI ToSipUri,
+        string? ToDisplayName, SIPURI FromSipUri, string? FromDisplayName)
+    {
+        SIPRequest Req = new SIPRequest(Method, reqUri);
+        SIPToHeader To = new SIPToHeader(ToDisplayName, ToSipUri, null);
+        SIPFromHeader From = new SIPFromHeader(FromDisplayName, FromSipUri, CallProperties.CreateNewTag());
+
+        Req.LocalSIPEndPoint = FromSipUri.ToSIPEndPoint();
+        SIPHeader Header = new SIPHeader(From, To, Crypto.GetRandomInt(100, int.MaxValue / 2),
+            CallProperties.CreateNewCallId());
+        Header.From.FromTag = CallProperties.CreateNewTag();
+
+        Header.Contact = new List<SIPContactHeader>();
+        Header.Contact.Add(new SIPContactHeader(FromSipUri.User, FromSipUri));
+        Header.CSeqMethod = Method;
+        Req.Header = Header;
+
+        SIPViaHeader ViaHeader = new SIPViaHeader(FromSipUri.ToSIPEndPoint().GetIPEndPoint(), CallProperties.
+            CreateBranchId(), FromSipUri.Protocol);
+        Header.Vias.PushViaHeader(ViaHeader);
+
+        return Req;
     }
 
     /// <summary>
@@ -254,6 +291,13 @@ public class SIPRequest : SIPMessage
         errorField = SIPValidationFieldsEnum.Unknown;
         errorMessage = null;
 
+        if (Header == null)
+        {
+            errorField = SIPValidationFieldsEnum.Headers;
+            errorMessage = "The Header field is null";
+            return false;
+        }
+
         if (Header.Vias == null || Header.Vias.Length == 0)
         {
             errorField = SIPValidationFieldsEnum.ViaHeader;
@@ -261,11 +305,18 @@ public class SIPRequest : SIPMessage
             return false;
         }
 
+        if (Header.MaxForwards < 1)
+        {
+            errorField = SIPValidationFieldsEnum.MaxForwards;
+            errorMessage = "The Max-Forwards value too small";
+            return false;
+        }
+
         // 10 Nov 22 PHR
         if (Header.MaxForwards > 70)
         {
             errorField = SIPValidationFieldsEnum.MaxForwards;
-            errorMessage = "The Max-Forwards value is out of range";
+            errorMessage = "The Max-Forwards value too large";
             return false;
         }
 
