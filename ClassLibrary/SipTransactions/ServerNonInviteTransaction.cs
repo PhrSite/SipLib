@@ -39,7 +39,7 @@ public class ServerNonInviteTransaction : SipTransactionBase
     /// Called by the SipTransport class to start the transaction.
     /// </summary>
     /// <returns>Returns true if the transaction has been immediately terminated.</returns>
-    public override bool StartTransaction()
+    internal override bool StartTransaction()
     {
         bool Terminated = false;
 

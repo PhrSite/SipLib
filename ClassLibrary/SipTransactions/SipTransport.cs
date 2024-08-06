@@ -216,7 +216,7 @@ public class SipTransport
     /// <returns>Returns a new ServerNonInviteTransaction object</returns>
     // <exception cref="ArgumentException">Thrown if the request is an INVITE</exception>
     public ServerNonInviteTransaction StartServerNonInviteTransaction(SIPRequest request, IPEndPoint remoteEndPoint,
-        SipTransactionCompleteDelegate completeDelegate, SIPResponse ResponseToSend)
+        SipTransactionCompleteDelegate? completeDelegate, SIPResponse ResponseToSend)
     {
         if (request.Method == SIPMethodsEnum.INVITE)
             throw new ArgumentException("This method cannot be used for INVITE transactions");

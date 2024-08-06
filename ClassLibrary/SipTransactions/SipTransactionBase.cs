@@ -95,7 +95,7 @@ public class SipTransactionBase
     /// Gets the SipTransportManager that is managing this transaction
     /// </summary>
     /// <value></value>
-    protected SipTransport? TransportManager
+    public SipTransport? TransportManager
     {
         get { return m_transportManager; }
     }
@@ -259,7 +259,7 @@ public class SipTransactionBase
     /// <param name="Response">SIP request message that was received from the remote endpoint</param>
     /// <param name="remoteEndPoint">Remote endpoint that sent the response</param>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public virtual bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
+    internal virtual bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
     {
         return false;
     }
@@ -277,80 +277,8 @@ public class SipTransactionBase
     /// Called by the SipTransport to start the transaction.
     /// </summary>
     /// <returns>Returns true if the transaction has been immediately terminated.</returns>
-    public virtual bool StartTransaction()
+    internal virtual bool StartTransaction()
     {
         return false;
     }
-}
-
-/// <summary>
-/// SIP transaction states
-/// </summary>
-public enum TransactionStateEnum
-{
-    /// <summary>
-    /// The INVITE request has been sent but a provisional resonse has not been received yet. Used for client
-    /// INVITE transactions
-    /// </summary>
-    Calling,
-    /// <summary>
-    /// The transaction has been comleted. 
-    /// </summary>
-    Completed,
-    /// <summary>
-    /// Used for server INVITE transactions. An ACK was received while the transaction was in the Completed state
-    /// </summary>
-    Confirmed,
-    /// <summary>
-    /// A provisional response (100 - 199) has been received. Used for the client INVITE and client non-INVITE
-    /// transactions.
-    /// </summary>
-    Proceeding,
-    /// <summary>
-    /// The transaction has been terminated.
-    /// </summary>
-    Terminated,
-    /// <summary>
-    /// The request has been sent but a provisional response has not been received yet. Used by the client
-    /// non-INVITE transactions.
-    /// </summary>
-    Trying
-}
-
-/// <summary>
-/// Enumeration of the reasons that a transaction was terminated 
-/// </summary>
-public enum TransactionTerminationReasonEnum
-{
-    /// <summary>
-    /// No response was received for the request.
-    /// </summary>
-    NoResponseReceived,
-
-    /// <summary>
-    /// A 200 OK or other 2XX response was received
-    /// </summary>
-    OkReceived,
-
-    /// <summary>
-    /// A final response code (300 - 699) was received
-    /// </summary>
-    FinalResponseReceived,
-
-    /// <summary>
-    /// For client non-INVITE transactions, an interim response was received but a final response was never
-    /// received.
-    /// </summary>
-    NoFinalResponseReceived,
-
-    /// <summary>
-    /// A connection failure for a TCP or TLS connection was detected. Does not apply to a UDP.
-    /// </summary>
-    ConnectionFailure,
-
-    /// <summary>
-    /// For server INVITE transactions. Indicates that the server sent a 300 - 699 final response code
-    /// to the client, but the client never sent an ACK request.
-    /// </summary>
-    AckToFinalResponseNotReceived,
 }

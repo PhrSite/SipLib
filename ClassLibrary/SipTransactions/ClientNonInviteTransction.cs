@@ -44,7 +44,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
     /// Called by the SipTransport to start the transaction.
     /// </summary>
     /// <returns>Returns true if the transaction has been immediately terminated.</returns>
-    public override bool StartTransaction()
+    internal override bool StartTransaction()
     {
         lock (StateLockObj)
         {
@@ -65,7 +65,7 @@ public class ClientNonInviteTransaction : SipTransactionBase
     /// <param name="Response">SIP request message that was received from the remote endpoint</param>
     /// <param name="remoteEndPoint">Remote endpoint that sent the response</param>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
+    internal override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
     {
         ResponseReceived?.Invoke(Response, remoteEndPoint, this);
         bool Terminated = false;

@@ -42,7 +42,7 @@ public class ServerInviteTransaction : SipTransactionBase
     /// Called by the SipTransport class to start the transaction.
     /// </summary>
     /// <returns>Returns true if the transaction has been immediately terminated.</returns>
-    public override bool StartTransaction()
+    internal override bool StartTransaction()
     {
         bool Terminated = false;
         lock (StateLockObj)
@@ -176,7 +176,13 @@ public class ServerInviteTransaction : SipTransactionBase
     internal override bool HandleSipRequest(SIPRequest Request, IPEndPoint remoteEndPoint)
     {
         bool Terminated = false;
-        RequestReceived?.Invoke(Request, remoteEndPoint, this);
+
+        // This method is called for requests that have a matching transaction ID so the request
+        // is a repeated INVITE request, a CANCEL request or an ACK request. Don't pass repeated
+        // INVITE requests to the transaction user, but do pass CANCEL and ACK requests. The
+        // transaction user may need the ACK requests in order to handle offerless INVITE requests.
+        if (Request.Method != SIPMethodsEnum.INVITE)
+            RequestReceived?.Invoke(Request, remoteEndPoint, this);
 
         lock (StateLockObj)
         {

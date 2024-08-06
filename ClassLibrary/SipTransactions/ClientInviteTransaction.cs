@@ -33,7 +33,7 @@ public class ClientInviteTransaction : SipTransactionBase
     /// Called by the SipTransport class to start the transaction.
     /// </summary>
     /// <returns>Returns true if the transaction has been immediately terminated.</returns>
-    public override bool StartTransaction()
+    internal override bool StartTransaction()
     {
         lock (StateLockObj)
         {
@@ -54,7 +54,7 @@ public class ClientInviteTransaction : SipTransactionBase
     /// <param name="Response">SIP response message that was received from the remote endpoint</param>
     /// <param name="remoteEndPoint">Remote endpoint that sent the response</param>
     /// <returns>Returns true if the transaction has been terminated.</returns>
-    public override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
+    internal override bool HandleSipResponse(SIPResponse Response, IPEndPoint remoteEndPoint)
     {
         bool Terminated = false;
         if (Response.StatusCode > 100 &&  Response.StatusCode < 200)
@@ -159,8 +159,74 @@ public class ClientInviteTransaction : SipTransactionBase
                     // In this case, there is no need to notify the transaction user
                 }
             }
+            else if (State == TransactionStateEnum.ForceTerminated)
+                Terminated = true;
         }
 
         return Terminated;
+    }
+
+    /// <summary>
+    /// Cancels the client INVITE request transaction by building and sending a CANCEL request.
+    /// </summary>
+    /// <returns>Returns true if a CANCEL request is sent. Returns false if a CANCEL request was not
+    /// sent because the INVITE transaction is not in the Proceeding state. If false is returned then
+    /// the caller must wait until an interim response is received and then try again later.</returns>
+    public bool CancelInvite()
+    {
+        bool Result = false;
+        lock (StateLockObj)
+        {
+            if (State == TransactionStateEnum.Proceeding)
+            {   // See Section 9.1 of RFC 3261. If a provisional response has been received then its
+                // OK to send a CANCEL request. 
+                Result = true;
+                SIPRequest cancelRequest = SipUtils.BuildCancelRequest(Request,
+                    TransportManager.SipChannel, RemoteEndPoint, Request.Header.CSeq);
+                TransportManager.StartClientNonInviteTransaction(cancelRequest, RemoteEndPoint, 
+                    OnCancelTransactionComplete, 500);
+            }
+            // For any other state of the client INVITE transaction, a CANCEL request must not be sent.
+        }
+
+        return Result;
+    }
+
+    /// <summary>
+    /// Called when a client CANCEL request has been completed or failed.
+    /// </summary>
+    /// <param name="sipRequest">The CANCEL request that was sent.</param>
+    /// <param name="sipResponse">If not null, then contains the response message. If null then the
+    /// CANCEL transaction failed.</param>
+    /// <param name="remoteEndPoint">The IP endpoint that sent the response</param>
+    /// <param name="sipTransport">The SipTransport that was used to send the CANCEL request</param>
+    /// <param name="Transaction">The transaction object for the CANCEL request</param>
+    private void OnCancelTransactionComplete(SIPRequest sipRequest, SIPResponse? sipResponse,
+        IPEndPoint remoteEndPoint, SipTransport sipTransport, SipTransactionBase Transaction)
+    {
+        if (sipResponse  == null)
+        {
+            if (sipResponse.Status == SIPResponseStatusCodesEnum.Ok)
+            {   // The CANCEL transaction was successful. The server should send a 487 Request Terminated
+                // response for the original client INVITE transaction (this object).
+                // No action is required here.
+            }
+            else
+            {
+                ForceTerminateTransacton();
+            }    
+        }
+        else
+        {   // The transaction for the CANCEL request failed
+            ForceTerminateTransacton();
+        }
+    }
+
+    private void ForceTerminateTransacton()
+    {
+        lock (StateLockObj)
+        {
+            State = TransactionStateEnum.ForceTerminated;
+        }
     }
 }

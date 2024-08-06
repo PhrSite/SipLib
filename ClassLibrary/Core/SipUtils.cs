@@ -504,9 +504,10 @@ public static class SipUtils
         SIPFromHeader FromHeader;
         SIPToHeader ToHeader;
 
-        string strBranch = CallProperties.CreateBranchId();
-        SIPMethodsEnum CSeqMethod = SIPMethodsEnum.BYE;
-        int CSeqNum = LastCSeqNumber += 1;
+        string strBranch;
+        SIPMethodsEnum CSeqMethod;
+        int CSeqNum;
+
         SIPRouteSet RouteSet = null;
         SIPEndPoint RemoteSipEndPoint = null;
 
