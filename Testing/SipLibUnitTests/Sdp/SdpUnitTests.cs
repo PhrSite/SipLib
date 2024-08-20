@@ -215,4 +215,86 @@ public class SdpUnitTests
         Assert.NotNull(AudioIpe);
         Assert.True(AudioIpe.ToString() == "10.2.3.4:49170", "The audio endpoint is incorrect");
     }
+
+    private const string AudioVideoSdpMediaDirecton =
+        "v=0" + CRLF +
+        "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+        "s=SDP Seminar" + CRLF +
+        "i=Session Information" + CRLF +
+        "u=http://www.example.com/seminars/sdp.pdf" + CRLF +
+        "e=j.doe@example.com (Jane Doe)" + CRLF +
+        "p=1 818 555 3333" + CRLF +
+        "b=CT:500" + CRLF +
+        "c=IN IP4 224.2.17.12/127" + CRLF +
+        "t=2873397496 2873404696" + CRLF +
+        "a=recvonly" + CRLF +
+        "m=audio 49170 RTP/AVP 0" + CRLF +
+        "b=AS:64" + CRLF +
+        "m=video 51372 RTP/AVP 99" + CRLF +
+        "a=rtpmap:99 h263-1998/90000" + CRLF;
+
+    [Fact]
+    private void TestParseSdpMediaDirection()
+    {
+        Sdp sdp = Sdp.ParseSDP(AudioVideoSdpMediaDirecton);
+        Assert.NotNull(sdp);
+        Assert.True(sdp.MediaDirection == MediaDirectionEnum.recvonly, "Media direction is not recvonly");
+    }
+
+    [Fact]
+    private void TestSetSdpMediaDirection()
+    {
+        Sdp sdp = Sdp.ParseSDP(AudioVideoSdpMediaDirecton);
+        Assert.NotNull(sdp);
+        sdp.MediaDirection = MediaDirectionEnum.sendonly;
+        Assert.True(sdp.MediaDirection == MediaDirectionEnum.sendonly, "Media direction is not sendonly");
+    }
+
+    private const string AudioVideoMediaDirecton =
+    "v=0" + CRLF +
+    "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+    "s=SDP Seminar" + CRLF +
+    "i=Session Information" + CRLF +
+    "u=http://www.example.com/seminars/sdp.pdf" + CRLF +
+    "e=j.doe@example.com (Jane Doe)" + CRLF +
+    "p=1 818 555 3333" + CRLF +
+    "b=CT:500" + CRLF +
+    "c=IN IP4 224.2.17.12/127" + CRLF +
+    "t=2873397496 2873404696" + CRLF +
+    "a=sendrecv" + CRLF +
+    "m=audio 49170 RTP/AVP 0" + CRLF +
+    "a=sendonly" + CRLF +
+    "b=AS:64" + CRLF +
+    "m=video 51372 RTP/AVP 99" + CRLF +
+    "a=recvonly" + CRLF +
+    "a=rtpmap:99 h263-1998/90000" + CRLF;
+
+    [Fact]
+    private void TestMediaLevelMediaDirection()
+    {
+        Sdp sdp = Sdp.ParseSDP(AudioVideoMediaDirecton);
+        Assert.NotNull(sdp);
+        Assert.True(sdp.Media[0].MediaDirection == MediaDirectionEnum.sendonly, "The audio media " +
+            "direction is not sendonly");
+        Assert.True(sdp.Media[1].MediaDirection == MediaDirectionEnum.recvonly, "The video media " +
+            "media direction is not receiveonly");
+    }
+
+    [Fact]
+    private void TestChangeMediaDirection()
+    {
+        Sdp sdp = Sdp.ParseSDP(AudioVideoMediaDirecton);
+        Assert.NotNull(sdp);
+
+        sdp.MediaDirection = MediaDirectionEnum.inactive;
+        Assert.True(sdp.MediaDirection == MediaDirectionEnum.inactive, "The SDP media direction is not inactive");
+
+        sdp.Media[0].MediaDirection = MediaDirectionEnum.sendrecv;
+        MediaDirectionEnum Mde = Sdp.GetMediaDirection(sdp, sdp.Media[0]);
+        Assert.True(Mde == MediaDirectionEnum.sendrecv, "The audio media direction is not sendrecv");
+
+        sdp.Media[1].MediaDirection = MediaDirectionEnum.sendonly;
+        Mde = Sdp.GetMediaDirection(sdp, sdp.Media[1]);
+        Assert.True(Mde == MediaDirectionEnum.sendonly, "The video media direction is not sendonly");
+    }
 }

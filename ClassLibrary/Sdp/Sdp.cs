@@ -1,8 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////////////
 //	File:	Sdp.cs													16 Nov 22 PHR
+//
+//  Revised: 6 Aug 24 PHR
+//              -- Removed public static Sdp ParseSDP(List<string> lines)
+//              -- Changed public static Sdp ParseSDP(string[] lines) to private
 /////////////////////////////////////////////////////////////////////////////////////
 
-// RFC 4566 describes the Session Description Protocol (SDP)
+// RFC 8866 describes the Session Description Protocol (SDP). RFC 8866 obsoletes RFC 4566.
 // See RFC 3266 for a description of how to handle IPv6 addresses in the SDP
 // See RFC 5118 for the SIP Torture tests using IPv6
     
@@ -11,96 +15,94 @@ using System.Net;
 using SipLib.RtpCrypto;
 using SipLib.Core;
 using SipLib.Msrp;
-using System.Net.Mime;
 
 namespace SipLib.Sdp;
 
 /// <summary>
-/// Class for processing the Session Description Protocol message contents of a SIP message. See RFC 4566. 
+/// Class for processing the Session Description Protocol message contents of a SIP message. See RFC 8866. 
 /// </summary>
 public class Sdp
 {
     /// <summary>
     /// Contains the version number (v) of the SDP protocol. This is expected to be always 0. See Section 5.1
-    /// of RFC 4566.
+    /// of RFC 8866.
     /// </summary>
     /// <value></value>
-    public int Version = 0;
+    public int Version { get; private set; } = 0;
     /// <summary>
-    /// Contains the origin information for the "o" parameter. See Section 5.2 of RFC 4566.
+    /// Contains the origin information for the "o" parameter. See Section 5.2 of RFC 8866.
     /// </summary>
     /// <value></value>
-    public Origin? Origin = null;
+    public Origin? Origin { get; set; } = null;
     /// <summary>
-    /// Contains the Session Name for the "s" type. parameter Section 5.3 of RFC 4566.
+    /// Contains the Session Name for the "s" type. parameter Section 5.3 of RFC 8866.
     /// </summary>
     /// <value></value>
-    public string SessionName = "";
+    public string SessionName { get; set; } = "";
 
     /// <summary>
-    /// Contains the session information "i" parameter. See Section 5.4 of RFC 4566. This parameter is optional.
+    /// Contains the session information "i" parameter. See Section 5.4 of RFC 8866. This parameter is optional.
     /// </summary>
     /// <value></value>
-    public string SessionInformation = "";
+    public string SessionInformation { get; set; } = "";
 
     /// <summary>
     /// Contains a URI to more information about the session. This is the "u" parameter. See Section 5.5 of
-    /// RFC 4566. This parameter is optional.
+    /// RFC 8866. This parameter is optional.
     /// </summary>
     /// <value></value>
-    public string Uri = "";
+    public string Uri { get; set; } = "";
 
     /// <summary>
-    /// Contains the e-mail parameter (e) for the session. See Section 5.6 of RFC 4566. This parameter is
+    /// Contains the e-mail parameter (e) for the session. See Section 5.6 of RFC 8866. This parameter is
     /// optional.
     /// </summary>
     /// <value></value>
-    public string Email = "";
+    public string Email { get; set; } = "";
 
     /// <summary>
-    /// Contains the phone number (p) parameter for the session. See Section 5.6 of RFC 4566. This parameter
+    /// Contains the phone number (p) parameter for the session. See Section 5.6 of RFC 8866. This parameter
     /// is optional.
     /// </summary>
     /// <value></value>
-    public string PhoneNumber = "";
+    public string PhoneNumber { get; set; } = "";
 
     /// <summary>
-    /// Bandwidth parameter (b) for the entire session. See Section 5.8 of RFC 4566.
+    /// Bandwidth parameter (b) for the entire session. See Section 5.8 of RFC 8866.
     /// This parameter is optional. Treating it as a simple string.
     /// </summary>
     /// <value></value>
-    public string Bandwidth = "";
+    public string Bandwidth { get; set; } = "";
 
     /// <summary>
-    /// Timing (t) parameter. See Section 5.9 of RFC 4566.
+    /// Timing (t) parameter. See Section 5.9 of RFC 8866.
     /// </summary>
     /// <value></value>
-    public string Timing = "0 0";
+    public string Timing { get; set; } = "0 0";
 
     /// <summary>
     /// Contains a list of all of the different types of media for a call.
     /// </summary>
     /// <value></value>
-    public List<MediaDescription> Media = new List<MediaDescription>();
+    public List<MediaDescription> Media { get; set; } = new List<MediaDescription>();
 
     /// <summary>
     /// Contains the connecton data for the call.
     /// </summary>
     /// <value></value>
-    public ConnectionData? ConnectionData = null;
+    public ConnectionData? ConnectionData { get; set; } = null;
 
     /// <summary>
     /// Contains the attributes for this media session.
     /// </summary>
     /// <value></value>
-    public List<SdpAttribute> Attributes = new List<SdpAttribute>();
+    public List<SdpAttribute> Attributes { get; set; } = new List<SdpAttribute>();
 
     /// <summary>
     /// Constructs a new Sdp object. Use this constructor when building a new SDP block to send.
     /// </summary>
-    public Sdp()
+    private Sdp()
     {
-        Origin = new Origin();
     }
 
     private static Random Rnd = new Random();
@@ -119,42 +121,13 @@ public class Sdp
     }
 
     /// <summary>
-    /// Parses the SDP contained in a list of strings.
-    /// </summary>
-    /// <param name="SdpContents">Each item in the list contains one line in the SDP</param>
-    /// <returns>Returns an Sdp object</returns>
-    // <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
-    // <exception cref="Exception">Thrown if an unexpected error occurs</exception>
-    public static Sdp ParseSDP(List<string> SdpContents)
-    {
-        if (SdpContents == null || SdpContents.Count == 0)
-            throw new ArgumentException("SdpContents is null or empty", nameof(SdpContents));
-
-        Sdp sdp;
-        try
-        {
-            sdp = ParseSDP(SdpContents.ToArray());
-        }
-        catch (ArgumentException)
-        {
-            throw;
-        }
-        catch (Exception)
-        {
-            throw new Exception("An unexpected SDP parsing error occurred");
-        }
-
-        return sdp;
-    }
-
-    /// <summary>
     /// Parses the SDP contained in an array of strings.
     /// </summary>
     /// <param name="Lines">Each string in the array contains one line in the SDP</param>
     /// <returns>Returns an Sdp object</returns>
     // <exception cref="ArgumentException">Thrown if an invalid argument is detected</exception>
     // <exception cref="Exception">Thrown if an unexpected error occurs</exception>
-    public static Sdp ParseSDP(string[] Lines)
+    private static Sdp ParseSDP(string[] Lines)
     {
         if (Lines == null || Lines.Length == 0)
             throw new ArgumentException("Lines is null empty", nameof(Lines));
@@ -589,16 +562,95 @@ public class Sdp
     /// media. The destination IP address may be specified at the session level or the media level.
     /// </summary>
     /// <param name="Sdp">The entire SDP block that was offered.</param>
-    /// <param name="Smd">The SDP Media Description block for the media to get the IP address for.</param>
+    /// <param name="Md">The SDP Media Description block for the media to get the IP address for.</param>
     /// <returns>Returns an IPAddress. Returns null if there was no address specified in the session or
     /// media levels.</returns>
-    public static IPEndPoint? GetMediaEndPoint(Sdp Sdp, MediaDescription Smd)
+    public static IPEndPoint? GetMediaEndPoint(Sdp Sdp, MediaDescription Md)
     {
-        IPAddress MediaIpAddr = Sdp.GetMediaIPAddr(Sdp, Smd);
+        IPAddress MediaIpAddr = Sdp.GetMediaIPAddr(Sdp, Md);
         if (MediaIpAddr == null)
             return null;
         else 
-            return new IPEndPoint(MediaIpAddr, Smd.Port);
+            return new IPEndPoint(MediaIpAddr, Md.Port);
+    }
+
+    /// <summary>
+    /// Gets the media direction attribute for a media type. The media direction may be specified
+    /// at the session level or at the media level. The media level has priority.
+    /// </summary>
+    /// <param name="sdp">Session data</param>
+    /// <param name="md">Media description. Must be one of the MediaDescription objects in the
+    /// SDP.</param>
+    /// <returns>Returns the media direction if specified at the media level or the session level.
+    /// Returns MediaDirectionEnum.sendrecv if the direction is not specified at either level.</returns>
+    public static MediaDirectionEnum GetMediaDirection(Sdp sdp, MediaDescription md)
+    {
+        string? dir = GetMediaDirectionAttribute(md.Attributes);
+        if (string.IsNullOrEmpty(dir) == false)
+            return (MediaDirectionEnum) Enum.Parse(typeof(MediaDirectionEnum), dir);
+
+        dir = GetMediaDirectionAttribute(sdp.Attributes);
+        if (string.IsNullOrEmpty(dir) == false)
+            return (MediaDirectionEnum)Enum.Parse(typeof(MediaDirectionEnum), dir);
+        else
+            return MediaDirectionEnum.sendrecv;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="AttrList"></param>
+    /// <returns></returns>
+    internal static string? GetMediaDirectionAttribute(List<SdpAttribute> AttrList)
+    {
+        string? dir = null;
+        foreach (SdpAttribute attr in AttrList)
+        {
+            if (attr.Attribute == "recvonly" || attr.Attribute == "sendrecv" || attr.Attribute == "sendonly" ||
+                attr.Attribute == "inactive")
+            {
+                dir = attr.Attribute;
+                break;
+            }
+        }
+
+        return dir;
+    }
+
+    /// <summary>
+    /// Gets or sets the media direction attribute for the session level.
+    /// </summary>
+    public MediaDirectionEnum MediaDirection
+    {
+        set
+        {
+            Sdp.ClearMediaDirection(Attributes);
+            Attributes.Add(new SdpAttribute(value.ToString(), null));
+        }
+        get
+        {
+            string? dir = Sdp.GetMediaDirectionAttribute(Attributes);
+            if (string.IsNullOrEmpty(dir) == false)
+                return (MediaDirectionEnum)Enum.Parse(typeof(MediaDirectionEnum), dir);
+            else
+                return MediaDirectionEnum.sendrecv;
+        }
+    }
+
+    internal static void ClearMediaDirection(List<SdpAttribute> AttrList)
+    {
+        List<SdpAttribute> removeList = new List<SdpAttribute>();
+        foreach (SdpAttribute attr in AttrList)
+        {
+            if (attr.Attribute == "recvonly" || attr.Attribute == "sendrecv" || attr.Attribute == "sendonly" ||
+                attr.Attribute == "inactive")
+                removeList.Add(attr);
+        }
+
+        foreach (SdpAttribute attr in removeList)
+        {
+            AttrList.Remove(attr);
+        }
     }
 
     /// <summary>

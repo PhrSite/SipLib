@@ -42,6 +42,15 @@ public delegate void RtcpPacketReceivedDelegate(RtcpCompoundPacket rtpCompoundPa
 public delegate void RtcpPacketSentDelegate(RtcpCompoundPacket rtcpCompoundPacket);
 
 /// <summary>
+/// Delegate type for the ReceiveStatisticsReady event of the RtpChannel class.
+/// </summary>
+/// <param name="receiveStatistics">Contains various statics such as jitter, Mean Opinion Score,
+/// etc.</param>
+/// <param name="rtpChannel">RtpChannel object that fired the event.</param>
+public delegate void ReceiveStatisticsReadyDelegate(RtpReceiveStatistics receiveStatistics,
+    RtpChannel rtpChannel);
+
+/// <summary>
 /// Delegate type for the DtlsHandshakeFailed event of the RtpChannel class
 /// </summary>
 /// <param name="IsServer">True if this RtpChannel is the DTLS server or false if it is the DTLS client.</param>
@@ -50,7 +59,22 @@ public delegate void DtlsHandshakeFailedDelegate(bool IsServer, IPEndPoint remot
 
 /// <summary>
 /// Class for sending and receiving Real Time Protocol (RTP) media such as audio, video and text (RTT).
+/// Each instance of an RtpChannel class handles a single media type.
 /// </summary>
+/// <remarks>
+/// Follow these steps to create and use an RtpChannel object.
+/// <list type="number">
+/// <item>Call the CreateFromSdp() method with the offered SDP and offered media description and the answered SDP
+/// and the answered media description after the media description negotiation has been completed.</item>
+/// <item>Hook the events of the RtpChannel class. At least the RtpPacketReceived event should be handled.</item>
+/// <item>Call the StartListening() method to start the RtpChannel.</item>
+/// <item>Call the Send() method to send a new RTP packet containing new media.</item>
+/// </list>
+/// <para>
+/// When the media session ends, unhook the events and call the Shutdown() method to release all resources
+/// held by the RtpChannel object.
+/// </para>
+/// </remarks>
 public class RtpChannel
 {
     private IPEndPoint? m_localRtpEndPoint = null;
@@ -100,8 +124,12 @@ public class RtpChannel
     /// <summary>
     /// Gets the fingerprint of the self-signed X.509 certificate that will be used for DTLS-SRTP.
     /// The certificate is a required SDP attribute for calls that offer or answer DTLS-SRTP media encryption.
+    /// <para>
+    /// The RtpChannel class automatically creates a self-signed X.509 certificate that will be used for all
+    /// instances of the RtpChannel class for an application session.
+    /// </para>
     /// </summary>
-    /// <value></value>
+    /// <value>Returns null if there was an error during creation of the self-signed X.509 certificate.</value>
     public static string? CertificateFingerprint
     {
         get
@@ -124,7 +152,8 @@ public class RtpChannel
     public event RtpPacketReceivedDelegate? RtpPacketReceived = null;
 
     /// <summary>
-    /// Event that is fired when a RTP packet has been sent by this RtpChannel
+    /// Event that is fired when a RTP packet has been sent by this RtpChannel. This event is used
+    /// for logging media when using an active SIP media recorder (SIPREC).
     /// </summary>
     /// <value></value>
     public event RtpPacketSentDelegate? RtpPacketSent = null;
@@ -142,14 +171,21 @@ public class RtpChannel
     public event RtcpPacketSentDelegate? RtcpPacketSent = null;
 
     /// <summary>
-    /// Event that is fired fired if the DTLS-SRTP handshake failed
+    /// Event that is fired if the DTLS-SRTP handshake failed
     /// </summary>
     /// <value></value>
     public event DtlsHandshakeFailedDelegate? DtlsHandshakeFailed = null;
 
+    /// <summary>
+    /// Event that is fired when new receive side statistics are ready. This event if fired only if
+    /// RTCP is enabled for the RtpChannel and the media type is audio. This event will be fired every
+    /// 5 seconds.
+    /// </summary>
+    public event ReceiveStatisticsReadyDelegate? ReceiveStatisticsReady = null;
+
     private static Random m_Random = new Random();
 
-    private RtpChannel(IPEndPoint localRtpEndpoint, string mediaType, bool enableRtcp, string CNAME)
+    private RtpChannel(IPEndPoint localRtpEndpoint, string mediaType, bool enableRtcp, string? CNAME)
     {
         m_localRtpEndPoint = localRtpEndpoint;
         m_mediaType = mediaType;
@@ -211,10 +247,16 @@ public class RtpChannel
     /// Creates an RtpChannel using the offered and answered Session Description Protocol (SDP) parameters.
     /// </summary>
     /// <param name="Incoming">Set to true if the call is incoming.</param>
-    /// <param name="OfferedSdp">The SDP that was offered.</param>
-    /// <param name="OfferedMd">The offered media description parameter block from the offered SDP</param>
-    /// <param name="AnsweredSdp">The SDP that was answered.</param>
-    /// <param name="AnsweredMd">The answered media description parameter block from the answered SDP</param>
+    /// <param name="OfferedSdp">The SDP that was offered. If Incoming is true, then this parameter must
+    /// be the Sdp object that was received in an INVITE request. Else, this parameter must be the Sdp
+    /// object that the client sent in an INVITE request.</param>
+    /// <param name="OfferedMd">The offered media description parameter block from the offered SDP for the
+    /// media type that the RtpChannel will handle.</param>
+    /// <param name="AnsweredSdp">The SDP that was answered. If Incoming is true, then this parameter must
+    /// be the Sdp object that the server sent in response to an INVITE request that it received. Else,
+    /// this parameter must the the Sdp object that the client received in response to the INVITE that it sent.</param>
+    /// <param name="AnsweredMd">The answered media description parameter block from the answered SDP for
+    /// the media type that the RtpChannel will handle.</param>
     /// <param name="enableRtcp">If true, then RTCP packets will be sent periodically.</param>
     /// <param name="CNAME">Cononical name to use for sending SDES RTCP packets that identify the
     /// media source. If null, then a default CNAME will be automatically generated.</param>
@@ -222,13 +264,16 @@ public class RtpChannel
     /// was detected and the string return value will contain an explanation of the error. If the RtpChannel
     /// return value is not null then the string return value will be null.</returns>
     public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
-        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string CNAME)
+        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string? CNAME)
     {
         if (OfferedMd.MediaType != AnsweredMd.MediaType)
             return (null, "Media type mismatch");
 
         if (OfferedMd.MediaType != "audio" && OfferedMd.MediaType == "text" && OfferedMd.MediaType == "video")
             return (null, $"Uknown media type: {OfferedMd.MediaType}");
+
+        if (AnsweredMd.Port == 0)
+            return (null, $"The {OfferedMd.MediaType} was rejected.");
 
         Sdp LocalSdp, RemoteSdp;
         MediaDescription LocalMd, RemoteMd;
@@ -550,6 +595,9 @@ public class RtpChannel
         SendRtcpPacket(rtcpCompoundPacket.ToByteArray());
 
         RtcpPacketSent?.Invoke(rtcpCompoundPacket);
+
+        if (MediaType == "audio")
+            ReceiveStatisticsReady?.Invoke(currentReceiveStats, this);
     }
 
     private void SendRtcpPacket(byte[] packetBytes)

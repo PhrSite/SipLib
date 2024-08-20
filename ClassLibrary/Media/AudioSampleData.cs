@@ -5,7 +5,7 @@
 namespace SipLib.Media;
 
 /// <summary>
-/// Data clas for passing audio sample data to an audio sample source 
+/// Data class for passing audio sample data to an audio sample source 
 /// </summary>
 public class AudioSampleData
 {

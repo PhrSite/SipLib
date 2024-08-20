@@ -4,6 +4,8 @@
 //             -- Added the RtpMapAttributes field
 //             -- Removed SdpAttribute GetRtpmapForCodecType(string strCodecName).
 //             -- Added RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
+//           7 Aug 24 PHR
+//             -- Changed fields to properties.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.RtpCrypto;
@@ -12,7 +14,7 @@ using System.Text;
 namespace SipLib.Sdp;
 
 /// <summary>
-/// Class for processing the Media Description "m=" type for the SDP contents. See Section 5.14 of RFC 4566.
+/// Class for processing the Media Description "m=" type for the SDP contents. See Section 5.14 of RFC 8866.
 /// </summary>
 public class MediaDescription
 {
@@ -20,34 +22,34 @@ public class MediaDescription
     /// Specifies the media type. Example: "audio", "video", "text" or "message".
     /// </summary>
     /// <value></value>
-    public string MediaType = "";
+    public string MediaType { get; set; } = "";
     /// <summary>
     /// Specifies the TCP/UDP port number;
     /// </summary>
     /// <value></value>
-    public int Port = 0;
+    public int Port { get; set; } = 0;
     /// <summary>
     /// Specifies the transport mechanism: "TCP", "UDP", "RTP/AVP", etc.
     /// </summary>
     /// <value></value>
-    public string Transport = "";
+    public string Transport { get; set; } = "";
     /// <summary>
     /// Contains a list of payload types for the m= line.
     /// </summary>
     /// <value></value>
-    public List<int> PayloadTypes = new List<int>();
+    public List<int> PayloadTypes { get; set; } = new List<int>();
     /// <summary>
     /// Contains the attributes for this type of media except the rtpmap attributes, which are stored
     /// in the RtpMapAttributes field.
     /// </summary>
     /// <value></value>
-    public List<SdpAttribute> Attributes = new List<SdpAttribute>();
+    public List<SdpAttribute> Attributes { get; set; } = new List<SdpAttribute>();
     /// <summary>
     /// Contains the connection data (c=) for this media. If null, then use the ConnectionData of the SDP
     /// session.
     /// </summary>
     /// <value></value>
-    public ConnectionData? ConnectionData = null;
+    public ConnectionData? ConnectionData { get; set; } = null;
 
     /// <summary>
     /// Specifies the bandwidth limit for the media in kilo-bits per second. This is comes from or generates
@@ -55,13 +57,13 @@ public class MediaDescription
     /// line in the media description.
     /// </summary>
     /// <value></value>
-    public string Bandwidth = "";
+    public string Bandwidth { get; set; } = "";
 
     /// <summary>
     /// Contains a list of RtpMap objects. Each object corresponds to a a=rtpmap .... line in the media description.
     /// </summary>
     /// <value></value>
-    public List<RtpMapAttribute> RtpMapAttributes = new List<RtpMapAttribute>();
+    public List<RtpMapAttribute> RtpMapAttributes { get; set; } = new List<RtpMapAttribute>();
 
     /// <summary>
     /// Constructs an empty MediaDescription object. Use this constructor to create a new Media Description
@@ -92,18 +94,20 @@ public class MediaDescription
 
         // Get the port number.
         int Idx = Fields[1].IndexOf('/');
-        String strPort;
+        string strPort;
         if (Idx >= 0)
             // The number of ports is specified so remove it.
             strPort = Fields[1].Remove(Idx);
         else
             strPort = Fields[1];
 
-        bool Success = int.TryParse(strPort, out Md.Port);
+        int port = 0;
+        bool Success = int.TryParse(strPort, out port);
         if (Success == false)
             throw new ArgumentException("The port number in the media description line is not valid", 
                 nameof(strMd));
-            
+
+        Md.Port = port;
         Md.Transport = Fields[2];
 
         int i;
@@ -129,7 +133,7 @@ public class MediaDescription
         if (string.IsNullOrEmpty(strMd) == true)
             return null;
 
-        string[] Lines = strMd.Split("\r\n");
+        string[] Lines = strMd.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
         if (Lines == null || Lines.Length < 1)
             return null;
 
@@ -237,8 +241,9 @@ public class MediaDescription
     /// <param name="strAttributeName">Name of the attribute to search for.
     /// </param>
     /// <returns>A string containing the attribute value. Returns an empty
-    /// string if the attribute name was not found.</returns>
-    public string GetAttributeValue(string strAttributeName)
+    /// string if the attribute name was not found or if the attribute was found but does not have
+    /// a value (not all attributes have values).</returns>
+    public string? GetAttributeValue(string strAttributeName)
     {
         string strRetVal = "";
         if (Attributes.Count > 0)
@@ -606,5 +611,55 @@ public class MediaDescription
         } // end for each
 
         return Sb.ToString();
+    }
+
+    /// <summary>
+    /// Gets or Sets the media direction attribute for this media description. If there is no media
+    /// direction attribute, then the getter returns sendrecv.
+    /// </summary>
+    public MediaDirectionEnum MediaDirection
+    {
+        set
+        {
+            Sdp.ClearMediaDirection(Attributes);
+            Attributes.Add(new SdpAttribute(value.ToString(), null));
+        }
+        get 
+        {
+            string? dir = Sdp.GetMediaDirectionAttribute(Attributes);
+            if (string.IsNullOrEmpty(dir) == false)
+                return (MediaDirectionEnum)Enum.Parse(typeof(MediaDirectionEnum), dir);
+            else
+                return MediaDirectionEnum.sendrecv;
+        }
+    }
+
+    private const string LabelAttributeName = "label";
+
+    /// <summary>
+    /// <para>
+    /// Gets or sets the label attribute of a media description block. RFC 4574 specifies the characteristics
+    /// of the label attribute.
+    /// </para>
+    /// <para>
+    /// The getter returns an empty string if the media description does not have a label attribute. The setter
+    /// removes any existing label attributes and then adds one with the value to ensure that each MediaDescription
+    /// has a single label attribute.
+    /// </para>
+    /// </summary>
+    public string? Label
+    {
+        set
+        {
+            if (string.IsNullOrEmpty(value) == true)
+                throw new ArgumentException("The Label attribute cannot be null or empty");
+
+            RemoveNamedAttributes(LabelAttributeName);
+            Attributes.Add(new SdpAttribute(LabelAttributeName, value));
+        }
+        get
+        {
+            return GetAttributeValue(LabelAttributeName);
+        }
     }
 }

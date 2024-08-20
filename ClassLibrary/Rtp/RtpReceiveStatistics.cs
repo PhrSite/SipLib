@@ -7,7 +7,7 @@ namespace SipLib.Rtp;
 /// <summary>
 /// Class for storing statistics related to received RTP packets.
 /// </summary>
-internal class RtpReceiveStatistics
+public class RtpReceiveStatistics
 {
     /// <summary>
     /// Local time of the sample

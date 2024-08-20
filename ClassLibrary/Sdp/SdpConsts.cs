@@ -32,5 +32,28 @@ public enum SetupType
     /// The endpoint did not specify a setup type or the provided attribute value is unknow or not supported
     /// </summary>
     unknown,
-
 }
+
+/// <summary>
+/// Enumeration of values for the Media Direction SDP attribute. See Section 6.7 of RFC 8866.
+/// </summary>
+public enum MediaDirectionEnum
+{
+    /// <summary>
+    /// Receive only
+    /// </summary>
+    recvonly,
+    /// <summary>
+    /// Send and receive
+    /// </summary>
+    sendrecv,
+    /// <summary>
+    /// Send only
+    /// </summary>
+    sendonly,
+    /// <summary>
+    /// Media is inactive
+    /// </summary>
+    inactive,
+}
+    

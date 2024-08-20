@@ -186,9 +186,8 @@ internal class RtpReceiveStatisticsManager
     }
 
     /// <summary>
-    /// Gets the current statistics and resets the statistics for the next
-    /// sample interval. This method should be called every few seconds 
-    /// (5 seconds is recommended for audio) to get the RTP RX statistics.
+    /// Gets the current statistics and resets the statistics for the next sample interval. This method
+    /// should be called every few seconds (5 seconds is recommended for audio) to get the RTP RX statistics.
     /// </summary>
     public RtpReceiveStatistics CurrentStatistics
     {

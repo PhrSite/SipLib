@@ -49,7 +49,7 @@ Or, you can install it from the Visual Studio GUI.
 4. Click on Install
 
 # External Dependancies
-The SipLib class library uses the following NuGet package.
+The SipLib class library uses the following NuGet packages.
 1. Portable.BouncyCastle
 2. Microsoft.Extensions.Logging
 
@@ -77,9 +77,30 @@ This directory contains the project files for the SipLib project and the followi
 | Video | Classes for packing and unpacking video frames for use in RTP channels for H.264 and VP8 video. The H.264 and VP8 codecs are not included here. |
 
 ## Testing Directory
-This directory contains the following subdirectory.
+This directory contains a subdirectory called SipLibUnitTests. This directory contains the SipLibUnitTests.sln Visual Studio solution file and several subdirectories containing the source code for the SipLibUnitTests project. This project is an XUnit project for performing unit tests for the SipLib class library.
+
+To run the unit tests:
+1. Open the SipLibUnitTests.sln file using Visual Studio 2022 (or later).
+2. Right click on the SipLibUnitTests project in Visual Studio's Solution Explorer window.
+3. Select Run Tests
+
+The following table is a guide to the subdirectories of the SipLibUnitTests project.
 
 | Directory | Description |
 |--------|--------|
-| SipLibUnitTests | xUnit unit test project for the SipLib class library |
+| Body | Unit tests for the SipLib.Body namespace |
+| Core | Unit tests for the classes in the SipLib.Core namespace. Also includes source code for th SIP torture tests specified in [RFC 4475](https://datatracker.ietf.org/doc/html/rfc4475) and [RFC 5118](https://datatracker.ietf.org/doc/html/rfc5118) |
+| DtlsSrtp | Unit tests for the Sip.Dtls namespace classes |
+| Msrp | Unit tests for the classes in the SipLib.Msrp namespace |
+| MsrpMessages | Data files for the unit tests in the Msrp directory |
+| RealTimeText | Source code for the unit tests for classes in the SipLib.RealTimeText namespace |
+| rfc4475tests | Data files for the SIP torture tests for [RFC 4475](https://datatracker.ietf.org/doc/html/rfc4475). |
+| Rtp | Unit tests for the classes in the SipLib.Rtp namespace |
+| RtpCrypto | Unit tests for the classes in the SipLib.RtpCrypto namespace |
+| Sdp | Unit tests for the classes in the SipLib.Sdp namespace |
+| SipMessages | Data files containing SIP messages for the unit tests in the Body directory |
+| SipTransactions | Unit tests for the classes in the SipLib.Transactions namespace |
+
+
+
 

@@ -4,8 +4,11 @@
 
 namespace SipLib.Sdp;
 using System.Net;
+using SipLib.Core;
 using SipLib.RtpCrypto;
 using SipLib.RealTimeText;
+using SipLib.Msrp;
+using System.Security.Cryptography.X509Certificates;
 
 /// <summary>
 /// Static class that provides various functions for working with the Session Description Protocol (SDP)
@@ -13,11 +16,11 @@ using SipLib.RealTimeText;
 public static class SdpUtils
 {
     /// <summary>
-    /// Builds an Sdp for offering G.711 audio.
+    /// Builds an Sdp for offering G.711 Mu-Law audio.
     /// </summary>
     /// <param name="iPAddress">IP address that the remote endpoint should send audio to. Audio data must also be
-    /// send from this address.</param>
-    /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
+    /// sent from this address.</param>
+    /// <param name="Port">Specifies the UDP port number that audio will be sent from and received on</param>
     /// <param name="UaName">User agent or server name to used for the origin name (o=). Also used to create
     /// a unique name for the audio session.</param>
     /// <returns>Returns an Sdp object with an audio media description</returns>
@@ -30,7 +33,7 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a basic MediaDescription object for offerring audio media.
+    /// Creates a basic MediaDescription object for offerring G.711 Mu-Law audio media.
     /// </summary>
     /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
     /// <returns>Returns a new MediaDescription object.</returns>
@@ -49,8 +52,8 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a basic MediaDescription object for offerring audio media that will be encrypted using
-    /// SDES-SRTP. See RFC 4568, RFC 3711 and RFC 6188.
+    /// Creates a basic MediaDescription object for offerring G.711 Mu-Law audio media that will be
+    /// encrypted using SDES-SRTP. See RFC 4568, RFC 3711 and RFC 6188.
     /// </summary>
     /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
     /// <returns>Returns a new MediaDescription object.</returns>
@@ -62,8 +65,8 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a basic MediaDescription object for offering audio media that will be encrypted using
-    /// DTLS-SRTP. See RFC 5763, RFC 5764 and RFC 3711.
+    /// Creates a basic MediaDescription object for offering G.711 Mu-Law audio media that will be
+    /// encrypted using DTLS-SRTP. See RFC 5763, RFC 5764 and RFC 3711.
     /// </summary>
     /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
     /// <param name="fingerPrintAttribute">Fingerprint from the X.509 certificate. For example:
@@ -84,6 +87,9 @@ public static class SdpUtils
     /// "SHA-256 4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB"</param>
     public static void AddDtlsSrtp(MediaDescription mediaDescription, string fingerPrintAttribute)
     {
+        if (mediaDescription.MediaType == "message")
+            return;     // Cannot use DTLS-SRTP with MSRP
+
         mediaDescription.Transport = "UDP/TLS/RTP/SAVP";
         mediaDescription.Attributes.Add(new SdpAttribute("fingerprint", fingerPrintAttribute.ToUpper()));
     }
@@ -94,6 +100,9 @@ public static class SdpUtils
     /// <param name="mediaDescription">Input MediaDescription to modify</param>
     public static void AddSdesSrtpEncryption(MediaDescription mediaDescription)
     {
+        if (mediaDescription.MediaType == "message")
+            return;     // Cannot use SDES-SRTP with MSRP
+
         mediaDescription.Transport = "RTP/SAVP";
 
         CryptoContext Cc1 = new CryptoContext(CryptoSuites.AES_256_CM_HMAC_SHA1_80);
@@ -169,9 +178,49 @@ public static class SdpUtils
         RttSmd.RtpMapAttributes.Add(new RtpMapAttribute(RttUtils.DefaultRedundantPayloadType, "red", 1000));
 
         // Use a default of 3 levels of redundancy
-        RttSmd.Attributes.Add(new SdpAttribute("fmtp", $"{RedPt} {T140Pt} {T140Pt} {T140Pt} {T140Pt}"));
+        RttSmd.Attributes.Add(new SdpAttribute("fmtp", $"{RedPt} {T140Pt}/{T140Pt}/{T140Pt}/{T140Pt}"));
 
         return RttSmd;
+    }
+
+    /// <summary>
+    /// Creates a basic MediaDescription object for offering Message Session Relay Protocol (MSRP, see RFC 4975).
+    /// </summary>
+    /// <param name="ipAddress">Specifies the IPv4 or IPv6 IP address to use for the MSRP URI in the
+    /// path attribute. This is address to which MSRP messages will be sent to and from which MSRP
+    /// messages will be sent.</param>
+    /// <param name="Port">Specifies the local port for the MSRP URI.</param>
+    /// <param name="UseTls">If true then offer MSRP over TLS (MSRPS), else offer MSRP over TCP.</param>
+    /// <param name="setupType">Specifies the setup type (active/passive) value to use for the setup
+    /// attribute. Optional. Defaults to SetupType.active.</param>
+    /// <param name="localCert">Used to build the fingerprint attribute of the client's X.509
+    /// certificate. Optional. Defaults to null. This is required only if mutual authentication is
+    /// being used.</param>
+    /// <returns>Returns a new MediaDescription object for offering MSRP.</returns>
+    public static MediaDescription CreateMsrpMediaDescription(IPAddress ipAddress, int Port,
+        bool UseTls, SetupType setupType = SetupType.active, X509Certificate2? localCert = null)
+    {
+        MediaDescription msrpMd = new MediaDescription();
+        msrpMd.MediaType = "message";
+        if (UseTls == true)
+            msrpMd.Transport = "TCP/TLS/MSRP";
+        else
+            msrpMd.Transport = "TCP/MSRP";
+
+        msrpMd.Port = Port;
+        msrpMd.Attributes.Add(new SdpAttribute("accept-types", "message/cpim text/plain"));
+        msrpMd.Attributes.Add(new SdpAttribute("setup", setupType.ToString()));
+
+        if (UseTls == true && localCert != null)
+            msrpMd.Attributes.Add(SipUtils.BuildFingerprintAttr(localCert));
+
+        string strScheme = UseTls == true ? "msrps" : "msrp";
+        string strAddr = ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ?
+            ipAddress.ToString() : $"[{ipAddress.ToString()}]";
+        string sessionID = MsrpMessage.NewRandomID();
+        msrpMd.Attributes.Add(new SdpAttribute("path", $"{strScheme}//{strAddr}:{Port}/{sessionID};tcp"));
+
+        return msrpMd;
     }
 
     /// <summary>

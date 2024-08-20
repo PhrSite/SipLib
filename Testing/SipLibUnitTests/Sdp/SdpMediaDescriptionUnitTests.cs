@@ -90,6 +90,122 @@ public class SdpMediaDescriptionUnitTests
     }
 
     [Fact]
+    public void TestMediaDirectionGet()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2\r\n" +
+            "a=recvonly";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Assert.True(Md.MediaDirection == MediaDirectionEnum.recvonly, "Media direction is not recvonly");
+    }
+
+    [Fact]
+    public void TestMediaDirectionDefault()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Assert.True(Md.MediaDirection == MediaDirectionEnum.sendrecv, "Media directon is not sendrecv");
+    }
+
+    [Fact]
+    public void TestMediaDirectionSet()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Md.MediaDirection = MediaDirectionEnum.sendonly;
+        Assert.True(Md.MediaDirection == MediaDirectionEnum.sendonly, "Media direction is not sendonly");
+
+        string strMediaBlock2 = Md.ToString();
+        MediaDescription Md2 = MediaDescription.ParseMediaDescriptionString(strMediaBlock2);
+        Assert.NotNull(Md2);
+        Assert.True(Md2.MediaDirection == MediaDirectionEnum.sendonly, "Media direction is not sendonly after copy");
+    }
+
+    [Fact]
+    public void TestExistingMediaDirectionSet()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2\r\n" +
+            "a=sendonly";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Md.MediaDirection = MediaDirectionEnum.recvonly;
+        Assert.True(Md.MediaDirection == MediaDirectionEnum.recvonly, "Media direction is not recvonly");
+
+        SdpAttribute attr = Md.GetNamedAttribute("sendonly");
+        Assert.True(attr == null, "Existing media direction attribute not cleared");
+    }
+
+    [Fact]
+    public void TestParseLabel()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=label:1\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2\r\n" +
+            "a=sendonly";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Assert.True(Md.Label == "1", "The label value is not 1");
+    }
+
+    [Fact]
+    public void TestLabelSet()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=label:1\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2\r\n" +
+            "a=sendonly";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Md.Label = "2";
+        Assert.True(Md.Label == "2", "The label value is not 2");
+    }
+
+    [Fact]
+    public void TestNoLable()
+    {
+        string strMediaBlock =
+            "m=audio 49230 RTP/AVP 96 97 98\r\n" +
+            "a=rtpmap:96 L8/8000\r\n" +
+            "a=rtpmap:97 L16/8000\r\n" +
+            "a=rtpmap:98 L16/11025/2\r\n" +
+            "a=sendonly";
+
+        MediaDescription Md = MediaDescription.ParseMediaDescriptionString(strMediaBlock);
+        Assert.NotNull(Md);
+        Assert.True(string.IsNullOrEmpty(Md.Label) == true, "label is not null or empty");
+    }
+
+    [Fact]
     public void TestBuildAudioAnswerSdp()
     {
         List<string> SupportedAudioCodecs = new List<string>() {"PCMU", "PCMA" };

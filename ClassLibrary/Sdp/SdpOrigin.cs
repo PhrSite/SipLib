@@ -50,10 +50,9 @@ public class Origin
     }
 
     /// <summary>
-    /// Constructs a new Origin object. Use this constructor for creating a new origin line for a new SDP
-    /// message.
+    /// Default constructor.
     /// </summary>
-    public Origin()
+    private Origin()
     {
     }
 
@@ -75,7 +74,7 @@ public class Origin
         Origin Or = new Origin();
         string[] Fields = strOrigin.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (Fields.Length != 6)
-            throw new ArgumentException("Origin input string does not contain six " +
+            throw new ArgumentException("The Origin input string does not contain six " +
                 "fields separated by single spaces", nameof(strOrigin));
 
         Or.UserName = Fields[0];

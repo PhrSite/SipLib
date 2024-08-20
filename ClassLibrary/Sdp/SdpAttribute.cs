@@ -17,11 +17,10 @@ public class SdpAttribute
     /// <value></value>
     public string Attribute = "";
     /// <summary>
-    /// Contains the attribute value. This string may be empty if the attribute
-    /// does not have a value.
+    /// Contains the attribute value. This string may be empty or null if the attribute does not have a value.
     /// </summary>
     /// <value></value>
-    public string Value = "";
+    public string? Value = "";
 
     /// <summary>
     /// Contains the parameters for the SDP a= attribute. This dictionary will be empty if there are no
@@ -133,7 +132,7 @@ public class SdpAttribute
     /// </summary>
     /// <param name="AttrName">Name of the attribute.</param>
     /// <param name="AttrValue">Value of the attribute</param>
-    public SdpAttribute(string AttrName, string AttrValue)
+    public SdpAttribute(string AttrName, string? AttrValue)
     {
         Attribute = AttrName;
         Value = AttrValue;
