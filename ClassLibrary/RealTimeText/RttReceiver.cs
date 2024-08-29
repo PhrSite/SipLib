@@ -161,7 +161,7 @@ public class RttReceiver
             strNewText = Encoding.UTF8.GetString(TextBytes);
             if (strNewText != RttUtils.ByteOrderMarker.ToString())
                 // Notify the user that at least one character has been received
-                RttCharactersReceived?.Invoke(strNewText, source);
+                RttCharactersReceived?.Invoke(FixLineEnding(strNewText), source);
             // Else ignore the Byte Order Marker (BOM)
             return;
         }
@@ -241,7 +241,7 @@ public class RttReceiver
                 return;     // Ignore the BOM character
 
             // Notify the user that at least one character has been received
-            RttCharactersReceived?.Invoke(strNewText, source);
+            RttCharactersReceived?.Invoke(FixLineEnding(strNewText), source);
         }
     }
 
@@ -287,5 +287,10 @@ public class RttReceiver
             Diff = Convert.ToUInt16((ushort.MaxValue - Seq1 + Seq2) & 0xffff);
 
         return Diff;
+    }
+
+    private string FixLineEnding(string RxChars)
+    {
+        return RxChars.Replace(RttUtils.strUtf8LineSeparator, "\n");
     }
 }

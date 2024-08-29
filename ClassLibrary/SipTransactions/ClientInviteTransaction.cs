@@ -76,6 +76,9 @@ public class ClientInviteTransaction : SipTransactionBase
             else if (Response.StatusCode >= 200 && Response.StatusCode <= 299)
             {   // Its a 200 OK or other 2XX response. The transaction user must build and send the ACK request
                 // for the 200 OK request.
+                SIPRequest AckOkReq = SipUtils.BuildAckRequest(Response, m_transportManager.SipChannel);
+                TransportManager.SendSipRequest(AckOkReq, RemoteEndPoint);
+
                 State = TransactionStateEnum.Terminated;
                 StateStartTime = DateTime.Now;
                 TerminationReason = TransactionTerminationReasonEnum.OkReceived;

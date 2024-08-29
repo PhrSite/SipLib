@@ -94,7 +94,7 @@ public class SipTransport
     }
 
     /// <summary>
-    /// Call this method to shutdown the processing thread and close the SIP channel and all current
+    /// Call this method to shutdown the processing thread and closes the SIP channel and all current
     /// connections.
     /// </summary>
     public void Shutdown()

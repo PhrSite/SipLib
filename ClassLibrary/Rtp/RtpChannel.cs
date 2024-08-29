@@ -116,6 +116,7 @@ public class RtpChannel
     /// <summary>
     /// Gets the media type for this RtpChannel
     /// </summary>
+    /// <value>Will be one of "audio", "video" or "text" (for RTT)</value>
     public string MediaType
     {
         get { return m_mediaType!; }
@@ -622,7 +623,7 @@ public class RtpChannel
     }
 
     /// <summary>
-    /// Shuts down this RtpChannel and releases all resources. This object cannot be used after this
+    /// Shuts down this RtpChannel and releases all resources. The RtpChannel object cannot be used after this
     /// method is called.
     /// </summary>
     public void Shutdown()

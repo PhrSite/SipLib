@@ -77,8 +77,10 @@ public static class SipUtils
         AckRequest.Header = new SIPHeader(Res.Header.From, Res.Header.To, Res.Header.CSeq, Res.Header.CallId);
         AckRequest.Header.CSeqMethod = SIPMethodsEnum.ACK;
         SIPViaHeader ViaHeader = null;
+
+        // See Section 13.1 and Section 17.1.1.3 of RFC 3261
         if (Res.StatusCode >= 200 && Res.StatusCode <= 299)
-            // Need a new Via and branch for an ACK to a 200 resonse
+            // Need a new Via and branch for an ACK to a 2XX resonse
             ViaHeader = new SIPViaHeader(ChannelEndPoint.GetIPEndPoint(), CallProperties.CreateBranchId(), 
                 ChannelEndPoint.Protocol);
         else

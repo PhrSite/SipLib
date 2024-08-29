@@ -35,9 +35,32 @@ public class RtpPacket
         m_PacketBytes = new byte[MIN_PACKET_LENGTH + PayloadLength];
         Version = 2;
     }
+    
+    /// <summary>
+    /// Creates a new RtpPacket given the payload length and the RTP packet header length.
+    /// </summary>
+    /// <param name="PayloadLength">Length of the packet payload in bytes. May be 0 is only sending
+    /// an RTP packet header.</param>
+    /// <param name="HeaderLength">Length of the RTP packet header in bytes. Must be at least 12.
+    /// The HeaderLength can be calculated as: 12 + 4 * (number of CSRCs).</param>
+    /// <exception cref="ArgumentException">Thrown if the HeaderLength is less than the minimum RTP
+    /// packet header length of 12.</exception>
+    public RtpPacket(int PayloadLength, int HeaderLength)
+    {
+        if (HeaderLength < MIN_PACKET_LENGTH)
+            throw new ArgumentException("The HeaderLength must be at least 12 bytes");
+
+        m_PacketBytes = new byte[PayloadLength + HeaderLength];
+        Version = 2;
+    }
 
     /// <summary>
     /// Constructs a RTP packet from an array of bytes.
+    /// <para>
+    /// Use this constructor to encapsulate the raw bytes received in a UDP packet. You can then access the
+    /// RTP packet header fields using the properties of the new RtpPacket object. Use the GetPayloadBytes()
+    /// method to get a byte array containing the media bytes.
+    /// </para>
     /// </summary>
     /// <param name="SrcBytes">Byte array to "attach" to. Must be at least MIN_PACKET_LENGTH bytes long.</param>
     // <exception cref="ArgumentException">Thrown if the SrcBytes array is less than MIN_PACKET_LENGTH bytes
@@ -183,7 +206,7 @@ public class RtpPacket
     }
 
     /// <summary>
-    /// Gets or sets the payload of the RTP packet.
+    /// Gets or sets the payload of the RTP packet. The getter returns a copy of the payload bytes.
     /// </summary>
     /// <exception cref="ArgumentException">Thrown by if the input packet is longer than the allocated payload
     /// length for this RTP packet.</exception>
