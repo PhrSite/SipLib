@@ -7,10 +7,19 @@ namespace SipLib.Msrp;
 /// <summary>
 /// Delegate type for the MsrpMessageReceived event of the MsrpConnection class.
 /// </summary>
-/// <param name="ContentType">Value of the Content-Type header minus any header parameters.</param>
+/// <param name="ContentType">Value of the Content-Type header minus any header parameters. This 
+/// indicates the MIME type such as text/pain, message/cpim, image/jpeg, etc...</param>
 /// <param name="Contents">Binary contents for this message. If the message was chunked then this array
 /// will contain all of the chunks concatenated together.</param>
 public delegate void MsrpMessageReceivedDelegate(string ContentType, byte[] Contents);
+
+/// <summary>
+/// Delegate type for the MsrpTextMessageReceived event of the MsrpConnection class.
+/// </summary>
+/// <param name="message">The text of the message</param>
+/// <param name="from">The user part of the remote MSRP URI if the content type is text/plain or
+/// the user part from the CPIM From header if the content type is message/cpim.</param>
+public delegate void MsrpTextMessageReceivedDelegate(string message, string from);
 
 /// <summary>
 /// Delegate type for the MsrpConnectionEstablished and the MsrpConnectionFailed events of the MsrpConnection

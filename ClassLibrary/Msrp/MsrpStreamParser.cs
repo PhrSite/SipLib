@@ -13,7 +13,7 @@ using System.Text;
 /// </summary>
 public class MsrpStreamParser
 {
-    private static readonly string EndLinePrefixString = "-------";
+    private static readonly string EndLinePrefixString = "\r\n-------";
     private static readonly byte[] CrLfBytes = Encoding.UTF8.GetBytes("\r\n");
     private static readonly byte[] MsrpBytePattern = Encoding.UTF8.GetBytes("MSRP");
 

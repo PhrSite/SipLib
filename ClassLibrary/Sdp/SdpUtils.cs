@@ -218,7 +218,7 @@ public static class SdpUtils
         string strAddr = ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ?
             ipAddress.ToString() : $"[{ipAddress.ToString()}]";
         string sessionID = MsrpMessage.NewRandomID();
-        msrpMd.Attributes.Add(new SdpAttribute("path", $"{strScheme}//{strAddr}:{Port}/{sessionID};tcp"));
+        msrpMd.Attributes.Add(new SdpAttribute("path", $"{strScheme}://{strAddr}:{Port}/{sessionID};tcp"));
 
         return msrpMd;
     }

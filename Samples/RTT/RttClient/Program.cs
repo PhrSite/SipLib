@@ -23,11 +23,11 @@ internal class Program
 
         if (addresses == null || addresses.Count == 0)
         {
-            Console.WriteLine("Error: No IPv4 addresses available");
+            Console.WriteLine("Error: No IPv6 addresses available");
             return;
         }
 
-        localAddress = addresses[0];    // Pick the first available IPv4 address to listen on
+        localAddress = addresses[0];    // Pick the first available IP address to listen on
         IPEndPoint localIPEndPoint = new IPEndPoint(localAddress, localPort);
         Console.WriteLine($"Local  IPEndPoint = {localIPEndPoint}");
         Channel = new SIPTCPChannel(localIPEndPoint, UserName);

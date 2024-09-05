@@ -23,7 +23,7 @@ internal class Program
         List<IPAddress> addresses = IpUtils.GetIPv6Addresses();
         if (addresses == null || addresses.Count == 0)
         {
-            Console.WriteLine("Error: No IPv4 addresses available");
+            Console.WriteLine("Error: No IPv6 addresses available");
             return;
         }
 

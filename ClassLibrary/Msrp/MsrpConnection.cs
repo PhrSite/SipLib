@@ -13,6 +13,7 @@ using SipLib.Core;
 using SipLib.Sdp;
 using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Text;
 
 /// <summary>
 /// Class for managing a single MSRP connection to either a remote server or from a remote client.
@@ -112,10 +113,19 @@ public class MsrpConnection
 
     /// <summary>
     /// Event that is fired when a complete MSRP message is received. This event is not fired for empty
-    /// SEND requests.
+    /// SEND requests. Use this event if you wish to parse and process the complete MSRP message given
+    /// the Content-Type that is a custom type -- for example a binary type such as image/jpeg.
+    /// <para>
+    /// If the application only needs to handle text messages then use the MsrpTextMessageReceived event.
+    /// </para>
     /// </summary>
     /// <value></value>
     public event MsrpMessageReceivedDelegate? MsrpMessageReceived = null;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event MsrpTextMessageReceivedDelegate? MsrpTextMessageReceived = null;
 
     /// <summary>
     /// This event is fired when a connection is established with the remote endpoint either as a client
@@ -258,7 +268,7 @@ public class MsrpConnection
     /// object is null, then the will contain an error message explaining why the MsrpConnection could no be
     /// created.</returns>
     public static (MsrpConnection?, string?) CreateFromSdp(Sdp OfferedSdp, MediaDescription OfferedMd,
-        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool IsIncoming, X509Certificate2 LocalCert)
+        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool IsIncoming, X509Certificate2? LocalCert)
     {
         MsrpConnection? connection = null;
 
@@ -620,6 +630,7 @@ public class MsrpConnection
         if (m_ReceivedMessagChunks.Count == 0)
         {   // The received message is complete
             MsrpMessageReceived?.Invoke(message.ContentType, message.Body);
+            FireMsrpMessageReceived(message.ContentType, message.Body);
         }
         else
         {   // The message was chunked so build up the entire contents
@@ -638,21 +649,62 @@ public class MsrpConnection
             }
 
             MsrpMessageReceived?.Invoke(message.ContentType, buffer);
+            FireMsrpMessageReceived(message.ContentType, buffer);
         }
 
         m_ReceivedMessagChunks.Clear();
 
         // If a success report is requested then send a REPORT request
-        if (message.SuccessReportRequested() == true && MsrpMessageReceived != null)
-        {   // There are listeners for the MsrpMessageReceived event so assume message delivery was
-            // successful
+        if (message.SuccessReportRequested() == true && HaveEventListeners() == true)
+        {   // There are listeners for the events so assume message delivery was successful
             SendReportRequest(message, 200, "OK");
         }
-        else if (message.FailureReportRequested() == true && MsrpMessageReceived == null)
-        {   // There are no listeners for the MsrpMessageReceived event so assume that message delivery
-            // was not successful.
+        else if (message.FailureReportRequested() == true && HaveEventListeners() == false)
+        {   // There are no listeners for the events so assume that message delivery was not successful.
             SendReportRequest(message, 503, "Service Unavailable -- No Listeners");
         }
+    }
+
+    private bool HaveEventListeners()
+    {
+        if (MsrpMessageReceived == null && MsrpTextMessageReceived == null)
+            return false;
+        else
+            return true;
+    }
+
+    private void FireMsrpMessageReceived(string ContentType, byte[] Contents)
+    {
+        string message = string.Empty;
+        string from = string.Empty;
+        string strContents = Encoding.UTF8.GetString(Contents);
+
+        if (ContentType.ToLower() == "text/plain")
+        {
+            message = strContents;
+            from = m_RemoteMsrpUri.uri.User != null ? m_RemoteMsrpUri.uri.User : m_RemoteMsrpUri.uri.Host;
+        }
+        else if (ContentType.ToLower() == "message/cpim")
+        {
+            CpimMessage? cpim = CpimMessage.ParseCpimBytes(Contents);
+            if (cpim != null && cpim?.ContentType == "text/plain")
+            {
+                if (cpim.Body != null)
+                    message = Encoding.UTF8.GetString((byte[])cpim.Body);
+                else
+                    message = "Empty CPIM message received";
+
+                from = cpim.From.Name != null ? cpim.From.Name : cpim.From.ToString();
+            }
+            else
+            {   // Error: Invalid CpimMessage or its not a CPIM message with text in the body
+                return;
+            }
+        }
+        else
+            return;
+
+        MsrpTextMessageReceived?.Invoke(message, from);
     }
 
     private void SendReportRequest(MsrpMessage message, int StatusCode, string StatusText)

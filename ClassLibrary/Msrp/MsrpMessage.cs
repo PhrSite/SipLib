@@ -123,7 +123,7 @@ public class MsrpMessage
     /// </summary>
     private static readonly byte[] BodyDelimArray = { 0x0d, 0x0a, 0x0d, 0x0a };
 
-    private const string EndLinePrefixString = "-------";
+    private const string EndLinePrefixString = "\r\n-------";
 
     private const string CRLF = "\r\n";
 
@@ -390,7 +390,13 @@ public class MsrpMessage
         if (Body != null)
             memoryStream.Write(Body, 0, Body.Length);
 
-        string EndLine = $"{EndLinePrefixString}{TransactionID}{Flag}{CRLF}";
+        //string EndLine = $"{EndLinePrefixString}{TransactionID}{Flag}{CRLF}";
+        string EndLine;
+        if (Body == null)
+            EndLine = $"{EndLinePrefixString.Replace(CRLF, "")}{TransactionID}{Flag}{CRLF}";
+        else
+             EndLine = $"{EndLinePrefixString}{TransactionID}{Flag}{CRLF}";
+
         memoryStream.Write(Encoding.UTF8.GetBytes(EndLine));
         byteArray = memoryStream.ToArray();
         return byteArray;

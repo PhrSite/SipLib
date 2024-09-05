@@ -73,6 +73,8 @@ public class MsrpConnectionUnitTests
         Assert.True(ServerMessageReceivedSignaled == true, "ServerMessageReceivedSignaled is false");
         Assert.True(ServerMessageReceivedEvent.IsSet == true, "ClientMessage1 send timeout");
         Assert.True(ServerReceivedContentType == "text/plain", "ClientMessage1 ContentType is wrong");
+
+        string strServeReceivedMessage = Encoding.UTF8.GetString(ServerReceivedMessageBytes);
         Assert.True(ClientMessage1 == Encoding.UTF8.GetString(ServerReceivedMessageBytes),
             "ClientMessage1 contents mismatch");
         ServerMessageReceivedEvent.Reset();

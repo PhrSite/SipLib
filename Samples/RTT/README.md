@@ -7,7 +7,7 @@ Microsoft .NET 8 must be installed on the computer.
 
 Start by running the RttServer program first by following these steps.
 1. Open a command prompt window and change directories to the RttServer directory.
-2. Thpe: dotnet run
+2. Type: dotnet run
 
 Next, run the RttClient program by following thest steps.
 1. Open another command prompt window and change directories to the RttClient directory.
