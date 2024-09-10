@@ -4,6 +4,7 @@ This project is a portable, cross-platform class library written in the C# langu
 The classes in this library support the following protocols.
 1. Session Initiation Protocol (SIP, RFC 3261) over UDP, TCP and TLS
 2. Session Description Protocol (SDP, RFC 8866)
+3. An Offer/Answer Model with the Session Description Protocol (SDP) (RFC 3264)
 3. Real Time Protocol (RTP, RFC 3550) for transport of audio, video and Real Time Text
 4. Real Time Text (RTT, RFC 4103)
 5. Message Session Relay Protocol (MSRP, RFC 4975) using TCP or TLS
@@ -33,13 +34,14 @@ This class library is available on NuGet.
 To install it from the .NET CLI, type:
 
 ```
-dotnet add package SipLib --version 1.0.0
+dotnet add package SipLib --version X.X.X
 ```
+"X.X.X" is the version number of the packet to add.
 
 To install using the NuGET Package Manager Command window, type:
 
 ```
-NuGet\Install-Package SipLib --version 1.0.0
+NuGet\Install-Package SipLib --version X.X.X
 ```
 Or, you can install it from the Visual Studio GUI.
 

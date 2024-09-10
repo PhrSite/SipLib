@@ -3,7 +3,6 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Text;
 using SipLib.Rtp;
 
@@ -26,7 +25,6 @@ public class RttSender
     private RttRtpSendDelegate? Sender = null;
 
     private ConcurrentQueue<string> m_Messages = new ConcurrentQueue<string>();
-
     private CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
 
     private SemaphoreSlim m_SendSemaphore = new SemaphoreSlim(0, int.MaxValue);
@@ -39,7 +37,6 @@ public class RttSender
     private uint m_SSRC = 0;
     private uint m_MessageStartTime = (uint)System.Environment.TickCount;
     private const int SEND_IDLE_TIME_MS = 300;
-
     private static Random m_Rnd = new Random();
 
     /// <summary>
@@ -227,8 +224,6 @@ public class RttSender
         RtpPacket Rp = new RtpPacket(RtpBytes);
         Rp.SSRC = m_SSRC;
 
-        //if (TotalCharBytes > 0)
-        //    Rp.Marker = true;
         if (TotalRedBytes == 0)
             Rp.Marker = true;
 
@@ -237,8 +232,7 @@ public class RttSender
         int CurrentIndex = Rp.HeaderLength;
         Rp.PayloadType = m_Params.RedundancyPayloadType;
 
-        // Set the payload type for each redundant block header and copy
-        // in the redundant block headers.
+        // Set the payload type for each redundant block header and copy in the redundant block headers.
         for (i = 0; i < m_Params.RedundancyLevel; i++)
         {
             m_RedundantBlocks[i].T140PayloadType = Convert.ToByte(m_Params.T140PayloadType & 0x00ff);
@@ -250,10 +244,6 @@ public class RttSender
         // Set the last redundant block header byte.
         RtpBytes[CurrentIndex++] = Convert.ToByte(m_Params.T140PayloadType & 0x00ff);
 
-        // For debug only
-        //if (TotalCharBytes > 0)
-        //    Console.Write(strText + ": ");  // For debug only
-
         // Copy in the redundant bytes if there are any.
         for (i = 0; i < m_Params.RedundancyLevel; i++)
         {
@@ -262,19 +252,12 @@ public class RttSender
                 Array.ConstrainedCopy(m_RedundantBlocks[i].PayloadBytes, 0, RtpBytes, CurrentIndex, 
                     m_RedundantBlocks[i].BlockLength);
                 CurrentIndex += m_RedundantBlocks[i].BlockLength;
-
-                // For debug only
-                //Console.Write(Encoding.UTF8.GetString(m_RedundantBlocks[i].PayloadBytes));
-                //Console.Write(" ");
             }
         } // end for i
 
         // Copy in the new text bytes if there are any.
         if (TotalCharBytes > 0)
-        {
             Array.ConstrainedCopy(TextBytes, 0, RtpBytes, CurrentIndex, TotalCharBytes);
-            //Console.Write(strText + ": ");  // For debug only
-        }
 
         Sender?.Invoke(Rp);
 

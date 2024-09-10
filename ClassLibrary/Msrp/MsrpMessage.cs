@@ -390,7 +390,6 @@ public class MsrpMessage
         if (Body != null)
             memoryStream.Write(Body, 0, Body.Length);
 
-        //string EndLine = $"{EndLinePrefixString}{TransactionID}{Flag}{CRLF}";
         string EndLine;
         if (Body == null)
             EndLine = $"{EndLinePrefixString.Replace(CRLF, "")}{TransactionID}{Flag}{CRLF}";
