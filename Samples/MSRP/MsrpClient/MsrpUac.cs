@@ -202,13 +202,14 @@ internal class MsrpUac
 
         m_remoteEndPoint = remIPEndPoint;
         string sipScheme = m_SipTransport.SipChannel.IsTLS == true ? "sips" : "sip";
-        SIPURI remoteUri = SIPURI.ParseSIPURI($"{sipScheme}:{remIPEndPoint};transport=tcp");
-        m_Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, remoteUri, remoteUri, "MsrpUas",
+        SIPURI remoteUri = SIPURI.ParseSIPURI($"{sipScheme}:MsrpServer@{remIPEndPoint};transport=tcp");
+        m_Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, remoteUri, remoteUri, "MsrpServer",
             m_SipTransport.SipChannel.SIPChannelContactURI, m_userName);
 
-        // Build an SDP offer containing RTT (media type = "text")
+        // Build an SDP offer containing MSRP (media type = "message")
         Sdp sdp = new Sdp(m_localAddress, m_userName);
-        MediaDescription MsrpMd = SdpUtils.CreateMsrpMediaDescription(m_localAddress, MsrpPort, m_SipTransport.SipChannel.IsTLS);
+        MediaDescription MsrpMd = SdpUtils.CreateMsrpMediaDescription(m_localAddress, MsrpPort, m_SipTransport.SipChannel.IsTLS,
+            SetupType.active, null, m_userName);
         sdp.Media.Add(MsrpMd);
 
         m_OfferedSdp = sdp;     // Save it for later
@@ -271,8 +272,8 @@ internal class MsrpUac
             return;
         }
 
-        (m_MsrpConnection, string? ErrorTxt) = MsrpConnection.CreateFromSdp(m_OfferedSdp!, m_OfferedSdp!.Media[0],
-            sdp, msrpMd, false, null);
+        (m_MsrpConnection, string? ErrorTxt) = MsrpConnection.CreateFromSdp(m_OfferedSdp!.Media[0],
+            msrpMd, false, null);
 
         if (ErrorTxt != null || m_MsrpConnection == null)
         {
@@ -290,13 +291,31 @@ internal class MsrpUac
         TextMessageReceived?.Invoke(message, from);
     }
 
+    /// <summary>
+    /// Sends a text message.
+    /// </summary>
+    /// <param name="message">Message to send.</param>
     public void Send(string message)
     {
-        if (m_Started == false || m_MsrpConnection == null)
+        if (m_Started == false || m_MsrpConnection == null || m_Invite == null)
             return;
 
-        m_MsrpConnection.SendMsrpMessage("text/plain", Encoding.UTF8.GetBytes(message));
+        SendCpim(m_MsrpConnection, message, m_Invite.Header!.From!.FromUserField,
+            m_Invite.Header!.To!.ToUserField!);
+        //m_MsrpConnection.SendMsrpMessage("text/plain", Encoding.UTF8.GetBytes(message));
     }
+
+    private void SendCpim(MsrpConnection connection, string message, SIPUserField from,
+        SIPUserField to)
+    {
+        CpimMessage cpimMessage = new CpimMessage();
+        cpimMessage.From = from;
+        cpimMessage.To.Add(to);
+        cpimMessage.ContentType = "text/plain";
+        cpimMessage.Body = Encoding.UTF8.GetBytes(message);
+        connection.SendMsrpMessage("message/cpim", cpimMessage.ToByteArray());
+    }
+
 
 }
 

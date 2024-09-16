@@ -16,12 +16,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/phrsite/SipLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>0.0.1 -- Initial version</PackageReleaseNotes>
+    <PackageReleaseNotes>0.0.2 -- Changes in the Msrp namespace.</PackageReleaseNotes>
     <PackageOutputPath>\_MyProjects\NuGetPackages</PackageOutputPath>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
-    <FileVersion>0.0.1</FileVersion>
+    <AssemblyVersion>0.0.2</AssemblyVersion>
+    <FileVersion>0.0.2</FileVersion>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

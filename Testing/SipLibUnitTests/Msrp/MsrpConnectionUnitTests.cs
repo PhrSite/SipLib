@@ -4,10 +4,8 @@
 
 namespace SipLibUnitTests.Msrp;
 
-using SipLib.Body;
 using SipLib.Core;
 using SipLib.Msrp;
-using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -94,14 +92,14 @@ public class MsrpConnectionUnitTests
         MsrpServer.Shutdown();
     }
 
-    private void OnServerMessageReceived(string ContentType, byte[] Contents)
+    private void OnServerMessageReceived(string ContentType, byte[] Contents, string from)
     {
         ServerReceivedContentType = ContentType;
         ServerReceivedMessageBytes = Contents;
         ServerMessageReceivedEvent.Set();
     }
 
-    private void OnClientMessageReceived(string ContentType, byte[] Contents)
+    private void OnClientMessageReceived(string ContentType, byte[] Contents, string from)
     {
         ClientReceivedContentType = ContentType;
         ClientReceivedMessageBytes = Contents;
@@ -204,7 +202,7 @@ public class MsrpConnectionUnitTests
 
         MsrpConnection msrpServer = MsrpConnection.CreateAsServer(ServerMsrpUri, ClientMsrpUri, null);
         // Must hook the MsrpMessageReceived event so that a success REPORT request is generated
-        msrpServer.MsrpMessageReceived += (contentType, content) => { };
+        msrpServer.MsrpMessageReceived += (contentType, content, from) => { };
         msrpServer.Start();
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
@@ -288,7 +286,7 @@ public class MsrpConnectionUnitTests
 
         MsrpConnection msrpClient = MsrpConnection.CreateAsClient(ClientMsrpUri, ServerMsrpUri, null);
         // Hook the MsrpMessageReceived event so that a success REPORT request is sent to the server
-        msrpClient.MsrpMessageReceived += (contentType, content) => { };
+        msrpClient.MsrpMessageReceived += (contentType, content, from) => { };
         msrpClient.Start();
 
         string MessageId = MsrpMessage.NewRandomID();

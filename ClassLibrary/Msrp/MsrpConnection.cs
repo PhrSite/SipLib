@@ -32,12 +32,13 @@ public class MsrpConnection
     private Stream? m_NetworkStream = null;
 
     /// <summary>
-    /// Absolute maximum size of a MSRP transaction (chunk) message.
+    /// Absolute maximum size of a MSRP message for receiving messages.
     /// </summary>
-    private const int DEFAULT_MAX_MSRP_MSG_LENGTH = 10000;
-    private int m_MaxMsrpMessageLength = DEFAULT_MAX_MSRP_MSG_LENGTH;
+    private const int DEFAULT_MAX_MSRP_MESSAGE_LENGTH = 10000;
+    private const int MINIMUM_MAX_MSRP_MESSAGE_LENGTH = 3000;
+    private int m_MaxMsrpTransactionLength = DEFAULT_MAX_MSRP_MESSAGE_LENGTH;
 
-    private MsrpStreamParser m_StreamParser = new MsrpStreamParser(DEFAULT_MAX_MSRP_MSG_LENGTH);
+    private MsrpStreamParser m_StreamParser = new MsrpStreamParser(DEFAULT_MAX_MSRP_MESSAGE_LENGTH);
     private byte[] m_ReadBuffer = new byte[DEFAULT_READ_BUFFER_LENGTH];
 
     /// <summary>
@@ -66,47 +67,30 @@ public class MsrpConnection
         Task transmitTask = TransmitTask(m_TokenSource.Token);
     }
 
-    private const int MINIMUM_MAX_MSRP_MESSAGE_LENGTH = 3000;
-
     /// <summary>
-    /// Gets or sets the maximum MSRP message transaction (chunk) length for receiving long MSRP messages.
-    /// This represents the absolute maximum of a single MSRP SEND request message chunk, not the maximum
-    /// size of a MSRP message that is properly chunked. The setter for this property must be called before
-    /// calling the Start() method.
-    /// <para> 
-    /// This property does not affect the maximum MSRP message length if a sender follows the chunking rules
-    /// set forth in RFC 4975.
+    /// Gets or sets the maximum size of a complete MSRP message that the MsrpConnection can receive.
+    /// <para>
+    /// The default size is 10,000 bytes. The minimum limit on the message length is 3,000 bytes. There is no
+    /// upper limit. For text applications it is not necessary to change the default. If the application will
+    /// be expected to receive large images or video files then this property must be set to an appropriate value.
     /// </para>
     /// <para>
-    /// The minimum value for this property is 3000 (this allows for 2048 byte contents plus a few hundred
-    /// bytes for the MSRP message headers. The default value of this property is 10000 bytes.
+    /// This property must be set before calling the Start() method.
     /// </para>
     /// </summary>
-    /// <remarks>
-    /// <para>According to RFC 4975, MSRP message senders must split messages where the body of
-    /// the message is greater than 2048 bytes into chunks containing 2048 byte blocks so it is not
-    /// necessary to set this property.
-    /// </para>
-    /// <para>
-    /// The only time that setting this property is necessary is if a remote MSRP endpoint does not follow
-    /// the rules for message chunking and is expected to send large messages that may contain images or
-    /// video recordings.
-    /// </para>
-    /// </remarks>
-    /// <value></value>
     public int MaxMsrpMessageLength
     {
-        get { return m_MaxMsrpMessageLength; }
+        get { return m_MaxMsrpTransactionLength; }
         set
         {
             if (m_Started == false)
             {
-                if (value < 2048)
-                    throw new ArgumentException("The maximum MSRP message chunk length may not be less than " +
+                if (value < MINIMUM_MAX_MSRP_MESSAGE_LENGTH)
+                    throw new ArgumentException("The maximum MSRP message message length may not be less than " +
                         $"{MINIMUM_MAX_MSRP_MESSAGE_LENGTH} bytes");
 
-                m_MaxMsrpMessageLength = value;
-                m_StreamParser = new MsrpStreamParser(m_MaxMsrpMessageLength);
+                m_MaxMsrpTransactionLength = value;
+                m_StreamParser = new MsrpStreamParser(m_MaxMsrpTransactionLength);
             }
         }
     }
@@ -123,7 +107,8 @@ public class MsrpConnection
     public event MsrpMessageReceivedDelegate? MsrpMessageReceived = null;
 
     /// <summary>
-    /// 
+    /// Event that fired when an MSRP message is received with a Content-Type of text/plain or message/cpim and the content
+    /// type of the CPIM message is text/plain. 
     /// </summary>
     public event MsrpTextMessageReceivedDelegate? MsrpTextMessageReceived = null;
 
@@ -258,17 +243,15 @@ public class MsrpConnection
     /// <summary>
     /// Creates a MsrpConnection from the offered and answered SDP.
     /// </summary>
-    /// <param name="OfferedSdp">The offered SDP from the INVITE request.</param>
     /// <param name="OfferedMd">The offered MediaDescription for MSRP ("message") media</param>
-    /// <param name="AnsweredSdp">The answered SDP from the OK response.</param>
     /// <param name="AnsweredMd">The answered MediaDescription for MSRP ("message") media</param>
     /// <param name="IsIncoming">If true then its an incoming call. Else its an outgoing call</param>
     /// <param name="LocalCert">X.509 certificate to use for MSRP over TLS (MSRPS)</param>
     /// <returns>Returns a tuple containing a MsrpConnection object and a string. If the returned MsrpConnection
     /// object is null, then the will contain an error message explaining why the MsrpConnection could no be
     /// created.</returns>
-    public static (MsrpConnection?, string?) CreateFromSdp(Sdp OfferedSdp, MediaDescription OfferedMd,
-        Sdp AnsweredSdp, MediaDescription AnsweredMd, bool IsIncoming, X509Certificate2? LocalCert)
+    public static (MsrpConnection?, string?) CreateFromSdp(MediaDescription OfferedMd,
+        MediaDescription AnsweredMd, bool IsIncoming, X509Certificate2? LocalCert)
     {
         MsrpConnection? connection = null;
 
@@ -324,9 +307,9 @@ public class MsrpConnection
         }
 
         if (IsServer == true)
-            connection = MsrpConnection.CreateAsServer(LocalMsrpUri, RemoteMsrpUri, LocalCert);
+            connection = CreateAsServer(LocalMsrpUri, RemoteMsrpUri, LocalCert);
         else
-            connection = MsrpConnection.CreateAsClient(LocalMsrpUri, RemoteMsrpUri, LocalCert);
+            connection = CreateAsClient(LocalMsrpUri, RemoteMsrpUri, LocalCert);
 
         return (connection, null);
     }
@@ -383,7 +366,7 @@ public class MsrpConnection
                 m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
                     m_NetworkStream);
 
-                SendMsrpMessage(null, null);
+                SendEmptySendRequest();
             }
 
             // Listen for another connection request
@@ -417,7 +400,7 @@ public class MsrpConnection
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, m_NetworkStream);
             
-            SendMsrpMessage(null, null);
+            SendEmptySendRequest();
         }
         catch (Exception) { }
     }
@@ -484,7 +467,7 @@ public class MsrpConnection
                 if (m_NetworkStream != null)
                 {
                     MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
-                    SendMsrpMessage(null, null);
+                    SendEmptySendRequest();
 
                     // Start reading from the stream asynchronously
                     m_NetworkStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, 
@@ -517,7 +500,7 @@ public class MsrpConnection
         try
         {
             sslStream.EndAuthenticateAsClient(ar);
-            SendMsrpMessage(null, null);    // Send an empty SEND request.
+            SendEmptySendRequest(); 
             MsrpConnectionEstablished?.Invoke(ConnectionIsPassive, m_RemoteMsrpUri);
             sslStream.BeginRead(m_ReadBuffer, 0, m_ReadBuffer.Length, StreamReadCallback, sslStream);
         }
@@ -629,8 +612,8 @@ public class MsrpConnection
     {
         if (m_ReceivedMessagChunks.Count == 0)
         {   // The received message is complete
-            MsrpMessageReceived?.Invoke(message.ContentType, message.Body);
             FireMsrpMessageReceived(message.ContentType, message.Body);
+            FireMsrpTextMessageReceived(message.ContentType, message.Body);
         }
         else
         {   // The message was chunked so build up the entire contents
@@ -648,8 +631,8 @@ public class MsrpConnection
                 CurIdx += msg.Body.Length;
             }
 
-            MsrpMessageReceived?.Invoke(message.ContentType, buffer);
             FireMsrpMessageReceived(message.ContentType, buffer);
+            FireMsrpTextMessageReceived(message.ContentType, buffer);
         }
 
         m_ReceivedMessagChunks.Clear();
@@ -674,6 +657,12 @@ public class MsrpConnection
     }
 
     private void FireMsrpMessageReceived(string ContentType, byte[] Contents)
+    {
+        string from = m_RemoteMsrpUri.uri.User != null ? m_RemoteMsrpUri.uri.User : m_RemoteMsrpUri.uri.Host;
+        MsrpMessageReceived?.Invoke(ContentType, Contents, from);
+    }
+
+    private void FireMsrpTextMessageReceived(string ContentType, byte[] Contents)
     {
         string message = string.Empty;
         string from = string.Empty;
@@ -877,6 +866,14 @@ public class MsrpConnection
         return msg;
     }
 
+    private void SendEmptySendRequest()
+    {
+        string MessageID = MsrpMessage.NewRandomID();  // Use a new random ID;
+        MsrpMessage msg = BuildSendRequest(MessageID);
+        msg.ByteRange = new ByteRangeHeader() { Start = 1, End = 0, Total = 0 };
+        EnqueueMsrpRequestMessage(msg);
+    }
+
     /// <summary>
     /// Sends an MSRP message to the remote endpoint. The method queues the message for transmission and
     /// returns immediately. It does not block. If the length of the message contents is longer than
@@ -886,14 +883,13 @@ public class MsrpConnection
     /// <param name="ContentType">Specifies the Content-Type header value for the message. For example:
     /// text/plain or message/CPIM.</param>
     /// <param name="Contents">Binary message contents encoded using UTF8 if the message is text or
-    /// the un-encode binary contents if sending a non-text message such as a picture or a video
-    /// file.</param>
+    /// the binary contents if sending a non-text message such as a picture or a video file.</param>
     /// <param name="messageID">If specified, this is the Message-ID header that will be include
-    /// in the SEND request. This should be a 9 or 10 digit alphanumeric string that identifies the
-    /// method. This parameter is optional. If pressent then the SEND request will include a
+    /// in the SEND request. This should be a 9 or 10 character alphanumeric string that identifies the
+    /// message. This parameter is optional. If present then the SEND request will include a
     /// Success-Report header with a value of "yes" so that the remote endpoint will generate a
     /// success report.</param>
-    public void SendMsrpMessage(string? ContentType, byte[]? Contents, string? messageID = null)
+    public void SendMsrpMessage(string ContentType, byte[] Contents, string? messageID = null)
     {
         string MessageID;
         bool RequestSuccessReport = false;
@@ -909,13 +905,6 @@ public class MsrpConnection
         }
 
         MsrpMessage msg;
-        if (ContentType == null || Contents == null)
-        {   // Send an empty SEND request
-            msg = BuildSendRequest(MessageID);
-            msg.ByteRange = new ByteRangeHeader() { Start = 1, End = 0, Total = 0 };
-            EnqueueMsrpRequestMessage(msg);
-            return;
-        }
 
         int NumChunks = Contents.Length / CHUNK_SIZE;
         if (Contents.Length % CHUNK_SIZE != 0)

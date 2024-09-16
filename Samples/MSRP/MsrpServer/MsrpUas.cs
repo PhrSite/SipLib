@@ -160,7 +160,7 @@ internal class MsrpUas
         if (OfferedMsrpMd == null)
         {
             SIPResponse badRequest = SipUtils.BuildResponse(sipRequest, SIPResponseStatusCodesEnum.BadRequest,
-                "Bad Request -- No text media offered", sipTransportManager.SipChannel, m_userName);
+                "Bad Request -- No message media offered", sipTransportManager.SipChannel, m_userName);
             // Fire and forget
             sipTransportManager.StartServerInviteTransaction(sipRequest, remoteEndPoint.GetIPEndPoint(),
                 null, badRequest);
@@ -171,11 +171,11 @@ internal class MsrpUas
         // Build the SDP to answer with
         Sdp AnswerSdp = new Sdp(m_localAddress, m_userName);
         MediaDescription AnswerMd = SdpUtils.CreateMsrpMediaDescription(m_localAddress, MsrpPort,
-            false, SetupType.passive, null);
+            false, SetupType.passive, null, m_userName);
         AnswerSdp.Media.Add(AnswerMd);
 
-        (m_MsrpConnection, string? ErrorText) = MsrpConnection.CreateFromSdp(OfferedSdp, OfferedMsrpMd,
-            AnswerSdp, AnswerMd, true, m_MyCertificate);
+        (m_MsrpConnection, string? ErrorText) = MsrpConnection.CreateFromSdp(OfferedMsrpMd,
+            AnswerMd, true, m_MyCertificate);
 
         if (m_MsrpConnection == null)
         {

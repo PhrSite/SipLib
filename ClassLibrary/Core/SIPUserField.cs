@@ -213,7 +213,7 @@ public class SIPUserField
     /// the name portion is present, it is not quoted.
     /// </summary>
     /// <returns>Returns the string formatted for usin in a CPIM message.</returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="NullReferenceException">Thrown if the URI field is null.</exception>
     public string ToCpimFormatString()
     {
         string userFieldStr = null;

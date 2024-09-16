@@ -44,6 +44,11 @@ public class MsrpMultipartMixed
     /// </summary>
     private const string Path = @"..\..\..\MsrpMessages\";
 
+    /// <summary>
+    /// Tests sending and receiving of an MSRP message with a content type of multipart/mixed. The
+    /// first body part has a content type of message/cpim. The second body part has a content type of
+    /// image/jpeg.
+    /// </summary>
     [Fact]
     public void TestMsrpMultipartMixed()
     {
@@ -121,14 +126,14 @@ public class MsrpMultipartMixed
 
     }
 
-    private void OnServerMessageReceived(string ContentType, byte[] Contents)
+    private void OnServerMessageReceived(string ContentType, byte[] Contents, string from)
     {
         ServerReceivedContentType = ContentType;
         ServerReceivedMessageBytes = Contents;
         ServerMessageReceivedEvent.Set();
     }
 
-    private void OnClientMessageReceived(string ContentType, byte[] Contents)
+    private void OnClientMessageReceived(string ContentType, byte[] Contents, string from)
     {
         ClientReceivedContentType = ContentType;
         ClientReceivedMessageBytes = Contents;

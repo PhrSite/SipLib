@@ -11,7 +11,9 @@ namespace SipLib.Msrp;
 /// indicates the MIME type such as text/pain, message/cpim, image/jpeg, etc...</param>
 /// <param name="Contents">Binary contents for this message. If the message was chunked then this array
 /// will contain all of the chunks concatenated together.</param>
-public delegate void MsrpMessageReceivedDelegate(string ContentType, byte[] Contents);
+/// <param name="from">The user part of the remote MSRP URI or the host part of the MSRP URI if the
+/// user part is null.</param>
+public delegate void MsrpMessageReceivedDelegate(string ContentType, byte[] Contents, string from);
 
 /// <summary>
 /// Delegate type for the MsrpTextMessageReceived event of the MsrpConnection class.

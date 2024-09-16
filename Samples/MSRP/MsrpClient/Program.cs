@@ -111,6 +111,6 @@ internal class Program
 
     private static void OnTextMessageReceived(string message, string from)
     {
-        Console.WriteLine(message.Replace("\r\n", ""));
+        Console.WriteLine($"From {from}: {message.Replace("\r\n", "")}");
     }
 }

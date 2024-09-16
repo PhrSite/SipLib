@@ -192,14 +192,22 @@ public static class SdpUtils
     /// <param name="Port">Specifies the local port for the MSRP URI.</param>
     /// <param name="UseTls">If true then offer MSRP over TLS (MSRPS), else offer MSRP over TCP.</param>
     /// <param name="setupType">Specifies the setup type (active/passive) value to use for the setup
-    /// attribute. Optional. Defaults to SetupType.active.</param>
+    /// attribute.</param>
     /// <param name="localCert">Used to build the fingerprint attribute of the client's X.509
-    /// certificate. Optional. Defaults to null. This is required only if mutual authentication is
-    /// being used.</param>
+    /// certificate. Optional. Defaults to null. This is required if UseTls is true and the SetupType
+    /// is passive or actpass (i.e. the new MsrpConnection can become a server).</param>
+    /// <param name="user">User name portion of the MSRP URI. Optional.</param>
     /// <returns>Returns a new MediaDescription object for offering MSRP.</returns>
+    /// <exception cref="ArgumentException">Thrown if UseTls is true, and localCert is null and setupType is passive or
+    /// actpass</exception>
     public static MediaDescription CreateMsrpMediaDescription(IPAddress ipAddress, int Port,
-        bool UseTls, SetupType setupType = SetupType.active, X509Certificate2? localCert = null)
+        bool UseTls, SetupType setupType, X509Certificate2? localCert = null,
+        string? user = null)
     {
+        if (UseTls == true && localCert == null && (setupType == SetupType.passive || setupType == SetupType.actpass))
+            throw new ArgumentException($"UseTls is {UseTls}, setupType = {setupType} and localCert is null. A X509Certificate2 " +
+                "is required.");
+
         MediaDescription msrpMd = new MediaDescription();
         msrpMd.MediaType = "message";
         if (UseTls == true)
@@ -218,7 +226,13 @@ public static class SdpUtils
         string strAddr = ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ?
             ipAddress.ToString() : $"[{ipAddress.ToString()}]";
         string sessionID = MsrpMessage.NewRandomID();
-        msrpMd.Attributes.Add(new SdpAttribute("path", $"{strScheme}://{strAddr}:{Port}/{sessionID};tcp"));
+        string strPathValue;
+        if (string.IsNullOrEmpty(user) == false)
+            strPathValue = $"{strScheme}://{user}@{strAddr}:{Port}/{sessionID};tcp";
+        else
+            strPathValue = $"{strScheme}://{strAddr}:{Port}/{sessionID};tcp";
+
+        msrpMd.Attributes.Add(new SdpAttribute("path", strPathValue));
 
         return msrpMd;
     }

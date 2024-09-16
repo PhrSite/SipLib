@@ -231,7 +231,6 @@ public class SIPURI
     {
         get
         {
-            //return (User.IsNullOrBlank()) ? User : SIPEscape.SIPURIUserUnescape(User);
             if (string.IsNullOrEmpty(User))
                 return User;
             else
