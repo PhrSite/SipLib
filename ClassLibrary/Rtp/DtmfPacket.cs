@@ -32,7 +32,7 @@ public class DtmfPacket
     /// <param name="packet">Input byte array</param>
     /// <param name="Offset">Index in the input byte array that contains the DtmfPacket bytes.
     /// packet.Length - Offset must be greater than or equal to DTMF_PACKET_LENGTH</param>
-    /// <returns></returns>
+    /// <returns>Returns a new DtmfPacket object</returns>
     public static DtmfPacket Parse(byte[] packet, int Offset)
     {
         if (packet == null || packet.Length - Offset < DTMF_PACKET_LENGTH)
@@ -60,7 +60,8 @@ public class DtmfPacket
     private const byte E_FLAG_CLEAR_MASK = 0x7f;
 
     /// <summary>
-    /// Gets or sets the E flag value
+    /// Gets or sets the E flag value. The E flag is 1 (true) if the packet indicates the end of a DTMF
+    /// event.
     /// </summary>
     /// <value></value>
     public bool Eflag

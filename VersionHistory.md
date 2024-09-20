@@ -13,4 +13,10 @@
 | NA      | Change | SipLib.Msrp.MsrpConnection -- Added a new private method calld SendEmptySendRequest(). |
 | NA      | Change | SipLib.Msrp.MessageReceivedDelegate -- added the "from" parameter. |
 
+## v0.0.3 - TBD
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Fix    | Changed the SRTP authenticaion key length to 20 bytes to conform with Section 5.2 of RFC 3711 and fix the problems with RTP packet authentication with SDES-SRTP. |
+| NA     | Addition | Finished coding for the AudioDestination and AudioSource classes in the SipLib.Media namespace. |
+
 

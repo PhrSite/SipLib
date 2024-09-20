@@ -104,12 +104,12 @@ public static class SRtpUtils
     /// <value></value>
     public const int n_sB = n_s / 8;
     /// <summary>
-    /// Default bit size of the authentication key.
+    /// Default size of the authentication key in bits. See Section 5.2 of RFC 3711.
     /// </summary>
     /// <value></value>
     public const int n_a = 160;
     /// <summary>
-    /// Default byte size of the authentication key.
+    /// Default size of the authentication key in bytes. See Section 5.2 of RFC 3711.
     /// </summary>
     /// <value></value>
     public const int n_aB = n_a / 8;
@@ -381,7 +381,9 @@ public static class SRtpUtils
     {
         byte[] KeyZeroInput = new byte[CryptoSuites.GetKeyLengthBytes(Context.CryptoSuite)];
         byte[] SaltZeroInput = new byte[n_sB];
-        byte[] AuthZeroInput = new byte[CryptoSuites.GetAuthTagLengthBytes(Context.CryptoSuite)];
+        //byte[] AuthZeroInput = new byte[CryptoSuites.GetAuthTagLengthBytes(Context.CryptoSuite)];
+        // 19 Sep 24 PHR
+        byte[] AuthZeroInput = new byte[n_aB];
 
         Context.RtpSessionKeys.SessionKey = SRtpUtils.DeriveSrtpSessionKey(PI, Mks.KeyDerivationRate,
             SrtpLabelItem.SrtpSessionKey, Mks.MasterSalt, Mks.MasterKey, KeyZeroInput);
@@ -401,7 +403,9 @@ public static class SRtpUtils
     {
         byte[] KeyZeroInput = new byte[CryptoSuites.GetKeyLengthBytes(Context.CryptoSuite)];
         byte[] SaltZeroInput = new byte[SRtpUtils.n_sB];
-        byte[] AuthZeroInput = new byte[CryptoSuites.GetAuthTagLengthBytes(Context.CryptoSuite)];
+        // byte[] AuthZeroInput = new byte[CryptoSuites.GetAuthTagLengthBytes(Context.CryptoSuite)];
+        // 19 Sep 24 PHR
+        byte[] AuthZeroInput = new byte[n_aB];
 
         Context.RtcpSessionKeys.SessionKey = SRtpUtils.DeriveSrtpSessionKey(PI, Mks.KeyDerivationRate,
             SrtpLabelItem.SrtcpSessionKey, Mks.MasterSalt, Mks.MasterKey, KeyZeroInput);

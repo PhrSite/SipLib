@@ -19,8 +19,8 @@ public class FileAudioSource : IAudioSampleSource
     private Timer? m_Timer = null;
     private HighResolutionTimer? m_HighResolutionTimer = null;
     private int m_CurrentPosition = 0;
-    private int m_PacketSizeBytes;
-    private short[] m_PacketBytes;
+    private int m_PacketSizeSamples;
+    private short[] m_PacketSamples;
     private const int PACKET_TIME_MS = 20;
 
     /// <summary>
@@ -34,8 +34,8 @@ public class FileAudioSource : IAudioSampleSource
         m_AudioSamples = audioSampleData;
         m_HighResolutionTimer = highResolutionTimer;
 
-        m_PacketSizeBytes = m_AudioSamples.SampleRate / (1000 / PACKET_TIME_MS);
-        m_PacketBytes = new short[m_PacketSizeBytes];
+        m_PacketSizeSamples = m_AudioSamples.SampleRate / (1000 / PACKET_TIME_MS);
+        m_PacketSamples = new short[m_PacketSizeSamples];
     }
 
     /// <summary>
@@ -70,13 +70,13 @@ public class FileAudioSource : IAudioSampleSource
 
     private void OnTimerElapsed(object? state)
     {
-        for (int i=0; i < m_PacketSizeBytes; i++)
+        for (int i=0; i < m_PacketSizeSamples; i++)
         {
-            m_PacketBytes[i] = m_AudioSamples.SampleData[m_CurrentPosition++];
+            m_PacketSamples[i] = m_AudioSamples.SampleData[m_CurrentPosition++];
             if (m_CurrentPosition >= m_AudioSamples.SampleData.Length)
                 m_CurrentPosition = 0;      // Wrap around
         }
 
-        AudioSamplesReady?.Invoke(m_PacketBytes, m_AudioSamples.SampleRate);
+        AudioSamplesReady?.Invoke(m_PacketSamples, m_AudioSamples.SampleRate);
     }
 }

@@ -166,7 +166,7 @@ public class InlineParams
 
         if (Lifetime != 0)
         {
-            int exp = (int) Math.Log2(Lifetime);
+            int exp = (int)Math.Log2(Lifetime);
             Sb.AppendFormat("|2^{0}", exp);
         }
 

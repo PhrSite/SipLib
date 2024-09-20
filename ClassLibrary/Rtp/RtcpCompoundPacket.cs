@@ -51,6 +51,9 @@ public class RtcpCompoundPacket
     /// <returns>Returns a new RtcpCompoundPacket objedt if successful or null if an error occurred</returns>
     public static RtcpCompoundPacket? Parse(byte[] Bytes)
     {
+        if (Bytes == null)
+            return null;
+
         RtcpCompoundPacket Rcp = new RtcpCompoundPacket();
         if (Bytes.Length < RtcpHeader.HeaderLength)
             return null;

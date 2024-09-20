@@ -11,6 +11,7 @@ using System.Timers;
 using SipLib.Channels;
 using SipLib.RtpCrypto;
 using SipLib.Sdp;
+using SipLib.Logging;
 
 using Org.BouncyCastle.Crypto.Tls;
 using Org.BouncyCastle.Crypto;
@@ -678,6 +679,7 @@ public class RtpChannel
             catch (SocketException) { }  // Occurs when the socket is closed.
             catch (ObjectDisposedException) { }
             catch (NullReferenceException) { }
+            catch (ArgumentNullException) { }
             catch (Exception) { }
             finally
             {
@@ -686,6 +688,10 @@ public class RtpChannel
         }
     }
 
+    // Limit the number of authentication errors that are logged so that the log does not get filled up.
+    private const int MAX_RTP_AUTHENTICAION_ERRORS = 20;
+    private int m_RtpAuthenticationErrors = 0;
+
     private void ProcessRtpPacket(byte[] buf, IPEndPoint Ipe)
     {
         if (buf.Length < RtpPacket.MIN_PACKET_LENGTH || Ipe == null)
@@ -693,9 +699,29 @@ public class RtpChannel
 
         byte[] decryptedPckt;
         if (m_IsSdesSrtp == true)
+        {
             decryptedPckt = m_srtpDecryptor.DecryptRtpPacket(buf);
+            if (decryptedPckt == null)
+            {
+                m_RtpAuthenticationErrors += 1;
+                if (m_RtpAuthenticationErrors < MAX_RTP_AUTHENTICAION_ERRORS)
+                    SipLogger.LogError($"SDES-SRTP Authentication Error = {m_srtpDecryptor.Error}, " +
+                        $"Remote endpoint = {m_remoteRtpEndpoint}");
+
+                return;
+            }
+        }
         else if (m_IsDtlsSrtp == true)
+        {
             decryptedPckt = m_DtlsTransport.UnprotectRTP(buf, 0, buf.Length);
+            if (decryptedPckt == null)
+            {
+                m_RtpAuthenticationErrors += 1;
+                if (m_RtpAuthenticationErrors < MAX_RTP_AUTHENTICAION_ERRORS)
+                    SipLogger.LogError($"DTLS-SRTP Decryption Error. Remote endpoint = {m_remoteRtpEndpoint}");
+                    return;
+            }
+        }
         else
             decryptedPckt = buf;
 
@@ -731,6 +757,10 @@ public class RtpChannel
         }
     }
 
+    // Limit the number of authentication errors that are logged so that the log does not get filled up.
+    private const int MAX_RTCP_AUTHENTICAION_ERRORS = 20;
+    private int m_RtcpAuthenticationErrors = 0;
+
     private void ProcessRtcpPacket(byte[] buf, IPEndPoint Ipe)
     {
         if (buf.Length < RtcpHeader.RTCP_HEADER_LENGTH)
@@ -738,9 +768,29 @@ public class RtpChannel
 
         byte[] decryptedPckt;
         if (m_IsSdesSrtp == true)
+        {
             decryptedPckt = m_srtpDecryptor.DecryptRtcpPacket(buf);
+            if (decryptedPckt == null)
+            {
+                m_RtcpAuthenticationErrors += 1;
+                if (m_RtcpAuthenticationErrors < MAX_RTCP_AUTHENTICAION_ERRORS)
+                    SipLogger.LogError($"SDES-SRTCP Authentication Error = {m_srtpDecryptor.Error}, " +
+                        $"Remote endpoint = {m_remoteRtpEndpoint}");
+
+                return;
+            }
+        }
         else if (m_IsDtlsSrtp == true)
+        {
             decryptedPckt = m_DtlsTransport.UnprotectRTCP(buf, 0, buf.Length);
+            if (decryptedPckt == null)
+            {
+                m_RtcpAuthenticationErrors += 1;
+                if (m_RtcpAuthenticationErrors < MAX_RTCP_AUTHENTICAION_ERRORS)
+                    SipLogger.LogError($"DTLS-SRTCP Decryption Error. Remote endpoint = {m_remoteRtpEndpoint}");
+                return;
+            }
+        }
         else
             decryptedPckt = buf;
 

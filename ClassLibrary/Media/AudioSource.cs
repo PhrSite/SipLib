@@ -20,7 +20,7 @@ public class AudioSource
     private int m_TelephoneEventClockRate = 8000;
 
     private RtpChannel m_RtpChannel;
-    private IAudioEncoder? m_AudioEncoder = null;
+    private IAudioEncoder m_AudioEncoder;
     private uint m_SamplesPerPacket;
     private const int PACKET_TIME_MS = 20;
 
@@ -50,6 +50,9 @@ public class AudioSource
     /// <value></value>
     private AudioSourceStateEnum AudioSourceState = AudioSourceStateEnum.Stopped;
 
+    /// <summary>
+    /// Stores the sample rate required by the audio encoder.
+    /// </summary>
     private int m_SampleRate;
 
     /// <summary>
@@ -83,7 +86,6 @@ public class AudioSource
 
         m_SSRC = rtpChannel.SSRC;
         m_SamplesPerPacket = (uint)(m_SampleRate * PACKET_TIME_MS) / 1000;
-
     }
 
     /// <summary>
@@ -127,12 +129,14 @@ public class AudioSource
     }
 
     /// <summary>
-    /// Event handler for the AudioSamplesReady event of the IAudioSampleSource object that is providing
-    /// audio samples to send to the remote endpoint via the RtpChannel.
+    /// The IAudioSampleSource object that is providing audio samples will call this method to send new
+    /// audio samples to the remote endpoint via the RtpChannel.
     /// </summary>
-    /// <param name="AudioSamples"></param>
-    /// <param name="SampleRate"></param>
-    public void OnAudioSamplesReady(short[] AudioSamples, int SampleRate)
+    /// <param name="AudioSamples">Contains the new audio samples to send. Must be 16-bit, linear PCM
+    /// samples.</param>
+    /// <param name="SampleRate">Sample rate in samples per second of the AudioSamples. Must be either 
+    /// 8000 or 16000</param>
+    public void SendAudioSamples(short[] AudioSamples, int SampleRate)
     {
         if (AudioSourceState != AudioSourceStateEnum.Playing)
             return;
@@ -163,15 +167,22 @@ public class AudioSource
         m_RtpChannel.Send(rtpPacket);
         m_SequenceNumber += 1;
         m_Timestamp += m_SamplesPerPacket;
-
     }
 
     private short[] GetNextAudioSamples(short[] NewSamples, int SampleRate)
     {
-        // TODO: Interpolate, decimate or return the input array of new samples depending on the sample
+        // Interpolate, decimate or return the input array of new samples depending on the sample
         // rate of the new samples and the sample rate required by the m_AudioEncoder object.
-
-        return NewSamples;
+        if (SampleRate > m_SampleRate)
+        {   // Decimate the samples to match the sample rate of the encoder being used.
+            return SampleRateFixer.HalveSampleRate(NewSamples);
+        }
+        else if (SampleRate < m_SampleRate)
+        {   // Interpolate the samples to match the sample rate of the encoder being used.
+            return SampleRateFixer.DoubleSampleRate(NewSamples);
+        }
+        else
+            return NewSamples;
     }
 
     /// <summary>
