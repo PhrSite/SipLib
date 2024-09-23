@@ -13,7 +13,7 @@ public class VP8RtpReceiver : VideoRtpReceiver
     private int _currVideoFramePosn = 0;
 
     private const int _maxFrameSize = 1048576;      // TBD
-    private byte[] _currVideoFrame;
+    private byte[] _currVideoFrame = new byte[_maxFrameSize];
 
     /// <summary>
     /// Processes RTP packets and builds up a complete VP8 encoded video frame.

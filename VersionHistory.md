@@ -18,5 +18,7 @@
 |--------|--------|-------|
 | NA     | Fix    | Changed the SRTP authenticaion key length to 20 bytes to conform with Section 5.2 of RFC 3711 and fix the problems with RTP packet authentication with SDES-SRTP. |
 | NA     | Addition | Finished coding for the AudioDestination and AudioSource classes in the SipLib.Media namespace. |
-
+| NA     | Fix      | The RttClient test program in Samples/RTT/RttClient was not sending an in-dialog BYE request. |
+| NA     | Fix      | The MsrpClient test program in Samples/MSRP/MsrpClient was not sending an in-dialog BYE request. |
+| NA     | Fix      | The SipLib.Media.AudioSource class was calling the wrong RtpPacket constructor resulting in extra bytes being attached to each RTP packet. |
 

@@ -41,8 +41,6 @@ public static class AesFunctions
         SymmetricAlgorithm aes = Aes.Create();
         aes.Mode = CipherMode.ECB;
         aes.Padding = PaddingMode.None;
-
-        int NumInputBytes = Input.Length;
         int blockSizeInBytes = aes.BlockSize / 8;
 
         if (Output.Length < Input.Length)

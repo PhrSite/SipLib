@@ -1,53 +1,47 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
-//  File:   RttUac.cs                                               25 Aug 24 PHR
+//  File:   AudioUac.cs                                             22 Sep 24 PHR
 /////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.Body;
 using SipLib.Core;
+using SipLib.RealTimeText;
+using SipLib.Rtp;
+using SipLib.Sdp;
+using SipLib.Transactions;
 using System.Net;
 
-using SipLib.Transactions;
-using SipLib.Sdp;
-using SipLib.Body;
-using SipLib.Rtp;
-using SipLib.RealTimeText;
-
-namespace RttClient;
+namespace TestAes256;
 
 /// <summary>
-/// Delegate type for the InterimResponseReceived and the CallRejected events of the RttUac class.
+/// Delegate type for the InterimResponseReceived and the CallRejected events of the AudioUac class.
 /// </summary>
 /// <param name="status">Indicates the interim response or the reason that the call was rejected.</param>
 internal delegate void ResponseReceivedDelegate(SIPResponseStatusCodesEnum status);
 
 /// <summary>
-/// Delegate type for the CharactersReceived event of the RttUac class.
-/// </summary>
-/// <param name="RxChars">Contains the character or characters received.</param>
-/// <param name="Source">Indicates the source of the sender</param>
-internal delegate void CharactersReceivedDelegate(string RxChars, string Source);
-
-/// <summary>
-/// Delegate type for the Error event of the RttUac class.
+/// Delegate type for the Error event of the AudioUac class.
 /// </summary>
 /// <param name="errorMsg">Describes the error that occurred</param>
 internal delegate void ErrorDelegate(string errorMsg);
 
+
 /// <summary>
-/// Implements a simple User Agent Client (UAC) that generates a RTT (text) media call request.
+/// Implements a simple UAC for sending a single INVITE request with an offer of audio media
+/// using SDES-SRTP with AES-256 encryption
 /// </summary>
-internal class RttUac
+internal class AudioUac
 {
-    private const int RttPort = 9000;
+    private const int AudioPort = 9000;
 
     private SipTransport m_SipTransport;
     private IPAddress m_localAddress;
     private string m_userName;
     private bool m_Started = false;
+    private string m_strToUserName = "conf-123";
 
     private Sdp? m_OfferedSdp = null;
     private RtpChannel? m_RtpChannel = null;
-    private RttSender? m_RttSender = null;
-    private RttReceiver? m_RttReceiver = null;
+
     private SIPRequest? m_Invite = null;
     private SIPResponse? m_OkResponse = null;
     private IPEndPoint? m_remoteEndPoint = null;
@@ -77,11 +71,6 @@ internal class RttUac
     public event Action? OkReceived = null;
 
     /// <summary>
-    /// Event that is fired when one or more characters are received.
-    /// </summary>
-    public event CharactersReceivedDelegate? CharactersReceived = null;
-
-    /// <summary>
     /// Event that is fired when a BYE request is received from the server
     /// </summary>
     public event Action? ByeReceived = null;
@@ -92,12 +81,12 @@ internal class RttUac
     public event ErrorDelegate? Error = null;
 
     /// <summary>
-    /// Constructor. Hook the events of the new RttUac object, then call the Start() method. Then call
+    /// Constructor. Hook the events of the new AudioUac object, then call the Start() method. Then call
     /// the Call() method to start a call.
     /// </summary>
     /// <param name="sipTransport">SipTransport to use. Must be started</param>
     /// <param name="userName">User name</param>
-    public RttUac(SipTransport sipTransport, string userName)
+    public AudioUac(SipTransport sipTransport, string userName)
     {
         m_SipTransport = sipTransport;
         m_userName = userName;
@@ -134,7 +123,7 @@ internal class RttUac
         SIPResponse byeResponse = SipUtils.BuildResponse(sipRequest, SIPResponseStatusCodesEnum.Ok, "OK",
             sipTransportManager.SipChannel, m_userName);
         // Fire and forget
-        sipTransportManager.StartServerNonInviteTransaction(sipRequest, remoteEndPoint.GetIPEndPoint(), 
+        sipTransportManager.StartServerNonInviteTransaction(sipRequest, remoteEndPoint.GetIPEndPoint(),
             null, byeResponse);
         m_CallState = CallStateEnum.Terminated;
         ByeReceived?.Invoke();
@@ -171,11 +160,11 @@ internal class RttUac
                 request = SipUtils.BuildCancelRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!,
                     m_Invite!.Header.CSeq);
             else
-                request = SipUtils.BuildByeRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!, false, 
+                request = SipUtils.BuildByeRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!, false,
                     m_Invite!.Header.CSeq, m_OkResponse!);
 
             await m_SipTransport.StartClientNonInviteTransaction(request, m_remoteEndPoint!, null).WaitForCompletionAsync();
-            
+
             if (m_CallState == CallStateEnum.InterimResponseReceived && m_ClientInviteTransaction != null)
             {   // Wait for the client INVITE transaction to complete
                 await m_ClientInviteTransaction.WaitForCompletionAsync();
@@ -205,14 +194,17 @@ internal class RttUac
 
         m_remoteEndPoint = remIPEndPoint;
         string sipScheme = m_SipTransport.SipChannel.IsTLS == true ? "sips" : "sip";
-        SIPURI remoteUri = SIPURI.ParseSIPURI($"{sipScheme}:{remIPEndPoint};transport=tcp");
-        m_Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, remoteUri, remoteUri, "RttUas",
+        SIPURI remoteUri = SIPURI.ParseSIPURI($"{sipScheme}:{m_strToUserName}@{remIPEndPoint};transport=tcp");
+        m_Invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, remoteUri, remoteUri, m_strToUserName,
             m_SipTransport.SipChannel.SIPChannelContactURI, m_userName);
 
         // Build an SDP offer containing RTT (media type = "text")
         Sdp sdp = new Sdp(m_localAddress, m_userName);
-        MediaDescription RttMd = SdpUtils.CreateRttMediaDescription(RttPort);
-        sdp.Media.Add(RttMd);
+        MediaDescription AudioMd = SdpUtils.CreateAudioMediaDescription(AudioPort);
+        SdpUtils.AddSdesSrtpEncryption(AudioMd);
+        //SdpUtils.AddDtlsSrtp(AudioMd, RtpChannel.CertificateFingerprint!);
+        AudioMd.MediaDirection = MediaDirectionEnum.recvonly;
+        sdp.Media.Add(AudioMd);
 
         m_OfferedSdp = sdp;     // Save it for later
 
@@ -260,60 +252,36 @@ internal class RttUac
 
         // Get the answered SDP
         string? strSdp = sipResponse.GetContentsOfType(ContentTypes.Sdp);
-        if (strSdp == null )
+        if (strSdp == null)
         {
             Error?.Invoke("INVITE request has no SDP");
             return;
         }
 
         Sdp sdp = Sdp.ParseSDP(strSdp);
-        MediaDescription? rttMd = sdp.GetMediaType("text");
-        if (rttMd == null || rttMd.Port == 0)
+        MediaDescription? audioMd = sdp.GetMediaType("audio");
+        if (audioMd == null || audioMd.Port == 0)
         {
-            Error?.Invoke("No RTT (text) media offered");
+            Error?.Invoke("No audio media in the answered media description");
             return;
         }
 
         (m_RtpChannel, string? errorTxt) = RtpChannel.CreateFromSdp(false, m_OfferedSdp!, m_OfferedSdp!.Media[0],
-            sdp!, rttMd, true, null);
+            sdp!, audioMd, true, null);
         if (errorTxt != null)
         {
             Error?.Invoke(errorTxt);
             return;
         }
 
-        RttParameters? rttParameters = RttParameters.FromMediaDescription(rttMd);
-        if (rttParameters == null)
-        {
-            Error?.Invoke("Error creating RttParameters from RTT media description");
+        if (m_RtpChannel == null)
             return;
-        }
 
-        m_RttReceiver = new RttReceiver(rttParameters, m_RtpChannel!, "RttUas");
-        m_RttReceiver.RttCharactersReceived += OnRttCharactersReceived;
-        m_RttSender = new RttSender(rttParameters, m_RtpChannel!.Send);
         m_RtpChannel.StartListening();
-        m_RttSender.Start();
 
         m_CallState = CallStateEnum.Answered;
     }
 
-    /// <summary>
-    /// Sends one or more characters
-    /// </summary>
-    /// <param name="str"></param>
-    public void SendRtt(string str)
-    {
-        if (m_RttSender == null)
-            return;     // No call yet
-
-        m_RttSender.SendMessage(str);
-    }
-
-    private void OnRttCharactersReceived(string RxChars, string Source)
-    {
-        CharactersReceived?.Invoke(RxChars, Source);
-    }
 }
 
 internal enum CallStateEnum
@@ -323,3 +291,4 @@ internal enum CallStateEnum
     Answered,
     Terminated
 }
+

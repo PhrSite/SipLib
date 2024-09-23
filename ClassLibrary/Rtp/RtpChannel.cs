@@ -392,8 +392,11 @@ public class RtpChannel
         List<CryptoAttribute> list = new List<CryptoAttribute>();
         List<SdpAttribute> attrList = mediaDescription.GetNamedAttributes("crypto");
         foreach (SdpAttribute attr in attrList)
-            list.Add(CryptoAttribute.Parse(attr.Value));
-
+        {
+            CryptoAttribute cryptoattr = CryptoAttribute.Parse(attr.Value);
+            if (cryptoattr != null)
+                list.Add(CryptoAttribute.Parse(attr.Value));
+        }
         return list;
     }
 

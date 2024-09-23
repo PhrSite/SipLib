@@ -53,7 +53,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogDebug(FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogDebug(FormatMessage(message));
         }
     }
 
@@ -66,7 +67,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogDebug(exception, FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogDebug(exception, FormatMessage(message));
         }
     }
 
@@ -78,7 +80,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogInformation(FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogInformation(FormatMessage(message));
         }
     }
 
@@ -91,7 +94,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogInformation(exception, FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogInformation(exception, FormatMessage(message));
         }
     }
 
@@ -103,7 +107,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogWarning(FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogWarning(FormatMessage(message));
         }
     }
 
@@ -116,7 +121,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogWarning(exception, FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogWarning(exception, FormatMessage(message));
         }
     }
 
@@ -128,7 +134,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogError(FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogError(FormatMessage(message));
         }
     }
 
@@ -141,7 +148,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogError(exception, FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogError(exception, FormatMessage(message));
         }
     }
 
@@ -153,7 +161,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogCritical(FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogCritical(FormatMessage(message));
         }
     }
 
@@ -166,7 +175,8 @@ public static class SipLogger
     {
         lock (m_lock)
         {
-            Log.LogCritical(exception, FormatMessage(message));
+            if (Log != NullLogger.Instance)
+                Log.LogCritical(exception, FormatMessage(message));
         }
     }
 }

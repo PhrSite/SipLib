@@ -312,7 +312,8 @@ public class MediaDescription
         foreach (SdpAttribute Sa in sdpAttributes)
         {
             CryptoAttribute cryptoAttribute = CryptoAttribute.Parse(Sa.Value);
-            cryptoAttributes.Add(cryptoAttribute);
+            if (cryptoAttribute != null)
+                cryptoAttributes.Add(cryptoAttribute);
         }
 
         return cryptoAttributes;

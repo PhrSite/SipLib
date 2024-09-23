@@ -701,9 +701,11 @@ public class Sdp
             return AnsMd;
         }
 
-        RtpMapAttribute? SupportedRma = FindSupportedCodec(OfferedMd, Settings.SupportedAudioCodecs);
+        RtpMapAttribute? SupportedRma = FindSupportedAudioCodec(OfferedMd, Settings.SupportedAudioCodecs);
         if (SupportedRma == null)
-        {
+        {   // Could not find a rtpmap attribute for the supported audio codecs. Try using a well known
+            // codec number.
+
             AnsMd = new MediaDescription("audio", 0, OfferedMd.PayloadTypes);
             return AnsMd;    // Error: No supported codecs offerred
         }
@@ -872,6 +874,41 @@ public class Sdp
         return AnsMd;
     }
 
+    private static RtpMapAttribute? FindSupportedAudioCodec(MediaDescription OfferedMd, List<string> SupportedCodecNames)
+    {
+        RtpMapAttribute? Result = null;
+        foreach (string CodecName in SupportedCodecNames)
+        {
+            foreach (RtpMapAttribute rma in OfferedMd.RtpMapAttributes)
+            {
+                if (rma.EncodingName == CodecName)
+                {
+                    Result = rma;
+                    break;
+                }
+            }
+
+            if (Result != null)
+                break;
+        }
+
+        if (Result == null)
+        {   // Could not find a supported codec name, try a well-known payload type
+            foreach (int pt in OfferedMd.PayloadTypes)
+            {
+                if (pt == 0)
+                {   // G.711 PCMU
+                    Result = new RtpMapAttribute(0, "PCMU", 8000);
+                }
+                else if (pt == 8)
+                {   // G.711 PCMA
+                    Result = new RtpMapAttribute(8, "PCMA", 8000);
+                }
+            }
+        }
+
+        return Result;
+    }
 
     private static RtpMapAttribute? FindSupportedCodec(MediaDescription OfferedMd, List<string> SupportedCodecNames)
     {
@@ -911,20 +948,20 @@ public class Sdp
         }
         else if (OfferedMediaDescription.UsingSdesSrtp() == true)
         {   // Negotiate the crypto suite to answer with
-            string? AnswerCryptoSuite = GetAnswerCryptoSuite(OfferedMediaDescription);
-            if (AnswerCryptoSuite != null)
+            CryptoAttribute offeredCryptoAttribute = GetAnswerCryptoAttribute(OfferedMediaDescription);
+            if (offeredCryptoAttribute != null)
             {
-                CryptoContext Cc1 = new CryptoContext(AnswerCryptoSuite);
+                CryptoContext Cc1 = new CryptoContext(offeredCryptoAttribute.CryptoSuite);
                 CryptoAttribute Ca1 = Cc1.ToCryptoAttribute();
-                Ca1.Tag = 1;
+                Ca1.Tag = offeredCryptoAttribute.Tag;
                 AnswerMediaDescription.Attributes.Add(new SdpAttribute("crypto", Ca1.ToString()));
             }
         }
     }
 
-    private static string? GetAnswerCryptoSuite(MediaDescription OfferedMediaDescription)
+    private static CryptoAttribute? GetAnswerCryptoAttribute(MediaDescription OfferedMediaDescription)
     {
-        string? strCryptoSuite = null;
+        CryptoAttribute? result = null;
         List<CryptoAttribute> offerredCryptoAttributes = OfferedMediaDescription.GetCryptoAttributes();
         if (offerredCryptoAttributes.Count == 0)
             return null;
@@ -935,16 +972,16 @@ public class Sdp
             {
                 if (cryptoAttribute.CryptoSuite == cryptoSuite)
                 {
-                    strCryptoSuite = cryptoSuite;
+                    result = cryptoAttribute;
                     break;
                 }
             }
 
-            if (strCryptoSuite != null)
+            if (result != null)
                 break;
         }
 
-        return strCryptoSuite;
+        return result;
     }
 
     /// <summary>

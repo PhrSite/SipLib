@@ -41,16 +41,16 @@ public class RtpPacket
     /// </summary>
     /// <param name="PayloadLength">Length of the packet payload in bytes. May be 0 is only sending
     /// an RTP packet header.</param>
-    /// <param name="HeaderLength">Length of the RTP packet header in bytes. Must be at least 12.
-    /// The HeaderLength can be calculated as: 12 + 4 * (number of CSRCs).</param>
-    /// <exception cref="ArgumentException">Thrown if the HeaderLength is less than the minimum RTP
+    /// <param name="headerLength">Length of the RTP packet header in bytes. Must be at least 12.
+    /// The headerLength can be calculated as: 12 + 4 * (number of CSRCs).</param>
+    /// <exception cref="ArgumentException">Thrown if the headerLength is less than the minimum RTP
     /// packet header length of 12.</exception>
-    public RtpPacket(int PayloadLength, int HeaderLength)
+    public RtpPacket(int PayloadLength, int headerLength)
     {
-        if (HeaderLength < MIN_PACKET_LENGTH)
+        if (headerLength < MIN_PACKET_LENGTH)
             throw new ArgumentException("The HeaderLength must be at least 12 bytes");
 
-        m_PacketBytes = new byte[PayloadLength + HeaderLength];
+        m_PacketBytes = new byte[PayloadLength + headerLength];
         Version = 2;
     }
 

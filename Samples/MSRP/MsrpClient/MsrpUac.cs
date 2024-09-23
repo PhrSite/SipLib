@@ -168,7 +168,7 @@ internal class MsrpUac
                 request = SipUtils.BuildCancelRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!,
                     m_Invite!.Header.CSeq);
             else
-                request = SipUtils.BuildByeRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!, true,
+                request = SipUtils.BuildByeRequest(m_Invite!, m_SipTransport.SipChannel, m_remoteEndPoint!, false,
                     m_Invite!.Header.CSeq, m_OkResponse!);
 
             await m_SipTransport.StartClientNonInviteTransaction(request, m_remoteEndPoint!, null).WaitForCompletionAsync();

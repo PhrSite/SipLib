@@ -157,7 +157,7 @@ public class AudioSource
         short[] SamplesToSend = GetNextAudioSamples(NewSamples, SampleRate);
 
         byte[] PayloadBytes = m_AudioEncoder!.Encode(SamplesToSend);
-        RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH + PayloadBytes.Length);
+        RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH, PayloadBytes.Length);
         rtpPacket.PayloadType = m_AudioPayloadType;
         rtpPacket.SSRC = m_SSRC;
         rtpPacket.SequenceNumber = m_SequenceNumber;

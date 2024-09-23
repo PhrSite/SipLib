@@ -65,7 +65,8 @@ public class CryptoAttribute
     ///     tag 1*WSP crypto-suite 1*WSP key-params *(1*WSP session-param)
     /// </summary>
     /// <param name="strCrypto">Input containing the value portion of a crypto SDP attribute.</param>
-    /// <returns>Returns a new CryptoAttribute object if successful or null if an error occurred.</returns>
+    /// <returns>Returns a new CryptoAttribute object if successful or null if an error occurred or
+    /// the crypto suite is not supported.</returns>
     public static CryptoAttribute? Parse(string strCrypto)
     {
         if (string.IsNullOrEmpty(strCrypto) == true)
@@ -81,6 +82,9 @@ public class CryptoAttribute
             return null;
 
         attr.CryptoSuite = Fields[1];
+
+        if (CryptoSuites.CryptoSuiteIsSupported(attr.CryptoSuite) == false)
+            return null;    // The crypto suite is not supported so cannot parse the inline parameters.
 
         if (string.IsNullOrEmpty(Fields[2]) == true)
             return null;
