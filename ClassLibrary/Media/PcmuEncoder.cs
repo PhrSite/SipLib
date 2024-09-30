@@ -12,7 +12,7 @@ public class PcmuEncoder : IAudioEncoder
     /// <summary>
     /// Encodes linear 16-bit PCM samples into PCMU (G.711 Mu-Law) samples
     /// </summary>
-    /// <param name="InputSamples">Input linear 16-bit Mu-Law samples</param>
+    /// <param name="InputSamples">Input linear 16-bit PCM samples</param>
     public byte[] Encode(short[] InputSamples)
     {
         byte[] EncodedOutput = new byte[InputSamples.Length];
@@ -38,6 +38,14 @@ public class PcmuEncoder : IAudioEncoder
     public int SampleRate
     {
         get { return 8000; }
+    }
+
+    /// <summary>
+    /// Amount to increment the RTP packet Time Stamp field by for each new packet.
+    /// </summary>
+    public uint TimeStampIncrement
+    {
+        get { return 160; }
     }
 
     /// <summary>

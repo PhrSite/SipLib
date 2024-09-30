@@ -93,6 +93,11 @@ public class AudioDestination
         if (rtpPacket.PayloadType == m_AudioPayloadType)
         {
             short[] decodedPacket = m_AudioDecoder.Decode(rtpPacket.Payload);
+            if (decodedPacket == null)
+            {
+                // TODO: Figure out what to do?
+                return;
+            }
 
             // Fix the sample rate if necessary
             if (m_DecoderSampleRate < m_DestinationSampleRate)

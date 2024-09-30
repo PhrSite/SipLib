@@ -712,11 +712,19 @@ public class Sdp
 
         RtpMapAttribute AnsRma = new RtpMapAttribute(SupportedRma.PayloadType, SupportedRma.EncodingName!,
             SupportedRma.ClockRate);
+
         List<int> PayloadTypes = new List<int>();
         PayloadTypes.Add(AnsRma.PayloadType);
         AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextAudioPort, PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
         AnsMd.RtpMapAttributes.Add(AnsRma);
+
+        if (SupportedRma.EncodingName == "AMR-WB")
+        {
+            SdpAttribute Fmtp = OfferedMd.GetFmtpForFormatNumber(AnsRma.PayloadType.ToString());
+            if (Fmtp != null)
+                AnsMd.Attributes.Add(Fmtp);
+        }
 
         // TODO: Get any fmtp attribute(s) for the media codec selected
 
@@ -903,6 +911,10 @@ public class Sdp
                 else if (pt == 8)
                 {   // G.711 PCMA
                     Result = new RtpMapAttribute(8, "PCMA", 8000);
+                }
+                else if (pt == 9)
+                {   // G.722
+                    Result = new RtpMapAttribute(9, "G722", 8000);
                 }
             }
         }

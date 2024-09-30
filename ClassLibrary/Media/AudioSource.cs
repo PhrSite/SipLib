@@ -157,7 +157,7 @@ public class AudioSource
         short[] SamplesToSend = GetNextAudioSamples(NewSamples, SampleRate);
 
         byte[] PayloadBytes = m_AudioEncoder!.Encode(SamplesToSend);
-        RtpPacket rtpPacket = new RtpPacket(RtpPacket.MIN_PACKET_LENGTH, PayloadBytes.Length);
+        RtpPacket rtpPacket = new RtpPacket(PayloadBytes.Length, RtpPacket.MIN_PACKET_LENGTH);
         rtpPacket.PayloadType = m_AudioPayloadType;
         rtpPacket.SSRC = m_SSRC;
         rtpPacket.SequenceNumber = m_SequenceNumber;
@@ -166,7 +166,8 @@ public class AudioSource
 
         m_RtpChannel.Send(rtpPacket);
         m_SequenceNumber += 1;
-        m_Timestamp += m_SamplesPerPacket;
+        // Account for wrap around
+        m_Timestamp = (m_Timestamp + m_AudioEncoder.TimeStampIncrement) % uint.MaxValue;
     }
 
     private short[] GetNextAudioSamples(short[] NewSamples, int SampleRate)

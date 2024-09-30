@@ -42,6 +42,14 @@ public class PcmaEncoder : IAudioEncoder
     }
 
     /// <summary>
+    /// Amount to increment the RTP packet Time Stamp field by for each new packet.
+    /// </summary>
+    public uint TimeStampIncrement
+    {
+        get { return 160; }
+    }
+
+    /// <summary>
     /// Closes the encoder so that it can release any memory or resources it has been using.
     /// </summary>
     public void CloseEncoder()

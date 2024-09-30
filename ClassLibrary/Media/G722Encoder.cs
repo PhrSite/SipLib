@@ -40,23 +40,31 @@ public class G722Encoder : IAudioEncoder
     }
 
     /// <summary>
-    /// Closes the encoder
+    /// Amount to increment the RTP packet Time Stamp field by for each new packet.
+    /// </summary>
+    public uint TimeStampIncrement
+    {
+        get { return 160; }
+    }
+
+    /// <summary>
+    /// Closes the encoder -- nothing to do for this codec.
     /// </summary>
     public void CloseEncoder()
     {
     }
 
     /// <summary>
-    /// 
+    /// Encodes the input samples into G.722 encoded audio
     /// </summary>
-    /// <param name="InputSamples"></param>
-    /// <returns></returns>
+    /// <param name="InputSamples">Raw input samples</param>
+    /// <returns>Returns the encoded byte array.</returns>
     public byte[] Encode(short[] InputSamples)
     {
         if (m_Encoder == null)
             return null!;
 
-        byte[] encodedBytes = new byte[ClockRate];
+        byte[] encodedBytes = new byte[InputSamples.Length / 2];
         int EncodedByteCount;
 
         try

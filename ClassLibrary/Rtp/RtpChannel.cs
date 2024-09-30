@@ -533,9 +533,11 @@ public class RtpChannel
 
         m_RtpListenerThread = new Thread(RtpListenerThread);
         m_RtpListenerThread.Priority = ThreadPriority.Highest;
+        m_RtpListenerThread.IsBackground = true;
         m_RtpListenerThread.Start();
 
         m_RtcpListenerThread = new Thread(RtcpListenerThread);
+        m_RtcpListenerThread.IsBackground= true;
         m_RtcpListenerThread.Start();
 
         if (RtcpEnabled == true)
