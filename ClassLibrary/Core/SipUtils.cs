@@ -853,4 +853,34 @@ public static class SipUtils
         return Result;
     }
 
+    /// <summary>
+    /// Gets the SIPCallInfoHeader for the Call-Info header that has a specified purpose parameter.
+    /// </summary>
+    /// <param name="Sh">SIPHeader object containing the SIP headers for the request or response to search in.
+    /// </param>
+    /// <param name="strPurpose">Purpose parameter to search for.</param>
+    /// <param name="ExcludeScheme">Exclude headers with a URI scheme equal to this value.</param>
+    /// <returns>Returns a SIPCallInfoHeader object if the specified Call-Info header was found or null if it
+    /// was not.</returns>
+    public static SIPCallInfoHeader? GetCallInfoHeaderForPurpose(SIPHeader Sh, string strPurpose,
+        SIPSchemesEnum ExcludeScheme)
+    {
+        SIPCallInfoHeader Result = null;
+        if (Sh.CallInfo == null || strPurpose == null)
+            return Result;
+
+        string str;
+        foreach (SIPCallInfoHeader Cih in Sh.CallInfo)
+        {
+            str = Cih.CallInfoField.Parameters.Get("purpose");
+            if (string.IsNullOrEmpty(str) == false && str == strPurpose && Cih.CallInfoField.URI.Scheme != ExcludeScheme)
+            {
+                Result = Cih;
+                break;
+            }
+        }
+
+        return Result;
+    }
+
 }

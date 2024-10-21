@@ -107,6 +107,12 @@ public class MsrpConnection
     public event MsrpMessageReceivedDelegate? MsrpMessageReceived = null;
 
     /// <summary>
+    /// Event that is fired when this MsrpConnection object sends a new MSRP message. The purpose of
+    /// this event is for active SIP recording (SIPREC).
+    /// </summary>
+    public event MsrpMessageSentDelegate? MsrpMessageSent = null;
+
+    /// <summary>
     /// Event that fired when an MSRP message is received with a Content-Type of text/plain or message/cpim and the content
     /// type of the CPIM message is text/plain. 
     /// </summary>
@@ -942,6 +948,8 @@ public class MsrpConnection
             CurrentChunkSize = BytesRemaining >= CHUNK_SIZE ? CHUNK_SIZE : BytesRemaining;
             CurrentEndIdx = CurrentEndIdx + CurrentChunkSize;
         }
+
+        MsrpMessageSent?.Invoke(ContentType, Contents);
     }
 
     /// <summary>

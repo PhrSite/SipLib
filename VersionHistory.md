@@ -21,4 +21,6 @@
 | NA     | Fix      | The RttClient test program in Samples/RTT/RttClient was not sending an in-dialog BYE request. |
 | NA     | Fix      | The MsrpClient test program in Samples/MSRP/MsrpClient was not sending an in-dialog BYE request. |
 | NA     | Fix      | The SipLib.Media.AudioSource class was calling the wrong RtpPacket constructor resulting in extra bytes being attached to each RTP packet. |
+| NA     | Addition | Added GetCallInfoHeaderForPurpose(SIPHeader Sh, string strPurpose, SIPSchemesEnum ExcludeScheme) to the SipUtils class. |
+| NA     | Addition | Added the MsrpMessageSent event to the MsrpConnection class. |
 
