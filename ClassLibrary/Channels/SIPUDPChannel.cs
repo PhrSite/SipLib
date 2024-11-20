@@ -51,7 +51,7 @@
 //          16 Feb 24 PHR
 //          -- Removed the Dispose() method because its not used.
 //          16 Jul 24 PHR
-//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Added support for the AcceptConnectionDelegate.
 //          -- Added checking for MAX_UDP_PAYLOAD_BYTES
 /////////////////////////////////////////////////////////////////////////////////////
 

@@ -215,7 +215,7 @@ internal class MsrpUas
     }
 
     /// <summary>
-    /// The RttUas class either sends a 200 OK or rejects the call with an error response. It does
+    /// The MsrpUas class either sends a 200 OK or rejects the call with an error response. It does
     /// not send in interim response so it will never receive a CANCEL request.
     /// </summary>
     /// <param name="sipRequest"></param>

@@ -204,14 +204,15 @@ public class MediaDescription
 
 
     /// <summary>
-    /// Creates a deep copy of this object. This only copies the m= line.
+    /// Creates a deep copy of this object.
     /// </summary>
     /// <returns>Returns a new object with a copy of each member variable in this object.</returns>
     public MediaDescription CreateCopy()
     {
-        MediaDescription MdCopy = MediaDescription.ParseMediaDescriptionLine(this.ToString().
-            Replace("m=", "").Replace("\r\n", ""));
-        return MdCopy;
+        //MediaDescription MdCopy = MediaDescription.ParseMediaDescriptionLine(this.ToString().
+        //    Replace("m=", "").Replace("\r\n", ""));
+        MediaDescription MdCopy = ParseMediaDescriptionString(this.ToString());
+        return MdCopy!;
     }
 
     /// <summary>

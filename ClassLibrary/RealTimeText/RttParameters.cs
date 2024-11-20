@@ -66,7 +66,7 @@ public class RttParameters
         RttParameters rttParams = new RttParameters();
         //SdpAttribute T140RtpMap = mediaDescription.GetRtpmapForCodecType("t140/1000");
         RtpMapAttribute T140RtpMap = mediaDescription.GetRtpMapForCodecType("t140");
-        rttParams.T140PayloadType = T140RtpMap.PayloadType;
+        rttParams.T140PayloadType = T140RtpMap != null ? T140RtpMap.PayloadType : 0;
         //SdpAttribute RedRtpMap = mediaDescription.GetRtpmapForCodecType("red/1000");
         RtpMapAttribute RedRtpMap = mediaDescription.GetRtpMapForCodecType("red");
         rttParams.RedundancyPayloadType = RedRtpMap != null ? RedRtpMap.PayloadType : 0;

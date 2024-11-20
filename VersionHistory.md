@@ -23,4 +23,7 @@
 | NA     | Fix      | The SipLib.Media.AudioSource class was calling the wrong RtpPacket constructor resulting in extra bytes being attached to each RTP packet. |
 | NA     | Addition | Added GetCallInfoHeaderForPurpose(SIPHeader Sh, string strPurpose, SIPSchemesEnum ExcludeScheme) to the SipUtils class. |
 | NA     | Addition | Added the MsrpMessageSent event to the MsrpConnection class. |
+| NA     | Change   | Modified SipLib.Sdp.MediaDescription.CreateCopy() to create a deep copy of the entire MediaDescription object instead of just the m= line. |
+| NA     | Addition | Added the Threading directory. This directory contains some base classes such as QueuedActionWorkerTask. |
+
 

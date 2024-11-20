@@ -76,6 +76,7 @@ This directory contains the project files for the SipLib project and the followi
 | RtpCrypto | Classes that implement the SDES-SRTP protocols used in secure RTP. |
 | Sdp | Classes used for the Session Description Protocol (SDP, see RFC 8866) |
 | SipTransactions | Classes for managing SIP transactions |
+| Threading | Contains base classes for threading and task scheduling such as QueuedActionWorkerTask. |
 | Video | Classes for packing and unpacking video frames for use in RTP channels for H.264 and VP8 video. The H.264 and VP8 codecs are not included here. |
 
 ## Testing Directory

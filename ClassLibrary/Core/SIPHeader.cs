@@ -112,7 +112,7 @@ public class SIPHeader
     /// Call-ID header field. See Section 20.8 of RFC 3261.
     /// </summary>
     /// <value></value>
-    public string? CallId = null;
+    public string CallId = string.Empty;
 
     /// <summary>
     /// Call-Info header field. See Section 20.9 of RFC 3261.

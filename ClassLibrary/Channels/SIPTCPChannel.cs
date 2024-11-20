@@ -73,7 +73,7 @@
 //          16 Feb 24 PHR
 //          -- Removed the Dispose() method because its not used.
 //          16 Jul 24 PHR
-//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Added support for the AcceptConnectionDelegate.
 //          -- Removed MAX_TCP_CONNECTIONS from the call to TcpListener.Start()
 /////////////////////////////////////////////////////////////////////////////////////
 

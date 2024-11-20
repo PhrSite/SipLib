@@ -78,7 +78,7 @@
 //             SslProtocols.None instead of SslProtocols.Tls12 so that the highest
 //             level of TLS available will be used.
 //          16 Jul 24 PHR
-//          -- Added support for the AcceptionConnectionDelegate.
+//          -- Added support for the AcceptConnectionDelegate.
 //          -- Added support for the AcceptClientCertificate and AcceptServerCertificate
 //             delegates.
 //          -- Removed the outer try/catch block around the while loop in the

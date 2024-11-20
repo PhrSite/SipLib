@@ -37,6 +37,9 @@
 //              9 Jul 24 PHR
 //              -- Changed LocalTCPSockets from public to protected.
 //              -- Changed PRUNE_NOTRANSMISSION_MINUTES from 70 to 180 minutes.
+//              5 Nov 24 PHR
+//              -- Changed LocalSIPEndPoint, SIPChannelEndPoint, SIPChannelContactURI,
+//                 and SipUri to non-nullable types and assigned default values.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -87,7 +90,7 @@ public abstract class SIPChannel
     /// This is the local SIPURI
     /// </summary>
     /// <value></value>
-    protected SIPURI? SipUri = null;
+    protected SIPURI SipUri = new SIPURI(SIPSchemesEnum.sip, IPAddress.Parse("127.0.0.1"), 5060);
 
     /// <summary>
     /// This is set to true when the main listener thread has been started.
@@ -99,13 +102,13 @@ public abstract class SIPChannel
     /// This is the local SIPEndPoint
     /// </summary>
     /// <value></value>
-    protected SIPEndPoint? LocalSIPEndPoint = null;
+    protected SIPEndPoint LocalSIPEndPoint = new SIPEndPoint(IPEndPoint.Parse("127.0.0.1"));
 
     /// <summary>
     /// Gets the local SIPEndPoint for the SIP channel
     /// </summary>
     /// <value></value>
-    public SIPEndPoint? SIPChannelEndPoint
+    public SIPEndPoint SIPChannelEndPoint
     {
         get { return LocalSIPEndPoint; }
     }
@@ -128,10 +131,7 @@ public abstract class SIPChannel
     /// <value></value>
     public SIPURI SIPChannelContactURI
     {
-        get
-        {
-            return SipUri!;
-        }
+        get { return SipUri; }
     }
 
     /// <summary>
