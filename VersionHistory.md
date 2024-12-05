@@ -25,5 +25,7 @@
 | NA     | Addition | Added the MsrpMessageSent event to the MsrpConnection class. |
 | NA     | Change   | Modified SipLib.Sdp.MediaDescription.CreateCopy() to create a deep copy of the entire MediaDescription object instead of just the m= line. |
 | NA     | Addition | Added the Threading directory. This directory contains some base classes such as QueuedActionWorkerTask. |
+| NA     | Change   | Modified the SipTransport class to send a 400 Bad Request response if a SIP request message can be parsed but is not valid. |
+| NA     | Change   | Modified the SIPResponse.IsValid() method to check for the presence of a branch parameter in the Via header. |
 
 

@@ -1,5 +1,9 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   SipTransport.cs                                         29 Aug 23 PHR
+//
+//  Revised:    4 Dec 24 PHR
+//                -- Modified ProcessSipRequest() to send a 400 Bad Request response
+//                   if a SIPRequest can be parsed but is not valid.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Core;
@@ -357,7 +361,19 @@ public class SipTransport
         IPEndPoint RemIpe = RemoteEndPoint.GetIPEndPoint();
 
         if (sipRequest.IsValid(out error, out strReason) == false)
-        {
+        {   // Try to build a response that indicates that the request is invalid
+            try
+            {
+                if (sipRequest.Method != SIPMethodsEnum.ACK)
+                {
+                    string reason = strReason == null ? "Bad Request" : strReason;
+                    SIPResponse response = SipUtils.BuildResponse(sipRequest, SIPResponseStatusCodesEnum.BadRequest,
+                        reason, SipChannel, null);
+                    m_SipChannel.Send(RemoteEndPoint.GetIPEndPoint(), response.ToByteArray());
+                }
+            }
+            catch (Exception) { }
+
             LogInvalidSipMessage?.Invoke(MsgBytes, RemIpe, SIPMessageTypesEnum.Request, this);            
             return;
         }

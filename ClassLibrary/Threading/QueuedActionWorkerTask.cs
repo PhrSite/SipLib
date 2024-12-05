@@ -54,7 +54,7 @@ public class QueuedActionWorkerTask
     /// <summary>
     /// Starts the backgroud task that executes queued actions.
     /// </summary>
-    public void Start()
+    public virtual void Start()
     {
         if (m_IsStarted == true || m_IsShutdown == true)
             return;
@@ -69,7 +69,7 @@ public class QueuedActionWorkerTask
     /// not terminate until the action that is currently being executed completes or a maximum of
     /// 500 ms elapses.
     /// </summary>
-    public async Task Shutdown()
+    public virtual async Task Shutdown()
     {
         if (m_IsStarted == false || m_IsShutdown == true)
             return;
@@ -86,7 +86,7 @@ public class QueuedActionWorkerTask
     /// the internal action queue and perform them.
     /// </summary>
     /// <param name="action">Action to be queued and executed.</param>
-    public void EnqueueWork(Action action)
+    protected void EnqueueWork(Action action)
     {
         m_WorkQueue.Enqueue(action);
         m_Semaphore.Release();
@@ -122,7 +122,7 @@ public class QueuedActionWorkerTask
     /// <summary>
     /// 
     /// </summary>
-    public virtual void DoTimedEvents()
+    protected virtual void DoTimedEvents()
     {
     }
 }

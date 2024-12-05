@@ -44,6 +44,9 @@
 //                -- Added GetQueueUri()
 //              23 Jul 24 PHR
 //                -- Added CreateBasicRequest().
+//              4 Dec 24 PHR
+//                -- Modified IsValid() to check for presence of a branch parameter
+//                   in the Via header
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -305,10 +308,17 @@ public class SIPRequest : SIPMessage
             return false;
         }
 
+        if (string.IsNullOrEmpty(Header.Vias.TopViaHeader.Branch) == true)
+        {
+            errorField = SIPValidationFieldsEnum.ViaHeader;
+            errorMessage = "Via header has no branch parameter";
+            return false;
+        }
+
         if (Header.MaxForwards < 1)
         {
             errorField = SIPValidationFieldsEnum.MaxForwards;
-            errorMessage = "The Max-Forwards value too small";
+            errorMessage = "The Max-Forwards value is missing or too small";
             return false;
         }
 
