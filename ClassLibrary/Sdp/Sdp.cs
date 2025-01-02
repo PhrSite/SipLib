@@ -15,6 +15,7 @@ using System.Net;
 using SipLib.RtpCrypto;
 using SipLib.Core;
 using SipLib.Msrp;
+using SipLib.Media;
 
 namespace SipLib.Sdp;
 
@@ -668,17 +669,64 @@ public class Sdp
         {
             switch (Md.MediaType)
             {
-                case "audio":
-                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings));
+                case MediaTypes.Audio:
+                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
-                case "video":
-                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings));
+                case MediaTypes.Video:
+                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
-                case "text":    // Real Time Text
-                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings));
+                case MediaTypes.RTT:    // Real Time Text
+                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
-                case "message": // MSRP
-                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings));
+                case MediaTypes.MSRP:
+                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings, null));
+                    break;
+                default:        // Unknown media type, reject it
+                    MediaDescription UnknownMd = new MediaDescription(Md.MediaType, 0, Md.PayloadTypes);
+                    AnswerSdp.Media.Add(UnknownMd);
+                    break;
+            }
+        }
+
+        return AnswerSdp;
+    }
+
+    /// <summary>
+    /// Builds an Sdp object to send as the answered Sdp in response to the offered Sdp in a re-INVITE request
+    /// </summary>
+    /// <param name="OfferedSdp">SDP that was offered in the re-INVITE</param>
+    /// <param name="address">IP address to be used for transport of all media. This address is used in the
+    /// "c=" line of the SDP.</param>
+    /// <param name="AnswerSettings">Settings that determine how to build the answered SDP</param>
+    /// <param name="LocalAudioPort">Local port number used by the current RtpChannel for audio. Set to zero
+    /// if there currently is no audio RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <param name="LocalVideoPort">Local port number used by the current RtpChannel for video. Set to zero
+    /// if there curently is no video RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <param name="LocalRttPort">Local port number used by the current RtpChannel for RTT. Set to zero
+    /// if there is currently no RTT RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <param name="localMsrpUri">Set to the MsrpUri if there is a MsrpConnection for MSRP. Set to null
+    /// if there is currently no MSRP for the call. If null then a new local port will be assigned by the port
+    /// manager and a new local MsrpUri object will be created.</param>
+    /// <returns>Returns the SDP to send to the client that offered the SDP</returns>
+    public static Sdp BuildReInviteAnswerSdp(Sdp OfferedSdp, IPAddress address, SdpAnswerSettings AnswerSettings,
+        int LocalAudioPort, int LocalVideoPort, int LocalRttPort, MsrpUri? localMsrpUri)
+    {
+        Sdp AnswerSdp = new Sdp(address, AnswerSettings.UserName);
+        foreach (MediaDescription Md in OfferedSdp.Media)
+        {
+            switch (Md.MediaType)
+            {
+                case MediaTypes.Audio:
+                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings, LocalAudioPort));
+                    break;
+                case MediaTypes.Video:
+                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings, LocalVideoPort));
+                    break;
+                case MediaTypes.RTT:    // Real Time Text
+                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings, LocalRttPort));
+                    break;
+                case MediaTypes.MSRP:
+                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings, localMsrpUri));
                     break;
                 default:        // Unknown media type, reject it
                     MediaDescription UnknownMd = new MediaDescription(Md.MediaType, 0, Md.PayloadTypes);
@@ -691,23 +739,21 @@ public class Sdp
     }
 
     private static MediaDescription GetAudioAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings
-        Settings)
+        Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
 
         if (Settings.EnableAudio == false)
         {
-            AnsMd = new MediaDescription("audio", 0, OfferedMd.PayloadTypes);
+            AnsMd = new MediaDescription(MediaTypes.Audio, 0, OfferedMd.PayloadTypes);
             return AnsMd;
         }
 
         RtpMapAttribute? SupportedRma = FindSupportedAudioCodec(OfferedMd, Settings.SupportedAudioCodecs);
         if (SupportedRma == null)
-        {   // Could not find a rtpmap attribute for the supported audio codecs. Try using a well known
-            // codec number.
-
-            AnsMd = new MediaDescription("audio", 0, OfferedMd.PayloadTypes);
-            return AnsMd;    // Error: No supported codecs offerred
+        {   // Error: No supported codecs offered so reject audio media
+            AnsMd = new MediaDescription(MediaTypes.Audio, 0, OfferedMd.PayloadTypes);
+            return AnsMd;
         }
 
         RtpMapAttribute AnsRma = new RtpMapAttribute(SupportedRma.PayloadType, SupportedRma.EncodingName!,
@@ -715,7 +761,8 @@ public class Sdp
 
         List<int> PayloadTypes = new List<int>();
         PayloadTypes.Add(AnsRma.PayloadType);
-        AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextAudioPort, PayloadTypes);
+        int Port = LocalPortToUse == 0 ? Settings.PortManager.NextAudioPort : LocalPortToUse;
+        AnsMd = new MediaDescription(OfferedMd.MediaType, Port, PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
         AnsMd.RtpMapAttributes.Add(AnsRma);
 
@@ -749,27 +796,29 @@ public class Sdp
         return AnsMd;
     }
 
-    private static MediaDescription GetVideoAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings Settings)
+    private static MediaDescription GetVideoAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
+        Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
         if (Settings.EnableVideo == false)
         {
-            AnsMd = new MediaDescription("video", 0, OfferedMd.PayloadTypes);
+            AnsMd = new MediaDescription(MediaTypes.Video, 0, OfferedMd.PayloadTypes);
             return AnsMd;
         }
 
         RtpMapAttribute? SupportedRma = FindSupportedCodec(OfferedMd, Settings.SupportedVideoCodecs);
         if (SupportedRma == null)
-        {
-            AnsMd = new MediaDescription("video", 0, OfferedMd.PayloadTypes);
-            return AnsMd;    // Error: No supported codecs offerred
+        {   // Error: No supported codecs offerred so reject the video media
+            AnsMd = new MediaDescription(MediaTypes.Video, 0, OfferedMd.PayloadTypes);
+            return AnsMd;
         }
 
         RtpMapAttribute AnsRma = new RtpMapAttribute(SupportedRma.PayloadType, SupportedRma.EncodingName!,
             SupportedRma.ClockRate);
         List<int> PayloadTypes = new List<int>();
         PayloadTypes.Add(AnsRma.PayloadType);
-        AnsMd = new MediaDescription(OfferedMd.MediaType, Settings.PortManager.NextVideoPort, PayloadTypes);
+        int Port = LocalPortToUse == 0 ? Settings.PortManager.NextVideoPort : LocalPortToUse;
+        AnsMd = new MediaDescription(OfferedMd.MediaType, Port, PayloadTypes);
         AnsMd.RtpMapAttributes.Add(AnsRma);
         AnsMd.Transport = OfferedMd.Transport;
 
@@ -787,16 +836,17 @@ public class Sdp
     }
 
     private static MediaDescription GetRttAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
-        Settings)
+        Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
         if (Settings.EnableRtt == false)
         {
-            AnsMd = new MediaDescription("text", 0, OfferedMd.PayloadTypes);
+            AnsMd = new MediaDescription(MediaTypes.RTT, 0, OfferedMd.PayloadTypes);
             return AnsMd;
         }
 
-        AnsMd = new MediaDescription("text", Settings.PortManager.NextRttPort, OfferedMd.PayloadTypes);
+        int Port = LocalPortToUse == 0 ? Settings.PortManager.NextRttPort : LocalPortToUse;
+        AnsMd = new MediaDescription(MediaTypes.RTT, Port, OfferedMd.PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
         foreach (int PayloadType in OfferedMd.PayloadTypes)
         {
@@ -828,16 +878,21 @@ public class Sdp
     }
 
     private static MediaDescription GetMsrpAnswerMediaDescription(MediaDescription OfferedMd, IPAddress Address,
-        SdpAnswerSettings Settings)
+        SdpAnswerSettings Settings, MsrpUri? LocalMsrpUriToUse)
     {
         MediaDescription? AnsMd = null;
         if (Settings.EnableMsrp == false)
         {
-            AnsMd = new MediaDescription("message", 0, new List<int>());
+            AnsMd = new MediaDescription(MediaTypes.MSRP, 0, new List<int>());
             return AnsMd;
         }
 
-        AnsMd = new MediaDescription("message", Settings.PortManager.NextMsrpPort, OfferedMd.PayloadTypes);
+        int Port = 0;
+        if (LocalMsrpUriToUse != null && LocalMsrpUriToUse.uri.HostPort != null)
+            Port = int.Parse(LocalMsrpUriToUse.uri.HostPort);
+        else
+            Port = Settings.PortManager.NextMsrpPort;
+        AnsMd = new MediaDescription(MediaTypes.MSRP, Port, OfferedMd.PayloadTypes);
         AnsMd.Transport = OfferedMd.Transport;
         AnsMd.Attributes.Add(new SdpAttribute("accept-types", "message/CPIM text/plain"));
 

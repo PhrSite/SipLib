@@ -320,7 +320,12 @@ public class MsrpConnection
         return (connection, null);
     }
 
-    private static MsrpUri? GetPathMsrpUri(MediaDescription Md)
+    /// <summary>
+    /// Parses the path attribute of a MediaDescription and returns a MsrpUri object
+    /// </summary>
+    /// <param name="Md">MediaDescription for MSRP media</param>
+    /// <returns>Returns a new MsrpUri object or null if an error occurred</returns>
+    public static MsrpUri? GetPathMsrpUri(MediaDescription Md)
     {
         MsrpUri? msrpUri = null;
         string strPathAttr = Md.GetAttributeValue("path");
@@ -1001,4 +1006,21 @@ public class MsrpConnection
             // Ignore errors. Any certificate is OK
             return true;
     }
+
+    /// <summary>
+    /// Gets the local MsrpUri for this connection or null if not set yet.
+    /// </summary>
+    public MsrpUri? LocalMsrpUri
+    {
+        get { return m_LocalMsrpUri; }
+    }
+
+    /// <summary>
+    /// Gets the remote MsrpUri for this connection or null if not set yet.
+    /// </summary>
+    public MsrpUri? RemoteMsrpUri
+    {
+        get { return m_RemoteMsrpUri; }
+    }
+
 }

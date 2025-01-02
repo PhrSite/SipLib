@@ -37,6 +37,8 @@
 //              11 Sep 23 PHR -- Added the RawBuffer field.
 //              30 Jan 24 PHR
 //                -- Added SIPMessage as the base class.
+//              27 Dec 24 PHR
+//                -- Modified ToByteArray() to set the RawBuffer field.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -207,7 +209,8 @@ public class SIPResponse : SIPMessage
     /// <returns></returns>
     public byte[] ToByteArray()
     {
-        return Encoding.UTF8.GetBytes(ToString());
+        RawBuffer = Encoding.UTF8.GetBytes(ToString());
+        return RawBuffer;
     }
 
     /// <summary>

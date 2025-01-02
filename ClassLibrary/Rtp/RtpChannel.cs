@@ -78,10 +78,10 @@ public delegate void DtlsHandshakeFailedDelegate(bool IsServer, IPEndPoint remot
 /// </remarks>
 public class RtpChannel
 {
-    private IPEndPoint? m_localRtpEndPoint = null;
-    private IPEndPoint? m_localRtcpEndPoint = null;
-    private IPEndPoint? m_remoteRtpEndpoint = null;
-    private IPEndPoint? m_remoteRtcpEndpoint = null;
+    private IPEndPoint m_localRtpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+    private IPEndPoint? m_localRtcpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+    private IPEndPoint m_remoteRtpEndpoint = new IPEndPoint(IPAddress.Any, 0);
+    private IPEndPoint m_remoteRtcpEndpoint = new IPEndPoint(IPAddress.Any, 0);
 
     private string? m_mediaType = null;
     private bool m_Incoming = false;
@@ -121,6 +121,14 @@ public class RtpChannel
     public string MediaType
     {
         get { return m_mediaType!; }
+    }
+
+    /// <summary>
+    /// Gets the port number of the local IPEndPoint.
+    /// </summary>
+    public int LocalPort
+    {
+        get { return m_localRtpEndPoint.Port; }
     }
 
     /// <summary>
@@ -300,7 +308,7 @@ public class RtpChannel
         remoteRtpEndPoint = Sdp.GetMediaEndPoint(RemoteSdp, RemoteMd);
         RtpChannel rtpChannel = new RtpChannel(localRtpEndPoint, LocalMd.MediaType, enableRtcp, CNAME);
         rtpChannel.m_Incoming = Incoming;
-        rtpChannel.m_remoteRtpEndpoint = remoteRtpEndPoint;
+        rtpChannel.m_remoteRtpEndpoint = remoteRtpEndPoint!;
         rtpChannel.m_mediaType = LocalMd.MediaType;
 
         // Figure out the RTCP endpoints. See RFC 3605
@@ -834,4 +842,39 @@ public class RtpChannel
         catch (SocketException) { }
         catch (Exception) { }
     }
+
+    /// <summary>
+    /// Gets or sets the RTP IPEndPoint of the remote. 
+    /// </summary>
+    public IPEndPoint RemoteRtpEndPoint
+    {
+        get { return m_remoteRtpEndpoint; }
+        set { m_remoteRtpEndpoint = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the RTCP IPEndPoint of the remote
+    /// </summary>
+    public IPEndPoint RemoteRtcpEndPoint
+    {
+        get { return m_remoteRtcpEndpoint; }
+        set { m_remoteRtcpEndpoint = value; }
+    }
+
+    /// <summary>
+    /// Returns true if this channel is using DTLS-SRTP encryption
+    /// </summary>
+    public bool IsDtlsSrtp
+    {
+        get { return m_IsDtlsSrtp; }
+    }
+
+    /// <summary>
+    /// Returns true if this channel is using SDES-SRTP encryption
+    /// </summary>
+    public bool IsSdesSrtp
+    {
+        get { return m_IsSdesSrtp; }
+    }
+
 }

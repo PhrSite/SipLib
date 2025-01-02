@@ -47,6 +47,8 @@
 //              4 Dec 24 PHR
 //                -- Modified IsValid() to check for presence of a branch parameter
 //                   in the Via header
+//              27 Dec 24 PHR
+//                -- Modified ToByteArray() to set the RawBuffer field.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -271,7 +273,8 @@ public class SIPRequest : SIPMessage
     /// <returns>Returns a UTF-8 encoded byte array</returns>
     public byte[] ToByteArray()
     {
-        return Encoding.UTF8.GetBytes(ToString());
+        RawBuffer = Encoding.UTF8.GetBytes(ToString());
+        return RawBuffer;
     }
 
     /// <summary>

@@ -154,7 +154,7 @@ public class AudioDestination
     /// </summary>
     /// <param name="destinationHandler">Audio samples destination handler function. If null then
     /// received RTP packets will be ignored but DTMF events will still be processed.</param>
-    public void SetDestionationHandler(AudioDestinationDelegate? destinationHandler)
+    public void SetDestinationHandler(AudioDestinationDelegate? destinationHandler)
     {
         DestinationHandler = destinationHandler;
     }

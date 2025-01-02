@@ -378,6 +378,22 @@ public class MediaDescription
     }
 
     /// <summary>
+    /// Returns true if this MediaDescription object call for DTLS-SRTP or SDES-SRTP encryption of false if
+    /// it does not.
+    /// </summary>
+    public bool UsingEncryption
+    {
+        get
+        {
+            SetupType setupType;
+            if (UsingDtlsSrtp(out setupType) == true || UsingSdesSrtp() == true)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
     /// Adds a a=setup:xxx attribute.
     /// </summary>
     /// <param name="SetType">Specifies the role (active, passive, etc.)</param>
