@@ -306,6 +306,11 @@ public class RtpChannel
 
         localRtpEndPoint = Sdp.GetMediaEndPoint(LocalSdp, LocalMd);
         remoteRtpEndPoint = Sdp.GetMediaEndPoint(RemoteSdp, RemoteMd);
+        if (remoteRtpEndPoint == null)
+        {   // Error: Unable to determine the remote endpoint from the SDP for this media type
+            return (null, $"Cannot determine the remote IP endpoint for media type = {RemoteMd.MediaType}");
+        }
+
         RtpChannel rtpChannel = new RtpChannel(localRtpEndPoint, LocalMd.MediaType, enableRtcp, CNAME);
         rtpChannel.m_Incoming = Incoming;
         rtpChannel.m_remoteRtpEndpoint = remoteRtpEndPoint!;

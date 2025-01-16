@@ -1,5 +1,10 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   ServerInviteTransaction.cs                              5 Sep 23 PHR
+//
+//  Revised: 4 Jan 24 PHR
+//             -- Fixed DoTimedEvents() so that it updates m_TimerGStartTime when
+//                the Timer G interval has expired. This is only a problem if the
+//                transport protocol is UDP.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Channels;
@@ -106,6 +111,7 @@ public class ServerInviteTransaction : SipTransactionBase
                     if ((Now - m_TimerGStartTime).TotalMilliseconds > m_CurrentTimerGInterval)
                     {   // Resend the last sent response to the client
                         TransportManager.SendSipResponse(LastSipResponseSent, RemoteEndPoint);
+                        m_TimerGStartTime = Now;
                         if (m_CurrentTimerGInterval > SipTimers.T2)
                             m_CurrentTimerGInterval = SipTimers.T2;
                         else

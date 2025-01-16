@@ -4,6 +4,10 @@
 //  Revised: 6 Aug 24 PHR
 //              -- Removed public static Sdp ParseSDP(List<string> lines)
 //              -- Changed public static Sdp ParseSDP(string[] lines) to private
+//           13 Jan 25 PHR
+//              -- Made the following static methods public:
+//                 BuildAudioAnswerMediaDescription, BuildVideoAnswerMediaDescription,
+//                 BuildRttAnswerMediaDescription, BuildMsrpAnswerMediaDescription
 /////////////////////////////////////////////////////////////////////////////////////
 
 // RFC 8866 describes the Session Description Protocol (SDP). RFC 8866 obsoletes RFC 4566.
@@ -346,6 +350,28 @@ public class Sdp
     }
 
     /// <summary>
+    /// Gets the MediaDescription object for the specified media type and media label attribute.
+    /// </summary>
+    /// <param name="strType">The media type to search for (audio, video, message or text)</param>
+    /// <param name="LabelAttribute">Value of the label attribute to seach for.</param>
+    /// <returns>Returns a MediaDescription object if the specified media type and label exist or null
+    /// if not found.</returns>
+    public MediaDescription? GetMediaByTypeAndLabel(string strType, string LabelAttribute)
+    {
+        MediaDescription RetVal = null;
+        foreach (MediaDescription Med in Media)
+        {
+            if (Med.MediaType == strType && Med.Label == LabelAttribute)
+            {
+                RetVal = Med;
+                break;
+            }
+        }
+
+        return RetVal;
+    }
+
+    /// <summary>
     /// Gets a list of MediaDescription objects in the SDP that have the same type of media.
     /// </summary>
     /// <param name="strType">Media type. Must be one of "audio", "video", "text" or "message"</param>
@@ -670,16 +696,16 @@ public class Sdp
             switch (Md.MediaType)
             {
                 case MediaTypes.Audio:
-                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings, 0));
+                    AnswerSdp.Media.Add(BuildAudioAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
                 case MediaTypes.Video:
-                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings, 0));
+                    AnswerSdp.Media.Add(BuildVideoAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
                 case MediaTypes.RTT:    // Real Time Text
-                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings, 0));
+                    AnswerSdp.Media.Add(BuildRttAnswerMediaDescription(Md, AnswerSettings, 0));
                     break;
                 case MediaTypes.MSRP:
-                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings, null));
+                    AnswerSdp.Media.Add(BuildMsrpAnswerMediaDescription(Md, address, AnswerSettings, null));
                     break;
                 default:        // Unknown media type, reject it
                     MediaDescription UnknownMd = new MediaDescription(Md.MediaType, 0, Md.PayloadTypes);
@@ -695,7 +721,7 @@ public class Sdp
     /// Builds an Sdp object to send as the answered Sdp in response to the offered Sdp in a re-INVITE request
     /// </summary>
     /// <param name="OfferedSdp">SDP that was offered in the re-INVITE</param>
-    /// <param name="address">IP address to be used for transport of all media. This address is used in the
+    /// <param name="address">Local IP address to be used for transport of all media. This address is used in the
     /// "c=" line of the SDP.</param>
     /// <param name="AnswerSettings">Settings that determine how to build the answered SDP</param>
     /// <param name="LocalAudioPort">Local port number used by the current RtpChannel for audio. Set to zero
@@ -717,16 +743,16 @@ public class Sdp
             switch (Md.MediaType)
             {
                 case MediaTypes.Audio:
-                    AnswerSdp.Media.Add(GetAudioAnswerMediaDescription(Md, AnswerSettings, LocalAudioPort));
+                    AnswerSdp.Media.Add(BuildAudioAnswerMediaDescription(Md, AnswerSettings, LocalAudioPort));
                     break;
                 case MediaTypes.Video:
-                    AnswerSdp.Media.Add(GetVideoAnswerMediaDescription(Md, AnswerSettings, LocalVideoPort));
+                    AnswerSdp.Media.Add(BuildVideoAnswerMediaDescription(Md, AnswerSettings, LocalVideoPort));
                     break;
                 case MediaTypes.RTT:    // Real Time Text
-                    AnswerSdp.Media.Add(GetRttAnswerMediaDescription(Md, AnswerSettings, LocalRttPort));
+                    AnswerSdp.Media.Add(BuildRttAnswerMediaDescription(Md, AnswerSettings, LocalRttPort));
                     break;
                 case MediaTypes.MSRP:
-                    AnswerSdp.Media.Add(GetMsrpAnswerMediaDescription(Md, address, AnswerSettings, localMsrpUri));
+                    AnswerSdp.Media.Add(BuildMsrpAnswerMediaDescription(Md, address, AnswerSettings, localMsrpUri));
                     break;
                 default:        // Unknown media type, reject it
                     MediaDescription UnknownMd = new MediaDescription(Md.MediaType, 0, Md.PayloadTypes);
@@ -738,7 +764,15 @@ public class Sdp
         return AnswerSdp;
     }
 
-    private static MediaDescription GetAudioAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings
+    /// <summary>
+    /// Builds a MediaDescription object for audio for sending as an answer to an offered media description 
+    /// </summary>
+    /// <param name="OfferedMd">Media description that was offered for audio</param>
+    /// <param name="Settings">Settings that determine how to build the answer media description</param>
+    /// <param name="LocalPortToUse">Local port number used by the current RtpChannel for audio. Set to zero
+    /// if there currently is no audio RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <returns>Returns a new MediaDescription to send in the SDP of an OK response.</returns>
+    public static MediaDescription BuildAudioAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings
         Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
@@ -796,7 +830,15 @@ public class Sdp
         return AnsMd;
     }
 
-    private static MediaDescription GetVideoAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
+    /// <summary>
+    /// Builds a MediaDescription object for video for sending as an answer to an offered media description
+    /// </summary>
+    /// <param name="OfferedMd">Media description that was offered for video</param>
+    /// <param name="Settings">Settings that determine how to build the answer media description</param>
+    /// <param name="LocalPortToUse">Local port number used by the current RtpChannel for video. Set to zero
+    /// if there currently is no video RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <returns>Returns a new MediaDescription to send in the SDP of an OK response.</returns>
+    public static MediaDescription BuildVideoAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
         Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
@@ -835,7 +877,15 @@ public class Sdp
         return AnsMd;
     }
 
-    private static MediaDescription GetRttAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
+    /// <summary>
+    /// Builds a MediaDescription object for RTT for sending as an answer to an offered media description
+    /// </summary>
+    /// <param name="OfferedMd">Media description that was offered for RTT</param>
+    /// <param name="Settings">Settings that determine how to build the answer media description</param>
+    /// <param name="LocalPortToUse">Local port number used by the current RtpChannel for RTT. Set to zero
+    /// if there currently is no RTT RtpChannel. If set to 0 then a port will be assigned by the port manager.</param>
+    /// <returns>Returns a new MediaDescription to send in the SDP of an OK response.</returns>
+    public static MediaDescription BuildRttAnswerMediaDescription(MediaDescription OfferedMd, SdpAnswerSettings 
         Settings, int LocalPortToUse)
     {
         MediaDescription? AnsMd = null;
@@ -877,7 +927,17 @@ public class Sdp
         return AnsMd;
     }
 
-    private static MediaDescription GetMsrpAnswerMediaDescription(MediaDescription OfferedMd, IPAddress Address,
+    /// <summary>
+    /// Builds a MediaDescription object for MSRP for sending as an answer to an offered media description
+    /// </summary>
+    /// <param name="OfferedMd">Media description that was offered for MSRP</param>
+    /// <param name="Address">Local IP address to use for the transport of MSRP</param>
+    /// <param name="Settings">Settings that determine how to build the answer media description</param>
+    /// <param name="LocalMsrpUriToUse">Set to the MsrpUri if there is a MsrpConnection for MSRP. Set to null
+    /// if there is currently no MSRP for the call. If null then a new local port will be assigned by the port
+    /// manager and a new local MsrpUri object will be created.</param>
+    /// <returns>Returns a new MediaDescription to send in the SDP of an OK response.</returns>
+    public static MediaDescription BuildMsrpAnswerMediaDescription(MediaDescription OfferedMd, IPAddress Address,
         SdpAnswerSettings Settings, MsrpUri? LocalMsrpUriToUse)
     {
         MediaDescription? AnsMd = null;
