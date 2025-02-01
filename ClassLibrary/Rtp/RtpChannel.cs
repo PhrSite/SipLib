@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   RtpChannel.cs                                           20 Oct 23 PHR
+//
+//  Revised: 25 Jan 25 PHR
+//           -- Added PacketIsRtp() to verify that a packet is actually an RTP packet.
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
@@ -706,6 +709,17 @@ public class RtpChannel
         }
     }
 
+    private const byte RTP_VERSION_MASK = 0xc0;
+    private const byte RTP_VERSION_VALUE = 0x80;
+    // The two most significant bits of an RTP packet must be 10
+    private bool PacketIsRtp(byte[] buf)
+    {
+        if ((buf[0] & RTP_VERSION_MASK) != RTP_VERSION_VALUE)
+            return false;
+        else
+            return true;
+    }
+
     // Limit the number of authentication errors that are logged so that the log does not get filled up.
     private const int MAX_RTP_AUTHENTICAION_ERRORS = 20;
     private int m_RtpAuthenticationErrors = 0;
@@ -714,6 +728,9 @@ public class RtpChannel
     {
         if (buf.Length < RtpPacket.MIN_PACKET_LENGTH || Ipe == null)
             return;     // Error: Packet too short or no remote endpoint provided
+
+        if (PacketIsRtp(buf) == false)
+            return;
 
         byte[] decryptedPckt;
         if (m_IsSdesSrtp == true)

@@ -122,7 +122,10 @@ public class Sdp
     {
         Origin = new Origin(UaName, LocalIp);
         ConnectionData = new ConnectionData(LocalIp);
-        SessionName = UaName + "_" + Rnd.Next().ToString();
+        if (string.IsNullOrEmpty(UaName) == false)
+            SessionName = UaName + "_" + Rnd.Next().ToString();
+        else
+            SessionName = "Unknown_" + Rnd.Next().ToString();
     }
 
     /// <summary>

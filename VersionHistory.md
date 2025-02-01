@@ -16,7 +16,7 @@
 ## v0.0.3 - TBD
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
-| NA     | Fix    | Changed the SRTP authenticaion key length to 20 bytes to conform with Section 5.2 of RFC 3711 and fix the problems with RTP packet authentication with SDES-SRTP. |
+| NA     | Fix    | Changed the SRTP authenticaion key length to 20 bytes to conform with Section 5.2 of RFC 3711 and fixed the problems with RTP packet authentication with SDES-SRTP. |
 | NA     | Addition | Finished coding for the AudioDestination and AudioSource classes in the SipLib.Media namespace. |
 | NA     | Fix      | The RttClient test program in Samples/RTT/RttClient was not sending an in-dialog BYE request. |
 | NA     | Fix      | The MsrpClient test program in Samples/MSRP/MsrpClient was not sending an in-dialog BYE request. |
@@ -28,5 +28,9 @@
 | NA     | Change   | Modified the SipTransport class to send a 400 Bad Request response if a SIP request message can be parsed but is not valid. |
 | NA     | Change   | Modified the SIPResponse.IsValid() method to check for the presence of a branch parameter in the Via header. |
 | NA     | Addition | Added the Sdp.GetMediaByTypeAndLabel() method. |
+| NA     | Fix      | Changed SipLib.Body.ContentTypes.ConferenceEvent from application/conference+xml to application/conference-info+xml to comply with Section 9.2 of RFC 4575. |
+| NA     | Change   | Modified the RtpChannel class to ignore packets that do not have a Version field of 2. |
+| NA     | Fix      | Modified the constructor of the Sdp class to set the UaName to a default value if it is not specified. |
+| NA     | Fix      | Modified the constructor of the SdpOrigin class to set the UserName to a default value if it is not specified. |
 
 

@@ -90,6 +90,9 @@ public class AudioDestination
         if (DestinationHandler == null)
             return;
 
+        if (rtpPacket.PayloadLength == 0)
+            return;
+
         if (rtpPacket.PayloadType == m_AudioPayloadType)
         {
             short[] decodedPacket = m_AudioDecoder.Decode(rtpPacket.Payload);

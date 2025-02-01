@@ -75,7 +75,7 @@ public class RtcpHeader
     /// Gets the fixed header length or an RTCP packet header.
     /// </summary>
     /// <value></value>
-    public static Int32 HeaderLength
+    public static int HeaderLength
     {
         get { return RTCP_HEADER_LENGTH; }
     }

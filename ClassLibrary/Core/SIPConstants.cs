@@ -895,6 +895,46 @@ public static class SIPEscape
 
         return result;
     }
+
+    /// <summary>
+    /// Replaces special characters with their hexadecimal equivalent as specified in RFC 2396, plus Less Than and 
+    /// Greater Than. This function can be used for escaping characters in an embeded URI embedded
+    /// </summary>
+    /// <param name="strInput">Input string to replace special characters in.
+    /// </param>
+    /// <returns>Returns a new string with the special characters replaced by 
+    /// their hexadecimal equivalent.</returns>
+    public static string EscapeSpecialCharacters(String strInput)
+    {
+        return strInput.Replace(";", "%3B").Replace("/", "%2F").
+            Replace("?", "%3F").Replace(":", "%3A").Replace("@", "%40").
+            Replace("&", "%26").Replace("=", "%3D").Replace("+", "%2B").
+            Replace("$", "%24").Replace(",", "%2C").Replace(" ", "%20").
+            Replace("<", "%3C").Replace(">", "%3E");
+    }
+
+    /// <summary>
+    /// Replaces the hexadecimal equivalent of special characters with the special characters as specified in RFC 2396,
+    /// plus Less Than and Greater Than.
+    /// </summary>
+    /// <param name="strInput">Input string containing hexadecimal equivalent hexadecial strings.</param>
+    /// <returns>Returns a new string with the hexadecimal equivalent strings replaced by the special characters.</returns>
+    public static string UnEscapeSpecialCharacters(string strInput)
+    {
+        return strInput.
+            Replace("%3B", ";").Replace("%3b", ";").
+            Replace("%2F", "/").Replace("%2f", "/").
+            Replace("%3F", "?").Replace("%3f", "?").
+            Replace("%3A", ":").Replace("%3a", ":").
+            Replace("%40", "@").
+            Replace("%26", "&").
+            Replace("%3D", "=").Replace("%3d", "=").
+            Replace("%2B", "+").Replace("%2b", "+").
+            Replace("%24", "$").
+            Replace("%2C", ",").Replace("%2c", ",").
+            Replace("%3C", "<").Replace("%3c", "<").
+            Replace("%3E", ">").Replace("%3e", ">");
+    }
 }
 #pragma warning restore CS1591
 

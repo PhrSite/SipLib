@@ -98,8 +98,12 @@ public class Origin
     /// </param>
     public Origin(string strUserName, IPAddress Addr)
     {
-        UserName = strUserName;
-        SessionId = Origin.NewSessionId();
+        if (string.IsNullOrEmpty(strUserName) == true)
+            UserName = "Unknown";
+        else
+            UserName = strUserName;
+
+        SessionId = NewSessionId();
         Version = 1;
         NetworkType = "IN";
         if (Addr.AddressFamily == AddressFamily.InterNetwork)
