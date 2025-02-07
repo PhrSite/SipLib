@@ -786,14 +786,16 @@ public enum SIPResponseStatusCodesEnum
 public class SIPResponseStatusCodes
 {
     /// <summary>
-    /// Converts an integer into a SIPResponseStatusCodesEnum
+    /// Converts an integer into a SIPResponseStatusCodesEnum value
     /// </summary>
-    /// <param name="statusCode"></param>
+    /// <param name="statusCode">Must be the integer equivalent of one of the values in the SIPResponseStatusCodesEnum.</param>
     /// <returns></returns>
     public static SIPResponseStatusCodesEnum GetStatusTypeForCode(int statusCode)
     {
-        return (SIPResponseStatusCodesEnum)Enum.Parse(typeof(SIPResponseStatusCodesEnum), statusCode.
-            ToString(), true);
+        if (statusCode == 0)
+            return SIPResponseStatusCodesEnum.None;
+        else
+            return (SIPResponseStatusCodesEnum)Enum.Parse(typeof(SIPResponseStatusCodesEnum), statusCode.ToString(), true);
     }
 }
 

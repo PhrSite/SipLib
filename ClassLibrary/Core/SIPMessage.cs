@@ -44,6 +44,9 @@
 //                -- Changed RawBuffer from public to internal
 //                -- Changed string[] SIPHeaders from public to internal
 //                -- Changed FirstLine from public to internal
+//              6 Feb 25 PHR
+//                -- Modified GetContentsOfType() to catch any exceptions that occur
+//                   when parsing the message body.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -247,14 +250,21 @@ public class SIPMessage
     /// This parameter may be a value taken from a message's Content-Type header but it must not include any
     /// header parameters.</param>
     /// <returns>Returns a string that contains the body content block. Returns null if the specified 
-    /// content type is not found.</returns>
+    /// content type is not found or if a parsing error occured.</returns>
     public string? GetContentsOfType(string contentType)
     {
         if (HasBody == false || RawBuffer == null)
             return null;
 
-        if (m_ContentsContainer == null)
-            m_ContentsContainer = BodyParser.ParseSipBody(RawBuffer, Header.ContentType);
+        try
+        {
+            if (m_ContentsContainer == null)
+                m_ContentsContainer = BodyParser.ParseSipBody(RawBuffer, Header.ContentType);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
 
         if (m_ContentsContainer.Count == 0)
             return null;

@@ -32,5 +32,7 @@
 | NA     | Change   | Modified the RtpChannel class to ignore packets that do not have a Version field of 2. |
 | NA     | Fix      | Modified the constructor of the Sdp class to set the UaName to a default value if it is not specified. |
 | NA     | Fix      | Modified the constructor of the SdpOrigin class to set the UserName to a default value if it is not specified. |
+| NA     | Addition | Added the SIPFrag class to the SipLib.Core namespace |
+| NA     | Change   | Modified SIPMessage.GetContentsOfType() to catch any exceptions that occur when parsing the message body. |
 
 
