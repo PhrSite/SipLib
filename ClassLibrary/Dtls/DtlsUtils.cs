@@ -44,8 +44,12 @@
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
 //      -- Added CreateCertificateFromPfxFile()
-//      -- Added CreateSelfSignedEcdsaTlsCert(), CreateSelfSignedBouncyCastleEcdsaCert(),
-//         CreateEcdsaPrivateKeyResource()
+//      -- Added CreateSelfSignedEcdsaTlsCert(), CreateSelfSignedBouncyCastleEcdsaCert(), CreateEcdsaPrivateKeyResource()
+// Revised: 7 Mar 25 PHR
+//      -- Modified DtlsUtils.CreateSelfSignedCert() to use X509CertificateLoader.LoadCertificate() instead of using
+//         the X509Certificate2 constructor to load the X.509 certificate because this constructor is obsolete in .NET 9.
+//      -- Modified DtlsUtils.ConvertBouncyCert() to use X509CertificateLoader.LoadPkcs12() instead of using the 
+//         of X509Certificate constructor to load the X.509 certificate because this construtor is obsolete in .NET 9.
 
 using System.Collections;
 using System.Security.Cryptography;
@@ -625,7 +629,8 @@ public class DtlsUtils
             var info = Org.BouncyCastle.Pkcs.PrivateKeyInfoFactory.CreatePrivateKeyInfo(subjectKeyPair.Private);
 
             // merge into X509Certificate2
-            var x509 = new X509Certificate2(certificate.GetEncoded());
+            //var x509 = new X509Certificate2(certificate.GetEncoded());
+            var x509 = X509CertificateLoader.LoadCertificate(certificate.GetEncoded()); // 7 Mar 25 PHR
 
             var seq = (Asn1Sequence)Asn1Object.FromByteArray(info.ParsePrivateKey().GetDerEncoded());
             if (seq.Count != 9)
@@ -876,7 +881,9 @@ public class DtlsUtils
         {
             pkcs12Store.Save(pfxStream, new char[] { }, new SecureRandom());
             pfxStream.Seek(0, SeekOrigin.Begin);
-            keyedCert = new X509Certificate2(pfxStream.ToArray(), string.Empty, X509KeyStorageFlags.Exportable);
+            //keyedCert = new X509Certificate2(pfxStream.ToArray(), string.Empty, X509KeyStorageFlags.Exportable);
+            // 7 Mar 25 PHR
+            keyedCert = X509CertificateLoader.LoadPkcs12(pfxStream.ToArray(), string.Empty, X509KeyStorageFlags.Exportable);
         }
 
         return keyedCert;

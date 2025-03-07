@@ -34,5 +34,8 @@
 | NA     | Fix      | Modified the constructor of the SdpOrigin class to set the UserName to a default value if it is not specified. |
 | NA     | Addition | Added the SIPFrag class to the SipLib.Core namespace |
 | NA     | Change   | Modified SIPMessage.GetContentsOfType() to catch any exceptions that occur when parsing the message body. |
+| NA     | Change   | Changed the target framework to .NET 9. |
+| NA     | Change   | Modified DtlsUtils.CreateSelfSignedCert() to use X509CertificateLoader.LoadCertificate() instead of using the X509Certificate2 constructor to load the X.509 certificate because this constructor is obsolete in .NET 9. |
+| NA     | Change   | Modified DtlsUtils.ConvertBouncyCert() to use X509CertificateLoader.LoadPkcs12() instead of using the of X509Certificate constructor to load the X.509 certificate because this construtor is obsolete in .NET 9. |
 
 

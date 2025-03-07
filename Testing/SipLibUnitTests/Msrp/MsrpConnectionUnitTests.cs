@@ -48,8 +48,9 @@ public class MsrpConnectionUnitTests
     {
         IPAddress ipAddress = IPAddress.Loopback;
 
-        X509Certificate2 ClientCert = new X509Certificate2($"{Path}MsrpClient.pfx", "MsrpClient");
-        X509Certificate2 ServerCert = new X509Certificate2($"{Path}MsrpServer.pfx", "MsrpServer");
+        // 7 Mar 25 PHR
+        X509Certificate2 ClientCert = X509CertificateLoader.LoadPkcs12FromFile($"{Path}MsrpClient.pfx", "MsrpClient");
+        X509Certificate2 ServerCert = X509CertificateLoader.LoadPkcs12FromFile($"{Path}MsrpServer.pfx", "MsrpServer");
 
         MsrpUri ClientMsrpUri = new MsrpUri(SIPSchemesEnum.msrps, "Client", ipAddress, ClientPort);
         MsrpUri ServerMsrpUri = new MsrpUri(SIPSchemesEnum.msrps, "Server", ipAddress, ServerPort);
