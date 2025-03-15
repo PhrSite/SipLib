@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Introduction </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Introduction ">
+    
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.json">
+      <meta property="docfx:tocrel" content="toc.json">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+
+                <ul class="nav level1 navbar-nav">
+                      <li>
+                          <a href="../articles/intro.html" title="Articles">Articles</a>
+                      </li>
+                      <li>
+                          <a href="../api/index.html" title="Api Documentation">Api Documentation</a>
+                      </li>
+                </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div>
+              <div class="sidefilter">
+                <form class="toc-filter">
+                  <span class="glyphicon glyphicon-filter filter-icon"></span>
+                  <input type="text" id="toc_filter_input" placeholder="Enter here to filter..." onkeypress="if(event.keyCode==13) {return false;}">
+                </form>
+              </div>
+              <div class="sidetoc">
+                <div class="toc" id="toc">
+
+                  <ul class="nav level1">
+                    <li class="">
+                      <a href="intro.html" title="Introduction" class="">Introduction</a>
+                    </li>
+                    <li class="">
+                      <a href="SipTransportManagement.html" title="SIP Message Transport Management" class="">SIP Message Transport Management</a>
+                    </li>
+                    <li class="active">
+                      <a href="SipChannelClasses.html" title="SIP Channel Classes" class="active">SIP Channel Classes</a>
+                    </li>
+                    <li class="">
+                      <a href="WorkingWithSipMessages.html" title="Working with SIP Messages" class="">Working with SIP Messages</a>
+                    </li>
+                    <li class="">
+                      <a href="SessionDescriptionProtocol.html" title="Session Description Protocol" class="">Session Description Protocol</a>
+                    </li>
+                    <li class="">
+                      <a href="RealTimeProtocol.html" title="Real Time Protocol" class="">Real Time Protocol</a>
+                    </li>
+                    <li class="">
+                      <a href="RealTimeText.html" title="Real Time Text" class="">Real Time Text</a>
+                    </li>
+                    <li class="">
+                      <a href="MessageSessionRelayProtocol.html" title="Message Session Relay Protocol (MSRP)" class="">Message Session Relay Protocol (MSRP)</a>
+                    </li>
+                    <li class="">
+                      <a href="ConfigureSipLibLogging.html" title="SipLib Application Logging" class="">SipLib Application Logging</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="introduction">Introduction</h1>
+
+<p>The <a href="../api/SipLib.Channels.SIPChannel.html">SIPChannel</a> class is the base class for all classes that manage low-level SIP connections and basic SIP message transport for sending and receiving SIP messages.</p>
+<p>This class library provides the following classes derived from the SIPChannel class. The SIPChannel class is abstract and is therefore never used directly.</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Transport Protocol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api/SipLib.Channels.SIPUDPChannel.html">SIPUDPChannel</a></td>
+<td>UDP</td>
+<td>Provides functions for sending and receiving SIP messages using the User Datagram Protocol (UDP).</td>
+</tr>
+<tr>
+<td><a href="../api/SipLib.Channels.SIPTCPChannel.html">SIPTCPChannel</a></td>
+<td>TCP</td>
+<td>Provides functions for sending and receiving SIP messages using the Transport Control Protocol (TCP). Manages persistent TCP connections to multiple remote endpoints.</td>
+</tr>
+<tr>
+<td><a href="../api/SipLib.Channels.SIPTLSChannel.html">SIPTLSChannel</a></td>
+<td>TLS</td>
+<td>Provides functions for sending and receiving SIP messages using the Transport Layer Security (TLS) protocol. Manages persistent TLS connections to multiple remote endpoints. Supports mutual client certificate authentication. Supports TLS v1.3 if the network stack of the operating system does.</td>
+</tr>
+</tbody>
+</table>
+<p>Each of these classes provides the following functionality.</p>
+<ol>
+<li>The ability to send SIP messages to a remote endpoint</li>
+<li>Notifies the class user when a complete SIP message is received via an event</li>
+<li>Differentiated Services (DiffServ) packet marking for network based Quality of Service control</li>
+<li>Operation using IPv4 or IPv6</li>
+<li>Client and server operation (SIPTCPChannel and SIPTLSChannel only)</li>
+</ol>
+<p>The SIPChannel derived classes are fairly low-level in that they do not manage SIP transactions and SIP dialogs. Applications normally create a SIPChannel derived class and pass that object to a <a href="../api/SipLib.Channels.SipTransport.html">SipTransport</a> object. The SipTransport class provides methods for sending and receiving SIP messages as well as SIP message transaction management. See the article entitled <a href="SipTransportManagement.html">SIP Message Transport and Transaction Management</a></p>
+<h2 id="local-end-point-requirements">Local End Point Requirements</h2>
+<p>Each instance of a SIPChannel derived class binds to a specific local IP endpoint. The IP address of the local IP endpoint may be an IPv4 or an IPv6 address. The IPAddress component of the local IP endpoint must be a specific address, it may not be a general network address such as IPAddress.Any or IPAddress.IPv6Any (0.0.0.0 or 0:0:0:0:0:0:0:0)</p>
+<p>The local endpoint is passed as an IPEndPoint object in the constructor of each SIPChannel derived class.</p>
+<p>For each combination of IP network type (IPv4, IPv6) and protocol type (UDP, TCP, TLS) each instance of a SIPChannel derived class must have a unique IP address and port combination. The port number must be non-zero and must be a port that is not currently in use by the operating system, another application or service.</p>
+<h2 id="connection-management">Connection Management</h2>
+<p>The SIPTCPChannel and SIPTLSChannel classes maintain a list of persistent connections. Connections are represented by the <a href="../api/SipLib.Channels.SIPConnection.html">SIPConnection</a> class. Each SIPConnection object is used by the channel class for sending and receiving SIP message to a unique IP endpoint.</p>
+<p>Each instance of the SIPTCPChannel and SIPTLSChannel classes maintains a dictionary of up to 1000 connections. Each connection is uniquely identified by the string version of the remote IP endpoint (for excample: &quot;192.168.1.200:5060&quot;).</p>
+<p>Connections may be created by a remote client or by the SIP channel class.</p>
+<p>When the application calls the Send() method of a SIP channel class, the SIP channel class checks its dictionary of connections to see if an available SIPConnection object is available to send the SIP message. If an open connection is available, then the SIP channel class uses that SIPConnection to send the message. If a connection is not available yet, then the SIP channel class establishes a TCP or TLS connection to the remote endpoint, then sends the SIP message.</p>
+<p>Connections are maintained by each SIP channel class until one of the followng events occur.</p>
+<ol>
+<li>The connection is closed by the remote endpoint. The channel class fires an event called SIPConnectionDisconnected if this occurs.</li>
+<li>The connection is closed by the SIP channel class</li>
+<li>The SIP channel class detects an abnormal disconnect event. The channel class fires an event called SIPConnectionDisconnected if this occurs.</li>
+<li>The SIP channel class closes the connection due to lack of SIP message activity.</li>
+</ol>
+<p>Each SIP channel class closes all active connections when the Close() method is called.</p>
+<p>The SIP message inactivity interval is set in the software to 180 minutes. If no SIP messages are sent or received over a persistent SIP connection for longer than this interval, then the SIP channel class will automatically close the connection to that remote endpoint. The purpose of this inactivity timer is to automatically clean stale or inactive connections that may occur under unusual connection failure conditions. Applications can avoid automatic connection closures by periodically sending SIP OPTIONS messages to all remote endpoints.</p>
+<p>The number of TCP or TLS connections does not limit the number of SIP calls that an application can handled because each connection can handle multiple SIP calls simultaneously.</p>
+<h2 id="connection-security-features">Connection Security Features</h2>
+<p>The SIPChannel derived classes allow applications to implement security based on user defined access control lists and in the case of TLS channels, applications may implement mutual authentication using X.509 certificates.</p>
+<h3 id="connection-based-access-control-udp-tcp-tls">Connection Based Access Control (UDP, TCP, TLS)</h3>
+<p>SIPUDPChannel, SIPTCPChannel and SIPTLSChannel support user defined access control via a delegate method called AcceptConnection. The following shows the delegate type for the AcceptConnection callback function.</p>
+<pre><code>public delegate bool AcceptConnectionDelegate(SIPProtocolsEnum protocol,
+	IPEndPoint remoteEndPoint);
+</code></pre>
+<p>If the implemented AcceptConnectionDelegate returns false then the SIPChannel derived class will reject the connection request, else it will accept the connection request.</p>
+<p>SIPUDPChannel operates over UDP, which is a connectionless transport, so SIPUDPChannel calls the AcceptConnection delegate for every UDP packet that it receives.</p>
+<p>Perform the following steps to use connection control for a SIP channel class.</p>
+<ol>
+<li>Implement a AcceptConnectionDelegate in your call controller class or in another appropriate place in the application.</li>
+<li>Create an instance of a SIPChannel derived class.</li>
+<li>Pass the AcceptionConnection in the constructor of the SIPChannel derived class.</li>
+</ol>
+<p>The AcceptionConnection callback parameter of the SIPChannel derived classes defaults to null so the default operation is to accept all connections.</p>
+<p>An application can use the SIP protocol type and the IPEndPoint of the remote endpoint point to decide whether or not to accept the connection request. Applications are also free to implement a different AcceptConnectionDelegate method for each SIP channel object in the event that there are multiple SIP channels being used.</p>
+<h3 id="certificate-based-access-control-tls">Certificate Based Access Control (TLS)</h3>
+<p>The SIPTLSChannel class allows the class user (the application) to perform custom mutual authentication based on client and server X.509 certificates.</p>
+<p>Certificate based mutual authentication is controlled by the following three constructor parameters of the SIPTLSChannel class.</p>
+<ol>
+<li>The UseMutualAuth parameter of the class's constructor. This parameter defaults to true.</li>
+<li>The acceptClientCertificate callback parameter.</li>
+<li>The acceptServerCertificate callback parameter.</li>
+</ol>
+<p>If the UseMutualAuth constructor parameter is true, then the SIPTLSChannel class will only allow connection requests from clients that provide an X.509 certificate during the TLS connection handshake process. The SIPTLSChannel class will also provide its X.509 certificate during the TLS handshake process when it is connecting as a client.</p>
+<p>If the UseMutualAuth constructor parameter is false, then the SIPTLSChannel class will allow clients to connect even if they don't provide an X.509 certificate. Also, the SIPTLSChannel class will not provided its X.509 certificate when connecting as a client.</p>
+<p>The delegate type for the acceptClientCertificate and the acceptServerCertificate callback parameters is a AcceptCertificateDelegate as shown below.</p>
+<pre><code>public delegate bool AcceptCertificateDelegate(X509Certificate? certificate,
+    X509Chain? chain,
+    SslPolicyErrors? sslPolicyErrors);
+</code></pre>
+<p>If the acceptClientCertificate callback parameter is null then the SIPTLSChannel class will accept all client connection requests. If the acceptClientCertificate callback parameter is not null and returns true then the SIPTLSChannel class will accept the client's connection request. If this callback function returns false then the SIPTLSChannel will refuse the client's connection request.</p>
+<p>If the acceptServerCertificate callback parameter is null then the SIPTLSChannel class will allow connections to a server regardless of the server's certificate. If the acceptServerCertificate callback parameter is not null and returns true then the SIPTLSChannel class will allow the connection to the server. If this function returns false then the SIPTLSChannel class will block the connection to the server.</p>
+<h2 id="maximum-sip-message-sizes">Maximum SIP Message Sizes</h2>
+<p>The maximum SIP message that can be sent via UDP using the SIPUDPChannel class is 65547 (65535 minus 8 bytes for the UDP header and 20 bytes for the IP header). An attempt to send a message longer this limit will result in an ArgumentException.</p>
+<p>TCP and TLS are stream protocols. Ths maximum SIP message that may be sent using the SIPTCPChannel and SIPTLSChannel classes is 200,000 bytes in length. This is set within the software.</p>
+<h2 id="quality-of-service-qos-and-dscp">Quality of Service (QOS) and DSCP</h2>
+<p>Each SIPChannel derived class sets the Differentiated Services Code Point (DSCP) for IPv4 and IPv6 to a value of 0x03 for SIP signaling. Each IP packet that is sent is marked with this DSCP value. This applies to both Windows and Linux platforms.</p>
+<p>Section 2.7 of the document entitled &quot;National Emergency Number Association's (NENA) Standard for NG9-1-1&quot; specifies the default DSCP value of 0x03. See <a href="https://cdn.ymaws.com/www.nena.org/resource/resmgr/standards/nena-sta-010.3b-2021_i3_stan.pdf">NENA-STA-010.3b</a>.</p>
+<p>For SIPTCPChannel and SIPTLSChannel, the DSCP is set for each client or server connection. For SIPUDPChannel, the DSCP is sent for the UdpClient object that is used for sending SIP packets.</p>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/PhrSite/SipLibDocumentation/blob/master/articles/SipChannelClasses.md/#L1" class="contribution-link">Edit this page</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

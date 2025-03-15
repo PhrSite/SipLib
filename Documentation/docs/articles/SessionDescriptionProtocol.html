@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Introduction </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Introduction ">
+    
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.json">
+      <meta property="docfx:tocrel" content="toc.json">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+
+                <ul class="nav level1 navbar-nav">
+                      <li>
+                          <a href="../articles/intro.html" title="Articles">Articles</a>
+                      </li>
+                      <li>
+                          <a href="../api/index.html" title="Api Documentation">Api Documentation</a>
+                      </li>
+                </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div>
+              <div class="sidefilter">
+                <form class="toc-filter">
+                  <span class="glyphicon glyphicon-filter filter-icon"></span>
+                  <input type="text" id="toc_filter_input" placeholder="Enter here to filter..." onkeypress="if(event.keyCode==13) {return false;}">
+                </form>
+              </div>
+              <div class="sidetoc">
+                <div class="toc" id="toc">
+
+                  <ul class="nav level1">
+                    <li class="">
+                      <a href="intro.html" title="Introduction" class="">Introduction</a>
+                    </li>
+                    <li class="">
+                      <a href="SipTransportManagement.html" title="SIP Message Transport Management" class="">SIP Message Transport Management</a>
+                    </li>
+                    <li class="">
+                      <a href="SipChannelClasses.html" title="SIP Channel Classes" class="">SIP Channel Classes</a>
+                    </li>
+                    <li class="">
+                      <a href="WorkingWithSipMessages.html" title="Working with SIP Messages" class="">Working with SIP Messages</a>
+                    </li>
+                    <li class="active">
+                      <a href="SessionDescriptionProtocol.html" title="Session Description Protocol" class="active">Session Description Protocol</a>
+                    </li>
+                    <li class="">
+                      <a href="RealTimeProtocol.html" title="Real Time Protocol" class="">Real Time Protocol</a>
+                    </li>
+                    <li class="">
+                      <a href="RealTimeText.html" title="Real Time Text" class="">Real Time Text</a>
+                    </li>
+                    <li class="">
+                      <a href="MessageSessionRelayProtocol.html" title="Message Session Relay Protocol (MSRP)" class="">Message Session Relay Protocol (MSRP)</a>
+                    </li>
+                    <li class="">
+                      <a href="ConfigureSipLibLogging.html" title="SipLib Application Logging" class="">SipLib Application Logging</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="introduction">Introduction</h1>
+
+<p>The Session Description Protocol (SDP) is used in SIP applications for negotiating media sessions for multimedia calls. <a href="https://datatracker.ietf.org/doc/html/rfc8866">RFC 8866</a> describes the SDP.</p>
+<p>The SipLib.Sdp namespace provides classes for working with the Session Description Protocol.</p>
+<p>The <a href="../api/SipLib.Sdp.Sdp.html">Sdp</a> class represents a complete SDP media session. The Sdp class provides methods and properties for setting up parameters that describe the entire session. Each media stream or media type (audio, video, text, etc.) is represented by media description block within the SDP. The <a href="../api/SipLib.Sdp.MediaDescription.html">MediaDescription</a> class provides methods and properties for creating a media description and setting up prameters that describe the media stream.</p>
+<p>SIP clients and servers negotiate media sessions according to the offer/answer model described in <a href="https://www.ietf.org/rfc/rfc3264.txt">RFC 3264</a>. When a client wants to start a media session, it contructs an SDP text block that describes the session capabilities and the media capabilities that it can support. It then attaches the SDP text block to the body of a SIP INVITE request message and sends the INVITE request to a SIP server. The SIP server receives the SIP INVITE request and extracts the SDP text block and parses it. The server then builds its own SDP text block that describes the media session and media streams that it is willing to accept. It then sends this SDP text block to the client in the body of a SIP 200 OK response. The client and the server then setup their media streams and start sending media back and forth.</p>
+<p>This article shows how to use the classes in the SipLib.Sdp namespace to build and parse SDP data in order to support multimedia applications containing audio, text and video media.</p>
+<h1 id="building-an-sdp-offer">Building an SDP Offer</h1>
+<p>A client builds an SDP parameter block by performing the following steps.</p>
+<ol>
+<li>Create an Sdp object by using a constructor of the Sdp class.</li>
+<li>Set the session level parameters by using the properties of the Sdp class.</li>
+<li>Construct a MediaDescription object for each media type that it wishes to support for the session using one of the constructors of the MediaDescription class.</li>
+<li>Set the parameters of the media using the properties of the MediaDescription class.</li>
+<li>Add each MediaDescription object to the list of media of the Sdp object by calling the Sdp.Media.Add() method.</li>
+<li>Convert the Sdp object to a string by calling the Sdp.ToString() method of the Sdp class.</li>
+<li>Attach the SDP text block an INVITE SIPRequest object and send it to the server. The client can use the <a href="../api/SipLib.Body.SipBodyBuilder.html">SipBodyBuilder</a> class to do this. See <a href="WorkingWithSipMessages.html#building-sip-message-bodies">Building SIP Message Bodies</a>.</li>
+</ol>
+<p>The following code sample shows how to create a simple Sdp object that offers G.711 Mu-Law audio.</p>
+<pre><code>private Sdp BuildAudioSdp(IPAddress iPAddress, int Port, string UaName)
+{
+    Sdp AudioSdp = new Sdp(iPAddress, UaName);
+
+    MediaDescription AudSmd = new MediaDescription();
+    AudSmd.MediaType = &quot;audio&quot;;
+    AudSmd.Port = Port;
+    AudSmd.Transport = &quot;RTP/AVP&quot;;
+    AudSmd.PayloadTypes = new List&lt;int&gt;() { 0, 101 };
+    AudSmd.Attributes.Add(new SdpAttribute(&quot;fmtp&quot;, &quot;101 0-15&quot;));
+    AudSmd.RtpMapAttributes.Add(new RtpMapAttribute(0, &quot;PCMU&quot;, 8000));
+    AudSmd.RtpMapAttributes.Add(new RtpMapAttribute(101, &quot;telephone-event&quot;, 8000));
+
+    // Add the media description to the Sdp's Media list
+    AudioSdp.Media.Add(AudSmd);
+
+    return AudioSdp;
+}
+</code></pre>
+<p>The iPAddress parameter is the IP address (IPv4 or IPv6) that the client wants to receive audio samples at and will be sending audio samples from. The Port parameter is the destination and source UDP port number. The UaName parameter is a user provided name that will be used to identify the SDP session.</p>
+<p>If you call the above function with <code>Sdp sdp = BuildAudioSdp(IPAddress.Parse(&quot;192.168.1.100&quot;), 7000, &quot;MySession&quot;);</code> and then call <code>sdp.ToString()</code> the resulting SDP string will be:</p>
+<pre><code>v=0
+o=MySession 7324305794702971685 1 IN IP4 192.168.1.100
+s=MySession_2130495306
+c=IN IP4 192.168.1.100
+t=0 0
+m=audio 7000 RTP/AVP 0 101
+a=rtpmap:0 PCMU/8000
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+</code></pre>
+<h2 id="helper-functions-for-build-sdp-offers">Helper Functions for Build SDP Offers</h2>
+<p>The <a href="../api/SipLib.Sdp.SdpUtils.html">SdpUtils</a> class contains helper functions that can be used to simplify the process of building an SDP offer. For example, the code in the code sample shown in the previous section could be replaced with the following code.</p>
+<pre><code>Sdp sdp = SdpUtils.BuildSimpleAudioSdp(IPAddress.Parse(&quot;192.168.1.100&quot;), 7000,
+	&quot;MySession&quot;);
+</code></pre>
+<p>The SdpUtils class provides the following static functions for creating audio, Real Time Text (RTT) and video MediaDescription objects to assist in building an SDP offer.</p>
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CreateAudioMediaDescription()</td>
+<td>Creates a basic MediaDescription object for offerring G.711 Mu-Law audio media. The MediaDescription also includes an offer of telephone-event.</td>
+</tr>
+<tr>
+<td>CreateRttMediaDescription()</td>
+<td>Creates a basic MediaDescription object for offering Real Time Text (RTT, see <a href="https://datatracker.ietf.org/doc/html/rfc4103">RFC 4103</a>) media.</td>
+</tr>
+<tr>
+<td>CreateVideoMediaDescription()</td>
+<td>Builds a basic MediaDescription object for offering H.264 video using the Basic Level 1 video profile.</td>
+</tr>
+<tr>
+<td>CreateMsrpMediaDescription()</td>
+<td>Creates a basic MediaDescription object for offering Message Session Relay Protocol (MSRP, see RFC 4975).</td>
+</tr>
+</tbody>
+</table>
+<p>The following code sample shows how to use the above functions to add another media type to the SDP offer.</p>
+<pre><code>Sdp sdp = SdpUtils.BuildSimpleAudioSdp(IPAddress.Parse(&quot;192.168.1.100&quot;), 7000,
+	&quot;MySession&quot;);
+MediaDescription rttMd = SdpUtils.CreateRttMediaDescription(8000);
+sdp.Media.Add(rttMd);
+</code></pre>
+<h3 id="modifying-mediadescription-objects-created-with-the-helper-functions">Modifying MediaDescription Objects Created With the Helper Functions</h3>
+<h4 id="adding-media-types">Adding Media Types</h4>
+<p>It is easy to modify a MediaDescription object that was created with one of the SdpUtils helper functions. For instance, the following code sample shows how to A-Law audio to a MediaDescription CreateAudioMediaDescription() function.</p>
+<pre><code>MediaDescription audioMd = SdpUtils.CreateAudioMediaDescription(7000);
+audioMd.PayloadTypes.Add(8);
+audioMd.RtpMapAttributes.Add(new RtpMapAttribute(8, &quot;PCMA&quot;, 8000));
+string strMd = audioMd.ToString();
+</code></pre>
+<p>The above code produces the following media description text block.</p>
+<pre><code>m=audio 7000 RTP/AVP 0 101 8
+a=rtpmap:0 PCMU/8000
+a=rtpmap:101 telephone-event/8000
+a=rtpmap:8 PCMA/8000
+a=fmtp:101 0-15
+</code></pre>
+<h4 id="media-level-connection-information"><a name="MediaLevelConnectionInfo">Media Level Connection Information</a></h4>
+<p>There are situations where it is necessary to have the connection information for a media type be different from the connection information of the entire sessions. The following code shows how to do this.</p>
+<pre><code>Sdp sdp = SdpUtils.BuildSimpleAudioSdp(IPAddress.Parse(&quot;192.168.1.100&quot;), 7000,
+    &quot;MySession&quot;);
+sdp.Media[0].ConnectionData = new ConnectionData(IPAddress.Parse(&quot;192.168.200&quot;));
+string strSdp = sdp.ToString();
+</code></pre>
+<p>The above code produces the following SDP text block.</p>
+<pre><code>v=0
+o=MySession 6272624327141496333 1 IN IP4 192.168.1.100
+s=MySession_289783837
+c=IN IP4 192.168.1.100
+t=0 0
+m=audio 7000 RTP/AVP 0 101
+c=IN IP4 192.168.0.200
+a=rtpmap:0 PCMU/8000
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+</code></pre>
+<h3 id="adding-media-encryption-to-the-offer">Adding Media Encryption to the Offer</h3>
+<p>The SipLib class library supports media encryption for all media types that use the Real Time Protocol (RTP). This library supports two ways to negotiate encryption keys. With the Security Descriptor/Secure Real Time Protocol (SDES-SRTP), encryptions keys are negotiated using attributes in the negotiated media descriptions. With Datagram Transport Layer Security/Secure Real Time Protocol (DTLS-SRTP) cipher suites and encryption keys are negotiated using the DTLS algorithm.</p>
+<p>SDES-SRTP and DTLS-SRTP operate over UDP/RTP and may not be used for Message Session Relay Protocol (MSRP, see RFC 4975)  media because MSRP operates over TCP. Use the Transport Layer Security (TLS) transport mechanism for MSRP if encryption is required as described in <a href="#MsrpEncryption">Encryption for MSRP</a>, below.</p>
+<p>SDES-SRTP and DTLS-SRTP use the SRTP algorithm described in RFC 3711 and RFC 6811.</p>
+<p>Only one of these encryption methods should be offered for a MediaDescription.</p>
+<h4 id="sdessrtp-encryption">SDES/SRTP Encryption</h4>
+<p>The AddSdesSrtpEncryption() static method of the SdpUtils class can be used to configure a MediaDescription for audio, RTT or video for SDES-SRTP. The declaration of this method is as follows.</p>
+<pre><code>public static void AddSdesSrtpEncryption(MediaDescription mediaDescription);
+</code></pre>
+<p>This method adds an offer of the following crypto-suites.</p>
+<ol>
+<li>AES_256_CM_HMAC_SHA1_80 (RFC 6188)</li>
+<li>AES_CM_128_HMAC_SHA1_80 (RFC 3711, RFC 4568)</li>
+</ol>
+<h4 id="dtlssrtp-encryption">DTLS/SRTP Encryption</h4>
+<p>The AddDtlsSrtpEncryption() static method of the SdpUtils class can be used to configure a MediaDescription for audio, RTT or video for DTLS-SRTP. The declaration of this method is as follows.</p>
+<pre><code>public static void AddDtlsSrtp(MediaDescription mediaDescription, 
+    string fingerPrintAttribute);
+</code></pre>
+<p>The fingerPrintAttribute parameter is the fingerprint of the X.509 certificate that the client will use for the DTLS handshake. If you are using the <a href="../api/SipLib.Rtp.RtpChannel.html">RtpChannel</a> class for all RTP media, then it automatically creates a self-signed X.509 certificate. You can use the RtpChannel.CertificateFingerprint static property to get the correct value for the fingerPringAttribute parameter.</p>
+<h4 id="encryption-for-msrp"><a name="MsrpEncryption">Encryption for MSRP</a></h4>
+<p>The SDES-SRTP and DTLS-SRTP encryption methods cannot be used for MSRP because MSRP operates over TCP and not UDP/RTP. The CreateMsrpMediaDescription() method of the SdpUtils class can be used to media descriptions for un-encrypted or encrypted MSRP media offers. The declaration of this method is as follows.</p>
+<pre><code>public static MediaDescription CreateMsrpMediaDescription(IPAddress ipAddress, int Port,
+    bool UseTls, SetupType setupType = SetupType.active,
+    X509Certificate2? localCert = null);
+</code></pre>
+<p>To use TLS, set the UseTls parameter to true as shown below.</p>
+<pre><code>MediaDescription msrpMd = SdpUtils.CreateMsrpMediaDescription(IPAddress.
+    Parse(&quot;192.168.1.100&quot;), 5000, true, SetupType.active);
+string strMd = msrpMd.ToString();
+</code></pre>
+<p>The above code sample will produce the following media description text block.</p>
+<pre><code>m=message 5000 TCP/TLS/MSRP *
+a=accept-types:message/cpim text/plain
+a=setup:active
+a=path:msrps//192.168.1.100:5000/2683pldqnv;tcp
+</code></pre>
+<h1 id="building-an-sdp-answer">Building an SDP Answer</h1>
+<p>When a SIP server receives an INVITE request containing an offered SDP text block, it must parse offered SDP text block and build an SDP to send as an answer to the offered SDP. The contents of the SDP answer can depend on many factors such as:</p>
+<ol>
+<li>What media types is the application willing to accept (audio, video. MSRP, RTT)?</li>
+<li>What IP address is the SIP server going to use for receiving media?</li>
+<li>What audio codecs is the application willing to use?</li>
+<li>What video codecs is the application willing to use?</li>
+<li>What port numbers are available for the application to use for each media type?</li>
+</ol>
+<p>Given the answers to the above questions and the offered SDP the application can then build an SDP answer, but the logic to accomplish is somewhat complicated.</p>
+<p>The the Sdp.BuildAnswerSdp() static method provide a fairly simple way to build an SDP answer. The declaration of the Sdp.BuildAnswerSdp() method is:</p>
+<pre><code>public static Sdp BuildAnswerSdp(Sdp OfferedSdp, IPAddress address,
+    SdpAnswerSettings AnswerSettings)
+</code></pre>
+<p>The OfferedSdp parameter is the SDP that was received in an INVITE request. The address parameter is the IP address (IPv4 or IPv6) that the application wishes to use for receiving and sending media. This function sets the IP address in a c= parameter at the session level when it builds the answer SDP. This behavior can be overridden as described in <a href="#MediaLevelConnectionInfo">Media Level Connection Information</a> above.</p>
+<p>The <a href="../api/SipLib.Sdp.SdpAnswerSettings.html">SdpAnswerSettings</a> class contains various properties that specify how to answer an offered SDP. The application can construct an instance of this class and modify the properties according to how it wants to handle media. It then uses the instance of the SdpAnswerSetting class each time it needs to answer a call. The declaration of the constructor of this class is:</p>
+<pre><code>public SdpAnswerSettings(List&lt;string&gt; AudioCodecs, List&lt;string&gt; VideoCodecs,
+    string userName, string fingerprint, MediaPortManager portManager)
+</code></pre>
+<p>The following code sample shows how to construct an SdpAnswerSettings object with some commonly used settings.</p>
+<pre><code>SdpAnswerSettings Sas = new SdpAnswerSettings(new List&lt;string&gt; { &quot;PCMU&quot;, &quot;PCMA&quot; },
+    new List&lt;string&gt; { &quot;H264&quot; }, &quot;MySession&quot;, RtpChannel.CertificateFingerprint,
+    new MediaPortManager(new MediaPortSettings()));
+</code></pre>
+<p>The BuildAnswerSdp() method uses a <a href="../api/SipLib.Media.MediaPortManager.html">MediaPortManager</a> class object to assign unique UDP ports for each media type for each call. The reason for this is to easily allow a server to handle media for multiple calls simultaneously.</p>
+<p>The MediaPortManager class increments the port number by 2 for audio, video and RTT media to allow the application to use the RTCP on odd port numbers. The MediaPortManager class increments the port number by 1 for MSRP because RTCP is not used for MSRP media.</p>
+<p>The default constructor of the <a href="../api/SipLib.Media.MediaPortSettings.html">MediaPortSettings</a> class assigns the port settings for the different types of media as follows.</p>
+<table>
+<thead>
+<tr>
+<th>Media Type</th>
+<th>Starting Port</th>
+<th>Port Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>audio</td>
+<td>6000</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>video</td>
+<td>7000</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>text (RTT)</td>
+<td>8000</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>message (MSRP)</td>
+<td>9000</td>
+<td>1000</td>
+</tr>
+</tbody>
+</table>
+<p>The application can alter the port ranges for each media type by using the properties of the MediaPortSettings class.</p>
+<h1 id="rfc-8866-support-level">RFC 8866 Support Level</h1>
+<h2 id="session-level-parameters">Session Level Parameters</h2>
+<table>
+<thead>
+<tr>
+<th>SDP Parameter</th>
+<th>Required?</th>
+<th>Sdp Property Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v</td>
+<td>Yes</td>
+<td>Version</td>
+<td>int</td>
+<td>Version of the SDP protocol. Defaults to 0. This cannot be changed</td>
+</tr>
+<tr>
+<td>o</td>
+<td>Yes</td>
+<td>Origin</td>
+<td><a href="../api/SipLib.Sdp.Origin.html">Origin</a></td>
+<td>Originator and session identifier. The constructor of the Sdp class initializes this property.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Yes</td>
+<td>SessionName</td>
+<td>string</td>
+<td>Session Name. The constructor of the Sdp class initializes this property to a unique value.</td>
+</tr>
+<tr>
+<td>i</td>
+<td>No</td>
+<td>SessionInformation</td>
+<td>string</td>
+<td>Session Information. Optional, not generally used.</td>
+</tr>
+<tr>
+<td>u</td>
+<td>No</td>
+<td>Uri</td>
+<td>string</td>
+<td>URI of the session description. Optional.</td>
+</tr>
+<tr>
+<td>e</td>
+<td>No</td>
+<td>Email</td>
+<td>string</td>
+<td>E-mail address. Optional.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>No</td>
+<td>PhoneNumber</td>
+<td>string</td>
+<td>Phone Number. Optional.</td>
+</tr>
+<tr>
+<td>c</td>
+<td>No</td>
+<td>ConnectionData</td>
+<td><a href="../api/SipLib.Sdp.ConnectionData.html">ConnectionData</a></td>
+<td>Connection information. Required if not provided in all of the media description blocks, otherwise required.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>No</td>
+<td>Bandwidth</td>
+<td>string</td>
+<td>Bandwidth information for the session. Optional.</td>
+</tr>
+<tr>
+<td>k</td>
+<td>No</td>
+<td></td>
+<td></td>
+<td>Obsolete -- not supported</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Yes</td>
+<td>Timing</td>
+<td>string</td>
+<td>Timing information. The Sdp class sets this field to a default value to &quot;0 0&quot;. For the applications that the SipLib class library is intended for there is generally no reason to change the value of this field.</td>
+</tr>
+<tr>
+<td>r</td>
+<td>No</td>
+<td></td>
+<td></td>
+<td>Repeat times. Not supported by the Sdp class</td>
+</tr>
+<tr>
+<td>z</td>
+<td>No</td>
+<td></td>
+<td></td>
+<td>Time zone adjustment information. Not supported by the Sdp class</td>
+</tr>
+<tr>
+<td>a</td>
+<td>No</td>
+<td>Attributes</td>
+<td>List of <a href="../api/SipLib.Sdp.SdpAttribute.html">SdpAttribute</a> objects</td>
+<td>Session level attributes. The Sdp class initializes this field to an empty generic list of type SdpAttribute</td>
+</tr>
+<tr>
+<td>m</td>
+<td>Yes</td>
+<td>Media</td>
+<td>List of <a href="../api/SipLib.Sdp.MediaDescription.html">MediaDescription</a> objects</td>
+<td>Media description blocks. The Sdp class initializes this field to an empty generic list of type MediaDescription.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="media-level-parameters">Media Level Parameters</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required?</th>
+<th>MediaDescription Field Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>i</td>
+<td>No</td>
+<td></td>
+<td></td>
+<td>Media Title. Not supported by the MediaDescription class.</td>
+</tr>
+<tr>
+<td>c</td>
+<td>No</td>
+<td>ConnectionData</td>
+<td><a href="../api/SipLib.Sdp.ConnectionData.html">ConnectionData</a></td>
+<td>Connection information. Not required if provided at the session level.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>No</td>
+<td>Bandwidth</td>
+<td>string</td>
+<td>Bandwidth information for the media type.</td>
+</tr>
+<tr>
+<td>a</td>
+<td>No</td>
+<td>Attributes</td>
+<td>List of <a href="../api/SipLib.Sdp.SdpAttribute.html">SdpAttribute</a> objects</td>
+<td>Media level attributes. The MediaDescription class initializes this field to an empty generic list of type SdpAttribute</td>
+</tr>
+<tr>
+<td>k</td>
+<td>No</td>
+<td></td>
+<td></td>
+<td>Obsolete -- not supported</td>
+</tr>
+<tr>
+<td>a</td>
+<td>No</td>
+<td>Attributes</td>
+<td>List of <a href="../api/SipLib.Sdp.SdpAttribute.html">SdpAttribute</a> objects</td>
+<td>Media level attributes. The MediaDescription class initializes this field to an empty generic list of type SdpAttribute</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/PhrSite/SipLibDocumentation/blob/master/articles/SessionDescriptionProtocol.md/#L1" class="contribution-link">Edit this page</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
