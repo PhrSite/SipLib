@@ -1,6 +1,9 @@
 ﻿// From: https://github.com/naudio/NAudio/blob/master/NAudio.Core/Codecs/G722Codec.cs
 // 24 Jan 24 PHR
 
+// Revised: 2 Apr 25 PHR
+//          -- Changed from public scope to internal scope
+
 namespace SipLib.Media;
 
 /// <summary>
@@ -23,7 +26,7 @@ namespace SipLib.Media;
 /// Computer Science, Speech Group
 /// Chengxiang Lu and Alex Hauptmann
 /// </summary>
-public class G722Codec
+internal class G722Codec
 {
     /// <summary>
     /// hard limits to 16 bit samples
@@ -154,7 +157,7 @@ public class G722Codec
     /// <param name="inputG722Data"></param>
     /// <param name="inputLength">Number of bytes in input G722 data to decode</param>
     /// <returns>Number of samples written into output buffer</returns>
-    public int Decode(G722CodecState state, short[] outputBuffer, byte[] inputG722Data, int inputLength)
+    internal int Decode(G722CodecState state, short[] outputBuffer, byte[] inputG722Data, int inputLength)
     {
         int dlowt;
         int rlow;
@@ -324,7 +327,7 @@ public class G722Codec
     /// <param name="inputBuffer">PCM 16 bit samples to encode</param>
     /// <param name="inputBufferCount">Number of samples in the input buffer to encode</param>
     /// <returns>Number of encoded bytes written into output buffer</returns>
-    public int Encode(G722CodecState state, byte[] outputBuffer, short[] inputBuffer, int inputBufferCount)
+    internal int Encode(G722CodecState state, byte[] outputBuffer, short[] inputBuffer, int inputBufferCount)
     {
         int dlow;
         int dhigh;
@@ -486,7 +489,7 @@ public class G722Codec
 /// <summary>
 /// Stores state to be used between calls to Encode or Decode
 /// </summary>
-public class G722CodecState
+internal class G722CodecState
 {
     /// <summary>
     /// ITU Test Mode
@@ -525,7 +528,7 @@ public class G722CodecState
     /// Band
     /// </summary>
     /// <value></value>
-    public Band[] Band { get; private set; }
+    internal Band[] Band { get; private set; }
 
     /// <summary>
     /// In bit buffer
@@ -585,7 +588,7 @@ public class G722CodecState
 /// <summary>
 /// Band data for G722 Codec
 /// </summary>
-public class Band
+internal class Band
 {
     /// <summary>s</summary>
     /// <value></value>
@@ -632,7 +635,7 @@ public class Band
 /// G722 Flags
 /// </summary>
 [Flags]
-public enum G722Flags
+internal enum G722Flags
 {
     /// <summary>
     /// None

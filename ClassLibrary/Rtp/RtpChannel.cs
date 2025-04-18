@@ -835,9 +835,10 @@ public class RtpChannel
     }
 
     /// <summary>
-    /// Sends an RTP packet to the remote endpoint
+    /// Sends an RTP packet to the remote endpoint. If encryption is being used then the packet is encrypted before
+    /// it is sent.
     /// </summary>
-    /// <param name="rtpPacket"></param>
+    /// <param name="rtpPacket">RtpPacket to send.</param>
     public void Send(RtpPacket rtpPacket)
     {
         if (m_IsListening == false || m_ThreadsEnding == true)
@@ -845,10 +846,22 @@ public class RtpChannel
 
         RtpPacketSent ?.Invoke(rtpPacket);
 
-        byte[] encryptedPckt;
-        byte[] packetBytes = rtpPacket.PacketBytes;
         if (RtcpEnabled == true)
             m_RtpSentStaticsManager.Update(rtpPacket);
+
+        byte[] encryptedPckt = EncryptPacket(rtpPacket);
+        try
+        {
+            m_RtpUdpClient.Send(encryptedPckt, m_remoteRtpEndpoint);
+        }
+        catch (SocketException) { }
+        catch (Exception) { }
+    }
+
+    private byte[] EncryptPacket(RtpPacket rtpPacket)
+    {
+        byte[] encryptedPckt;
+        byte[] packetBytes = rtpPacket.PacketBytes;
 
         if (m_IsSdesSrtp == true)
             encryptedPckt = m_srtpEncryptor.EncryptRtpPacket(packetBytes);
@@ -857,12 +870,7 @@ public class RtpChannel
         else
             encryptedPckt = packetBytes;
 
-        try
-        {
-            m_RtpUdpClient.Send(encryptedPckt, m_remoteRtpEndpoint);
-        }
-        catch (SocketException) { }
-        catch (Exception) { }
+        return encryptedPckt!;
     }
 
     /// <summary>

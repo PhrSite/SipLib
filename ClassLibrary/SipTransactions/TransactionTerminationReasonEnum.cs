@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   TransactionTerminationReasonEnum.cs                     3 Aug 24 PHR
+//
+//  Revised: 12 Apr 25 PHR
+//           -- Added FinalResponseSent
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Transactions;
@@ -47,4 +50,9 @@ public enum TransactionTerminationReasonEnum
     /// forcefully terminated by the transaction manager.
     /// </summary>
     CancelRequestFailed,
+
+    /// <summary>
+    /// A final response was sent to an INVITE request. Used for a ServerInviteTransaction.
+    /// </summary>
+    FinalResponseSent,
 }

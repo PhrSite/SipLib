@@ -5,6 +5,9 @@
 //             -- Fixed DoTimedEvents() so that it updates m_TimerGStartTime when
 //                the Timer G interval has expired. This is only a problem if the
 //                transport protocol is UDP.
+//           12 Apr 25 PHR
+//             -- Added calls to NotifyTransactionUser() when a final response is sent
+//                so that the TransactionComplete delegate is called.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Channels;
@@ -63,6 +66,9 @@ public class ServerInviteTransaction : SipTransactionBase
             {
                 State = TransactionStateEnum.Terminated;
                 Terminated = true;
+                // 12 Apr 25 PHR
+                TerminationReason = TransactionTerminationReasonEnum.FinalResponseSent;
+                NotifyTransactionUser(Request, null, RemoteEndPoint);
             }
             else
                 // The transaction user already sent a 300 - 699 final response
@@ -79,6 +85,9 @@ public class ServerInviteTransaction : SipTransactionBase
         m_TimerHStartTime = Now;
         StateStartTime = Now;
         State = TransactionStateEnum.Completed;
+        // 12 Apr 25 PHR
+        TerminationReason = TransactionTerminationReasonEnum.FinalResponseSent;
+        NotifyTransactionUser(Request, null, RemoteEndPoint); 
     }
 
     /// <summary>
@@ -163,6 +172,7 @@ public class ServerInviteTransaction : SipTransactionBase
             {
                 State = TransactionStateEnum.Terminated;
                 StateStartTime = DateTime.Now;
+                NotifyTransactionUser(Request, null, RemoteEndPoint);   // 12 Apr 25 PHR
             }
             else if (response.StatusCode >= 300)
             {   // The transaction user sent a non-200 final response

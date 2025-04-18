@@ -1,17 +1,11 @@
 # Version History
 
-## v0.0.1 - 9 Sep 2024
+## v0.0.4 -- TBD
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
-| NA       |  New      | Initial version |
+| NA     | Change | SipLib.Media.G722Codec.cs -- Changed from public scope to internal scope |
+| NA     | Fix    | The ServerInviteTransaction class was not calling the TransactionComplete delegate when the transaction user sent a final response (>= 200) for the INVITE to the client endpoint. |
 
-## v0.0.2 - 16 Sep 2024
-| Issue No. | Change Type | Description |
-|--------|--------|-------|
-| NA       |  Change  | Added a "user" parameter to SipUtils.CreateMsrpMediaDescription(). Changed the setupType to be required. |
-| NA     | Change | Removed the OfferedSdp and AnsweredSdp parameters from MsrpConnection.CreateFromSdp() because they are not used. |
-| NA      | Change | SipLib.Msrp.MsrpConnection -- Added a new private method calld SendEmptySendRequest(). |
-| NA      | Change | SipLib.Msrp.MessageReceivedDelegate -- added the "from" parameter. |
 
 ## v0.0.3 - 14 Mar 2025
 | Issue No. | Change Type | Description |
@@ -37,5 +31,20 @@
 | NA     | Change   | Changed the target framework to .NET 9. |
 | NA     | Change   | Modified DtlsUtils.CreateSelfSignedCert() to use X509CertificateLoader.LoadCertificate() instead of using the X509Certificate2 constructor to load the X.509 certificate because this constructor is obsolete in .NET 9. |
 | NA     | Change   | Modified DtlsUtils.ConvertBouncyCert() to use X509CertificateLoader.LoadPkcs12() instead of using the of X509Certificate constructor to load the X.509 certificate because this construtor is obsolete in .NET 9. |
+
+## v0.0.2 - 16 Sep 2024
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA       |  Change  | Added a "user" parameter to SipUtils.CreateMsrpMediaDescription(). Changed the setupType to be required. |
+| NA     | Change | Removed the OfferedSdp and AnsweredSdp parameters from MsrpConnection.CreateFromSdp() because they are not used. |
+| NA      | Change | SipLib.Msrp.MsrpConnection -- Added a new private method calld SendEmptySendRequest(). |
+| NA      | Change | SipLib.Msrp.MessageReceivedDelegate -- added the "from" parameter. |
+
+## v0.0.1 - 9 Sep 2024
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA       |  New      | Initial version |
+
+
 
 
