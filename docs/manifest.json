@@ -11,26 +11,6 @@
       }
     },
     {
-      "type": "Conceptual",
-      "source_relative_path": "LICENSE.md",
-      "output": {
-        ".html": {
-          "relative_path": "LICENSE.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "README.md",
-      "output": {
-        ".html": {
-          "relative_path": "README.html"
-        }
-      },
-      "version": ""
-    },
-    {
       "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Body.BinaryBodyParser.yml",
       "output": {
@@ -3165,6 +3145,132 @@
       "IsMRef": true,
       "Title": "SipLib.Sdp",
       "Summary": "\n<p sourcefile=\"Namespaces/SipLib.Sdp.md\" sourcestartlinenumber=\"5\">Classes used for the Session Description Protocol (SDP, see RFC 8866).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.IncomingTestCall.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.IncomingTestCall.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.IncomingTestCall",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"1\">Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.IncomingTestCallManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.IncomingTestCallManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.IncomingTestCallManager",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCallManager.yml\" sourcestartlinenumber=\"1\">Class for managing NG9-1-1 incoming test calls.</p>\n<p>To use this class, construct an instance of it and then call the Start() method.</p>\n<p>Call the Shutdown() method when the application or the object that is using this class is shutting down.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.IncomingTestCallSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.IncomingTestCallSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.IncomingTestCallSettings",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCallSettings.yml\" sourcestartlinenumber=\"1\">The settings in this class determine how to handle an incoming test call request. See Section 9 of NENA-STA-010.3b.\nPsapSimulatorSrs.docx.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.OutgoingTestCallResults.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.OutgoingTestCallResults.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.OutgoingTestCallResults",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.OutgoingTestCallResults.yml\" sourcestartlinenumber=\"1\">Class for reporting the results of an NG9-1-1 test call that uses only one media type. The media type is typically audio.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.SimpleOutgoingAudioTestCall",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml\" sourcestartlinenumber=\"1\">This class creates and sends a single NG9-1-1 audio test call to a test call target and reports the results of the test call.\nThe format of the audio sent is G.711 Mu-Law (PCMU) and each sample is silence.</p>\n<p>\nTo use this class, call the constructor and then call the DoTestCall() method. DoTestCall is an awaitable Task that\nreturns the results of the test call.\n</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.TestCallConstants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.TestCallConstants.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.TestCallConstants",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.TestCallConstants.yml\" sourcestartlinenumber=\"1\">Constants relating to NG9-1-1 test calls</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.TestCallDurationUnitsEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.TestCallDurationUnitsEnum.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.TestCallDurationUnitsEnum",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.TestCallDurationUnitsEnum.yml\" sourcestartlinenumber=\"1\">Enumeration for the DurationUnits property of the IncomingTestCallSettings class.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.TestCallEndedDelegateType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.TestCallEndedDelegateType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls.TestCallEndedDelegateType",
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.TestCallEndedDelegateType.yml\" sourcestartlinenumber=\"1\">Delegate type for the TestCallEnded event of the IncomingTestCall class.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.TestCalls.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.TestCalls.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.TestCalls",
+      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"5\">Classes for sending and receiving NG9-1-1 test calls.</p>\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"7\">RFC 6849 describes SIP extensions for performing loopback test calls. Section 9 of NENA-STA-010.3b specifies the requirements for test calls that relate to use within the NG9-1-1 environment.</p>\n"
     },
     {
       "type": "ManagedReference",

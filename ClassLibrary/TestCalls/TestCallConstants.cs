@@ -7,7 +7,7 @@ namespace SipLib.TestCalls;
 /// <summary>
 /// Constants relating to NG9-1-1 test calls
 /// </summary>
-internal class TestCallConstants
+public class TestCallConstants
 {
     /// <summary>
     /// URN value that identifies an NG9-1-1 test call. If an INVITE is for a test call the Request URI (RURI) will

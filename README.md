@@ -78,6 +78,7 @@ This directory contains the project files for the SipLib project and the followi
 | RtpCrypto | Classes that implement the SDES-SRTP protocols used in secure RTP. |
 | Sdp | Classes used for the Session Description Protocol (SDP, see RFC 8866) |
 | SipTransactions | Classes for managing SIP transactions |
+| TestCalls | Classes for sending and receiving NG9-1-1 test calls. RFC 6849 describes SIP extensions for performing loopback test calls. Section 9 of NENA-STA-010.3b specifies the requirements for test calls that relate to use within the NG9-1-1 environment. |
 | Threading | Contains base classes for threading and task scheduling such as QueuedActionWorkerTask. |
 | Video | Classes for packing and unpacking video frames for use in RTP channels for H.264 and VP8 video. The H.264 and VP8 codecs are not included here. |
 

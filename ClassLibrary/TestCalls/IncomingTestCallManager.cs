@@ -62,6 +62,12 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
     /// <param name="sipTransport">SipTransport that the request was received on.</param>
     public void ProcessTestCallInviteRequest(SIPRequest sipRequest, SIPEndPoint remoteEndPoint, SipTransport sipTransport)
     {
+        if (m_TestCallSettings.Enable == false)
+        {
+            RejectTestCall(sipRequest, remoteEndPoint, sipTransport);
+            return;
+        }
+
         if (IncomingTestCall.TestCallIsValid(sipRequest) == false)
         {
             RejectTestCall(sipRequest, remoteEndPoint, sipTransport);

@@ -55,7 +55,7 @@ public class IncomingTestCall : QueuedActionWorkerTask
     /// <param name="answerSettings">Settings that determine how to answer the test call INVITE requet.</param>
     /// <param name="testCallSettings">Settings that determine how to handle the test call.</param>
     public IncomingTestCall(SIPRequest invite, SIPEndPoint remoteEndPoint, SipTransport transport, SdpAnswerSettings answerSettings, IncomingTestCallSettings
-        testCallSettings) : base(100)
+        testCallSettings) : base(5)
     {
         m_Invite = invite;
         m_RemoteSipEndPoint = remoteEndPoint;
@@ -65,13 +65,14 @@ public class IncomingTestCall : QueuedActionWorkerTask
         CallId = invite.Header.CallId;
         m_LastSequenceNumber = m_Invite.Header.CSeq;
         m_OkResponse = new SIPResponse(SIPResponseStatusCodesEnum.Ok, "OK", m_Transport.SipChannel.SIPChannelEndPoint);
+
     }
 
     internal void StartCall()
     {
-        Start();
-
-        EnqueueWork(() => { DoStartCall(); });
+        //Start();
+        //EnqueueWork(() => { DoStartCall(); });
+        DoStartCall();
     }
 
     private void DoStartCall()
@@ -162,6 +163,8 @@ public class IncomingTestCall : QueuedActionWorkerTask
 
             rtpChannel.StartListening();
         }
+
+        Start();
     }
 
     private RtpChannel? m_AudioRtpChannel = null;
@@ -205,6 +208,8 @@ public class IncomingTestCall : QueuedActionWorkerTask
             else if (testCallParams.PacketLoopbackType == PacketLoopbackTypeEnum.EncapsulatedPacketLoopback)
                 SendEncapsulatedRtpPacket(receivedPacket, channel, testCallParams);
         }
+
+        testCallParams.IncrementPacketsReceived();
 
         EnqueueWork(() => DoTimedEvents());     // Reduce the sampling latency
     }
@@ -296,6 +301,12 @@ public class IncomingTestCall : QueuedActionWorkerTask
         if (m_TestCallSettings.DurationUnits == TestCallDurationUnitsEnum.DurationUnitsPackets)
         {
             bool PacketCountsReached = true;
+            // For debug only
+            if (m_ParamsList.Count == 0)
+            {
+
+            }
+
             foreach (TestCallParams tcp in m_ParamsList)
             {
                 if (tcp.PacketsReceived < m_TestCallSettings.DurationPackets)
@@ -311,10 +322,14 @@ public class IncomingTestCall : QueuedActionWorkerTask
                     // TODO: Log this error
                 }
             }
+            else
+                Done = true;
         }
         else
         {   // Call duration in minutes
-            if ((Now - m_CallStartTime).TotalMinutes >= m_TestCallSettings.DurationMinutes)
+            //if ((Now - m_CallStartTime).TotalMinutes >= m_TestCallSettings.DurationMinutes)
+            //    Done = true;
+            if ((Now - m_CallStartTime).TotalMilliseconds >= (m_TestCallSettings.DurationMinutes * 60000))
                 Done = true;
         }
 
