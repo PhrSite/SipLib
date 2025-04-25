@@ -38,7 +38,7 @@ public static class MuLawEncoder
     /// </summary>
     /// <param name="sample">16 bit PCM sample</param>
     /// <returns>mu-law encoded byte</returns>
-    public static byte LinearToMuLawSample(short sample)
+    internal static byte LinearToMuLawSample(short sample)
     {
         int sign = (sample >> 8) & 0x80;
         if (sign != 0)

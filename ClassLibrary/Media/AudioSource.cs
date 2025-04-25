@@ -100,7 +100,7 @@ public class AudioSource
     }
 
     /// <summary>
-    /// 
+    /// Stops transmission of RTP packets. This is the same as Pause.
     /// </summary>
     public void Stop()
     {

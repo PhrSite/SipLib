@@ -1580,6 +1580,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.AudioMediaUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.AudioMediaUtils.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.AudioMediaUtils",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.AudioMediaUtils.yml\" sourcestartlinenumber=\"1\">Utility function relating to audio media handling</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.AudioSampleData.yml",
       "output": {
         ".html": {
@@ -1762,6 +1776,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.G729Decoder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.G729Decoder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.G729Decoder",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.G729Decoder.yml\" sourcestartlinenumber=\"1\">Decodes G.729 encoded data into 16-bit PCM audio samples</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.G729Encoder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.G729Encoder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.G729Encoder",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.G729Encoder.yml\" sourcestartlinenumber=\"1\">Encodes 16-bit PCM audio samples into G.729 RTP payload bytes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.HighResolutionTimer.yml",
       "output": {
         ".html": {
@@ -1829,6 +1871,20 @@
       "IsMRef": true,
       "Title": "SipLib.Media.IAudioSampleSource",
       "Summary": "<p sourcefile=\"api/SipLib.Media.IAudioSampleSource.yml\" sourcestartlinenumber=\"1\">Interface that must be implemented for each type of an audio sample source.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.Ld8k.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.Ld8k.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.Ld8k",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.Ld8k.yml\" sourcestartlinenumber=\"1\">This is the base class for the G729Encoder and G729Decoder classes. This class only contains definitions of constants\nused for encoding and decoding G.729 audio data.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2010,7 +2066,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media",
-      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"5\">Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722.</p>\n"
+      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"5\">Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722.</p>\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">See <a href=\"~/articles/SipLibMedia.md\" sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">The SipLib.Media Namespace</a>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3158,7 +3214,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.TestCalls.IncomingTestCall",
-      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"1\">Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"1\">Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.\nSee <a href=\"~/articles/SipLibTestCalls.md\" sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"2\">The SipLib.TestCalls Namespace</a></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3270,7 +3326,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.TestCalls",
-      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"5\">Classes for sending and receiving NG9-1-1 test calls.</p>\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"7\">RFC 6849 describes SIP extensions for performing loopback test calls. Section 9 of NENA-STA-010.3b specifies the requirements for test calls that relate to use within the NG9-1-1 environment.</p>\n"
+      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"5\">Classes for sending and receiving NG9-1-1 test calls.</p>\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"7\">RFC 6849 describes SIP extensions for performing loopback test calls. Section 9 of NENA-STA-010.3b specifies the requirements for test calls that relate to use within the NG9-1-1 environment.</p>\n<p sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"9\">See <a href=\"~/articles/SipLibTestCalls.md\" sourcefile=\"Namespaces/SipLib.TestCalls.md\" sourcestartlinenumber=\"9\">The SipLib.TestCalls Namespace</a>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3726,6 +3782,26 @@
       "output": {
         ".html": {
           "relative_path": "articles/SipChannelClasses.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/SipLibMedia.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/SipLibMedia.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/SipLibTestCalls.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/SipLibTestCalls.html"
         }
       },
       "version": ""

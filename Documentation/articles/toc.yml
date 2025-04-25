@@ -14,5 +14,9 @@
   href: RealTimeText.md
 - name: Message Session Relay Protocol (MSRP)
   href: MessageSessionRelayProtocol.md
+- name: The SipLib.Media Namespace
+  href: SipLibMedia.md
+- name: The SipLib.TestCalls Namespace
+  href: SipLibTestCalls.md
 - name: SipLib Application Logging
   href: ConfigureSipLibLogging.md

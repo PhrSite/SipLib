@@ -22,6 +22,7 @@ public delegate void TestCallEndedDelegateType(string callId);
 
 /// <summary>
 /// Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.
+/// See [The SipLib.TestCalls Namespace](~/articles/SipLibTestCalls.md)
 /// </summary>
 public class IncomingTestCall : QueuedActionWorkerTask
 {

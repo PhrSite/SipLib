@@ -6,7 +6,7 @@ namespace SipLib.Media;
 /// <summary>
 /// A-law encoder
 /// </summary>
-public static class ALawEncoder
+internal static class ALawEncoder
 {
     private const int cBias = 0x84;
     private const int cClip = 32635;

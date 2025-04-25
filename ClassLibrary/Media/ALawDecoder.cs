@@ -8,7 +8,7 @@ namespace SipLib.Media;
 /// based on code from:
 /// http://hazelware.luggle.com/tutorials/mulawcompression.html
 /// </summary>
-public class ALawDecoder
+internal class ALawDecoder
 {
     /// <summary>
     /// only 512 bytes required, so just use a lookup

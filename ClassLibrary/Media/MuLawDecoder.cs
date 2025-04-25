@@ -7,7 +7,7 @@ namespace SipLib.Media;
 /// mu-law decoder based on code from:
 /// http://hazelware.luggle.com/tutorials/mulawcompression.html
 /// </summary>
-public static class MuLawDecoder
+internal static class MuLawDecoder
 {
     /// <summary>
     /// only 512 bytes required, so just use a lookup

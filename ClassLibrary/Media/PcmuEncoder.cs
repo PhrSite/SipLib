@@ -32,7 +32,7 @@ public class PcmuEncoder : IAudioEncoder
     }
 
     /// <summary>
-    /// Gets the sample rate in samples/second
+    /// Gets the input audio sample rate in samples/second
     /// </summary>
     /// <value></value>
     public int SampleRate

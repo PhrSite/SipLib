@@ -1034,6 +1034,10 @@ public class Sdp
                 {   // G.722
                     Result = new RtpMapAttribute(9, "G722", 8000);
                 }
+                else if (pt == 18)
+                {   // G.729
+                    Result = new RtpMapAttribute(18, "G729", 8000);
+                }
             }
         }
 

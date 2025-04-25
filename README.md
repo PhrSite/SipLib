@@ -70,7 +70,7 @@ This directory contains the project files for the SipLib project and the followi
 | Documentation | This directory contains the DOCFX configuration files, documentation markdown source files and other files required to generate the on-line documentation web pages. |
 | Dtls | Classes required to support encryption and decryption of media (audio, video and Real Time Text) using the Datagram Transport Layer Security  DTLS specified in RFC 5763 and RFC 5764. |
 | Logging | Contains a static class called SipLogger that the classes in this class library can use for logging application messages. |
-| Media | Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722. |
+| Media | Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722 and G.729. |
 | Msrp | Message Session Relay Protocol (MSRP, see RFC 4975) related classes. |
 | Network | Contains a utility helper class for performing network protocol related functions. |
 | RealTimeText | Classes for the Real Time Text (RTT, see RFC 4103) protocol. |
