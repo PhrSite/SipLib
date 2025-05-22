@@ -23,6 +23,7 @@
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <Version>0.0.3</Version>
     <PackageTags>SIP;NG9-1-1</PackageTags>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,6 +41,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NoWarn>1701;1702;8600;8602;8618;8604</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Media\AmrWb\Testing\**" />
+    <EmbeddedResource Remove="Media\AmrWb\Testing\**" />
+    <None Remove="Media\AmrWb\Testing\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\README.md">

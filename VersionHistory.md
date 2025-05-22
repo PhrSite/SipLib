@@ -8,7 +8,8 @@
 | NA     | Addition | Added the SipLib.TestCalls namespace. This namespace contains classes for handling incoming and outgoing NG9-1-1 test calls. |
 | NA     | Change   | SipLib.Media namespase -- changed the following classes from public to internal: MuLawEncoder, MuLawDecoder, ALawDecoder, ALawEncoder. |
 | NA     | Addition | SipLib.Media namespace -- Added the AudioMediaUtils class. |
-| NA     | Addition | SipLIb.Media namespace -- Added the G729Encoder and G729Decoder classes. |
+| NA     | Addition | SipLib.Media namespace -- Added the G729Encoder and G729Decoder classes. |
+| NA     | Addition | SipLib.Media namespace -- Added the AmrWbEncoder and AmrWbDecoder classes |
 
 
 ## v0.0.3 - 14 Mar 2025

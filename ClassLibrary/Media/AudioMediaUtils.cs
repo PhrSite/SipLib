@@ -37,6 +37,9 @@ public static class AudioMediaUtils
                     case "G729":
                         encoder = new G729Encoder();
                         break;
+                    case "AMR-WB":
+                        encoder = new AmrWbEncoder();
+                        break;
                 }
 
                 if (encoder != null)
@@ -88,6 +91,9 @@ public static class AudioMediaUtils
                         break;
                     case "G729":
                         decoder = new G729Decoder();
+                        break;
+                    case "AMR-WB":
+                        decoder = new AmrWbDecoder();
                         break;
                 }
 

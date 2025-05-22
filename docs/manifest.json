@@ -12,6 +12,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/AmrWbLib.AmrWb.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/AmrWbLib.AmrWb.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "AmrWbLib.AmrWb",
+      "Summary": "<p sourcefile=\"api/AmrWbLib.AmrWb.yml\" sourcestartlinenumber=\"1\">Class for encoding and decoding Advanced Multi-Rate Wide Band data.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/AmrWbLib.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/AmrWbLib.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "AmrWbLib",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Body.BinaryBodyParser.yml",
       "output": {
         ".html": {
@@ -1549,6 +1577,34 @@
       "IsMRef": true,
       "Title": "SipLib.Media.ALawEncoder",
       "Summary": "<p sourcefile=\"api/SipLib.Media.ALawEncoder.yml\" sourcestartlinenumber=\"1\">A-law encoder</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.AmrWbDecoder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.AmrWbDecoder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.AmrWbDecoder",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.AmrWbDecoder.yml\" sourcestartlinenumber=\"1\">Class for decoding AMR-WB encoded audio data into 16-bit linear PCM samples</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.AmrWbEncoder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.AmrWbEncoder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.AmrWbEncoder",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.AmrWbEncoder.yml\" sourcestartlinenumber=\"1\">Class for encoding linear 16-bit PCM samples into AMR-WB data.</p>\n"
     },
     {
       "type": "ManagedReference",
