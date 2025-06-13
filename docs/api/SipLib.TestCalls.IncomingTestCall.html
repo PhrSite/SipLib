@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class IncomingTestCall ">
     
-    <meta name="description" content="Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849. See The SipLib.TestCalls Namespace">
+    <meta name="description" content="Class for handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849. See The SipLib.TestCalls Namespace">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -510,6 +510,9 @@
                           <li class="">
                             <a href="SipLib.Media.RtpEncryptionEnum.html" title="RtpEncryptionEnum" class="">RtpEncryptionEnum</a>
                           </li>
+                          <li class="">
+                            <a href="SipLib.Media.SilenceAudioSampleSource.html" title="SilenceAudioSampleSource" class="">SilenceAudioSampleSource</a>
+                          </li>
                         </ul>
                     </li>
                     <li class="">
@@ -907,7 +910,7 @@
 
 
   <h1 id="SipLib_TestCalls_IncomingTestCall" data-uid="SipLib.TestCalls.IncomingTestCall" class="text-break">Class IncomingTestCall</h1>
-  <div class="markdown level0 summary"><p>Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.
+  <div class="markdown level0 summary"><p>Class for handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.
 See <a href="../articles/SipLibTestCalls.html">The SipLib.TestCalls Namespace</a></p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -1020,11 +1023,12 @@ See <a href="../articles/SipLibTestCalls.html">The SipLib.TestCalls Namespace</a
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_TestCalls_IncomingTestCall_DoTimedEvents.md&amp;value=---%0Auid%3A%20SipLib.TestCalls.IncomingTestCall.DoTimedEvents%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/IncomingTestCall.cs/#L294">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/IncomingTestCall.cs/#L293">View Source</a>
   </span>
   <a id="SipLib_TestCalls_IncomingTestCall_DoTimedEvents_" data-uid="SipLib.TestCalls.IncomingTestCall.DoTimedEvents*"></a>
   <h4 id="SipLib_TestCalls_IncomingTestCall_DoTimedEvents" data-uid="SipLib.TestCalls.IncomingTestCall.DoTimedEvents">DoTimedEvents()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Checks to see if its time to terminate the incoming test call.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1034,64 +1038,15 @@ See <a href="../articles/SipLibTestCalls.html">The SipLib.TestCalls Namespace</a
   <div><a class="xref" href="SipLib.Threading.QueuedActionWorkerTask.html#SipLib_Threading_QueuedActionWorkerTask_DoTimedEvents">QueuedActionWorkerTask.DoTimedEvents()</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_TestCalls_IncomingTestCall_IsNg911TestCall_SipLib_Core_SIPRequest_.md&amp;value=---%0Auid%3A%20SipLib.TestCalls.IncomingTestCall.IsNg911TestCall(SipLib.Core.SIPRequest)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/IncomingTestCall.cs/#L441">View Source</a>
-  </span>
-  <a id="SipLib_TestCalls_IncomingTestCall_IsNg911TestCall_" data-uid="SipLib.TestCalls.IncomingTestCall.IsNg911TestCall*"></a>
-  <h4 id="SipLib_TestCalls_IncomingTestCall_IsNg911TestCall_SipLib_Core_SIPRequest_" data-uid="SipLib.TestCalls.IncomingTestCall.IsNg911TestCall(SipLib.Core.SIPRequest)">IsNg911TestCall(SIPRequest)</h4>
-  <div class="markdown level1 summary"><p>Returns true if the SIP request is an INVITE for an NG9-1-1 test call</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool IsNg911TestCall(SIPRequest sipRequest)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="SipLib.Core.SIPRequest.html">SIPRequest</a></td>
-        <td><span class="parametername">sipRequest</span></td>
-        <td><p>Incoming SIP Request</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p>Returns true if the INVITE is for a NG9-1-1 test call or false if it is not.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_TestCalls_IncomingTestCall_Shutdown.md&amp;value=---%0Auid%3A%20SipLib.TestCalls.IncomingTestCall.Shutdown%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/IncomingTestCall.cs/#L255">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/IncomingTestCall.cs/#L253">View Source</a>
   </span>
   <a id="SipLib_TestCalls_IncomingTestCall_Shutdown_" data-uid="SipLib.TestCalls.IncomingTestCall.Shutdown*"></a>
   <h4 id="SipLib_TestCalls_IncomingTestCall_Shutdown" data-uid="SipLib.TestCalls.IncomingTestCall.Shutdown">Shutdown()</h4>
-  <div class="markdown level1 summary"><p>This method must be called after the test call has ended or when the application is shutting down.</p>
+  <div class="markdown level1 summary"><p>This method must be called after the test call has ended or when the application is shutting down. If this method
+is called when the test call is still active, then the test call is terminated before shutting down.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>

@@ -118,6 +118,9 @@
                       <a href="SipLibMedia.html" title="The SipLib.Media Namespace" class="">The SipLib.Media Namespace</a>
                     </li>
                     <li class="">
+                      <a href="SipLibVideo.html" title="The SipLib.Video Namespace" class="">The SipLib.Video Namespace</a>
+                    </li>
+                    <li class="">
                       <a href="SipLibTestCalls.html" title="The SipLib.TestCalls Namespace" class="">The SipLib.TestCalls Namespace</a>
                     </li>
                     <li class="">
@@ -134,9 +137,48 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="real-time-text">Real Time Text</h1>
 
-<p>The Real Time Text protocol (RTT, see RFC 4103) is used in NG9-1-1 to allow deaf or hard of hearing callers to communicate with 911 call takers.</p>
+<p>The Real Time Text protocol (RTT, see RFC 4103) is used in NG9-1-1 to allow deaf or hard of hearing callers to communicate with 911 call takers using text messages. Text characters are typically sent one character at a time and displayed immediately, one character at a time.</p>
 <p>The SipLib.RealTimeText namespace provides two classes for working with RTT media. The <a href="../api/SipLib.RealTimeText.RttSender.html">RttSender</a> class is for sending RTT media and the <a href="../api/SipLib.RealTimeText.RttReceiver.html">RttReceiver</a> class is for receiving RTT media.</p>
 <p>The <a href="https://github.com/PhrSite/SipLib/tree/master/Samples/RTT">Samples/RTT</a> directory in the SipLib GitHub repository contains two sample programs that demonstrate how to use the RttSender and the RttReceiver classes.</p>
+<h1 id="using-the-rttsender-class"><a name="UsingRttSender">Using The RttSender Class</a></h1>
+<p>The RttSender class allows an application to sent text characters to the remote party of a call using the RTT protocol.</p>
+<p>The procedure for using this class is:</p>
+<ol>
+<li>Construct an instance of the RttSender class and store it with the call object</li>
+<li>Call the Start() method of RttSender object.</li>
+</ol>
+<p>When the call ends, the application must call the Stop() method of the RttSender object.</p>
+<p>The declaration of the RttSender's constructor is:</p>
+<pre><code>public RttSender(RttParameters Rp, RttRtpSendDelegate sender);
+</code></pre>
+<p>The <a href="../api/SipLib.RealTimeText.RttParameters.html">RttParameters</a> parameter contains the negotiated RTT protocol parameters such as the RTP payload types, redundancy level and the maximum number of characters per second that may be sent, etc... The RttParameters object may be constructed  from the negotiated MediaDescription object with the static FromMediaDescription() method of the RttParameters class.</p>
+<pre><code>public static RttParameters? FromMediaDescription(MediaDescription mediaDescription;
+</code></pre>
+<p>The MediaDescription parameter is the negotiated or answered media description. If the application is the client, then this is the MediaDescription object for RTT that it received from the server. If the application is the server, then this is the MediaDescription object for RTT that it sent to the client.</p>
+<p>The declaration of RttRtpSendDelegate delegate type is:</p>
+<pre><code>public delegate void RttRtpSendDelegate(RtpPacket rtpPckt);
+</code></pre>
+<p>This is typically the Send() method of the RtpChannel class. For instance, if the RtpChannel that was created for the RTT media for a call is named &quot;rtpChannel&quot;, then the value of this parameter should be &quot;rtpChannel.Send&quot;.</p>
+<p>The application sends characters with the SendMessage() method of the RttSender class.</p>
+<pre><code>public void SendMessage(string message);
+</code></pre>
+<p>An application is generally expected to send characters one at a time as the user types them. However, there are cases in which it is desirable to send stored text messages. The length of the message may be one or more characters. The maximum length of a message depends on the negotiated maximum character rate (CPS) and whether or not redundancy is being used.</p>
+<p>If CPS is 0 (no rate restriction) and redundancy is being used then the maximum length is 1024 characters. If CPS is 0 and redundancy is not being used then the maximum length is the maximum size of a RTP UDP packet. If CPS is greater than 0 then characters are sent one at a time so there is no length restriction. The SendMessage() method will truncate the message to the maximum value allowed if the message is too long.</p>
+<h1 id="using-the-rttreceiver-class"><a name="UsingRttReceiver">Using the RttReceiver Class</a></h1>
+<p>To use this class, create an instance of it and hook the RttCharacters received event.</p>
+<p>The declaration of the constructor to user is:</p>
+<pre><code>public RttReceiver(RttParameters rttParams, RtpChannel rtpChannel, string source);
+</code></pre>
+<p>The <a href="../api/SipLib.RealTimeText.RttParameters.html">RttParameters</a> parameter contains the negotiated RTT protocol parameters such as the RTP payload types, redundancy level and the maximum number of characters per second that may be sent, etc... The RttParameters object may be constructed  from the negotiated MediaDescription object with the static FromMediaDescription() method of the RttParameters class.</p>
+<pre><code>public static RttParameters? FromMediaDescription(MediaDescription mediaDescription;
+</code></pre>
+<p>The MediaDescription parameter is the negotiated or answered media description. If the application is the client, then this is the MediaDescription object for RTT that it received from the server. If the application is the server, then this is the MediaDescription object for RTT that it sent to the client.</p>
+<p>The parameter called rtpChannel must be the RtpChannel that was created to handle RTT media for the call.</p>
+<p>The source parameter should be a string that identifies the remote party. This can be something like &quot;Caller&quot; or &quot;John Doe&quot;.</p>
+<p>The declaration of the delegate for the RttCharactersReceived event is as follows:</p>
+<pre><code>public delegate void RttCharactersReceivedDelegate(string RxChars, string Source);
+</code></pre>
+<p>The RxChars paramter contains the characters that were received. The Source paramter identifies the sender of the characters.</p>
 
 </article>
           </div>

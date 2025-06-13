@@ -37,8 +37,9 @@ using System.Net;
 namespace SipLib.Core;
 
 /// <summary>
-/// Implements the SIP URI concept from the SIP RFC3261. This class also handles URIs for
-/// http, https, ws, wss, msrp, msrps and im schemes.
+/// Implements the SIP URI concept from the SIP RFC 3261. This class also handles URIs for
+/// http, https, ws, wss, msrp, msrps, cid and im schemes. This class also handles URNs that will appear in the
+/// SIP request line for NG9-1-1 applications.
 /// </summary>
 public class SIPURI
 {

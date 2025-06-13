@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class AudioDestination ">
     
-    <meta name="description" content="This class receives audio RTP packets from an RtpChannel, decodes them and sends them to an audio destination by calling a delegate function that processes the received audio samples.  The clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.">
+    <meta name="description" content="This class receives audio RTP packets from an RtpChannel, decodes them and sends them to an audio destination by calling a delegate function that processes the received audio samples.  The clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.  See The AudioDestination Class for a description of how to use this class.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -510,6 +510,9 @@
                           <li class="">
                             <a href="SipLib.Media.RtpEncryptionEnum.html" title="RtpEncryptionEnum" class="">RtpEncryptionEnum</a>
                           </li>
+                          <li class="">
+                            <a href="SipLib.Media.SilenceAudioSampleSource.html" title="SilenceAudioSampleSource" class="">SilenceAudioSampleSource</a>
+                          </li>
                         </ul>
                     </li>
                     <li class="">
@@ -912,6 +915,7 @@ by calling a delegate function that processes the received audio samples.</p>
 <p>
 The clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.
 </p>
+<p>See <a href="../articles/SipLibMedia.html#AudioDestinationClass">The AudioDestination Class</a> for a description of how to use this class.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -956,7 +960,7 @@ The clock rate (sample rate) of the audio handled by this class must be either 8
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Media_AudioDestination__ctor_SipLib_Sdp_MediaDescription_SipLib_Media_IAudioDecoder_SipLib_Rtp_RtpChannel_SipLib_Media_AudioDestinationDelegate_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.AudioDestination.%23ctor(SipLib.Sdp.MediaDescription%2CSipLib.Media.IAudioDecoder%2CSipLib.Rtp.RtpChannel%2CSipLib.Media.AudioDestinationDelegate%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L59">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L62">View Source</a>
   </span>
   <a id="SipLib_Media_AudioDestination__ctor_" data-uid="SipLib.Media.AudioDestination.#ctor*"></a>
   <h4 id="SipLib_Media_AudioDestination__ctor_SipLib_Sdp_MediaDescription_SipLib_Media_IAudioDecoder_SipLib_Rtp_RtpChannel_SipLib_Media_AudioDestinationDelegate_System_Int32_" data-uid="SipLib.Media.AudioDestination.#ctor(SipLib.Sdp.MediaDescription,SipLib.Media.IAudioDecoder,SipLib.Rtp.RtpChannel,SipLib.Media.AudioDestinationDelegate,System.Int32)">AudioDestination(MediaDescription, IAudioDecoder, RtpChannel, AudioDestinationDelegate?, int)</h4>
@@ -1006,7 +1010,8 @@ null then RTP packets are ignored.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">DestinationSampleRate</span></td>
-        <td><p>Sample rate expected by the destination handler</p>
+        <td><p>Sample rate expected by the destination handler. Must be 8000 or 16000
+samples per second.</p>
 </td>
       </tr>
     </tbody>
@@ -1022,7 +1027,8 @@ null then RTP packets are ignored.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
-        <td><p>Thrown if the audio clock rate is not 8000 or 16000.</p>
+        <td><p>Thrown if the audio clock rate is not 8000 or 16000, or if the
+DestinationSampleRate is not 8000 or 16000.</p>
 </td>
       </tr>
     </tbody>
@@ -1034,7 +1040,7 @@ null then RTP packets are ignored.</p>
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Media_AudioDestination_SetDestinationHandler_SipLib_Media_AudioDestinationDelegate_.md&amp;value=---%0Auid%3A%20SipLib.Media.AudioDestination.SetDestinationHandler(SipLib.Media.AudioDestinationDelegate)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L160">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L166">View Source</a>
   </span>
   <a id="SipLib_Media_AudioDestination_SetDestinationHandler_" data-uid="SipLib.Media.AudioDestination.SetDestinationHandler*"></a>
   <h4 id="SipLib_Media_AudioDestination_SetDestinationHandler_SipLib_Media_AudioDestinationDelegate_" data-uid="SipLib.Media.AudioDestination.SetDestinationHandler(SipLib.Media.AudioDestinationDelegate)">SetDestinationHandler(AudioDestinationDelegate?)</h4>
@@ -1071,7 +1077,7 @@ received RTP packets will be ignored but DTMF events will still be processed.</p
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Media_AudioDestination_DtmfDigitReceived.md&amp;value=---%0Auid%3A%20SipLib.Media.AudioDestination.DtmfDigitReceived%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L46">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L47">View Source</a>
   </span>
   <h4 id="SipLib_Media_AudioDestination_DtmfDigitReceived" data-uid="SipLib.Media.AudioDestination.DtmfDigitReceived">DtmfDigitReceived</h4>
   <div class="markdown level1 summary"><p>This event is fired when the end of a DTMF event is detected. This event is fired only once for
@@ -1109,7 +1115,7 @@ each detected DTMF event even though multiple RTP packets for the same event may
                     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Media_AudioDestination.md&amp;value=---%0Auid%3A%20SipLib.Media.AudioDestination%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L30" class="contribution-link">View Source</a>
+                    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Media/AudioDestination.cs/#L31" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

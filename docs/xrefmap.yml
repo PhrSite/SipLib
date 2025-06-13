@@ -12797,6 +12797,19 @@ references:
   commentId: F:SipLib.Media.AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE
   fullName: SipLib.Media.AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE
   nameWithType: AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE
+- uid: SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
+  name: SupportedAudioCodecs
+  href: api/SipLib.Media.AudioMediaUtils.html#SipLib_Media_AudioMediaUtils_SupportedAudioCodecs
+  commentId: P:SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
+  fullName: SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
+  nameWithType: AudioMediaUtils.SupportedAudioCodecs
+- uid: SipLib.Media.AudioMediaUtils.SupportedAudioCodecs*
+  name: SupportedAudioCodecs
+  href: api/SipLib.Media.AudioMediaUtils.html#SipLib_Media_AudioMediaUtils_SupportedAudioCodecs_
+  commentId: Overload:SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
+  isSpec: "True"
+  fullName: SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
+  nameWithType: AudioMediaUtils.SupportedAudioCodecs
 - uid: SipLib.Media.AudioSampleData
   name: AudioSampleData
   href: api/SipLib.Media.AudioSampleData.html
@@ -12879,48 +12892,19 @@ references:
   fullName.vb: SipLib.Media.AudioSource.New
   nameWithType: AudioSource.AudioSource
   nameWithType.vb: AudioSource.New
-- uid: SipLib.Media.AudioSource.Pause
-  name: Pause()
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_Pause
-  commentId: M:SipLib.Media.AudioSource.Pause
-  fullName: SipLib.Media.AudioSource.Pause()
-  nameWithType: AudioSource.Pause()
-- uid: SipLib.Media.AudioSource.Pause*
-  name: Pause
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_Pause_
-  commentId: Overload:SipLib.Media.AudioSource.Pause
+- uid: SipLib.Media.AudioSource.ClearAudioSampleSource
+  name: ClearAudioSampleSource()
+  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_ClearAudioSampleSource
+  commentId: M:SipLib.Media.AudioSource.ClearAudioSampleSource
+  fullName: SipLib.Media.AudioSource.ClearAudioSampleSource()
+  nameWithType: AudioSource.ClearAudioSampleSource()
+- uid: SipLib.Media.AudioSource.ClearAudioSampleSource*
+  name: ClearAudioSampleSource
+  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_ClearAudioSampleSource_
+  commentId: Overload:SipLib.Media.AudioSource.ClearAudioSampleSource
   isSpec: "True"
-  fullName: SipLib.Media.AudioSource.Pause
-  nameWithType: AudioSource.Pause
-- uid: SipLib.Media.AudioSource.Resume
-  name: Resume()
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_Resume
-  commentId: M:SipLib.Media.AudioSource.Resume
-  fullName: SipLib.Media.AudioSource.Resume()
-  nameWithType: AudioSource.Resume()
-- uid: SipLib.Media.AudioSource.Resume*
-  name: Resume
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_Resume_
-  commentId: Overload:SipLib.Media.AudioSource.Resume
-  isSpec: "True"
-  fullName: SipLib.Media.AudioSource.Resume
-  nameWithType: AudioSource.Resume
-- uid: SipLib.Media.AudioSource.SendAudioSamples(System.Int16[],System.Int32)
-  name: SendAudioSamples(short[], int)
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_SendAudioSamples_System_Int16___System_Int32_
-  commentId: M:SipLib.Media.AudioSource.SendAudioSamples(System.Int16[],System.Int32)
-  name.vb: SendAudioSamples(Short(), Integer)
-  fullName: SipLib.Media.AudioSource.SendAudioSamples(short[], int)
-  fullName.vb: SipLib.Media.AudioSource.SendAudioSamples(Short(), Integer)
-  nameWithType: AudioSource.SendAudioSamples(short[], int)
-  nameWithType.vb: AudioSource.SendAudioSamples(Short(), Integer)
-- uid: SipLib.Media.AudioSource.SendAudioSamples*
-  name: SendAudioSamples
-  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_SendAudioSamples_
-  commentId: Overload:SipLib.Media.AudioSource.SendAudioSamples
-  isSpec: "True"
-  fullName: SipLib.Media.AudioSource.SendAudioSamples
-  nameWithType: AudioSource.SendAudioSamples
+  fullName: SipLib.Media.AudioSource.ClearAudioSampleSource
+  nameWithType: AudioSource.ClearAudioSampleSource
 - uid: SipLib.Media.AudioSource.SendDtmfEvent(SipLib.Rtp.DtmfEventEnum)
   name: SendDtmfEvent(DtmfEventEnum)
   href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_SendDtmfEvent_SipLib_Rtp_DtmfEventEnum_
@@ -12934,6 +12918,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Media.AudioSource.SendDtmfEvent
   nameWithType: AudioSource.SendDtmfEvent
+- uid: SipLib.Media.AudioSource.SetAudioSampleSource(SipLib.Media.IAudioSampleSource)
+  name: SetAudioSampleSource(IAudioSampleSource)
+  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_SetAudioSampleSource_SipLib_Media_IAudioSampleSource_
+  commentId: M:SipLib.Media.AudioSource.SetAudioSampleSource(SipLib.Media.IAudioSampleSource)
+  fullName: SipLib.Media.AudioSource.SetAudioSampleSource(SipLib.Media.IAudioSampleSource)
+  nameWithType: AudioSource.SetAudioSampleSource(IAudioSampleSource)
+- uid: SipLib.Media.AudioSource.SetAudioSampleSource*
+  name: SetAudioSampleSource
+  href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_SetAudioSampleSource_
+  commentId: Overload:SipLib.Media.AudioSource.SetAudioSampleSource
+  isSpec: "True"
+  fullName: SipLib.Media.AudioSource.SetAudioSampleSource
+  nameWithType: AudioSource.SetAudioSampleSource
 - uid: SipLib.Media.AudioSource.Start
   name: Start()
   href: api/SipLib.Media.AudioSource.html#SipLib_Media_AudioSource_Start
@@ -14664,6 +14661,63 @@ references:
   commentId: F:SipLib.Media.RtpEncryptionEnum.SdesSrtp
   fullName: SipLib.Media.RtpEncryptionEnum.SdesSrtp
   nameWithType: RtpEncryptionEnum.SdesSrtp
+- uid: SipLib.Media.SilenceAudioSampleSource
+  name: SilenceAudioSampleSource
+  href: api/SipLib.Media.SilenceAudioSampleSource.html
+  commentId: T:SipLib.Media.SilenceAudioSampleSource
+  fullName: SipLib.Media.SilenceAudioSampleSource
+  nameWithType: SilenceAudioSampleSource
+- uid: SipLib.Media.SilenceAudioSampleSource.#ctor
+  name: SilenceAudioSampleSource()
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource__ctor
+  commentId: M:SipLib.Media.SilenceAudioSampleSource.#ctor
+  name.vb: New()
+  fullName: SipLib.Media.SilenceAudioSampleSource.SilenceAudioSampleSource()
+  fullName.vb: SipLib.Media.SilenceAudioSampleSource.New()
+  nameWithType: SilenceAudioSampleSource.SilenceAudioSampleSource()
+  nameWithType.vb: SilenceAudioSampleSource.New()
+- uid: SipLib.Media.SilenceAudioSampleSource.#ctor*
+  name: SilenceAudioSampleSource
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource__ctor_
+  commentId: Overload:SipLib.Media.SilenceAudioSampleSource.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Media.SilenceAudioSampleSource.SilenceAudioSampleSource
+  fullName.vb: SipLib.Media.SilenceAudioSampleSource.New
+  nameWithType: SilenceAudioSampleSource.SilenceAudioSampleSource
+  nameWithType.vb: SilenceAudioSampleSource.New
+- uid: SipLib.Media.SilenceAudioSampleSource.AudioSamplesReady
+  name: AudioSamplesReady
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource_AudioSamplesReady
+  commentId: E:SipLib.Media.SilenceAudioSampleSource.AudioSamplesReady
+  fullName: SipLib.Media.SilenceAudioSampleSource.AudioSamplesReady
+  nameWithType: SilenceAudioSampleSource.AudioSamplesReady
+- uid: SipLib.Media.SilenceAudioSampleSource.Start
+  name: Start()
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource_Start
+  commentId: M:SipLib.Media.SilenceAudioSampleSource.Start
+  fullName: SipLib.Media.SilenceAudioSampleSource.Start()
+  nameWithType: SilenceAudioSampleSource.Start()
+- uid: SipLib.Media.SilenceAudioSampleSource.Start*
+  name: Start
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource_Start_
+  commentId: Overload:SipLib.Media.SilenceAudioSampleSource.Start
+  isSpec: "True"
+  fullName: SipLib.Media.SilenceAudioSampleSource.Start
+  nameWithType: SilenceAudioSampleSource.Start
+- uid: SipLib.Media.SilenceAudioSampleSource.Stop
+  name: Stop()
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource_Stop
+  commentId: M:SipLib.Media.SilenceAudioSampleSource.Stop
+  fullName: SipLib.Media.SilenceAudioSampleSource.Stop()
+  nameWithType: SilenceAudioSampleSource.Stop()
+- uid: SipLib.Media.SilenceAudioSampleSource.Stop*
+  name: Stop
+  href: api/SipLib.Media.SilenceAudioSampleSource.html#SipLib_Media_SilenceAudioSampleSource_Stop_
+  commentId: Overload:SipLib.Media.SilenceAudioSampleSource.Stop
+  isSpec: "True"
+  fullName: SipLib.Media.SilenceAudioSampleSource.Stop
+  nameWithType: SilenceAudioSampleSource.Stop
 - uid: SipLib.Msrp
   name: SipLib.Msrp
   href: api/SipLib.Msrp.html
@@ -21923,19 +21977,6 @@ references:
   isSpec: "True"
   fullName: SipLib.TestCalls.IncomingTestCall.DoTimedEvents
   nameWithType: IncomingTestCall.DoTimedEvents
-- uid: SipLib.TestCalls.IncomingTestCall.IsNg911TestCall(SipLib.Core.SIPRequest)
-  name: IsNg911TestCall(SIPRequest)
-  href: api/SipLib.TestCalls.IncomingTestCall.html#SipLib_TestCalls_IncomingTestCall_IsNg911TestCall_SipLib_Core_SIPRequest_
-  commentId: M:SipLib.TestCalls.IncomingTestCall.IsNg911TestCall(SipLib.Core.SIPRequest)
-  fullName: SipLib.TestCalls.IncomingTestCall.IsNg911TestCall(SipLib.Core.SIPRequest)
-  nameWithType: IncomingTestCall.IsNg911TestCall(SIPRequest)
-- uid: SipLib.TestCalls.IncomingTestCall.IsNg911TestCall*
-  name: IsNg911TestCall
-  href: api/SipLib.TestCalls.IncomingTestCall.html#SipLib_TestCalls_IncomingTestCall_IsNg911TestCall_
-  commentId: Overload:SipLib.TestCalls.IncomingTestCall.IsNg911TestCall
-  isSpec: "True"
-  fullName: SipLib.TestCalls.IncomingTestCall.IsNg911TestCall
-  nameWithType: IncomingTestCall.IsNg911TestCall
 - uid: SipLib.TestCalls.IncomingTestCall.Shutdown
   name: Shutdown()
   href: api/SipLib.TestCalls.IncomingTestCall.html#SipLib_TestCalls_IncomingTestCall_Shutdown
@@ -22019,6 +22060,19 @@ references:
   isSpec: "True"
   fullName: SipLib.TestCalls.IncomingTestCallManager.IsActiveTestCall
   nameWithType: IncomingTestCallManager.IsActiveTestCall
+- uid: SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall(SipLib.Core.SIPRequest)
+  name: IsNg911TestCall(SIPRequest)
+  href: api/SipLib.TestCalls.IncomingTestCallManager.html#SipLib_TestCalls_IncomingTestCallManager_IsNg911TestCall_SipLib_Core_SIPRequest_
+  commentId: M:SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall(SipLib.Core.SIPRequest)
+  fullName: SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall(SipLib.Core.SIPRequest)
+  nameWithType: IncomingTestCallManager.IsNg911TestCall(SIPRequest)
+- uid: SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall*
+  name: IsNg911TestCall
+  href: api/SipLib.TestCalls.IncomingTestCallManager.html#SipLib_TestCalls_IncomingTestCallManager_IsNg911TestCall_
+  commentId: Overload:SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall
+  isSpec: "True"
+  fullName: SipLib.TestCalls.IncomingTestCallManager.IsNg911TestCall
+  nameWithType: IncomingTestCallManager.IsNg911TestCall
 - uid: SipLib.TestCalls.IncomingTestCallManager.ProcessTestCallByeRequest(SipLib.Core.SIPRequest,SipLib.Core.SIPEndPoint,SipLib.Transactions.SipTransport)
   name: ProcessTestCallByeRequest(SIPRequest, SIPEndPoint, SipTransport)
   href: api/SipLib.TestCalls.IncomingTestCallManager.html#SipLib_TestCalls_IncomingTestCallManager_ProcessTestCallByeRequest_SipLib_Core_SIPRequest_SipLib_Core_SIPEndPoint_SipLib_Transactions_SipTransport_

@@ -118,6 +118,9 @@
                       <a href="SipLibMedia.html" title="The SipLib.Media Namespace" class="active">The SipLib.Media Namespace</a>
                     </li>
                     <li class="">
+                      <a href="SipLibVideo.html" title="The SipLib.Video Namespace" class="">The SipLib.Video Namespace</a>
+                    </li>
+                    <li class="">
                       <a href="SipLibTestCalls.html" title="The SipLib.TestCalls Namespace" class="">The SipLib.TestCalls Namespace</a>
                     </li>
                     <li class="">
@@ -134,7 +137,11 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="the-siplibmedia-namespace">The SipLib.Media Namespace</h1>
 
-<h2 id="audio">Audio</h2>
+<p>The SipLib.Media namespace contains classes for working with audio media. This namespace includes classes for encoding and decoding audio (codec classes) and classes for sending and receiving audio data in RTP packets over RtpChannels.</p>
+<p>The <a href="SipLibVideo.html">SipLib.Video</a> namespace contains classes for working with video media.</p>
+<p>The <a href="RealTimeText.html">SipLib.RealTimeText</a> namespace provides classes for working with Real Time Text (RTT) media.</p>
+<p>The <a href="MessageSessionRelayProtocol.html">SipLib.Msrp</a> namespace provides classes for working with Message Session Rely Protocol (MSRP) text media.</p>
+<h1 id="audio-codecs">Audio Codecs</h1>
 <p>The SipLib.Media namespace provides the following classes for encoding and decoding audio sample data.</p>
 <table>
 <thead>
@@ -142,6 +149,8 @@
 <th>Codec Type</th>
 <th>Encoder Class</th>
 <th>Decoder Class</th>
+<th>Clock Rate (Sample Rate in samples/second)</th>
+<th>Bit Rate (kbits/second)</th>
 </tr>
 </thead>
 <tbody>
@@ -149,24 +158,205 @@
 <td>G.711 PCMU</td>
 <td><a href="../api/SipLib.Media.PcmuEncoder.html">PcmuEncoder</a></td>
 <td><a href="../api/SipLib.Media.PcmuDecoder.html">PcmuDecoder</a></td>
+<td>8000</td>
+<td>64</td>
 </tr>
 <tr>
 <td>G.711 PCMA</td>
 <td><a href="../api/SipLib.Media.PcmaEncoder.html">PcmaEncoder</a></td>
 <td><a href="../api/SipLib.Media.PcmaDecoder.html">PcmaDecoder</a></td>
+<td>8000</td>
+<td>64</td>
 </tr>
 <tr>
 <td>G.722</td>
 <td><a href="../api/SipLib.Media.G722Encoder.html">G722Encoder</a></td>
 <td><a href="../api/SipLib.Media.G722Decoder.html">G722Decoder</a></td>
+<td>8000/16000 (see Note 1)</td>
+<td>64</td>
 </tr>
 <tr>
 <td>G.729</td>
 <td><a href="../api/SipLib.Media.G729Encoder.html">G729Encoder</a></td>
 <td><a href="../api/SipLib.Media.G729Decoder.html">G729Decoder</a></td>
+<td>8000</td>
+<td>8</td>
+</tr>
+<tr>
+<td>AMR-WB</td>
+<td><a href="../api/SipLib.Media.AmrWbEncoder.html">AmrWbEncoder</a></td>
+<td><a href="../api/SipLib.Media.AmrWbDecoder.html">AmrWbDecoder</a></td>
+<td>16000</td>
+<td>6.60, 8.85, 12.65, 14.25, 15.85, 18.25, 19.85, 23.05, 23.85 (see Note 2)</td>
 </tr>
 </tbody>
 </table>
+<p>Notes:</p>
+<ol>
+<li>The sample rate of the G.722 codec is 16000 but the clock rate used in the SDP media description is 8000.</li>
+<li>The AmrWbDecoder automatcially adapts to the bit rate of the data it receives. The AmrWbEncoder operates at a fixed bit rate of 12.65 kbits/second (mode 2). Mode 2 is generally considered to deliver toll quality audio.</li>
+</ol>
+<h1 id="the-audiosource-class"><a name="AudioSourceClass">The AudioSource Class</a></h1>
+<p>The <a href="../api/SipLib.Media.AudioSource.html">AudioSource</a> class performs the following tasks.</p>
+<ol>
+<li>Receives blocks of linear 16-bit Pulse Code Modulated (PCM) audio samples.</li>
+<li>Encodes each block of linear audio samples.</li>
+<li>Builds RTP packets containing the encoded sample data and sends them using an RtpChannel channel object.</li>
+<li>Receives DTMF digits from the application.</li>
+<li>Builds RTP packets containing DTMF events (per RFC 4733) and sends them using an RtpChannel object.</li>
+</ol>
+<p>An application can create an instance of this class once a SIP call dialog has been established as follows.</p>
+<pre><code>IAudioEncoder? encoder = AudioMediaUtils.GetAudioEncoder(AudioAnswerMd);
+AudioSource audioSource = new AudioSource(AudioAnswerMd, encoder, rtpChannel);
+</code></pre>
+<p>In the above code sample, the AudioAnswerMd parameter is the instance of a <a href="../api/SipLib.Sdp.MediaDescription.html">MediaDescription</a> object that was used to answer the offer of audio media. If the application is a client then this is the MediaDescription that the client received from the server. If the application is the server, then this is the MediaDescription that it sent to the client.</p>
+<p>The rtpChannel parameter is the instance of an <a href="../api/SipLib.Rtp.RtpChannel.html">RtpChannel</a> object that was created to handle audio for the call.</p>
+<p>Applications should store the instance of the AudioSource class with the instance of the call object.</p>
+<p>The next step is to provide the AudioSource object with a audio sample source by calling the SetAudioSampleSource() method.</p>
+<pre><code>public void SetAudioSampleSource(IAudioSampleSource audioSampleSource);
+</code></pre>
+<p>The source of audio samples that are sent to the remote endpoint can change during the call. For instance, the source can be set to the microphone of a PC when the call is initially answered but then changed to a music on hold (MOH) source when the call is put on-hold. It can then be changed back to the microphone when call hold is terminated. This can be done by calling the SetAudioSampleSource() method with different classes that implement the <a href="../api/SipLib.Media.IAudioSampleSource.html">IAudioSampleSource</a> interface.</p>
+<p>When the audio session ends (i.e., the call ends), the application must perform the following steps.</p>
+<ol>
+<li>Call the ClearAudioSampleSource() method of the AudioSource class</li>
+<li>Call the Stop method of the IAudioSampleSource interface</li>
+</ol>
+<p>To use a class that implements the <a href="../api/SipLib.Media.IAudioSampleSource.html">IAudioSampleSource</a> interface:</p>
+<ol>
+<li>Create an instance of the class.</li>
+<li>Pass the instance of the class to the AudioSource object by calling the AudioSource.SetAudioSampleSource() method.</li>
+<li>Call the Start() method of the IAudioSampleSource interface.</li>
+</ol>
+<p>Classes that implement the IAudioSampleSource interface must provide audio samples with the following characteristics.</p>
+<ul>
+<li>Sample Format: 16-bit linear</li>
+<li>Sample Rate: 8000 or 16000 samples/second</li>
+<li>Number of Channels: 1</li>
+</ul>
+<p>The AudioSource class will automatically convert the sample rate of the samples provided by the IAudioSampleSource interface to the sample rate required by the encoer object used to encode samples send via the RtpChannel.</p>
+<p>When the IAudioSampleSource object is no longer required, the application must call its Stop() method.</p>
+<p>The IAudioSampleSource interface has an event called AudioSamplesReady. The declaration of this event is:</p>
+<pre><code>public delegate void AudioSamplesReadyDelegate(short[] NewSamples, int SampleRate);
+</code></pre>
+<p>The AudioSource class hooks this event when the application calls its SetAudioSampleSource() method. Classes that implement the IAudioSampleSource interface fire this event every 20 milliseconds to provide the AudioSource class with new samples to send in RTP packets.</p>
+<h2 id="microphone-audio-source">Microphone Audio Source</h2>
+<p>In most applications there is a need to acquire audio from a microphone and send it to the remote party of a call. However the SipLib class library does not provide a built-in implementation of the IAudioSampleSource interface that acquires audio from a microphone because such an implementation is very operating system specific.</p>
+<h2 id="built-in-audio-sample-sources">Built-In Audio Sample Sources</h2>
+<h3 id="the-fileaudiosource-class"><a name="FileAudioSource">The FileAudioSource Class</a></h3>
+<p>The <a href="../api/SipLib.Media.FileAudioSource.html">FileAudioSource</a> class plays audio sample data that was read from a recording file. This class is intended for uses in applications that need to play a pre-recorded message to a caller. It can also be used for playing music-on-hold recordings. This is a simple audio source that simply loops around to the beginning of a sample array when it reaches the end of its sample array.</p>
+<p>Perform the following steps to use the FileAudioSource class.</p>
+<ol>
+<li>Call the constructor</li>
+<li>Pass the new instance of the FileAudioSource object to the AudioSource class via the SetAudioSampleSource() method.</li>
+<li>Call the Start() method of the FileAudioSource object.</li>
+</ol>
+<p>Call the Stop() method of the FileAudioSource object when the audio session ends, or when the FileAudioSource object is no longer needed.</p>
+<p>The declaration of the constructor of the FileAudioSource class is:</p>
+<pre><code>public FileAudioSource(AudioSampleData audioSampleData, HighResolutionTimer? highResolutionTimer);
+</code></pre>
+<p>The <a href="../api/SipLib.Media.HighResolutionTimer.html">HighResolutionTimer</a> parameter is optional. If a high resolution timer is not provided then the FileAudioSource class creates and uses a System.Threading.Timer object for each instance of the FileAudioSource class.</p>
+<p>In most applications a System.Threading.Timer class is adequate. Within a 16 RTP packet window (320 milliseconds) the average jitter will be a few milliseconds. However the maximum jitter may be as high as 10-15 milliseconds.</p>
+<p>The HighResolutionTimer uses a single dedicated, high priority thread to generate periodic events. This timer may be shared with multiple instances of the FileAudioSource class. The maximum jitter of the HighResolutionTimer class is typically less than one millisecond and the average jitter can be as low as 0.1 milliseconds. The disadvantage of this class is that it consumes a lot of CPU time.</p>
+<p>The <a href="../api/SipLib.Media.AudioSampleData.html">AudioSampleData</a> class provides a fixed length array of audio sample values and a property called SampleRate that specifies the sample rate in samples per second. The method of reading audio samples from a file is operating system specific. The SipLib class library does not provide in classes to do this.</p>
+<p>A single instance of the AudioSampleData class can be used by multiple instances of the FileAudioSouce class.</p>
+<p>The following code sample shows how to create AudioSampleData object from a WAVE file in Windows using the <a href="https://github.com/naudio/NAudio">NAudio</a> class library.</p>
+<pre><code>using NAudio.Wave;
+
+public static AudioSampleData ReadWaveFile(string FilePath)
+{
+    short[] Samples;
+    if (File.Exists(FilePath) == false)
+    {
+        throw new FileNotFoundException($&quot;Wave file: '{FilePath}' not found&quot;);
+    }
+
+    WaveFileReader Wfr = new WaveFileReader(FilePath);
+    WaveFormat waveFormat = Wfr.WaveFormat;
+    if (waveFormat == null || waveFormat.Channels != 1 || (waveFormat.SampleRate != 8000 &amp;&amp;
+        waveFormat.SampleRate != 16000) || waveFormat.BitsPerSample != 16)
+    {
+        throw new ArgumentException($&quot;Invalid wave file format for file: '{FilePath}'&quot;);
+    }
+
+    byte[] buffer = new byte[Wfr.Length];
+    Wfr.ReadExactly(buffer);
+    Samples = new short[Wfr.SampleCount];
+
+    MemoryStream memoryStream = new MemoryStream(buffer);
+    BinaryReader binaryReader = new BinaryReader(memoryStream);
+    for (long i = 0; i &lt; Wfr.Length / 2; i++)
+        Samples[i] = binaryReader.ReadInt16();
+
+    binaryReader.Dispose();
+    memoryStream.Dispose();
+    return new AudioSampleData(Samples, waveFormat.SampleRate);
+}
+</code></pre>
+<h3 id="the-silenceaudiosamplesource-class">The SilenceAudioSampleSource Class</h3>
+<p>The <a href="../api/SipLib.Media.SilenceAudioSampleSource.html">SilenceAudioSampleSource</a> class generates silent audio samples that can be sent to a caller. This class can be used in applications where it is necessary to mute the audio that is sent without pausing transmission of RTP packets sent via the RtpChannel.</p>
+<p>Perform the following steps to use the SilenceAudioSampleSource class.</p>
+<ol>
+<li>Call the constructor</li>
+<li>Pass the new instance to the AudioSource class via the SetAudioSampleSource() method.</li>
+<li>Call the Start() method of the SilenceAudioSampleSource object.</li>
+</ol>
+<p>Call the Stop() method of the SilenceAudioSampleSource object when the audio session ends, or the FileAudioSource object is no longer needed.</p>
+<p>A single instance of the SilenceAudioSampleSource class may be used by multiple calls that use the AudioSource class by following the following procedure.</p>
+<ol>
+<li>Call the constructor of the SilenceAudioSampleSource class.</li>
+<li>Store the reference to new SilenceAudioSampleSource instance outside the context of a single call.</li>
+<li>Call the Start() method of the new SilenceAudioSampleSource instance.</li>
+<li>Pass the SilenceAudioSampleSource instance to one or more instances of the AudioSource class.</li>
+</ol>
+<p>Call the Stop() method of the SilenceAudioSampleSource class when the application terminates or when there is no longer a need to send silence to callers.</p>
+<h2 id="sending-dtmf-digit-events">Sending DTMF Digit Events</h2>
+<p>An application can send DTMF digits over the RtpChannel (see RFC 4733) by calling the SendDtmfEvent() method of the AudioSource class.</p>
+<pre><code>public void SendDtmfEvent(DtmfEventEnum dtmfEvent);
+</code></pre>
+<p>The <a href="../api/SipLib.Rtp.DtmfEventEnum.html">DtmfEventEnum</a> enumeration defines values for 0-9, #, * and A-F. The AudioSource class will only send DTMF event RTP packets if it is currently running.</p>
+<p>DTMF events are queued and sent out at a packet rate equal to the packet rate of audio data. If the application needs to send multiple digits then it can call the SendDemfEvent() method multiple times. However, the AudioSource class does not insert an inter-digit gap between DTMF events so the calling application must ensure there is at least a 40 millisecond gap between digits. This is normally not an issue because DTMF digits are usally entered by a human being in response to voice prompts.</p>
+<p>The AudioSource class sends four DTMF event RTP packets followed by three DTMF end event packets, so the DTMF event duration is 80 milliseconds.</p>
+<h1 id="the-audiodestination-class"><a name="AudioDestinationClass">The AudioDestination Class</a></h1>
+<p>The <a href="../api/SipLib.Media.AudioDestination.html">AudioDestination</a> class performs the following functions.</p>
+<ol>
+<li>Receives RTP packets from an RtpChannel.</li>
+<li>Decodes the data into linear 16-bit PCM samples and sends the decoded samples to the user via a user-provided callback delegate.</li>
+<li>Performs sample rate correction between the received data and the data required by the user's audio handler.</li>
+<li>Receives RTP packets containing DTMF events and sends them to the user via an event.</li>
+<li>Allows the user to change the destination handler for the received audio samples via a method call.</li>
+</ol>
+<p>An application can create an instance of this class once a SIP call dialog has been established as follows.</p>
+<pre><code>IAudioDecoder? decoder = AudioMediaUtils.GetAudioDecoder(AudioAnswerMd);
+if (decoder != null)
+{
+    AudioDestination audioDestination = new AudioDestination(AudioAnswerMd, decoder,
+        rtpChannel, OnAudioDataAvailable, DestinationSampleRate);
+    audioDestination.DtmfDigitReceived += OnDtmfDigitReceived;
+}
+else
+{
+    // TODO: Handle this error
+}
+
+private void OnAudioDataAvailable(short[] PcmSamples)
+{
+    // TODO: handle the received array of audio data here
+}
+
+private void OnDtmfDigitReceived(DtmfEventEnum digit)
+{
+    // TODO: Handle the DTMF digit here.
+}
+</code></pre>
+<p>In the above code sample, the AudioAnswerMd parameter is the instance of a <a href="../api/SipLib.Sdp.MediaDescription.html">MediaDescription</a> object that was used to answer the offer of audio media. If the application is a client then this is the MediaDescription that the client received from the server. If the application is the server, then this is the MediaDescription that it sent to the client.</p>
+<p>The rtpChannel parameter is the instance of an <a href="../api/SipLib.Rtp.RtpChannel.html">RtpChannel</a> object that was created to handle audio for the call.</p>
+<p>The OnAudioDataAvailable() function is where the application handles the new audio data by sending it to the system speakers or a headset. If this parameter of the constructor is null, then the AudioDestination class will process RTP packets but it will ignore the audio data.</p>
+<h2 id="changing-the-audio-destination-handler">Changing the Audio Destination Handler</h2>
+<p>The application can use the SetDestinationHandler() method to change how it handles the received audio samples.</p>
+<pre><code>public void SetDestinationHandler(AudioDestinationDelegate? destinationHandler);
+</code></pre>
+<p>If the <a href="../api/SipLib.Media.AudioDestinationDelegate.html">AudioDestinationDelegate</a> parameter is null, then received audio samples will be ignored.</p>
+<p>This method may be called at any time to change the destination handler.</p>
 
 </article>
           </div>

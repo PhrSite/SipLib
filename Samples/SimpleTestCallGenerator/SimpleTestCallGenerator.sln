@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTestCallGenerator", "SimpleTestCallGenerator.csproj", "{EC0ECF3B-43DC-494E-85E1-CC7543EB1F52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SipLib", "..\..\ClassLibrary\SipLib.csproj", "{8E2E8DA8-011E-8C1A-B309-E2A784635400}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC0ECF3B-43DC-494E-85E1-CC7543EB1F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0ECF3B-43DC-494E-85E1-CC7543EB1F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0ECF3B-43DC-494E-85E1-CC7543EB1F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0ECF3B-43DC-494E-85E1-CC7543EB1F52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E2E8DA8-011E-8C1A-B309-E2A784635400}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E2E8DA8-011E-8C1A-B309-E2A784635400}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E2E8DA8-011E-8C1A-B309-E2A784635400}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E2E8DA8-011E-8C1A-B309-E2A784635400}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C159AD3E-5545-4882-80E6-FA6F388800CB}
+	EndGlobalSection
+EndGlobal

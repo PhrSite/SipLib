@@ -118,6 +118,9 @@
                       <a href="SipLibMedia.html" title="The SipLib.Media Namespace" class="">The SipLib.Media Namespace</a>
                     </li>
                     <li class="">
+                      <a href="SipLibVideo.html" title="The SipLib.Video Namespace" class="">The SipLib.Video Namespace</a>
+                    </li>
+                    <li class="">
                       <a href="SipLibTestCalls.html" title="The SipLib.TestCalls Namespace" class="">The SipLib.TestCalls Namespace</a>
                     </li>
                     <li class="">
@@ -155,8 +158,9 @@
 <p>When the RTP session ends (for example, when a call ends), the user of the RtpChannel object must call the Shutdown() method to deallocate resources (such as UDP sockets) used by the RtpChannel.</p>
 <h1 id="creating-an-rtpchannel">Creating an RtpChannel</h1>
 <p>Creating an RtpChannel is complicated because there are a large number of configurations and options involved. The easiest way (actually the only way) to create one is to use the CreateFromSdp() method. The declaration of this static function is as follows:</p>
-<pre><code>public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
-    Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string? CNAME)
+<pre><code>public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp,
+    MediaDescription OfferedMd, Sdp AnsweredSdp, MediaDescription AnsweredMd,
+    bool enableRtcp, string? CNAME)
 </code></pre>
 <p>This function can be used by both clients and servers to create an RtpChannel object. For a client, it should be called after the client receives the 200 OK SIP response from the server. For the server, it should be called after the server sends the 200 OK SIP response message to the client.</p>
 <p>The following table describes how to set the parameter of the CreateFromSdp() function.</p>

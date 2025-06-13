@@ -141,4 +141,15 @@ public static class AudioMediaUtils
     /// Default payload type number for the G.729 codec
     /// </summary>
     public const int G729_DEFAULT_PAYLOAD_TYPE = 18;
+
+    private static readonly List<string> m_SupportedAudioCodecs = new List<string>() 
+    { "PCMU", "PCMA", "G722", "G729", "AMR-WB" };
+
+    /// <summary>
+    /// Gets a list of supported audio codecs.
+    /// </summary>
+    public static List<string> SupportedAudioCodecs
+    {
+        get { return m_SupportedAudioCodecs; }
+    }
 }

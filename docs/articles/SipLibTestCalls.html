@@ -117,6 +117,9 @@
                     <li class="">
                       <a href="SipLibMedia.html" title="The SipLib.Media Namespace" class="">The SipLib.Media Namespace</a>
                     </li>
+                    <li class="">
+                      <a href="SipLibVideo.html" title="The SipLib.Video Namespace" class="">The SipLib.Video Namespace</a>
+                    </li>
                     <li class="active">
                       <a href="SipLibTestCalls.html" title="The SipLib.TestCalls Namespace" class="active">The SipLib.TestCalls Namespace</a>
                     </li>
@@ -134,6 +137,129 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="the-siplibtestcalls-namespace">The SipLib.TestCalls Namespace</h1>
 
+<p>The SipLib.TestCalls namespace provides various classes for supporting NG9-1-1 test calls.</p>
+<p>The requirements for handling NG9-1-1 test calls originate from the following documents.</p>
+<blockquote>
+<p>Section 9 of the National Emergency Number Association (NENA) Standard for NG9-1-1. See <a href="https://cdn.ymaws.com/www.nena.org/resource/resmgr/standards/nena-sta-010.3b-2021_i3_stan.pdf">NENA-STA-010.3b</a>.</p>
+<p>An Extension to the Session Description Protocol (SDP) and Real-time Transport Protocol (RTP) for Media Loopback, <a href="https://www.rfc-editor.org/rfc/rfc6849.html">RFC 6849</a>, IETF, February 2013.</p>
+</blockquote>
+<p>The purpose of NG9-1-1 test calls is to verify both the SIP signaling and the RTP media pathways. A test call generator sends a test call SIP request to a test call target. The test call target answers the call and echoes back RTP media sent to it by the test call generator. The test call target then terminates the call after it receives three RTP packets. Test calls are automatic and operate in the background. There is no human interaction for test calls.</p>
+<p>Test calls typically use audio media, but it is possible to use any type of media that uses the RTP protocol. This includes video and RTT. There is no mention of MSRP test calls in NENA-STA-010.3b and RFC 6849 so the classes in SipLib.TestCalls namespace do not currently support test calls containing MSRP media.</p>
+<h1 id="handling-incoming-test-calls">Handling Incoming Test Calls</h1>
+<p>An application can use the <a href="../api/SipLib.TestCalls.IncomingTestCallManager.html">IncomingTestCallManager</a> class to process NG9-1-1 test calls in the background. This class is a complete User Agent Client (UAC) that is capable of handling multiple test calls simultaneously. An application can follow the following procedure for adding support for handling incoming test calls.</p>
+<ol>
+<li>Construct an instance of the IncomingTestCallManager and save a reference to that instance.</li>
+<li>Call the Start() method of the IncomintTestCallManager class.</li>
+<li>Route SIP INVITE requests for test calls to the IncomingTestCallManager instance by calling the ProcessTestCallInviteRequest() method.</li>
+<li>Route SIP BYE requests for test calls by calling the ProcessTestCallByeRequest() method of the IncomingTestCallManager instance.</li>
+<li>Call the Shutdown() method of the IncomingTestCallManager class when the application is shutting down.</li>
+</ol>
+<p>The IncomingTestCallManager class will either answer an incoming test call or reject it immediately so there is no need for the application's UAC to route any other SIP requests to the IncomingTestCallManager class.</p>
+<h2 id="creating-an-incomingtestcallmanager-object">Creating an IncomingTestCallManager Object</h2>
+<p>The declaration of the constructor of the IncomingTestCallManager class is:</p>
+<pre><code>public IncomingTestCallManager(SdpAnswerSettings answerSettings, IncomingTestCallSettings
+    testCallSettings, string userName);
+</code></pre>
+<p>The <a href="../api/SipLib.Sdp.SdpAnswerSettings.html">SdpAnswerSettings</a> parameter contains various parameters that determine how the IncomingTestCallManager will answer incoming test calls. The application can use the same instance of the SdpAnswerSettings that it uses or it may create a new instance of this class with different settings than those used by the application.</p>
+<p>The <a href="../api/SipLib.TestCalls.IncomingTestCallSettings.html">IncomingTestCallSettings</a> parameter determines how incoming test calls will be handled. This class has the following properties.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enable</td>
+<td>bool</td>
+<td>Enables incoming test calls if true. If false then the IncomingTestCallManager will reject all incoming test calls. The default setting is true.</td>
+</tr>
+<tr>
+<td>MaxTestCalls</td>
+<td>int</td>
+<td>Specifies the maximum number of concurrent test calls that the IncomingTestCallManager must handle. The IncomingTestCallManager will reject test calls after the number of concurrent calls reaches this number. The minimum setting is 1. There is no upper limit. The default setting is 1.</td>
+</tr>
+<tr>
+<td>DurationUnits</td>
+<td><a href="../api/SipLib.TestCalls.TestCallDurationUnitsEnum.html">TestCallDurationUnitsEnum</a></td>
+<td>This property determines how the test call will be ended. If equal to DurationUnitsPackets then the test call will be terminated after the number of RTP packets specified by the DurationPackets property is received. If equal to DurationUnitsMinutes then the test call will be terminated when the test call duration reaches the number of minutes specified by the DurationMinutes. The default is DurationPackets.</td>
+</tr>
+<tr>
+<td>DurationPackets</td>
+<td>int</td>
+<td>Specifies the number of RTP packets to receive before terminating the test call. The default is 3.</td>
+</tr>
+<tr>
+<td>DurationMinutes</td>
+<td>int</td>
+<td>Specifies the number of minutes to wait before terminating the call. The default is 1.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="routing-test-call-invite-requests">Routing Test Call INVITE Requests</h2>
+<p>The application must route incoming SIP INVITE requests to its instance of the IncomingTestCallManager class. The application can use the static IsNg911TestCall() method of the IncomingTestCallManager class to determine if an incoming INVITE is for a test call.</p>
+<pre><code>public static bool IsNg911TestCall(SIPRequest sipRequest);
+</code></pre>
+<p>This method returns true if the SIPRequest object is an INVITE request for a test call.</p>
+<p>The following code sample shows how the application can route incoming test calls.</p>
+<pre><code>private void ProcessInviteRequest(SIPRequest sipRequest, SIPEndPoint remoteEndPoint,
+    SipTransport sipTransport)
+{
+    if (IncomingTestCallManager.IsNg911TestCall(sipRequest) == true)
+    {
+        m_TestCallManager.ProcessTestCallInviteRequest(sipRequest, remoteEndPoint,
+            sipTransport);
+        return;
+    }
+
+    // TODO: Handle a normal INVITE request.
+}
+</code></pre>
+<h2 id="routing-incoming-bye-requests">Routing Incoming BYE Requests</h2>
+<p>Normally, the test call target will end a test call. However it is possible for the test call generator to end a test call by sending a BYE request. The application must therefore be able to route an incoming BYE request for a test call to  its instance of the IncomingTestCallManager class.</p>
+<p>The following code sample shows how to do this.</p>
+<pre><code>private void ProcessByeRequest(SIPRequest sipRequest, SIPEndPoint remoteEndPoint,
+    SipTransport sipTransport)
+{
+    if (m_TestCallManager.IsActiveTestCall(sipRequest) == true)
+    {
+        m_TestCallManager.ProcessTestCallByeRequest(sipRequest, remoteEndPoint,
+            sipTransport);
+        return;
+    }
+
+    // TODO: Handle a BYE request for an existing call.
+}
+</code></pre>
+<h1 id="generating-test-calls">Generating Test Calls</h1>
+<p>The SipLib.TestCalls namspace contains a class called <a href="../api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.html">SimpleOutgoingAudioTestCall</a> that can send a simple audio test call to a server application that can handle NG9-1-1 test calls. There is also a sample application in the Samples directory of the SipLib repository that shows how to use this class.</p>
+<h2 id="using-the-simpleoutgoingaudiotestcall-class"><a name="UsingSimpleOutgointAudioTestCall">Using The SimpleOutgoingAudioTestCall Class</a></h2>
+<p>This class sends an NG9-1-1 test call to an application that supports NG9-1-1 test calls. The test call only sends audio data. The audio data contains silence. The audio format is G.711 MuLaw.</p>
+<p>This class waits for the test call to be terminated by the application and reports the results.</p>
+<p>Follow this procedure to use this class to send a test call.</p>
+<ol>
+<li>Construct an instance of this class.</li>
+<li>Call the DoTestCall() method and await the results.</li>
+</ol>
+<p>The declaration of the constructor of this class is:</p>
+<pre><code>public SimpleOutgoingAudioTestCall(SIPURI toSipUri, SipTransport transport, 
+    int localRtpAudioPort, int maxTestCallDurationSeconds = int.MaxValue)
+</code></pre>
+<h2 id="sample-test-call-generator-application">Sample Test Call Generator Application</h2>
+<p>The <a href="https://github.com/PhrSite/SipLib/tree/master/Samples/RTT">Samples/SimpleTestCallGenerator</a> directory in the SipLib GitHub repository contains a Visual Studio command line project called SimpleTestCallGenerator.</p>
+<p>This sample program binds to the first available loca IP address using port 5090 for SIP and port 10000 for audio. It uses TCP for the SIP transport.</p>
+<p>This sample program uses the <a href="../api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.html">SimpleOutgoingAudioTestCall</a> class to send a single test call to another application that will answer the test call.</p>
+<p>To run this application from a command prompt window;</p>
+<ol>
+<li>Open a command prompt window</li>
+<li>Change directories to the SimpleTestCallGenerator directory</li>
+<li>Type <code>dotnet run -- IPEndPoint</code>, where IPEndPoint is the IPv4 endpoint of the application that will answer the test call.</li>
+</ol>
+<p>For example:</p>
+<pre><code>dotnet run -- 192.168.1.84:5060
+</code></pre>
 
 </article>
           </div>

@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Namespace SipLib.Media ">
     
-    <meta name="description" content="Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722. See The SipLib.Media Namespace.">
+    <meta name="description" content="Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722, G.729 and AMR-WB. See The SipLib.Media Namespace.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -510,6 +510,9 @@
                           <li class="">
                             <a href="SipLib.Media.RtpEncryptionEnum.html" title="RtpEncryptionEnum" class="">RtpEncryptionEnum</a>
                           </li>
+                          <li class="">
+                            <a href="SipLib.Media.SilenceAudioSampleSource.html" title="SilenceAudioSampleSource" class="">SilenceAudioSampleSource</a>
+                          </li>
                         </ul>
                     </li>
                     <li class="">
@@ -906,7 +909,7 @@
 
   <h1 id="SipLib_Media" data-uid="SipLib.Media" class="text-break">Namespace SipLib.Media</h1>
   <div class="markdown level0 summary">
-<p>Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722.</p>
+<p>Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722, G.729 and AMR-WB.</p>
 <p>See <a href="../articles/SipLibMedia.html">The SipLib.Media Namespace</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -926,6 +929,7 @@ by calling a delegate function that processes the received audio samples.</p>
 <p>
 The clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.
 </p>
+<p>See <a href="../articles/SipLibMedia.html#AudioDestinationClass">The AudioDestination Class</a> for a description of how to use this class.</p>
 </section>
       <h4><a class="xref" href="SipLib.Media.AudioMediaUtils.html">AudioMediaUtils</a></h4>
       <section><p>Utility function relating to audio media handling</p>
@@ -935,10 +939,16 @@ The clock rate (sample rate) of the audio handled by this class must be either 8
 </section>
       <h4><a class="xref" href="SipLib.Media.AudioSource.html">AudioSource</a></h4>
       <section><p>Class for sending sourced audio (from a microphone or a recording) to a remote endpoint via RTP packets
-over an RtpChannel.</p>
+over an RtpChannel. This class also manages sending DTMF events over the RtpChannel.</p>
+<p>
+Refer to <a href="../articles/SipLibMedia.html#AudioSourceClass">The AudioSource Class</a> for a detailed description of
+this class.
+</p>
 </section>
       <h4><a class="xref" href="SipLib.Media.FileAudioSource.html">FileAudioSource</a></h4>
-      <section><p>Class for sending audio samples that have been read from a wave file.</p>
+      <section><p>Class for sending audio samples that have been read from a wave file. This class loops the audio continuously until the
+Stop() method is called.</p>
+<p>See <a href="../articles/SipLibMedia.html#FileAudioSource">The FileAudioSource Class</a> for a description of this class.</p>
 </section>
       <h4><a class="xref" href="SipLib.Media.G722Decoder.html">G722Decoder</a></h4>
       <section><p>Class for decoding G.722 encoded data into linear 16-bit PCM samples.</p>
@@ -990,6 +1000,14 @@ based on code from:
 </section>
       <h4><a class="xref" href="SipLib.Media.PortRange.html">PortRange</a></h4>
       <section><p>Stores the port range for a single media type</p>
+</section>
+      <h4><a class="xref" href="SipLib.Media.SilenceAudioSampleSource.html">SilenceAudioSampleSource</a></h4>
+      <section><p>Class for sending silence audio samples. This class sends a block of samples with a value of 0 every 20 milliseconds.
+Each sample is a 16-bit linear PCM format sample with a value of 0. The AudioSamplesReady event is fired every 20 milliseconds
+after the Start() method is called.</p>
+<p>An instance of this class may be used to send silence to multiple calls. To do this, create a single instance
+of this class, then call the Start() method once. multiple AudioSource classes can then hook the AudioSamples event to
+receive the audio samples. Do not call the Stop() method until the application shuts down.</p>
 </section>
     <h3 id="interfaces">
 Interfaces

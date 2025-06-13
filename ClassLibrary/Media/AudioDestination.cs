@@ -26,6 +26,7 @@ public delegate void DtmfDigitReceivedDelegate(DtmfEventEnum digit);
 /// <para>
 /// The clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.
 /// </para>
+/// <para>See <a href="~/articles/SipLibMedia.md#AudioDestinationClass">The AudioDestination Class</a> for a description of how to use this class.</para>
 /// </summary>
 public class AudioDestination
 {
@@ -54,11 +55,16 @@ public class AudioDestination
     /// <param name="rtpChannel">RtpChannel to receive audio RTP packets on.</param>
     /// <param name="destinationHandler">Function to call to handle the decoded audio packets. If this is
     /// null then RTP packets are ignored.</param>
-    /// <param name="DestinationSampleRate">Sample rate expected by the destination handler</param>
-    /// <exception cref="ArgumentException">Thrown if the audio clock rate is not 8000 or 16000.</exception>
+    /// <param name="DestinationSampleRate">Sample rate expected by the destination handler. Must be 8000 or 16000
+    /// samples per second.</param>
+    /// <exception cref="ArgumentException">Thrown if the audio clock rate is not 8000 or 16000, or if the
+    /// DestinationSampleRate is not 8000 or 16000.</exception>
     public AudioDestination(MediaDescription AnsweredMediaDescription, IAudioDecoder Decoder, RtpChannel rtpChannel,
         AudioDestinationDelegate? destinationHandler, int DestinationSampleRate)
     {
+        if (DestinationSampleRate != 8000 && DestinationSampleRate != 16000)
+            throw new ArgumentException($"The DestinationSampleRate is {DestinationSampleRate}, it must be 8000 or 16000");
+
         m_AudioDecoder = Decoder;
         m_RtpChannel = rtpChannel;
         DestinationHandler = destinationHandler;

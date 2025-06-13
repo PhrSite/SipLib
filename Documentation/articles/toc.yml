@@ -16,6 +16,8 @@
   href: MessageSessionRelayProtocol.md
 - name: The SipLib.Media Namespace
   href: SipLibMedia.md
+- name: The SipLib.Video Namespace
+  href: SipLibVideo.md
 - name: The SipLib.TestCalls Namespace
   href: SipLibTestCalls.md
 - name: SipLib Application Logging

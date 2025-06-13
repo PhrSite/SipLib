@@ -18,6 +18,7 @@ public delegate void RttRtpSendDelegate(RtpPacket rtpPckt);
 /// This class manages the sending side of a RTT media session. See RFC 4103. This class manages the 
 /// transmission of redundant or non-redundant RTP packets containing RTT payloads based on the timing
 /// requirements specified in RFC 4103.
+/// <para>See <a href="~/articles/RealTimeText.md#UsingRttSender">Using the RttSender Class</a></para>
 /// </summary>
 public class RttSender
 {

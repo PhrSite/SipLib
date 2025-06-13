@@ -25,6 +25,7 @@ public delegate void RttCharactersReceivedDelegate(string RxChars, string Source
 /// <para>This class supports receiving characters from a mixer-aware remote endpoint as described in
 /// RFC 9071 RTP-Mixer Formatting of Multiparty Real-Time Text.
 /// </para>
+/// <para><a href="~/articles/RealTimeText.md#UsingRttReceiver">See Using the RTT Receiver Class</a></para>
 /// </summary>
 public class RttReceiver
 {
@@ -109,7 +110,8 @@ public class RttReceiver
 
     /// <summary>
     /// Processes an RTP packet containing RTT media. This method fires the RttCharactersReceived event
-    /// when characters a detected.
+    /// when characters are detected.
+    /// <para>Note: Applications will not normally call this method. Its scope is public for the purpose of unit testing.</para>
     /// </summary>
     /// <param name="rtpPacket">Input RTP packet to process.</param>
     public void ProcessRtpPacket(RtpPacket rtpPacket)

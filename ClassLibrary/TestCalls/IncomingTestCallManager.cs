@@ -22,7 +22,7 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
     private IncomingTestCallSettings m_TestCallSettings;
     private ConcurrentDictionary<string, IncomingTestCall> m_Calls = new ConcurrentDictionary<string, IncomingTestCall>();
     private string m_UserName;
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -37,18 +37,16 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// 
+    /// This method must be called when the application is shutting down to terminate the worker background task.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Returns an awaitable Task.</returns>
     public override async Task Shutdown()
     {
-        ManualResetEventSlim Mre = new ManualResetEventSlim(false);
-        EnqueueWork(() =>
+        IncomingTestCall[] calls = m_Calls.Values.ToArray<IncomingTestCall>();
+        foreach (IncomingTestCall call in calls)
         {
-            
-        });
-
-        Mre.Wait(500);
+            await call.Shutdown();
+        }
 
         await base.Shutdown();
     }
@@ -102,14 +100,14 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
 
     private void OnTestCallEnded(string callId)
     {
-        EnqueueWork(async () => 
+        EnqueueWork(async () =>
         {
             IncomingTestCall? call = GetCall(callId);
             if (call == null)
                 return;         // The call has already ended
 
             await call.Shutdown();
-            m_Calls.TryRemove(callId, out IncomingTestCall? testCall);           
+            m_Calls.TryRemove(callId, out IncomingTestCall? testCall);
         });
     }
 
@@ -136,7 +134,7 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// Processes a BYE request for a test call.
+    /// Processes a BYE request for a test call. This must be called only if IsActiveTestCall() returns true.
     /// </summary>
     /// <param name="sipRequest">The SIP BYE request.</param>
     /// <param name="remoteEndPoint">Sender of the BYE request.</param>
@@ -155,11 +153,10 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// 
+    /// Not used.
     /// </summary>
     protected override void DoTimedEvents()
     {
-        
     }
 
     /// <summary>
@@ -175,4 +172,23 @@ public class IncomingTestCallManager : QueuedActionWorkerTask
             return m_Calls.GetValueOrDefault(callID);
     }
 
+    /// <summary>
+    /// Returns true if the SIP request is an INVITE for an NG9-1-1 test call
+    /// </summary>
+    /// <param name="sipRequest">Incoming SIP Request</param>
+    /// <returns>Returns true if the INVITE is for a NG9-1-1 test call or false if it is not.</returns>
+    public static bool IsNg911TestCall(SIPRequest sipRequest)
+    {
+        if (sipRequest.Method != SIPMethodsEnum.INVITE || sipRequest.URI is null)
+            return false;
+
+        if (sipRequest.URI.Scheme != SIPSchemesEnum.urn || sipRequest.URI.Host == null)
+            return false;
+
+        if (sipRequest.URI.Host.IndexOf(TestCallConstants.TestCallUrnValue) >= 0)
+            return true;
+        else
+            return false;
+
+    }
 }

@@ -21,12 +21,11 @@ using System.Threading.Tasks;
 public delegate void TestCallEndedDelegateType(string callId);
 
 /// <summary>
-/// Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.
+/// Class for handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.
 /// See [The SipLib.TestCalls Namespace](~/articles/SipLibTestCalls.md)
 /// </summary>
 public class IncomingTestCall : QueuedActionWorkerTask
 {
-
     private SipTransport m_Transport;
     private SIPRequest m_Invite;
     private SdpAnswerSettings m_AnswerSettings;
@@ -41,6 +40,7 @@ public class IncomingTestCall : QueuedActionWorkerTask
     private Sdp? m_AnsweredSdp = null;
     private List<TestCallParams> m_ParamsList = new List<TestCallParams>();
     private DateTime m_CallStartTime = DateTime.Now;
+    private bool m_ShuttingDown = false;
 
     /// <summary>
     /// Event that is fired with the incoming test call has ended.
@@ -66,13 +66,10 @@ public class IncomingTestCall : QueuedActionWorkerTask
         CallId = invite.Header.CallId;
         m_LastSequenceNumber = m_Invite.Header.CSeq;
         m_OkResponse = new SIPResponse(SIPResponseStatusCodesEnum.Ok, "OK", m_Transport.SipChannel.SIPChannelEndPoint);
-
     }
 
     internal void StartCall()
     {
-        //Start();
-        //EnqueueWork(() => { DoStartCall(); });
         DoStartCall();
     }
 
@@ -249,11 +246,13 @@ public class IncomingTestCall : QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// This method must be called after the test call has ended or when the application is shutting down.
+    /// This method must be called after the test call has ended or when the application is shutting down. If this method
+    /// is called when the test call is still active, then the test call is terminated before shutting down.
     /// </summary>
     /// <returns></returns>
     public override async Task Shutdown()
     {
+        m_ShuttingDown = true;
         await DoShutdown();
     }
 
@@ -289,7 +288,7 @@ public class IncomingTestCall : QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// 
+    /// Checks to see if its time to terminate the incoming test call.
     /// </summary>
     protected override void DoTimedEvents()
     {
@@ -371,7 +370,8 @@ public class IncomingTestCall : QueuedActionWorkerTask
             ByeCompleteCallback, 1000);
         m_Event.Wait();
 
-        TestCallEnded?.Invoke(CallId);
+        if (m_ShuttingDown == false)
+            TestCallEnded?.Invoke(CallId);
     }
 
     private void ByeCompleteCallback(SIPRequest sipRequest, SIPResponse? sipResponse,
@@ -432,24 +432,4 @@ public class IncomingTestCall : QueuedActionWorkerTask
 
         return true;
     }
-
-    /// <summary>
-    /// Returns true if the SIP request is an INVITE for an NG9-1-1 test call
-    /// </summary>
-    /// <param name="sipRequest">Incoming SIP Request</param>
-    /// <returns>Returns true if the INVITE is for a NG9-1-1 test call or false if it is not.</returns>
-    public static bool IsNg911TestCall(SIPRequest sipRequest)
-    {
-        if (sipRequest.Method != SIPMethodsEnum.INVITE || sipRequest.URI is null)
-            return false;
-
-        if (sipRequest.URI.Scheme != SIPSchemesEnum.urn || sipRequest.URI.Host == null)
-            return false;
-
-        if (sipRequest.URI.Host.IndexOf(TestCallConstants.TestCallUrnValue) >= 0)
-            return true;
-        else
-            return false;
-    }
-
 }

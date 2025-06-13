@@ -10,10 +10,15 @@ namespace SipLib.Media;
 
 /// <summary>
 /// Class for sending sourced audio (from a microphone or a recording) to a remote endpoint via RTP packets
-/// over an RtpChannel.
+/// over an RtpChannel. This class also manages sending DTMF events over the RtpChannel.
+/// <para>
+/// Refer to <a href="~/articles/SipLibMedia.md#AudioSourceClass">The AudioSource Class</a> for a detailed description of
+/// this class.
+/// </para>
 /// </summary>
 public class AudioSource
 {
+    private IAudioSampleSource? m_CurrentAudioSampleSource = null;
     private int m_AudioPayloadType = 0;
     private int m_TelephoneEventPayloadType = 101;
     private bool m_TelephoneEventEnabled = false;
@@ -89,7 +94,35 @@ public class AudioSource
     }
 
     /// <summary>
-    /// 
+    /// Sets the IAudioSampleSource for this AudioSource and starts it sending RTP packets. If there is a previous
+    /// IAudioSampleSource set, then this method replaces it with the new IAudioSampleSource.
+    /// </summary>
+    /// <param name="audioSampleSource">New source of the audio samples.</param>
+    public void SetAudioSampleSource(IAudioSampleSource audioSampleSource)
+    {
+        ClearAudioSampleSource();
+        m_CurrentAudioSampleSource = audioSampleSource;
+        m_CurrentAudioSampleSource.AudioSamplesReady += SendAudioSamples;   // Hook the event
+        Start();
+    }
+
+    /// <summary>
+    /// Clears the current sample source. This method must be called when the audio session for a call ends.
+    /// </summary>
+    public void ClearAudioSampleSource()
+    {
+        if (m_CurrentAudioSampleSource != null)
+        {   // Unhook the event handler
+            m_CurrentAudioSampleSource.AudioSamplesReady -= SendAudioSamples;
+            m_CurrentAudioSampleSource = null;
+        }
+
+        Stop();
+    }
+
+    /// <summary>
+    /// Starts transmission of RTP packets. It is not not necessary to call this method after calling the SetAudioSampleSource()
+    /// method. This method can be called after the Stop() method was called to re-start transmission of RTP packets.
     /// </summary>
     public void Start()
     {
@@ -111,24 +144,6 @@ public class AudioSource
     }
 
     /// <summary>
-    /// Pauses transmission of RTP packets.
-    /// </summary>
-    public virtual void Pause()
-    {
-        if (AudioSourceState == AudioSourceStateEnum.Playing)
-            AudioSourceState = AudioSourceStateEnum.Paused;
-    }
-
-    /// <summary>
-    /// Resumes generation and transmission of RTP packets.
-    /// </summary>
-    public virtual void Resume()
-    {
-        if (AudioSourceState == AudioSourceStateEnum.Paused)
-            AudioSourceState = AudioSourceStateEnum.Playing;
-    }
-
-    /// <summary>
     /// The IAudioSampleSource object that is providing audio samples will call this method to send new
     /// audio samples to the remote endpoint via the RtpChannel.
     /// </summary>
@@ -136,7 +151,7 @@ public class AudioSource
     /// samples.</param>
     /// <param name="SampleRate">Sample rate in samples per second of the AudioSamples. Must be either 
     /// 8000 or 16000</param>
-    public void SendAudioSamples(short[] AudioSamples, int SampleRate)
+    private void SendAudioSamples(short[] AudioSamples, int SampleRate)
     {
         if (AudioSourceState != AudioSourceStateEnum.Playing)
             return;
@@ -255,8 +270,6 @@ public class AudioSource
     {
         /// <summary></summary>
         Stopped,
-        /// <summary></summary>
-        Paused,
         /// <summary></summary>
         Playing,
     }

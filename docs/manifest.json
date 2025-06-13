@@ -1058,7 +1058,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Core.SIPURI",
-      "Summary": "<p sourcefile=\"api/SipLib.Core.SIPURI.yml\" sourcestartlinenumber=\"1\">Implements the SIP URI concept from the SIP RFC3261. This class also handles URIs for\nhttp, https, ws, wss, msrp, msrps and im schemes.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Core.SIPURI.yml\" sourcestartlinenumber=\"1\">Implements the SIP URI concept from the SIP RFC 3261. This class also handles URIs for\nhttp, https, ws, wss, msrp, msrps, cid and im schemes. This class also handles URNs that will appear in the\nSIP request line for NG9-1-1 applications.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1618,7 +1618,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media.AudioDestination",
-      "Summary": "<p sourcefile=\"api/SipLib.Media.AudioDestination.yml\" sourcestartlinenumber=\"1\">This class receives audio RTP packets from an RtpChannel, decodes them and sends them to an audio destination\nby calling a delegate function that processes the received audio samples.</p>\n<p>\nThe clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.\n</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Media.AudioDestination.yml\" sourcestartlinenumber=\"1\">This class receives audio RTP packets from an RtpChannel, decodes them and sends them to an audio destination\nby calling a delegate function that processes the received audio samples.</p>\n<p>\nThe clock rate (sample rate) of the audio handled by this class must be either 8000 or 16000.\n</p>\n<p>See <a href=\"~/articles/SipLibMedia.md#AudioDestinationClass\">The AudioDestination Class</a> for a description of how to use this class.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1688,7 +1688,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media.AudioSource",
-      "Summary": "<p sourcefile=\"api/SipLib.Media.AudioSource.yml\" sourcestartlinenumber=\"1\">Class for sending sourced audio (from a microphone or a recording) to a remote endpoint via RTP packets\nover an RtpChannel.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Media.AudioSource.yml\" sourcestartlinenumber=\"1\">Class for sending sourced audio (from a microphone or a recording) to a remote endpoint via RTP packets\nover an RtpChannel. This class also manages sending DTMF events over the RtpChannel.</p>\n<p>\nRefer to <a href=\"~/articles/SipLibMedia.md#AudioSourceClass\">The AudioSource Class</a> for a detailed description of\nthis class.\n</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1758,7 +1758,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media.FileAudioSource",
-      "Summary": "<p sourcefile=\"api/SipLib.Media.FileAudioSource.yml\" sourcestartlinenumber=\"1\">Class for sending audio samples that have been read from a wave file.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Media.FileAudioSource.yml\" sourcestartlinenumber=\"1\">Class for sending audio samples that have been read from a wave file. This class loops the audio continuously until the\nStop() method is called.</p>\n<p>See <a href=\"~/articles/SipLibMedia.md#FileAudioSource\">The FileAudioSource Class</a> for a description of this class.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2112,6 +2112,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.SilenceAudioSampleSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.SilenceAudioSampleSource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.SilenceAudioSampleSource",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.SilenceAudioSampleSource.yml\" sourcestartlinenumber=\"1\">Class for sending silence audio samples. This class sends a block of samples with a value of 0 every 20 milliseconds.\nEach sample is a 16-bit linear PCM format sample with a value of 0. The AudioSamplesReady event is fired every 20 milliseconds\nafter the Start() method is called.</p>\n<p>An instance of this class may be used to send silence to multiple calls. To do this, create a single instance\nof this class, then call the Start() method once. multiple AudioSource classes can then hook the AudioSamples event to\nreceive the audio samples. Do not call the Stop() method until the application shuts down.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.yml",
       "output": {
         ".html": {
@@ -2122,7 +2136,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media",
-      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"5\">Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law and G.722.</p>\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">See <a href=\"~/articles/SipLibMedia.md\" sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">The SipLib.Media Namespace</a>.</p>\n"
+      "Summary": "\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"5\">Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722, G.729 and AMR-WB.</p>\n<p sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">See <a href=\"~/articles/SipLibMedia.md\" sourcefile=\"Namespaces/SipLib.Media.md\" sourcestartlinenumber=\"7\">The SipLib.Media Namespace</a>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2430,7 +2444,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.RealTimeText.RttReceiver",
-      "Summary": "<p sourcefile=\"api/SipLib.RealTimeText.RttReceiver.yml\" sourcestartlinenumber=\"1\">This class handles Real Time Protocol (RTP) packets containing Real Time Text (RTT, RFC 4103)\nand notifies the user of this class when complete messages are available. A complete message may\nbe one character or several characters.</p>\n<p>\nThis class handles RTT redundancy as specified in Section 4.2 of RFC 4103 and is capable of recovering\nthe original message even if there are dropped RTP packets.\n</p>\n<p>This class supports receiving characters from a mixer-aware remote endpoint as described in\nRFC 9071 RTP-Mixer Formatting of Multiparty Real-Time Text.\n</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.RealTimeText.RttReceiver.yml\" sourcestartlinenumber=\"1\">This class handles Real Time Protocol (RTP) packets containing Real Time Text (RTT, RFC 4103)\nand notifies the user of this class when complete messages are available. A complete message may\nbe one character or several characters.</p>\n<p>\nThis class handles RTT redundancy as specified in Section 4.2 of RFC 4103 and is capable of recovering\nthe original message even if there are dropped RTP packets.\n</p>\n<p>This class supports receiving characters from a mixer-aware remote endpoint as described in\nRFC 9071 RTP-Mixer Formatting of Multiparty Real-Time Text.\n</p>\n<p><a href=\"~/articles/RealTimeText.md#UsingRttReceiver\">See Using the RTT Receiver Class</a></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2472,7 +2486,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.RealTimeText.RttSender",
-      "Summary": "<p sourcefile=\"api/SipLib.RealTimeText.RttSender.yml\" sourcestartlinenumber=\"1\">This class manages the sending side of a RTT media session. See RFC 4103. This class manages the\ntransmission of redundant or non-redundant RTP packets containing RTT payloads based on the timing\nrequirements specified in RFC 4103.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.RealTimeText.RttSender.yml\" sourcestartlinenumber=\"1\">This class manages the sending side of a RTT media session. See RFC 4103. This class manages the\ntransmission of redundant or non-redundant RTP packets containing RTT payloads based on the timing\nrequirements specified in RFC 4103.</p>\n<p>See <a href=\"~/articles/RealTimeText.md#UsingRttSender\">Using the RttSender Class</a></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3270,7 +3284,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.TestCalls.IncomingTestCall",
-      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"1\">Class for a handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.\nSee <a href=\"~/articles/SipLibTestCalls.md\" sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"2\">The SipLib.TestCalls Namespace</a></p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"1\">Class for handling a single NG9-1-1 test call. See Section 9 of NENA-STA-010.3b and RFC 6849.\nSee <a href=\"~/articles/SipLibTestCalls.md\" sourcefile=\"api/SipLib.TestCalls.IncomingTestCall.yml\" sourcestartlinenumber=\"2\">The SipLib.TestCalls Namespace</a></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3326,7 +3340,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.TestCalls.SimpleOutgoingAudioTestCall",
-      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml\" sourcestartlinenumber=\"1\">This class creates and sends a single NG9-1-1 audio test call to a test call target and reports the results of the test call.\nThe format of the audio sent is G.711 Mu-Law (PCMU) and each sample is silence.</p>\n<p>\nTo use this class, call the constructor and then call the DoTestCall() method. DoTestCall is an awaitable Task that\nreturns the results of the test call.\n</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml\" sourcestartlinenumber=\"1\">This class creates and sends a single NG9-1-1 audio test call to a test call target and reports the results of the test call.\nThe format of the audio sent is G.711 Mu-Law (PCMU) and each sample is silence.</p>\n<p>\nTo use this class, call the constructor and then call the DoTestCall() method. DoTestCall is an awaitable Task that\nreturns the results of the test call.\n</p>\n<p>See <a href=\"~/articles/SipLibTestCalls.md#UsingSimpleOutgointAudioTestCall\">Using The SimpleOutgoingAudioTestCall Class</a> </p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3858,6 +3872,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/SipLibTestCalls.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/SipLibVideo.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/SipLibVideo.html"
         }
       },
       "version": ""

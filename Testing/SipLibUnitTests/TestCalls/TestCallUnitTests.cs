@@ -58,7 +58,7 @@ public class TestCallUnitTests
     {
         SIPRequest invite = ParseRequest(ValidTestCallInvite);
         Assert.True(invite != null, "Invalid SIPRequest");
-        bool IsTestCall = IncomingTestCall.IsNg911TestCall(invite);
+        bool IsTestCall = IncomingTestCallManager.IsNg911TestCall(invite);
         Assert.True(IsTestCall == true, "IsNg911TestCall returned false");
     }
 
@@ -97,7 +97,7 @@ public class TestCallUnitTests
     {
         SIPRequest invite = ParseRequest(NotATestCall);
         Assert.True(invite != null, "Invalid SIPRequest");
-        bool IsTestCall = IncomingTestCall.IsNg911TestCall(invite);
+        bool IsTestCall = IncomingTestCallManager.IsNg911TestCall(invite);
         Assert.True(IsTestCall == false, "IsNg911TestCall returned true");
     }
 

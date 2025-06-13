@@ -5,7 +5,9 @@
 namespace SipLib.Media;
 
 /// <summary>
-/// Class for sending audio samples that have been read from a wave file.
+/// Class for sending audio samples that have been read from a wave file. This class loops the audio continuously until the
+/// Stop() method is called.
+/// <para>See <a href="~/articles/SipLibMedia.md#FileAudioSource">The FileAudioSource Class</a> for a description of this class.</para>
 /// </summary>
 public class FileAudioSource : IAudioSampleSource
 {

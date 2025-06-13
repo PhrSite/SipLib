@@ -10,7 +10,6 @@ using SipLib.Sdp;
 using SipLib.Body;
 using SipLib.Media;
 using System.Net;
-using System.ComponentModel;
 
 /// <summary>
 /// This class creates and sends a single NG9-1-1 audio test call to a test call target and reports the results of the test call.
@@ -19,6 +18,7 @@ using System.ComponentModel;
 /// To use this class, call the constructor and then call the DoTestCall() method. DoTestCall is an awaitable Task that
 /// returns the results of the test call.
 /// </para>
+/// <para>See <a href= "~/articles/SipLibTestCalls.md#UsingSimpleOutgointAudioTestCall">Using The SimpleOutgoingAudioTestCall Class</a> </para>
 /// </summary>
 public class SimpleOutgoingAudioTestCall
 {
@@ -26,13 +26,9 @@ public class SimpleOutgoingAudioTestCall
     private SIPURI m_ToSipUri;
     private int m_LocalRtpAudioPort;
     private string m_CallId = string.Empty;
-
-    private int m_PacketsSent = 0;
-    private int m_PacketsReceived = 0;
-
-    private DateTime m_CallStartTime = DateTime.Now;
-    private DateTime m_CallStopTime = DateTime.Now;
+    private OutgoingTestCallResults m_Results;
     private int m_MaxTestCallDurationSeconds;
+    private bool m_ByeReceived = false;
 
     /// <summary>
     /// Constructor.
@@ -53,6 +49,7 @@ public class SimpleOutgoingAudioTestCall
         m_Transport = transport;
         m_LocalRtpAudioPort = localRtpAudioPort;
         m_MaxTestCallDurationSeconds = maxTestCallDurationSeconds;
+        m_Results = new OutgoingTestCallResults();
     }
 
     /// <summary>
@@ -61,14 +58,15 @@ public class SimpleOutgoingAudioTestCall
     /// <returns>Returns the results of the test call.</returns>
     public async Task<OutgoingTestCallResults> DoTestCall()
     {
-        OutgoingTestCallResults results = new OutgoingTestCallResults();
+        m_Results = new OutgoingTestCallResults();
+        m_ByeReceived = false;
         IPEndPoint TargetEndPoint = m_ToSipUri.ToSIPEndPoint()!.GetIPEndPoint();
         IPAddress? localIpAddress = m_Transport.SipChannel.SIPChannelContactURI?.ToSIPEndPoint()?.Address;
         if (m_Transport.SipChannel.SIPChannelContactURI is null || localIpAddress == null)
         {
-            results.Success = false;
-            results.FailureReason = "The SIPChannelContactURI is null or does not contain an IP address";
-            return results;
+            m_Results.Success = false;
+            m_Results.FailureReason = "The SIPChannelContactURI is null or does not contain an IP address";
+            return m_Results;
         }
 
         SIPURI LocalContactURI = m_Transport.SipChannel.SIPChannelContactURI;
@@ -95,21 +93,17 @@ public class SimpleOutgoingAudioTestCall
 
         ClientInviteTransaction Cit = m_Transport.StartClientInvite(invite, TargetEndPoint, null, null);
         SipTransactionBase transactionBase = await Cit.WaitForCompletionAsync();
-        m_CallStartTime = DateTime.Now;
+        m_Results.CallStartTime = DateTime.Now;
         if (transactionBase.LastReceivedResponse == null)
         {
-            results.Success = false;
-            results.FailureReason = "No response received to the INVITE request.";
-            m_Transport.SipRequestReceived -= OnSipRequestReceived;
-            return results;
+            SetFailureReason("No response received to the INVITE request.");
+            return m_Results;
         }
 
         if (transactionBase.LastReceivedResponse.Status != SIPResponseStatusCodesEnum.Ok)
         {
-            results.Success = false;
-            results.FailureReason = $"Test call target returned response code {transactionBase.LastReceivedResponse.StatusCode}";
-            m_Transport.SipRequestReceived -= OnSipRequestReceived;
-            return results;
+            SetFailureReason($"Test call target returned response code {transactionBase.LastReceivedResponse.StatusCode}");
+            return m_Results;
         }
 
         // Make sure that the OK response has an SDP body
@@ -117,10 +111,8 @@ public class SimpleOutgoingAudioTestCall
         string? strAnsweredSdp = OkResponse.GetContentsOfType(ContentTypes.Sdp);
         if (string.IsNullOrEmpty(strAnsweredSdp) == true)
         {
-            results.Success = false;
-            results.FailureReason = "The test call target did not provide a SDP block in the OK response.";
-            m_Transport.SipRequestReceived -= OnSipRequestReceived;
-            return results;
+            SetFailureReason("The test call target did not provide a SDP block in the OK response.");
+            return m_Results;
         }
 
         Sdp AnsweredSdp;
@@ -130,11 +122,9 @@ public class SimpleOutgoingAudioTestCall
         }
         catch (Exception Ex)
         {
-            results.Success = false;
-            results.FailureReason = $"An exception occurred while parsing the SDP from the test call target. The " +
-                $"exception message is: {Ex.Message}";
-            m_Transport.SipRequestReceived -= OnSipRequestReceived;
-            return results;
+            SetFailureReason($"An exception occurred while parsing the SDP from the test call target. The " +
+                $"exception message is: {Ex.Message}");
+            return m_Results;
         }
 
         MediaDescription answeredMediaDescription = AnsweredSdp.Media[0];
@@ -142,12 +132,10 @@ public class SimpleOutgoingAudioTestCall
             answeredMediaDescription, false, null);
         if (rtpChannel == null)
         {
-            results.Success = false;
-            results.FailureReason = $"Error creating an RTP channel for the test call. Error message = {error}";
             // Terminate the call to the test call target
             await SendByeRequest(invite, TargetEndPoint, OkResponse);
-            m_Transport.SipRequestReceived -= OnSipRequestReceived;
-            return results;
+            SetFailureReason($"Error creating an RTP channel for the test call. Error message = {error}");
+            return m_Results;
         }
 
         rtpChannel.RtpPacketSent += OnRtpPacketSent;
@@ -155,10 +143,9 @@ public class SimpleOutgoingAudioTestCall
         rtpChannel.StartListening();
 
         AudioSource audioSource = new AudioSource(answeredMediaDescription, new PcmuEncoder(), rtpChannel);
-        FileAudioSource fileAudioSource = new FileAudioSource(new AudioSampleData(new short[8000], 8000), null);
-        fileAudioSource.AudioSamplesReady += audioSource.SendAudioSamples;
-        fileAudioSource.Start();
-        audioSource.Start();
+        SilenceAudioSampleSource Sass = new SilenceAudioSampleSource();
+        audioSource.SetAudioSampleSource(Sass);
+        Sass.Start();
 
         // Wait for the BYE request from the test call server
         bool TestCallTimeExceeded = false;
@@ -167,7 +154,7 @@ public class SimpleOutgoingAudioTestCall
             await Task.Delay(10);
 
             DateTime Now = DateTime.Now;
-            if ((Now - m_CallStartTime).TotalSeconds > m_MaxTestCallDurationSeconds)
+            if ((Now - m_Results.CallStartTime).TotalSeconds > m_MaxTestCallDurationSeconds)
                 // The call has lasted too long.
                 TestCallTimeExceeded = true;
         }
@@ -175,13 +162,12 @@ public class SimpleOutgoingAudioTestCall
         if (TestCallTimeExceeded == true)
         {
             await SendByeRequest(invite, TargetEndPoint, OkResponse);
-            results.Success = false;
-            results.FailureReason = "Maximum test call duration exceeded.";
-            return results;
+            SetFailureReason("Maximum test call duration exceeded.");
+            return m_Results;
         }
 
-        fileAudioSource.Stop();
-        audioSource.Stop();
+        Sass.Stop();
+        audioSource.ClearAudioSampleSource();
         rtpChannel.Shutdown();
 
         // Unhook the event handlers
@@ -189,12 +175,15 @@ public class SimpleOutgoingAudioTestCall
         rtpChannel.RtpPacketSent += OnRtpPacketSent;
         rtpChannel.RtpPacketReceived += OnRtpPacketReceived;
 
-        results.Success = true;
-        results.PacketsSent = m_PacketsSent;
-        results.PacketsReceived = m_PacketsReceived;
-        results.CallStartTime = m_CallStartTime;
-        results.CallStopTime = m_CallStopTime;
-        return results;
+        m_Results.Success = true;
+        return m_Results;
+    }
+
+    private void SetFailureReason(string reason)
+    {
+        m_Results.Success = false;
+        m_Results.FailureReason = reason;
+        m_Transport.SipRequestReceived -= OnSipRequestReceived;
     }
 
     private async Task SendByeRequest(SIPRequest invite, IPEndPoint TargetEndPoint, SIPResponse OkResponse)
@@ -206,15 +195,13 @@ public class SimpleOutgoingAudioTestCall
 
     private void OnRtpPacketReceived(RtpPacket rtpPacket)
     {
-        m_PacketsReceived += 1;
+        m_Results.PacketsReceived += 1;
     }
 
     private void OnRtpPacketSent(RtpPacket rtpPacket)
     {
-        m_PacketsSent += 1;
+        m_Results.PacketsSent += 1;
     }
-
-    private bool m_ByeReceived = false;
 
     private void OnSipRequestReceived(SIPRequest sipRequest, SIPEndPoint remoteEndPoint, SipTransport sipTransportManager)
     {
@@ -225,7 +212,7 @@ public class SimpleOutgoingAudioTestCall
         {
             SIPResponse OkResponse = SipUtils.BuildOkToByeOrCancel(sipRequest, remoteEndPoint);
             m_Transport.SipChannel.Send(remoteEndPoint.GetIPEndPoint(), OkResponse.ToByteArray());
-            m_CallStopTime = DateTime.Now;
+            m_Results.CallStopTime = DateTime.Now;
             m_ByeReceived = true;
         }
         else

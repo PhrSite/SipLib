@@ -22,8 +22,9 @@ When the RTP session ends (for example, when a call ends), the user of the RtpCh
 # Creating an RtpChannel
 Creating an RtpChannel is complicated because there are a large number of configurations and options involved. The easiest way (actually the only way) to create one is to use the CreateFromSdp() method. The declaration of this static function is as follows:
 ```
-public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp, MediaDescription OfferedMd,
-    Sdp AnsweredSdp, MediaDescription AnsweredMd, bool enableRtcp, string? CNAME)
+public static (RtpChannel?, string?) CreateFromSdp(bool Incoming, Sdp OfferedSdp,
+    MediaDescription OfferedMd, Sdp AnsweredSdp, MediaDescription AnsweredMd,
+    bool enableRtcp, string? CNAME)
 ```
 This function can be used by both clients and servers to create an RtpChannel object. For a client, it should be called after the client receives the 200 OK SIP response from the server. For the server, it should be called after the server sends the 200 OK SIP response message to the client.
 
