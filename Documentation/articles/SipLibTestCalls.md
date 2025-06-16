@@ -6,19 +6,25 @@ The requirements for handling NG9-1-1 test calls originate from the following do
 >
 > An Extension to the Session Description Protocol (SDP) and Real-time Transport Protocol (RTP) for Media Loopback, [RFC 6849](https://www.rfc-editor.org/rfc/rfc6849.html), IETF, February 2013.
 
-The purpose of NG9-1-1 test calls is to verify both the SIP signaling and the RTP media pathways. A test call generator sends a test call SIP request to a test call target. The test call target answers the call and echoes back RTP media sent to it by the test call generator. The test call target then terminates the call after it receives three RTP packets. Test calls are automatic and operate in the background. There is no human interaction for test calls.
+The purpose of NG9-1-1 test calls is to verify both the SIP signaling and the RTP media pathways. A test call generator sends a test call SIP INVITE request to a test call target. The test call target answers the call and echoes back RTP media sent to it by the test call generator. The test call target then terminates the call after it receives three (or more) RTP packets. Test calls are automatic and operate in the background. There is no human interaction required for test calls.
 
 Test calls typically use audio media, but it is possible to use any type of media that uses the RTP protocol. This includes video and RTT. There is no mention of MSRP test calls in NENA-STA-010.3b and RFC 6849 so the classes in SipLib.TestCalls namespace do not currently support test calls containing MSRP media.
 
 # Handling Incoming Test Calls
-An application can use the [IncomingTestCallManager](~/api/SipLib.TestCalls.IncomingTestCallManager.yml) class to process NG9-1-1 test calls in the background. This class is a complete User Agent Client (UAC) that is capable of handling multiple test calls simultaneously. An application can follow the following procedure for adding support for handling incoming test calls.
-1. Construct an instance of the IncomingTestCallManager and save a reference to that instance.
-2. Call the Start() method of the IncomintTestCallManager class.
+An application can use the [IncomingTestCallManager](~/api/SipLib.TestCalls.IncomingTestCallManager.yml) class to process NG9-1-1 test calls in the background. This class is a complete User Agent Server (UAS) that is capable of handling multiple test calls simultaneously. An application can use the following procedure for handling incoming test calls.
+1. Construct an instance of the IncomingTestCallManager class and save a reference to that instance.
+2. Call the Start() method of the IncomingTestCallManager class.
 3. Route SIP INVITE requests for test calls to the IncomingTestCallManager instance by calling the ProcessTestCallInviteRequest() method.
 4. Route SIP BYE requests for test calls by calling the ProcessTestCallByeRequest() method of the IncomingTestCallManager instance.
 5. Call the Shutdown() method of the IncomingTestCallManager class when the application is shutting down.
 
-The IncomingTestCallManager class will either answer an incoming test call or reject it immediately so there is no need for the application's UAC to route any other SIP requests to the IncomingTestCallManager class.
+The IncomingTestCallManager class will either answer an incoming test call or reject it immediately so there is no need for the application's UAS to route any other SIP requests to the IncomingTestCallManager class.
+
+The IncomingTestCallManager class creates an instance of the [IncomingTestCall](~/api/SipLib.TestCalls.IncomingTestCall.yml) class when it receives an INVITE request for a test call. Each instance of the IncomingTestCall class runs in a separate Task and manages a single test call. The IncomingTestCallManager task manages all test call tasks.
+
+The IncomingTestCallManager task may be configured to terminate test calls after a specified number or RTP packets has been received (and echoed back to the caller) or to terminate test calls after a specified number of minutes have elapsed.
+
+If an incoming test call contains multiple types of media (audio, video and RTT), and if configured to terminate calls after a specified number of RTP packets, then the IncomingTestCall class will terminate the call after the specified number of RTP packets is received for all media types in the call.
 
 ## Creating an IncomingTestCallManager Object
 The declaration of the constructor of the IncomingTestCallManager class is:
@@ -81,9 +87,9 @@ private void ProcessByeRequest(SIPRequest sipRequest, SIPEndPoint remoteEndPoint
 ```
 
 # Generating Test Calls
-The SipLib.TestCalls namspace contains a class called [SimpleOutgoingAudioTestCall](~/api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml) that can send a simple audio test call to a server application that can handle NG9-1-1 test calls. There is also a sample application in the Samples directory of the SipLib repository that shows how to use this class.
+The SipLib.TestCalls namspace contains a class called [SimpleOutgoingAudioTestCall](~/api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml) that can send a simple audio test call to a server application that can handle NG9-1-1 test calls. There is also a sample application in the Samples directory of the SipLib repository that shows how to use this class. See the <a href="#SampleTestCallGenerator">Sample Test Call Generator Application</a> section below.
 ## <a name="UsingSimpleOutgointAudioTestCall">Using The SimpleOutgoingAudioTestCall Class</a>
-This class sends an NG9-1-1 test call to an application that supports NG9-1-1 test calls. The test call only sends audio data. The audio data contains silence. The audio format is G.711 MuLaw.
+This class sends an NG9-1-1 test call to an application that supports NG9-1-1 test calls. The test call only send audio data. The audio data contains silence. The audio format is G.711 MuLaw.
 
 This class waits for the test call to be terminated by the application and reports the results.
 
@@ -97,12 +103,33 @@ public SimpleOutgoingAudioTestCall(SIPURI toSipUri, SipTransport transport,
     int localRtpAudioPort, int maxTestCallDurationSeconds = int.MaxValue)
 ```
 
+The toSipUri parameter specifies the SIP endpoint to send test calls to. See the [SIPURI](~/api/SipLib.Core.SIPURI.yml) class. The toSipUri must have a host portion that is an IP endpoint. The reason for this is that this class does not perform a DNS lookup.
 
+The transport parameter is the instance of the [SipTransport](~/api/SipLib.Transactions.SipTransport.yml) class that will be used to send SIP messages to the test call target. See [SIP Message Transport and Transaction Management](~/articles/SipTransportManagement.md) for information on how to create and manage a SipTransport object.
 
-## Sample Test Call Generator Application
+The localRtpAudioPort parameter specifies the local UDP port number that the new intance of the SimpleOutgoingAudioTestCall class will use to send and receive audio RTP packets. Each concurrent instance of this class must have a unique port number.
+
+The maxTestCallDurationSeconds parameter specifies the maximum duration of the test call. This duration is measured from the time that this class receives the OK response from the test call target. If the test call duration exceeds this limit then this class sends a BYE request to terminate the call.
+
+The declaration of the DoTestCall() method is:
+```
+public async Task<OutgoingTestCallResults> DoTestCall();
+```
+
+This method initiates a test call by sending an INVITE request to the test call target. If the test call target responds with an OK response then this method sets up an [RtpChannel](~/api/SipLib.RTP.RtpChannel.yml) and starts sending audio RTP packets to the test call target. This method waits for the test call target to terminate the call with a BYE request.
+
+If the test call lasts longer than the maxTestCallDurationSeconds parameter of the constructor then this method terminates the test call by sending a BYE request to the test call target.
+
+The [OutgoingTestCallResults](~/api/SipLib.TestCalls.OutgoingTestCallResults.yml) return object contains the results of the test call.
+
+If the test call target does not respond to the INVITE request, this method performs several retries. This method may block as long as 32 seconds before a request timeout occurs.
+
+Once a SimpleOutgoingAudioTestCall object has been created, the DoTestCall() may be called periodically to sent test calls to the test call target.
+
+## <a name="SampleTestCallGenerator">Sample Test Call Generator Application</a>
 The [Samples/SimpleTestCallGenerator](https://github.com/PhrSite/SipLib/tree/master/Samples/RTT) directory in the SipLib GitHub repository contains a Visual Studio command line project called SimpleTestCallGenerator.
 
-This sample program binds to the first available loca IP address using port 5090 for SIP and port 10000 for audio. It uses TCP for the SIP transport.
+This sample program binds to the first available local IPv4 address using port 5090 for SIP and port 10000 for audio. It uses TCP for the SIP transport.
 
 This sample program uses the [SimpleOutgoingAudioTestCall](~/api/SipLib.TestCalls.SimpleOutgoingAudioTestCall.yml) class to send a single test call to another application that will answer the test call.
 

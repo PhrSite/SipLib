@@ -30,6 +30,12 @@ public class SimpleOutgoingAudioTestCall
     private int m_MaxTestCallDurationSeconds;
     private bool m_ByeReceived = false;
 
+    private IPEndPoint m_TargetEndPoint;
+    private IPAddress? m_LocalIpAddress;
+    private SIPURI m_LocalContactURI;
+    private string m_SdpUaName;
+    private SIPURI m_ruri;
+
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -41,7 +47,10 @@ public class SimpleOutgoingAudioTestCall
     /// multiple test calls are being performed concurrently on the specified SipTransport, then each test call must
     /// have a unique local RTP port.</param>
     /// <param name="maxTestCallDurationSeconds">Specifies the maximum duration of a test call in seconds. This 
-    /// parameter is optional. The default is int.MaxVal.</param>
+    /// parameter is optional. The call duration is measured from the time that this class receives the OK response
+    /// from the test call target..
+    /// If the test call duration exceeds this limit then this class sends a BYE request to terminate the call.
+    /// The default is int.MaxVal.</param>
     public SimpleOutgoingAudioTestCall(SIPURI toSipUri, SipTransport transport, int localRtpAudioPort, 
         int maxTestCallDurationSeconds = int.MaxValue)
     {
@@ -50,33 +59,30 @@ public class SimpleOutgoingAudioTestCall
         m_LocalRtpAudioPort = localRtpAudioPort;
         m_MaxTestCallDurationSeconds = maxTestCallDurationSeconds;
         m_Results = new OutgoingTestCallResults();
+
+        m_TargetEndPoint = m_ToSipUri.ToSIPEndPoint()!.GetIPEndPoint();
+        m_LocalIpAddress = m_Transport.SipChannel.SIPChannelContactURI?.ToSIPEndPoint()?.Address;
+        if (m_Transport.SipChannel.SIPChannelContactURI is null || m_LocalIpAddress == null)
+            throw new ArgumentException("The SIPChannelContactURI is null or does not contain an IP address");
+
+        m_LocalContactURI = m_Transport.SipChannel.SIPChannelContactURI;
+        m_SdpUaName = m_LocalContactURI.User == null ? "TestCaller" : m_LocalContactURI.User;
+        m_ruri = SIPURI.ParseSIPURI("urn:" + TestCallConstants.TestCallUrnValue);
     }
 
     /// <summary>
-    /// Starts the test call.
+    /// Starts a test call.
     /// </summary>
-    /// <returns>Returns the results of the test call.</returns>
+    /// <returns>Returns the results of the test call when the test call is terminated.</returns>
     public async Task<OutgoingTestCallResults> DoTestCall()
     {
         m_Results = new OutgoingTestCallResults();
         m_ByeReceived = false;
-        IPEndPoint TargetEndPoint = m_ToSipUri.ToSIPEndPoint()!.GetIPEndPoint();
-        IPAddress? localIpAddress = m_Transport.SipChannel.SIPChannelContactURI?.ToSIPEndPoint()?.Address;
-        if (m_Transport.SipChannel.SIPChannelContactURI is null || localIpAddress == null)
-        {
-            m_Results.Success = false;
-            m_Results.FailureReason = "The SIPChannelContactURI is null or does not contain an IP address";
-            return m_Results;
-        }
-
-        SIPURI LocalContactURI = m_Transport.SipChannel.SIPChannelContactURI;
-        string SdpUaName = LocalContactURI.User == null ? "TestCaller" : LocalContactURI.User;
 
         // Build an INVITE request for the test call
-        SIPURI ruri = SIPURI.ParseSIPURI("urn:" + TestCallConstants.TestCallUrnValue);
-        SIPRequest invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, ruri, m_ToSipUri, m_ToSipUri.User,
-            LocalContactURI, LocalContactURI.User);
-        Sdp audioSdp = SdpUtils.BuildSimpleAudioSdp(localIpAddress, m_LocalRtpAudioPort, SdpUaName);
+        SIPRequest invite = SIPRequest.CreateBasicRequest(SIPMethodsEnum.INVITE, m_ruri, m_ToSipUri, m_ToSipUri.User,
+            m_LocalContactURI, m_LocalContactURI.User);
+        Sdp audioSdp = SdpUtils.BuildSimpleAudioSdp(m_LocalIpAddress, m_LocalRtpAudioPort, m_SdpUaName);
 
         // Add the attributes required for a test call
         audioSdp.Media[0].Attributes.Add(new SdpAttribute(TestCallConstants.LoopbackAttributeName, 
@@ -91,12 +97,13 @@ public class SimpleOutgoingAudioTestCall
 
         m_Transport.SipRequestReceived += OnSipRequestReceived;
 
-        ClientInviteTransaction Cit = m_Transport.StartClientInvite(invite, TargetEndPoint, null, null);
+        ClientInviteTransaction Cit = m_Transport.StartClientInvite(invite, m_TargetEndPoint, null, null);
         SipTransactionBase transactionBase = await Cit.WaitForCompletionAsync();
         m_Results.CallStartTime = DateTime.Now;
         if (transactionBase.LastReceivedResponse == null)
         {
             SetFailureReason("No response received to the INVITE request.");
+            m_Results.CallStopTime = DateTime.Now;
             return m_Results;
         }
 
@@ -133,7 +140,7 @@ public class SimpleOutgoingAudioTestCall
         if (rtpChannel == null)
         {
             // Terminate the call to the test call target
-            await SendByeRequest(invite, TargetEndPoint, OkResponse);
+            await SendByeRequest(invite, m_TargetEndPoint, OkResponse);
             SetFailureReason($"Error creating an RTP channel for the test call. Error message = {error}");
             return m_Results;
         }
@@ -161,7 +168,7 @@ public class SimpleOutgoingAudioTestCall
 
         if (TestCallTimeExceeded == true)
         {
-            await SendByeRequest(invite, TargetEndPoint, OkResponse);
+            await SendByeRequest(invite, m_TargetEndPoint, OkResponse);
             SetFailureReason("Maximum test call duration exceeded.");
             return m_Results;
         }

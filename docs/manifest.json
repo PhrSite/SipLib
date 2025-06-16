@@ -36,7 +36,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "AmrWbLib",
-      "Summary": null
+      "Summary": "\n<p sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"5\">This namespace contains a single class called AmrWb. This class implements the Adaptive Multi Rate Wide Band (AMR-WB) audio codec described in the following document.</p>\n<blockquote sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"7\">\n<p sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"7\">3rd Generation Partnership Project; Technical Specification Group Services and System Aspects; ANSI-C code for the\nAdaptive Multi-Rate - Wideband (AMR-WB) speech codec (Release 17), <a href=\"https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=1421\" sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"8\">3GPP TS 26.173 V17.1.1 (2023-03)</a>.</p>\n</blockquote>\n<p sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"10\">The <a href=\"~/api/AmrWbLib.AmrWb.yml\" sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"10\">AmrWb</a> class is not intended for public consumption. Applications can use the <a href=\"~/api/SipLib.Media.AmrWbEncoder.yml\" sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"10\">AmrWbEncoder</a> and the <a href=\"~/api/SipLib.Media.AmrWbDecoder.yml\" sourcefile=\"Namespaces/AmrWbLib.md\" sourcestartlinenumber=\"10\">AmrWbDecoder</a> classes in the SipLib.Media namespace for encoding and decoding audio with an AMR-WB codec.</p>\n"
     },
     {
       "type": "ManagedReference",

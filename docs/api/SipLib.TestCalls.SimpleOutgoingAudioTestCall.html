@@ -961,7 +961,7 @@ returns the results of the test call.
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_TestCalls_SimpleOutgoingAudioTestCall__ctor_SipLib_Core_SIPURI_SipLib_Transactions_SipTransport_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.TestCalls.SimpleOutgoingAudioTestCall.%23ctor(SipLib.Core.SIPURI%2CSipLib.Transactions.SipTransport%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/SimpleOutgoingAudioTestCall.cs/#L44">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/SimpleOutgoingAudioTestCall.cs/#L54">View Source</a>
   </span>
   <a id="SipLib_TestCalls_SimpleOutgoingAudioTestCall__ctor_" data-uid="SipLib.TestCalls.SimpleOutgoingAudioTestCall.#ctor*"></a>
   <h4 id="SipLib_TestCalls_SimpleOutgoingAudioTestCall__ctor_SipLib_Core_SIPURI_SipLib_Transactions_SipTransport_System_Int32_System_Int32_" data-uid="SipLib.TestCalls.SimpleOutgoingAudioTestCall.#ctor(SipLib.Core.SIPURI,SipLib.Transactions.SipTransport,System.Int32,System.Int32)">SimpleOutgoingAudioTestCall(SIPURI, SipTransport, int, int)</h4>
@@ -1008,7 +1008,10 @@ have a unique local RTP port.</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxTestCallDurationSeconds</span></td>
         <td><p>Specifies the maximum duration of a test call in seconds. This
-parameter is optional. The default is int.MaxVal.</p>
+parameter is optional. The call duration is measured from the time that this class receives the OK response
+from the test call target..
+If the test call duration exceeds this limit then this class sends a BYE request to terminate the call.
+The default is int.MaxVal.</p>
 </td>
       </tr>
     </tbody>
@@ -1020,11 +1023,11 @@ parameter is optional. The default is int.MaxVal.</p>
     <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_TestCalls_SimpleOutgoingAudioTestCall_DoTestCall.md&amp;value=---%0Auid%3A%20SipLib.TestCalls.SimpleOutgoingAudioTestCall.DoTestCall%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/SimpleOutgoingAudioTestCall.cs/#L58">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/TestCalls/SimpleOutgoingAudioTestCall.cs/#L77">View Source</a>
   </span>
   <a id="SipLib_TestCalls_SimpleOutgoingAudioTestCall_DoTestCall_" data-uid="SipLib.TestCalls.SimpleOutgoingAudioTestCall.DoTestCall*"></a>
   <h4 id="SipLib_TestCalls_SimpleOutgoingAudioTestCall_DoTestCall" data-uid="SipLib.TestCalls.SimpleOutgoingAudioTestCall.DoTestCall">DoTestCall()</h4>
-  <div class="markdown level1 summary"><p>Starts the test call.</p>
+  <div class="markdown level1 summary"><p>Starts a test call.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1042,7 +1045,7 @@ parameter is optional. The default is int.MaxVal.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="SipLib.TestCalls.OutgoingTestCallResults.html">OutgoingTestCallResults</a>&gt;</td>
-        <td><p>Returns the results of the test call.</p>
+        <td><p>Returns the results of the test call when the test call is terminated.</p>
 </td>
       </tr>
     </tbody>

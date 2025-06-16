@@ -24,6 +24,7 @@ This class library, incombination with the following NG9-1-1 related class libra
 1. [Ng911Lib](https://github.com/PhrSite/Ng911Lib)
 2. [EidoLib](https://github.com/PhrSite/EidoLib)
 3. [Ng911CadIfLib](https://github.com/PhrSite/Ng911CadIfLib)
+4. [SipRecClient](https://github.com/PhrSite/SipRecClient)
 
 # Documentation
 The documentation pages project are located at https://phrsite.github.io/SipLib. The documentation web site includes class documentation and articles that explain the usage of the classes in this library.
@@ -70,7 +71,7 @@ This directory contains the project files for the SipLib project and the followi
 | Documentation | This directory contains the DOCFX configuration files, documentation markdown source files and other files required to generate the on-line documentation web pages. |
 | Dtls | Classes required to support encryption and decryption of media (audio, video and Real Time Text) using the Datagram Transport Layer Security  DTLS specified in RFC 5763 and RFC 5764. |
 | Logging | Contains a static class called SipLogger that the classes in this class library can use for logging application messages. |
-| Media | Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722 and G.729. |
+| Media | Classes for encoding and decoding audio. The supported codecs are G.711 Mu-Law, G.711 A-Law, G.722, G.729 and AMR-WB. |
 | Msrp | Message Session Relay Protocol (MSRP, see RFC 4975) related classes. |
 | Network | Contains a utility helper class for performing network protocol related functions. |
 | RealTimeText | Classes for the Real Time Text (RTT, see RFC 4103) protocol. |
@@ -83,6 +84,16 @@ This directory contains the project files for the SipLib project and the followi
 | Video | Classes for packing and unpacking video frames for use in RTP channels for H.264 and VP8 video. The H.264 and VP8 codecs are not included here. |
 
 ## Testing Directory
+
+### AmrWb
+This directory contains test programs for the Adaptive Multi-Rate Wide Band (AMR-WB) codec implementation provided in the SipLib.Media namespace. It contains the following subdirectories.
+
+| Directory | Description |
+|--------|--------|
+| TestAmrWbDecoder  | Test program for testing the AMR-WB decoder implementation provided in th SipLib.Media namespace using the test vectors provided in [3GPP TS 26.173 V17.1.1 (2023-03)](https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=1421).  |
+| TestAmrWbEncoder | Test program for testnig the AMR-WB encoder implementation provided in the SipLib.Media namespace using the test vectors provided in [3GPP TS 26.173 V17.1.1 (2023-03)](https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=1421). |
+
+### SipLibUnitTests
 This directory contains a subdirectory called SipLibUnitTests. This directory contains the SipLibUnitTests.sln Visual Studio solution file and several subdirectories containing the source code for the SipLibUnitTests project. This project is an XUnit project for performing unit tests for the SipLib class library.
 
 To run the unit tests:
@@ -106,6 +117,7 @@ The following table is a guide to the subdirectories of the SipLibUnitTests proj
 | Sdp | Unit tests for the classes in the SipLib.Sdp namespace |
 | SipMessages | Data files containing SIP messages for the unit tests in the Body directory |
 | SipTransactions | Unit tests for the classes in the SipLib.Transactions namespace |
+| TestCalls| Unit tests for the classes in the SipLib.TestCalls namespace |
 
 
 

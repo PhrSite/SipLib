@@ -1,6 +1,6 @@
 # Version History
 
-## v0.0.4 -- TBD
+## v0.0.4 -- 16 Jun 2025
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Change | SipLib.Media.G722Codec.cs -- Changed from public scope to internal scope |
@@ -10,6 +10,8 @@
 | NA     | Addition | SipLib.Media namespace -- Added the AudioMediaUtils class. |
 | NA     | Addition | SipLib.Media namespace -- Added the G729Encoder and G729Decoder classes. |
 | NA     | Addition | SipLib.Media namespace -- Added the AmrWbEncoder and AmrWbDecoder classes |
+| NA     | Addition | Added the SipLib.TestCalls namespace. This namespace contains classes for handling NG9-1-1 test calls |
+| NA     | Addition | Added the SimpleTestCallGenerator directory to the Samples directory. This new directory contains a sample application that can generate NG9-1-1 test calls. |
 
 
 ## v0.0.3 - 14 Mar 2025
