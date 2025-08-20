@@ -870,15 +870,6 @@ public partial class AmrWb
             }
         }
 
-        // 8 Jan 24 PHR
-        //long temp = L_var1 + L_var2;
-        //if (temp > int.MaxValue)
-        //    L_var_out = int.MaxValue;
-        //else if (temp < int.MinValue)
-        //    L_var_out = int.MinValue;
-        //else
-        //    L_var_out = (int)temp;
-
         return (L_var_out);
     }
 
@@ -931,15 +922,6 @@ public partial class AmrWb
                 }
             }
         }
-
-        // 8 Jan 24 PHR
-        //long long_var_out = L_var1 - L_var2;
-        //if (long_var_out > int.MaxValue)
-        //    L_var_out = int.MaxValue;
-        //else if (long_var_out < int.MinValue)
-        //    L_var_out = int.MinValue;
-        //else
-        //    L_var_out = (int) long_var_out;
 
         return (L_var_out);
     }

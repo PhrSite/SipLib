@@ -180,7 +180,8 @@ public class SIPHeader
     /// <value></value>
     public string? Event = null;
     /// <summary>
-    /// Expires header field. See Section 20.19 of RFC 3261.
+    /// Expires header field. See Section 20.19 of RFC 3261. A value of -1 indicates that the Expires header
+    /// value is not present.
     /// </summary>
     /// <value></value>
     public int Expires = -1;
