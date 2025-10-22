@@ -89,7 +89,8 @@ public class SIPUDPChannel : SIPChannel
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This
     /// parameter is optional and defaults to null.</param>
     /// <param name="acceptConnection">User provided callback function that can determine whether or not to
-    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.
+    /// If null, then all UDP packets containing SIP messages are accepted.</param>
     public SIPUDPChannel(IPEndPoint localIPEndPoint, string? User = null, AcceptConnectionDelegate? acceptConnection = null)
     {
         LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.udp, localIPEndPoint);

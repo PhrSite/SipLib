@@ -14,12 +14,13 @@
 // See RFC 3266 for a description of how to handle IPv6 addresses in the SDP
 // See RFC 5118 for the SIP Torture tests using IPv6
     
-using System.Text;
-using System.Net;
-using SipLib.RtpCrypto;
 using SipLib.Core;
-using SipLib.Msrp;
 using SipLib.Media;
+using SipLib.Msrp;
+using SipLib.RtpCrypto;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace SipLib.Sdp;
 
@@ -684,6 +685,56 @@ public class Sdp
     }
 
     /// <summary>
+    /// Builds an Sdp object to send with the INVITE request for a new call.
+    /// </summary>
+    /// <param name="address">IP address to be used for transport of all media. This address is used in the
+    /// "c=" line of the SDP.</param>
+    /// <param name="offerSettings">Configuration settings that specify what media types to offer and the types of
+    /// codecs to offer for each media type.</param>
+    /// <param name="msrpCert">X.509 certificate to use for MSRP. This may be null if not offering MSRP. It must
+    /// be non-null if offering MSRP and the offerSettings.MsrpSetupType is not active.</param>
+    /// <returns>Returns a new Sdp object to send with an INVITE request.</returns>
+    public static Sdp BuildOfferSdp(IPAddress address, SdpOfferSettings offerSettings, X509Certificate2? msrpCert)
+    {
+        Sdp offerSdp = new Sdp(address, offerSettings.UserName);
+        offerSdp.Origin = new Origin(offerSettings.UserName, address);
+
+        if (offerSettings.OfferAudio == true)
+        {
+            MediaDescription audioMediaDescription = SdpUtils.CreateAudioMediaDescription(offerSettings.PortManager.NextAudioPort,
+                offerSettings.OfferAudioCodecs, offerSettings.RtpEncryptionType, offerSettings.Fingerprint);
+            offerSdp.Media.Add(audioMediaDescription);
+        }
+
+        if (offerSettings.OfferVideo == true)
+        {
+            MediaDescription videoMediaDescription = SdpUtils.CreateVideoMediaDescription(offerSettings.PortManager.NextVideoPort,
+                offerSettings.OfferVideoCodecs, offerSettings.RtpEncryptionType, offerSettings.Fingerprint);
+            offerSdp.Media.Add(videoMediaDescription);
+        }
+
+        if (offerSettings.OfferRtt == true)
+        {
+            MediaDescription rttMediaDescription = SdpUtils.CreateRttMediaDescription(offerSettings.PortManager.NextRttPort);
+            if (offerSettings.RtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
+                SdpUtils.AddSdesSrtpEncryption(rttMediaDescription);
+            else if (offerSettings.RtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
+                SdpUtils.AddDtlsSrtp(rttMediaDescription, offerSettings.Fingerprint);
+
+            offerSdp.Media.Add(rttMediaDescription);
+        }
+
+        if (offerSettings.OfferMsrp == true)
+        {
+            MediaDescription msrpMediaDescription = SdpUtils.CreateMsrpMediaDescription(address, offerSettings.PortManager.NextMsrpPort,
+                offerSettings.UseTlsForMsrp, offerSettings.MsrpSetupType, msrpCert, offerSettings.UserName);
+            offerSdp.Media.Add(msrpMediaDescription);
+        }
+
+        return offerSdp;
+    }
+
+    /// <summary>
     /// Builds an Sdp object to send as the answered Sdp in responsed to the offered Sdp
     /// </summary>
     /// <param name="OfferedSdp">SDP that was offered</param>
@@ -694,6 +745,8 @@ public class Sdp
     public static Sdp BuildAnswerSdp(Sdp OfferedSdp, IPAddress address, SdpAnswerSettings AnswerSettings)
     {
         Sdp AnswerSdp = new Sdp(address, AnswerSettings.UserName);
+        AnswerSdp.Origin = new Origin(AnswerSettings.UserName, address);
+
         foreach (MediaDescription Md in OfferedSdp.Media)
         {
             switch (Md.MediaType)

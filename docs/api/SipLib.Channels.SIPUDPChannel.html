@@ -173,6 +173,9 @@
                             <a href="SipLib.Channels.SIPUDPChannel.html" title="SIPUDPChannel" class="active">SIPUDPChannel</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Channels.SipChannelSettings.html" title="SipChannelSettings" class="">SipChannelSettings</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Channels.SipConnectionFailedDelegate.html" title="SipConnectionFailedDelegate" class="">SipConnectionFailedDelegate</a>
                           </li>
                           <li class="">
@@ -653,6 +656,9 @@
                             <a href="SipLib.Rtp.RtpChannel.html" title="RtpChannel" class="">RtpChannel</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Rtp.RtpEncryptionTypeEnum.html" title="RtpEncryptionTypeEnum" class="">RtpEncryptionTypeEnum</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Rtp.RtpPacket.html" title="RtpPacket" class="">RtpPacket</a>
                           </li>
                           <li class="">
@@ -769,6 +775,9 @@
                             <a href="SipLib.Sdp.SdpAttribute.html" title="SdpAttribute" class="">SdpAttribute</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Sdp.SdpOfferSettings.html" title="SdpOfferSettings" class="">SdpOfferSettings</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Sdp.SdpUtils.html" title="SdpUtils" class="">SdpUtils</a>
                           </li>
                           <li class="">
@@ -812,6 +821,9 @@
                       <a href="SipLib.Threading.html" title="SipLib.Threading" class="">SipLib.Threading</a>
 
                         <ul class="nav level2">
+                          <li class="">
+                            <a href="SipLib.Threading.QueuedActionThread.html" title="QueuedActionThread" class="">QueuedActionThread</a>
+                          </li>
                           <li class="">
                             <a href="SipLib.Threading.QueuedActionWorkerTask.html" title="QueuedActionWorkerTask" class="">QueuedActionWorkerTask</a>
                           </li>
@@ -946,6 +958,9 @@
       <a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_SIPChannelContactURI">SIPChannel.SIPChannelContactURI</a>
     </div>
     <div>
+      <a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_RemoteSipUriMatchesChannel_SipLib_Core_SIPURI_">SIPChannel.RemoteSipUriMatchesChannel(SIPURI)</a>
+    </div>
+    <div>
       <a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_IsReliable">SIPChannel.IsReliable</a>
     </div>
     <div>
@@ -1001,10 +1016,10 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel__ctor_System_Net_IPEndPoint_System_String_SipLib_Channels_AcceptConnectionDelegate_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.%23ctor(System.Net.IPEndPoint%2CSystem.String%2CSipLib.Channels.AcceptConnectionDelegate)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel__ctor_System_Net_IPEndPoint_System_String_SipLib_Channels_AcceptConnectionDelegate_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.%23ctor(System.Net.IPEndPoint%2CSystem.String%2CSipLib.Channels.AcceptConnectionDelegate)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L93">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L94">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel__ctor_" data-uid="SipLib.Channels.SIPUDPChannel.#ctor*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel__ctor_System_Net_IPEndPoint_System_String_SipLib_Channels_AcceptConnectionDelegate_" data-uid="SipLib.Channels.SIPUDPChannel.#ctor(System.Net.IPEndPoint,System.String,SipLib.Channels.AcceptConnectionDelegate)">SIPUDPChannel(IPEndPoint, string?, AcceptConnectionDelegate?)</h4>
@@ -1042,7 +1057,8 @@ parameter is optional and defaults to null.</p>
         <td><a class="xref" href="SipLib.Channels.AcceptConnectionDelegate.html">AcceptConnectionDelegate</a></td>
         <td><span class="parametername">acceptConnection</span></td>
         <td><p>User provided callback function that can determine whether or not to
-accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</p>
+accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.
+If null, then all UDP packets containing SIP messages are accepted.</p>
 </td>
       </tr>
     </tbody>
@@ -1051,10 +1067,10 @@ accept a network connection based on the client's IPEndPoint and the protocol ty
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Close.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Close%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Close.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Close%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L279">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L280">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_Close_" data-uid="SipLib.Channels.SIPUDPChannel.Close*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_Close" data-uid="SipLib.Channels.SIPUDPChannel.Close">Close()</h4>
@@ -1069,10 +1085,10 @@ accept a network connection based on the client's IPEndPoint and the protocol ty
   <div><a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_Close">SIPChannel.Close()</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_DisableConnectionReset_System_Net_Sockets_UdpClient_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.DisableConnectionReset(System.Net.Sockets.UdpClient)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_DisableConnectionReset_System_Net_Sockets_UdpClient_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.DisableConnectionReset(System.Net.Sockets.UdpClient)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L118">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L119">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_DisableConnectionReset_" data-uid="SipLib.Channels.SIPUDPChannel.DisableConnectionReset*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_DisableConnectionReset_System_Net_Sockets_UdpClient_" data-uid="SipLib.Channels.SIPUDPChannel.DisableConnectionReset(System.Net.Sockets.UdpClient)">DisableConnectionReset(UdpClient)</h4>
@@ -1116,10 +1132,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_GetConnectionsList.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.GetConnectionsList%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_GetConnectionsList.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.GetConnectionsList%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L271">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L272">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_GetConnectionsList_" data-uid="SipLib.Channels.SIPUDPChannel.GetConnectionsList*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_GetConnectionsList" data-uid="SipLib.Channels.SIPUDPChannel.GetConnectionsList">GetConnectionsList()</h4>
@@ -1150,10 +1166,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
   <div><a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_GetConnectionsList">SIPChannel.GetConnectionsList()</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_IsConnectionEstablished_System_Net_IPEndPoint_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.IsConnectionEstablished(System.Net.IPEndPoint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_IsConnectionEstablished_System_Net_IPEndPoint_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.IsConnectionEstablished(System.Net.IPEndPoint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L262">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L263">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_IsConnectionEstablished_" data-uid="SipLib.Channels.SIPUDPChannel.IsConnectionEstablished*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_IsConnectionEstablished_System_Net_IPEndPoint_" data-uid="SipLib.Channels.SIPUDPChannel.IsConnectionEstablished(System.Net.IPEndPoint)">IsConnectionEstablished(IPEndPoint)</h4>
@@ -1202,10 +1218,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
   <div><a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_IsConnectionEstablished_System_Net_IPEndPoint_">SIPChannel.IsConnectionEstablished(IPEndPoint)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.Byte%5B%5D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.Byte%5B%5D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L234">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L235">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_Send_" data-uid="SipLib.Channels.SIPUDPChannel.Send*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___" data-uid="SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint,System.Byte[])">Send(IPEndPoint, byte[])</h4>
@@ -1260,10 +1276,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___System_String_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.Byte%5B%5D%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___System_String_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.Byte%5B%5D%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L252">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L253">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_Send_" data-uid="SipLib.Channels.SIPUDPChannel.Send*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_Byte___System_String_" data-uid="SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint,System.Byte[],System.String)">Send(IPEndPoint, byte[], string?)</h4>
@@ -1308,10 +1324,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
   <div><a class="xref" href="SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_Send_System_Net_IPEndPoint_System_Byte___System_String_">SIPChannel.Send(IPEndPoint, byte[], string?)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L215">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L216">View Source</a>
   </span>
   <a id="SipLib_Channels_SIPUDPChannel_Send_" data-uid="SipLib.Channels.SIPUDPChannel.Send*"></a>
   <h4 id="SipLib_Channels_SIPUDPChannel_Send_System_Net_IPEndPoint_System_String_" data-uid="SipLib.Channels.SIPUDPChannel.Send(System.Net.IPEndPoint,System.String)">Send(IPEndPoint, string)</h4>
@@ -1373,10 +1389,10 @@ See also: https://microsoft.public.win32.programmer.networks.narkive.com/RlxW2V6
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/new/V004Working/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Channels_SIPUDPChannel.md&amp;value=---%0Auid%3A%20SipLib.Channels.SIPUDPChannel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/blob/V004Working/ClassLibrary/Channels/SIPUDPChannel.cs/#L69" class="contribution-link">View Source</a>
+                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Channels/SIPUDPChannel.cs/#L69" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

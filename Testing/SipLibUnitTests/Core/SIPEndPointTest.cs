@@ -138,7 +138,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point with an IPv6 loopback address gets represented as a string correctly.
+        /// Tests that a SIP end point with an IPv6 loopback m_Address gets represented as a string correctly.
         /// </summary>
         [Fact]
         public void IPv6LoopbackToStringTest()
@@ -151,7 +151,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point with an IPv6 loopback address gets parsed correctly.
+        /// Tests that a SIP end point with an IPv6 loopback m_Address gets parsed correctly.
         /// </summary>
         [Fact]
         public void IPv6LoopbackAndSchemeParseTest()
@@ -167,7 +167,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point with an IPv6 loopback address and port gets parsed correctly.
+        /// Tests that a SIP end point with an IPv6 loopback m_Address and port gets parsed correctly.
         /// </summary>
         [Fact]
         public void IPv6LoopbackAndPortParseTest()
@@ -185,7 +185,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point with an IPv6 loopback address and scheme gets parsed correctly.
+        /// Tests that a SIP end point with an IPv6 loopback m_Address and scheme gets parsed correctly.
         /// </summary>
         [Fact]
         public void IPv6LoopbackWithScehemeParseTest()
@@ -203,7 +203,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point for a web socket with an IPv6 loopback address and port gets 
+        /// Tests that a SIP end point for a web socket with an IPv6 loopback m_Address and port gets 
         /// parsed correctly.
         /// </summary>
         [Fact]
@@ -240,7 +240,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point an IPV6 address and a connection id gets parsed correctly.
+        /// Tests that a SIP end point an IPV6 m_Address and a connection id gets parsed correctly.
         /// </summary>
         [Fact]
         public void IPv6WithConnectionIDParseTest()
@@ -258,7 +258,7 @@ namespace SipLibUnitTests.Core
         }
 
         /// <summary>
-        /// Tests that a SIP end point an IPV6 address, a connection id and a channel id gets parsed correctly.
+        /// Tests that a SIP end point an IPV6 m_Address, a connection id and a channel id gets parsed correctly.
         /// </summary>
         [Fact]
         public void IPv6WithConnectionAndChannelIDParseTest()

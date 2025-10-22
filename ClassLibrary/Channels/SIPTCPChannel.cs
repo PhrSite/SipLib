@@ -122,7 +122,8 @@ public class SIPTCPChannel : SIPChannel
     /// <param name="User">Specifies the User part of the SIPURI for the local contact URI. This parameter
     /// defaults to null.</param>
     /// <param name="acceptConnection">User provided callback function that can determine whether or not to
-    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.
+    /// If null, then connection requests from all IPEndPoints are accepted.</param>
     public SIPTCPChannel(IPEndPoint localIPEndPoint, string? User = null, AcceptConnectionDelegate? acceptConnection = null)
     {
         LocalSIPEndPoint = new SIPEndPoint(SIPProtocolsEnum.tcp, localIPEndPoint);

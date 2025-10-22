@@ -172,11 +172,14 @@ public class SIPTLSChannel : SIPChannel
     /// <param name="UseMutualAuth">If true then use mutual TLS authentication. This parameter defaults
     /// to true.</param>
     /// <param name="acceptConnection">User provided callback function that can determine whether or not to
-    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.</param>
+    /// accept a network connection based on the client's IPEndPoint and the protocol type. Defaults to null.
+    /// If null, connection requests from all IPEndPoints are accepted.</param>
     /// <param name="acceptClientCertificate">User provided callback function that can determine whether or
-    /// not to accept a connection from a client based on the client's X.509 certificate. Defaults to  null.</param>
+    /// not to accept a connection from a client based on the client's X.509 certificate. Defaults to  null.
+    /// If null, then all client certificates are accepted.</param>
     /// <param name="acceptServerCertificate">User provided callback function that can determine whether or
-    /// not to allow a connection to a server base on the server's X.509 certificate. Defaults to null.</param>
+    /// not to allow a connection to a server based on the server's X.509 certificate. Defaults to null.
+    /// If null, then all server certificates are accepted.</param>
     public SIPTLSChannel(X509Certificate2? serverCertificate, IPEndPoint localIPEndPoint, string? User = null,
         bool UseMutualAuth = true, AcceptConnectionDelegate? acceptConnection = null,
         AcceptCertificateDelegate? acceptClientCertificate = null, 

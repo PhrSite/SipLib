@@ -376,6 +376,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Channels.SipChannelSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Channels.SipChannelSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Channels.SipChannelSettings",
+      "Summary": "<p sourcefile=\"api/SipLib.Channels.SipChannelSettings.yml\" sourcestartlinenumber=\"1\">Class containing configuration settings for building SIPChannel derived classes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Channels.SipConnectionFailedDelegate.yml",
       "output": {
         ".html": {
@@ -2728,6 +2742,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Rtp.RtpEncryptionTypeEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Rtp.RtpEncryptionTypeEnum.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Rtp.RtpEncryptionTypeEnum",
+      "Summary": "<p sourcefile=\"api/SipLib.Rtp.RtpEncryptionTypeEnum.yml\" sourcestartlinenumber=\"1\">Enumeration of the different types of encryption available for RTP media (audio, video and RTT).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Rtp.RtpPacket.yml",
       "output": {
         ".html": {
@@ -3232,6 +3260,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Sdp.SdpOfferSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Sdp.SdpOfferSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Sdp.SdpOfferSettings",
+      "Summary": "<p sourcefile=\"api/SipLib.Sdp.SdpOfferSettings.yml\" sourcestartlinenumber=\"1\">Class for passing the media settings to use when building an SDP to offer in a new call (INVITE) request.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Sdp.SdpUtils.yml",
       "output": {
         ".html": {
@@ -3400,6 +3442,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Threading.QueuedActionThread.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Threading.QueuedActionThread.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Threading.QueuedActionThread",
+      "Summary": "<p>\nThis class is intended to be the base class for other classes that need to queue actions and\nexecute them within the context of a single long-running Thread. It is generally not used directly in a stand-alone manner.\n</p>\n<p>\nAfter constructing a class derived from this class, the derived class must call the Start() method\nto start the background task. When the derived class is shutting down, it must call the Shutdown() method.\n</p>\n<p>\nActions are queued for execution by calling the EnqueueAction() method.\n</p>\n<p>\nDerived classes can override the DoTimedEvents() methods so that they can do work periodically within\nthe tread context of this class. The DoTimedEvents() method is called each time through the task loop.\nThe maximum period of execution is the WaitIntervalMsec value provided in the constructor.\n</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Threading.QueuedActionWorkerTask.yml",
       "output": {
         ".html": {
@@ -3410,7 +3466,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Threading.QueuedActionWorkerTask",
-      "Summary": "<p>\nThis class is intended to be the base class for other classes that need to queue actions and\nexecute them on a single thread context. It is generally not used directly in a stand-alone manner.\n</p>\n<p>\nAfter constructing a class derived from this class, the derived class must call the Start() method\nto start the background task. When the derived class is shutting down, it must call the Shutdown() method.\n</p>\n<p>\nActions are queued for execution by calling the EnqueueAction() method.\n</p>\n<p>\nDerived classes can override the DoTimedEvents() methods so that they can do work periodically within\nthe tread context of this class. The DoTimedEvents() method is called each time through the task loop.\nThe maximum period of execution is the WaitIntervalMsec value provided in the constructor.\n</p>\n"
+      "Summary": "<p>\nThis class is intended to be the base class for other classes that need to queue actions and\nexecute them within the context of a single long-running Task. It is generally not used directly in a stand-alone manner.\n</p>\n<p>\nAfter constructing a class derived from this class, the derived class must call the Start() method\nto start the background task. When the derived class is shutting down, it must call the Shutdown() method.\n</p>\n<p>\nActions are queued for execution by calling the EnqueueAction() method.\n</p>\n<p>\nDerived classes can override the DoTimedEvents() methods so that they can do work periodically within\nthe tread context of this class. The DoTimedEvents() method is called each time through the task loop.\nThe maximum period of execution is the WaitIntervalMsec value provided in the constructor.\n</p>\n"
     },
     {
       "type": "ManagedReference",

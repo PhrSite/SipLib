@@ -1021,7 +1021,7 @@ public class SIPTortureTests
     /// 4.3.  Port Ambiguous in a SIP URI
     /// From a parsing perspective, the request below is well-formed.
     /// However, from a semantic point of view, it will not yield the desired
-    /// result.Implementations must ensure that when a raw IPv6 address
+    /// result.Implementations must ensure that when a raw IPv6 m_Address
     /// appears in a SIP URI, then a port number, if required, appears
     /// outside the closing "]" delimiting the IPv6 reference.  Raw IPv6
     /// addresses can occur in many header fields, including the Contact,
@@ -1067,7 +1067,7 @@ public class SIPTortureTests
     /// <summary>
     /// 4.4.  Port Unambiguous in a SIP URI
     /// In contrast to the example in Section 4.3, the following REGISTER
-    /// request leaves no ambiguity whatsoever on where the IPv6 address ends
+    /// request leaves no ambiguity whatsoever on where the IPv6 m_Address ends
     /// and the port number begins.This REGISTER request is well formatted
     /// per the grammar in [RFC3261].
     /// </summary>
@@ -1105,8 +1105,8 @@ public class SIPTortureTests
 
     /// <summary>
     /// 4.5.  IPv6 Reference Delimiters in Via Header
-    /// The request below contains an IPv6 address in the Via "received"
-    /// parameter.The IPv6 address is delimited by "[" and "]".  Even
+    /// The request below contains an IPv6 m_Address in the Via "received"
+    /// parameter.The IPv6 m_Address is delimited by "[" and "]".  Even
     /// though this is not a valid request based on a strict interpretation
     /// of the grammar in [RFC3261], robust implementations must nonetheless
     /// be able to parse the topmost Via header field and continue processing
@@ -1142,7 +1142,7 @@ public class SIPTortureTests
 
     /// <summary>
     /// 4.5.  IPv6 Reference Delimiters in Via Header
-    /// The OPTIONS request below contains an IPv6 address in the Via
+    /// The OPTIONS request below contains an IPv6 m_Address in the Via
     /// "received" parameter without the adorning "[" and "]".  This request
     /// is valid according to the grammar in [RFC3261].
     /// </summary>
@@ -1281,7 +1281,7 @@ public class SIPTortureTests
     /// 4.8.  Multiple IP Addresses in SDP
     /// The request below is valid and well-formed according to the grammar
     /// in [RFC3261].  The SDP contains multiple media lines, and each media
-    /// line is identified by a different network connection address.
+    /// line is identified by a different network connection m_Address.
     /// </summary>
     [Fact]
     [Trait("Category", "IPv6Torture")]
@@ -1339,7 +1339,7 @@ public class SIPTortureTests
     /// 4.9.  IPv4-Mapped IPv6 Addresses
     /// The message below is well-formed according to the grammar in
     /// [RFC3261].  The Via list contains two Via headers, both of which
-    /// include an IPv4-mapped IPv6 address.An IPv4-mapped IPv6 address
+    /// include an IPv4-mapped IPv6 m_Address.An IPv4-mapped IPv6 m_Address
     /// also appears in the Contact header and the SDP.The topmost Via
     /// header includes a port number that is appropriately delimited by "]".
     /// </summary>

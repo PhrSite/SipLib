@@ -10,6 +10,8 @@ using SipLib.Core;
 using System.Collections.Concurrent;
 using System.Net;
 using SipLib.Channels;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Sockets;
 
 namespace SipLib.Transactions;
 
@@ -461,4 +463,87 @@ public class SipTransport
     {
         SendSipResponse(Response, DestEp.GetIPEndPoint());
     }
+
+    /// <summary>
+    /// Determines if this SipTransport can be used to contact a remote SIPURI.
+    /// </summary>
+    /// <param name="remoteUri">Remote SIPURI that needs to be contacted.</param>
+    /// <returns>Returns true if this SipTransport can be used to contact the remote SIPURI.</returns>
+    public bool RemoteSipUriMatchesTransport(SIPURI remoteUri)
+    {
+        return SipChannel.RemoteSipUriMatchesChannel(remoteUri);
+    }
+
+    /// <summary>
+    /// Finds the SipTransport to use to contact a remote endpoint defined by a SIPURI.
+    /// </summary>
+    /// <param name="remoteUri">Remote SIPURI that needs to be contacted.</param>
+    /// <param name="transports">List of active SipTransport object to search through</param>
+    /// <returns>Returns the SipTransport object to use if a match is found or null if a match is not found.</returns>
+    public static SipTransport? FindMatchingSipTransport(SIPURI remoteUri, List<SipTransport> transports)
+    {
+        foreach (SipTransport transport in transports)
+        {
+            if (transport.RemoteSipUriMatchesTransport(remoteUri) == true)
+                return transport;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Creates a new SipTransport object given a SIPURI of a remote endpoint that needs to be contacted.
+    /// <para>
+    /// After calling this method, hook its events and then call the Start() method.
+    /// </para>
+    /// </summary>
+    /// <param name="remoteSipUri">SIPURI of the remote endpoint to contact.</param>
+    /// <param name="settings">Configuration settings for building the SIPChannel to be used by the new SipTransport
+    /// object.</param>
+    /// <param name="certificate">X.509 to use if TLS is requires.</param>
+    /// <returns>Returns a new SipTransport object.</returns>
+    /// <exception cref="ArgumentException">Thrown if the settings do not meet the requirements necessary to build a
+    /// SIPChannel from the input SIPURI.</exception>
+    public static SipTransport CreateFromRemoteSipUri(SIPURI remoteSipUri, SipChannelSettings settings, X509Certificate2 certificate)
+    {
+        SipTransport? transport = null;
+        SIPEndPoint? remoteSipEndPoint = remoteSipUri.ToSIPEndPoint();
+        if (remoteSipEndPoint is null)
+            throw new ArgumentException("The remoteSipUri parameter must have a Host field containing an IP endpoint");
+
+        IPEndPoint localEndPoint;
+        IPEndPoint remoteEndPoint = remoteSipEndPoint.GetIPEndPoint();
+        if (remoteEndPoint.AddressFamily == AddressFamily.InterNetwork)
+        {
+            if (settings.LocalIPv4Address == null)
+                throw new ArgumentException("The remoteSipUri requires IPv4 and no local IPv4 address is available");
+            localEndPoint = new IPEndPoint(settings.LocalIPv4Address, settings.LocalSipPort);
+        }
+        else if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
+        {
+            if (settings.LocalIPv6Address == null)
+                throw new ArgumentException("The remoteSipUri requires IPv6 and no local IPv6 address is available");
+
+            localEndPoint = new IPEndPoint(settings.LocalIPv6Address, settings.LocalSipPort);
+        }
+        else
+            throw new ArgumentException("The remoteSipUri requires an unknown address family");
+
+        SIPChannel sipChannel;
+        if (remoteSipEndPoint.Protocol == SIPProtocolsEnum.tcp)
+            sipChannel = new SIPTCPChannel(localEndPoint, settings.LocalUser, settings.AcceptConnection);
+        else if (remoteSipEndPoint.Protocol == SIPProtocolsEnum.tls)
+        {
+            localEndPoint.Port = settings.LocalSipsPort;
+            sipChannel = new SIPTLSChannel(certificate, localEndPoint, settings.LocalUser, settings.UseMutualAuthentication,
+                settings.AcceptConnection, settings.AcceptClientCertificate, settings.AcceptServerCertificate);
+        }
+        else
+            sipChannel = new SIPUDPChannel(localEndPoint, settings.LocalUser, settings.AcceptConnection);
+
+        transport = new SipTransport(sipChannel);
+
+        return transport;
+    }
+
 }

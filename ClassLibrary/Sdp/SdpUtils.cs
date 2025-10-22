@@ -8,7 +8,9 @@ using SipLib.Core;
 using SipLib.RtpCrypto;
 using SipLib.RealTimeText;
 using SipLib.Msrp;
+using SipLib.Media;
 using System.Security.Cryptography.X509Certificates;
+using SipLib.Rtp;
 
 /// <summary>
 /// Static class that provides various functions for working with the Session Description Protocol (SDP)
@@ -33,7 +35,7 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a basic MediaDescription object for offerring G.711 Mu-Law audio media.
+    /// Creates a basic MediaDescription object for offering G.711 Mu-Law audio media.
     /// </summary>
     /// <param name="Port">Specifies the UDP port number that audio will be sent and received on</param>
     /// <returns>Returns a new MediaDescription object.</returns>
@@ -49,6 +51,70 @@ public static class SdpUtils
         AudSmd.RtpMapAttributes.Add(new RtpMapAttribute(101, "telephone-event", 8000));
 
         return AudSmd;
+    }
+
+    /// <summary>
+    /// Creates a MediaDescriptionobject for offerring multiple audio codecs.
+    /// </summary>
+    /// <param name="port">Port number to used for audio media.</param>
+    /// <param name="OfferAudioCodecs">List of audio codecs to offer.</param>
+    /// <param name="rtpEncryptionType">Specifies the type of media encryption to offer.</param>
+    /// <param name="fingerprint">Specifies the fingerprint of the X.509 certificate that will be used for DTLS-SRTP encryption.
+    /// It is best to pass in RtpChannel.CertificateFingerprint.</param>
+    /// <returns>Returns a new MediaDescription object to add to the Sdp for offering audio media</returns>
+    public static MediaDescription CreateAudioMediaDescription(int port, List<string> OfferAudioCodecs,
+        RtpEncryptionEnum rtpEncryptionType, string fingerprint)
+    {
+        MediaDescription audioMediaDescription = new MediaDescription();
+        audioMediaDescription.MediaType = MediaTypes.Audio;
+        audioMediaDescription.Port = port;
+        audioMediaDescription.Transport = "RTP/AVP";
+
+        foreach (string codec in OfferAudioCodecs)
+        {
+            switch (codec)
+            {
+                case "PCMU":
+                    audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE);
+                    audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE,
+                        "PCMU", 8000));
+                    break;
+                case "PCMA":
+                    audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.PCMA_DEFAULT_PAYLOAD_TYPE);
+                    audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.PCMA_DEFAULT_PAYLOAD_TYPE,
+                        "PCMA", 8000));
+                    break;
+                case "G722":
+                    audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.G722_DEFAULT_PAYLOAD_TYPE);
+                    audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.G722_DEFAULT_PAYLOAD_TYPE,
+                        "G722", 8000));
+                    break;
+                case "G729":
+                    audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.G729_DEFAULT_PAYLOAD_TYPE);
+                    audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.G729_DEFAULT_PAYLOAD_TYPE,
+                        "G729", 8000));
+                    break;
+                case "AMR-WB":
+                    audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE);
+                    audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE,
+                        "AMR-WB", 16000));
+                    audioMediaDescription.Attributes.Add(new SdpAttribute("fmtp", $"{AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE} " +
+                        $"octet-align=1"));
+                    break;
+            }
+        }
+
+        // Add the telephone-event
+        audioMediaDescription.PayloadTypes.Add(AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE);
+        audioMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE, "telephone-event", 8000));
+        audioMediaDescription.Attributes.Add(new SdpAttribute("fmtp", $"{AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE} 0-15"));
+
+        if (rtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
+            AddSdesSrtpEncryption(audioMediaDescription);
+        else if (rtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
+            AddDtlsSrtp(audioMediaDescription, fingerprint);
+
+        return audioMediaDescription;
     }
 
     /// <summary>
@@ -127,8 +193,49 @@ public static class SdpUtils
         MediaDescription VidSmd = new MediaDescription("video", Port, new List<int> { 96 });
         VidSmd.Transport = "RTP/AVP";
         VidSmd.RtpMapAttributes.Add(new RtpMapAttribute(96, "H264", 90000));
-        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 " + "profile-level-id=42801f"));
+        VidSmd.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 profile-level-id=42801f"));
         return VidSmd;
+    }
+
+    /// <summary>
+    /// Builds a MediaDescription object offering one or more video codecs.
+    /// </summary>
+    /// <param name="Port">Specifies the UDP port number that video will be sent and received on</param>
+    /// <param name="offerVideoCodecs">List of video codec names to offer. For example: H264, VP8, etc.</param>
+    /// <param name="rtpEncryptionType">Specifies the type of encryption to offer.</param>
+    /// <param name="fingerprint">Fingerprint of the X.509 certificate that will be used for DTLS-SRTP encryption.
+    /// It is best to pass in RtpChannel.CertificateFingerprint.</param>
+    /// <returns>Returns a new MediaDescription object that can be added to an Sdp object that will be offered.</returns>
+    public static MediaDescription CreateVideoMediaDescription(int Port, List<string> offerVideoCodecs,
+        RtpEncryptionEnum rtpEncryptionType, string fingerprint)
+    {
+        MediaDescription videoMediaDescription = new MediaDescription();
+        videoMediaDescription.MediaType = MediaTypes.Video;
+        videoMediaDescription.Port = Port;
+        videoMediaDescription.Transport = "RTP/AVP";
+
+        foreach (string codec in offerVideoCodecs)
+        {
+            if (codec == "H264")
+            {
+                videoMediaDescription.PayloadTypes.Add(96);
+                videoMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(96, "H264", 90000));
+                // H.264 video using the Basic Level 1 video profile.
+                videoMediaDescription.Attributes.Add(SdpAttribute.ParseSdpAttribute("fmtp:96 profile-level-id=42801f"));
+            }
+            else
+            {
+                videoMediaDescription.PayloadTypes.Add(98);
+                videoMediaDescription.RtpMapAttributes.Add(new RtpMapAttribute(98, codec, 90000));
+            }
+        }
+
+        if (rtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
+            AddSdesSrtpEncryption(videoMediaDescription);
+        else if (rtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
+            AddDtlsSrtp(videoMediaDescription, fingerprint);
+
+        return videoMediaDescription;
     }
 
     /// <summary>
@@ -201,8 +308,7 @@ public static class SdpUtils
     /// <exception cref="ArgumentException">Thrown if UseTls is true, and localCert is null and setupType is passive or
     /// actpass</exception>
     public static MediaDescription CreateMsrpMediaDescription(IPAddress ipAddress, int Port,
-        bool UseTls, SetupType setupType, X509Certificate2? localCert = null,
-        string? user = null)
+        bool UseTls, SetupType setupType, X509Certificate2? localCert = null, string? user = null)
     {
         if (UseTls == true && localCert == null && (setupType == SetupType.passive || setupType == SetupType.actpass))
             throw new ArgumentException($"UseTls is {UseTls}, setupType = {setupType} and localCert is null. A X509Certificate2 " +

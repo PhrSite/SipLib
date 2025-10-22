@@ -359,8 +359,7 @@ public class SIPURI
                     int colonPosn = uri.IndexOf(SCHEME_ADDR_SEPARATOR);
 
                     if (colonPosn == -1)
-                        throw new SIPValidationException(SIPValidationFieldsEnum.URI, 
-                            "SIP URI did not contain compulsory colon");
+                        throw new SIPValidationException(SIPValidationFieldsEnum.URI, "SIP URI did not contain compulsory colon");
                     else
                     {
                         try
@@ -454,8 +453,7 @@ public class SIPURI
                     SIPSchemesEnum.sips || sipURI.Scheme == SIPSchemesEnum.tel) && sipURI.Host !=
                     null && sipURI.Host.IndexOf("+1") >= 0)
                 {   // The URI is of the format sip:+1xxxxxxxxxx or 
-                    // tel:+1xxxxxxxxxx. This handles the North American 
-                    // Numbering plan (NANP) only.
+                    // tel:+1xxxxxxxxxx. This handles the North American Numbering plan (NANP) only.
                     sipURI.User = sipURI.Host.Replace("+1", "").Trim();
                 }
 
@@ -485,7 +483,6 @@ public class SIPURI
     {
         try
         {
-            //uri = ParseSIPURIRelaxed(uriStr);
             uri = ParseSIPURI(uriStr);
             return (uri! != null!);
         }
@@ -584,11 +581,11 @@ public class SIPURI
     /// <summary>
     /// Converts this SIPURI object into a SIPEndPoint object.
     /// </summary>
-    /// <returns>Returns a SIPEndPoint object if the SIPURI represents an endpoint or
-    /// null if it does not (for example: urn:service:sos)</returns>
+    /// <returns>Returns a SIPEndPoint object if the SIPURI represents an endpoint or null if it does not 
+    /// (for example: urn:service:sos)</returns>
     public SIPEndPoint? ToSIPEndPoint()
     {
-        if (IPSocket.TryParseIPEndPoint(Host!, out var ipEndPoint))
+        if (IPSocket.TryParseIPEndPoint(Host!, out IPEndPoint? ipEndPoint))
         {
             if (ipEndPoint.Port != 0)
             {
@@ -618,10 +615,8 @@ public class SIPURI
             }
             else
             {
-                Parameters = new SIPParameters(paramsAndHeaders.Substring(0, headerDelimPosn), 
-                    PARAM_TAG_DELIMITER);
-                Headers = new SIPParameters(paramsAndHeaders.Substring(headerDelimPosn + 1), 
-                    HEADER_TAG_DELIMITER);
+                Parameters = new SIPParameters(paramsAndHeaders.Substring(0, headerDelimPosn), PARAM_TAG_DELIMITER);
+                Headers = new SIPParameters(paramsAndHeaders.Substring(headerDelimPosn + 1), HEADER_TAG_DELIMITER);
             }
         }
     }
@@ -730,12 +725,12 @@ public class SIPURI
     /// <returns>A new SIP URI if mangling took place. Null if no mangling occurred.</returns>
     public static SIPURI? Mangle(SIPURI uri, IPEndPoint receivedOn)
     {
-        if (receivedOn != null && IPAddress.TryParse(uri.HostAddress, out var ipv4Host))
+        if (receivedOn != null && IPAddress.TryParse(uri.HostAddress, out IPAddress? ipv4Host))
         {
 
             if (ipv4Host.IsPrivate() && !IPAddress.Equals(ipv4Host, receivedOn.Address))
             {
-                var mangledURI = uri.CopyOf();
+                SIPURI mangledURI = uri.CopyOf();
                 mangledURI.Host = mangledURI.Host!.Replace(mangledURI.Host, receivedOn.ToString());
                 return mangledURI;
             }
@@ -754,7 +749,7 @@ public class SIPURI
         if (HostPort == null)
             // If the URI does not contain an explicit port it means the default is implcit.
             return true;
-        else if (int.TryParse(HostPort, out var port))
+        else if (int.TryParse(HostPort, out int port))
         {
             switch (Protocol)
             {

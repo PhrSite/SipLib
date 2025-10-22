@@ -10,7 +10,7 @@ namespace SipLib.Threading;
 /// <summary>
 /// <para>
 /// This class is intended to be the base class for other classes that need to queue actions and
-/// execute them on a single thread context. It is generally not used directly in a stand-alone manner.
+/// execute them within the context of a single long-running Task. It is generally not used directly in a stand-alone manner.
 /// </para>
 /// <para>
 /// After constructing a class derived from this class, the derived class must call the Start() method
@@ -42,7 +42,7 @@ public class QueuedActionWorkerTask
     /// Constructor
     /// </summary>
     /// <param name="WaitIntervalMsec">Specifies the maximum number of milliseconds that the worker
-    /// task spends sleeping. The minimum value is 10 msec. There is no maximum value.</param>
+    /// task spends sleeping. The minimum value is 0 msec. There is no maximum value.</param>
     public QueuedActionWorkerTask(int WaitIntervalMsec = DEFAULT_WAIT_INTERVAL_MS)
     {
         if (WaitIntervalMsec < MINIMUM_WAIT_INTERVAL_MS)
@@ -120,7 +120,10 @@ public class QueuedActionWorkerTask
     }
 
     /// <summary>
-    /// 
+    /// This method is called from within the Task context of the worker Task managed by this class. The base class implementation
+    /// performs no work. This method must be overridden by the derived class if periodic actions are required.
+    /// <para>The method is called once for each iteration of the thread's main loop. The maximum period between calls is specified by the 
+    /// WaitIntervalMsec constructor parameter.</para>
     /// </summary>
     protected virtual void DoTimedEvents()
     {

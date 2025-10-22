@@ -439,7 +439,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that a SIP URI with an IPv6 address is correctly parsed.
+    /// Tests that a SIP URI with an IPv6 m_Address is correctly parsed.
     /// </summary>
     [Fact]
     public void ParseIPv6UnitTest()
@@ -459,7 +459,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that a SIP URI with an IPv6 address and an explicit port is correctly parsed.
+    /// Tests that a SIP URI with an IPv6 m_Address and an explicit port is correctly parsed.
     /// </summary>
     [Fact]
     public void ParseIPv6WithExplicitPortUnitTest()
@@ -472,7 +472,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that SIP URIs with an IPv6 address with default ports generate the same canonical addresses.
+    /// Tests that SIP URIs with an IPv6 m_Address with default ports generate the same canonical addresses.
     /// </summary>
     [Fact]
     public void IPv6UriPortToNoPortCanonicalAddressUnitTest()
@@ -501,7 +501,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that the SIP URI constructor that takes an IP address works correctly for IPv6.
+    /// Tests that the SIP URI constructor that takes an IP m_Address works correctly for IPv6.
     /// </summary>
     [Fact]
     public void UriConstructorWithIPv6AddressUnitTest()
@@ -523,7 +523,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that a SIP URI with an IPv4 address mapped to an IPv6 address is parsed correctly.
+    /// Tests that a SIP URI with an IPv4 m_Address mapped to an IPv6 m_Address is parsed correctly.
     /// </summary>
     [Fact]
     public void ParseIPv4MappedAddressUnitTest()
@@ -546,7 +546,7 @@ public class SIPURIUnitTest
     }
 
     /// <summary>
-    /// Tests that a SIP URI with a private IPv4 address gets mangled correctly.
+    /// Tests that a SIP URI with a private IPv4 m_Address gets mangled correctly.
     /// </summary>
     // 9 Nov 22 PHR -- Mangle not implemented in SipLib
     //[Fact]
@@ -560,7 +560,7 @@ public class SIPURIUnitTest
     //}
 
     /// <summary>
-    /// Tests that a SIP URI with a private IPv4 address and no port gets mangled correctly.
+    /// Tests that a SIP URI with a private IPv4 m_Address and no port gets mangled correctly.
     /// </summary>
     // 9 Nov 22 PHR -- Mangle not implemented in SipLib
     //[Fact]
@@ -574,7 +574,7 @@ public class SIPURIUnitTest
     //}
 
     /// <summary>
-    /// Tests that a SIP URI with a private IPv4 address and that was recived on an IPv6
+    /// Tests that a SIP URI with a private IPv4 m_Address and that was recived on an IPv6
     /// end point gets mangled correctly.
     /// </summary>
     // 9 Nov 22 PHR -- Mangle not implemented in SipLib
@@ -596,8 +596,8 @@ public class SIPURIUnitTest
     //}
 
     /// <summary>
-    /// Tests that a SIP URI with a does not get mangled when the received on IP address
-    /// is the same private IP address as the URI host.
+    /// Tests that a SIP URI with a does not get mangled when the received on IP m_Address
+    /// is the same private IP m_Address as the URI host.
     /// </summary>
     // 9 Nov 22 PHR -- Mangle not implemented in SipLib
     //[Fact]
@@ -615,7 +615,7 @@ public class SIPURIUnitTest
     //}
 
     /// <summary>
-    /// Tests that a SIP URI with a public IPv4 address does not get mangled.
+    /// Tests that a SIP URI with a public IPv4 m_Address does not get mangled.
     /// </summary>
     // 9 Nov 22 PHR -- Mangle not implemented in SipLib
     //[Fact]

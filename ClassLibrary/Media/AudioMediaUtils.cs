@@ -123,24 +123,35 @@ public static class AudioMediaUtils
     }
 
     /// <summary>
-    /// Default payload type number for the G.711 PCMU codec
+    /// Default payload type (codec number) for the G.711 PCMU codec
     /// </summary>
     public const int PCMU_DEFAULT_PAYLOAD_TYPE = 0;
 
     /// <summary>
-    /// Default payload type number for the G.711 PCMA codec
+    /// Default payload type (codec number) for the G.711 PCMA codec
     /// </summary>
     public const int PCMA_DEFAULT_PAYLOAD_TYPE = 8;
 
     /// <summary>
-    /// Default payload type number for the G.722 codec
+    /// Default payload type (codec number) for the G.722 codec
     /// </summary>
     public const int G722_DEFAULT_PAYLOAD_TYPE = 9;
 
     /// <summary>
-    /// Default payload type number for the G.729 codec
+    /// Default payload type (codec number) for the G.729 codec
     /// </summary>
     public const int G729_DEFAULT_PAYLOAD_TYPE = 18;
+
+    /// <summary>
+    /// Default payload type (codec number) for the AMR-WB codec. There is actually no defined default payload type so one
+    /// is defined here.
+    /// </summary>
+    public const int AMRWB_DEFAULT_PAYLOAD_TYPE = 20;
+
+    /// <summary>
+    /// Default payload type (codec number) for the telephone-event usint RTP DTMF events.
+    /// </summary>
+    public const int TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE = 101;
 
     private static readonly List<string> m_SupportedAudioCodecs = new List<string>() 
     { "PCMU", "PCMA", "G722", "G729", "AMR-WB" };

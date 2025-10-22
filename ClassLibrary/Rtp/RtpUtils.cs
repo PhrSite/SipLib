@@ -234,3 +234,24 @@ public class RtpUtils
 
 }
 
+/// <summary>
+/// Enumeration of the different types of encryption available for RTP media (audio, video and RTT).
+/// </summary>
+public enum RtpEncryptionTypeEnum
+{
+    /// <summary>
+    /// No media encryption
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Use SDES-SRTP as described in RFC 4568 and RFC 3711.
+    /// </summary>
+    SDES_SRTP,
+
+    /// <summary>
+    /// Use DTLS-SRTP as described in RFC 5763, RFC 5764 and RFC 3711
+    /// </summary>
+    DTLS_SRTP
+}
+

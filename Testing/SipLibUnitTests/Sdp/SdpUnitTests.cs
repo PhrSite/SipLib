@@ -3,8 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLibUnitTests.Sdp; 
-using System.Net;
+using SipLib.Media;
+using SipLib.Rtp;
 using SipLib.Sdp;
+using System.Net;
 
 [Trait("Category", "unit")]
 public class SdpUnitTests
@@ -297,4 +299,62 @@ public class SdpUnitTests
         Mde = Sdp.GetMediaDirection(sdp, sdp.Media[1]);
         Assert.True(Mde == MediaDirectionEnum.sendonly, "The video media direction is not sendonly");
     }
+
+    private static MediaPortSettings m_PortSettings = new MediaPortSettings();
+    private MediaPortManager m_MediaPortManager = new MediaPortManager(m_PortSettings);
+    private IPAddress m_Address = IPAddress.Parse("192.168.1.82");
+
+    [Fact]
+    private void TestBasicOfferSdp1()
+    {
+        List<string> supportedVideoCodecs = new List<string>() {"H264", "VP8" };
+        SdpOfferSettings sdpOfferSettings = new SdpOfferSettings(AudioMediaUtils.SupportedAudioCodecs, supportedVideoCodecs,
+            "TestSdp", RtpChannel.CertificateFingerprint!, m_MediaPortManager);
+        sdpOfferSettings.OfferVideo = true;
+        sdpOfferSettings.OfferRtt = true;
+        sdpOfferSettings.OfferMsrp = true;
+
+        Sdp offerSdp = Sdp.BuildOfferSdp(m_Address, sdpOfferSettings, null);
+        string strSdp = offerSdp.ToString();
+
+        Sdp parsedSdp = Sdp.ParseSDP(strSdp);
+
+        Assert.True(parsedSdp.Media.Count == 4, "Media.Count is wrong");
+
+        MediaDescription audioMd = parsedSdp.GetMediaType(MediaTypes.Audio);
+        Assert.True(audioMd != null, "audioMd is null");
+        Assert.True(audioMd.Port != 0, "audioMd.Port is 0");
+        // Allow for 101 telephone-event
+        Assert.True(audioMd.PayloadTypes.Count == AudioMediaUtils.SupportedAudioCodecs.Count + 1, "audioMd.PayloadType.Count is wrong");
+        Assert.True(audioMd.RtpMapAttributes.Count == audioMd.PayloadTypes.Count, "audioMd.RtpMapAttributes.Count is wrong");
+        RtpMapAttribute audioPcmuRma = audioMd.GetRtpMapForPayloadType(AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE);
+
+        List<int> payloadNumbers = new List<int>()
+        {
+            AudioMediaUtils.PCMU_DEFAULT_PAYLOAD_TYPE, AudioMediaUtils.PCMA_DEFAULT_PAYLOAD_TYPE,
+            AudioMediaUtils.G722_DEFAULT_PAYLOAD_TYPE, AudioMediaUtils.G729_DEFAULT_PAYLOAD_TYPE,
+            AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE, AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+        };
+
+        foreach (int payloadNumber in payloadNumbers)
+        {
+            RtpMapAttribute Rma = audioMd.GetRtpMapForPayloadType(payloadNumber);
+            Assert.True(Rma != null, $"Rma for payloadtype = {payloadNumber} is null");
+        }
+
+        MediaDescription videoMd = parsedSdp.GetMediaType(MediaTypes.Video);
+        Assert.True(videoMd != null, "videoMd is null");
+        Assert.True(videoMd.Port != 0, "videoMd.Port is 0");
+        Assert.True(videoMd.PayloadTypes.Count == supportedVideoCodecs.Count, "videoMd.PayloadType.Count is wrong");
+
+        MediaDescription rttMd = parsedSdp.GetMediaType(MediaTypes.RTT);
+        Assert.True(rttMd != null, "rttMd is null");
+        Assert.True(rttMd.Port != 0, "rttMd.Port is 0");
+
+        MediaDescription msrpMd = parsedSdp.GetMediaType(MediaTypes.MSRP);
+        Assert.True(msrpMd != null, "msrpMd is null");
+        Assert.True(msrpMd.Port != 0, "msrpMd.Port is 0");
+        Assert.True(msrpMd.GetSetupTypeAttributeValue() == SetupType.active, "msrpMd SetupType is wrong");
+    }
+
 }

@@ -73,7 +73,7 @@ public abstract class SIPChannel
     /// request or false to refuse it.
     /// </para>
     /// <para>
-    /// If this delegate member is null then all connection requests will be received regardless of where they
+    /// If this delegate member is null then all connection requests will be accepted regardless of where they
     /// came from.
     /// </para>
     /// </summary>
@@ -132,6 +132,27 @@ public abstract class SIPChannel
     public SIPURI SIPChannelContactURI
     {
         get { return SipUri; }
+    }
+
+    /// <summary>
+    /// Determines if a SIPChannel derived object can be used to contact a remote SIPURI.
+    /// </summary>
+    /// <param name="remoteUri">Remote SIPURI that needs to be contacted.</param>
+    /// <returns>Returns true if the SIPChannel can be used to contact a remote endpoint defined by the SIPURI.</returns>
+    /// <exception cref="ArgumentException">Thrown if the Host field of the remoteUri parameter does not contain an IP endpoint</exception>
+    public bool RemoteSipUriMatchesChannel(SIPURI remoteUri)
+    {
+        bool Matches = false;
+        SIPEndPoint? remoteSipEndPoint = remoteUri.ToSIPEndPoint();
+        if (remoteSipEndPoint is null)
+            throw new ArgumentException("The remoteUri parameter must have a Host field containing an IP endpoint");
+
+        if (remoteUri.Scheme == SIPChannelContactURI.Scheme && remoteUri.Protocol == SIPChannelContactURI.Protocol &&
+            remoteSipEndPoint.GetIPEndPoint().AddressFamily == SIPChannelContactURI.ToSIPEndPoint().GetIPEndPoint().
+            AddressFamily)
+            Matches = true;
+
+        return Matches;
     }
 
     /// <summary>

@@ -890,6 +890,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Channels.SIPChannel.PruneConnections
   nameWithType: SIPChannel.PruneConnections
+- uid: SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel(SipLib.Core.SIPURI)
+  name: RemoteSipUriMatchesChannel(SIPURI)
+  href: api/SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_RemoteSipUriMatchesChannel_SipLib_Core_SIPURI_
+  commentId: M:SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel(SipLib.Core.SIPURI)
+  fullName: SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel(SipLib.Core.SIPURI)
+  nameWithType: SIPChannel.RemoteSipUriMatchesChannel(SIPURI)
+- uid: SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel*
+  name: RemoteSipUriMatchesChannel
+  href: api/SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_RemoteSipUriMatchesChannel_
+  commentId: Overload:SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel
+  isSpec: "True"
+  fullName: SipLib.Channels.SIPChannel.RemoteSipUriMatchesChannel
+  nameWithType: SIPChannel.RemoteSipUriMatchesChannel
 - uid: SipLib.Channels.SIPChannel.SIPChannelContactURI
   name: SIPChannelContactURI
   href: api/SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_SIPChannelContactURI
@@ -1445,6 +1458,129 @@ references:
   isSpec: "True"
   fullName: SipLib.Channels.SIPUDPChannel.Send
   nameWithType: SIPUDPChannel.Send
+- uid: SipLib.Channels.SipChannelSettings
+  name: SipChannelSettings
+  href: api/SipLib.Channels.SipChannelSettings.html
+  commentId: T:SipLib.Channels.SipChannelSettings
+  fullName: SipLib.Channels.SipChannelSettings
+  nameWithType: SipChannelSettings
+- uid: SipLib.Channels.SipChannelSettings.AcceptClientCertificate
+  name: AcceptClientCertificate
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptClientCertificate
+  commentId: P:SipLib.Channels.SipChannelSettings.AcceptClientCertificate
+  fullName: SipLib.Channels.SipChannelSettings.AcceptClientCertificate
+  nameWithType: SipChannelSettings.AcceptClientCertificate
+- uid: SipLib.Channels.SipChannelSettings.AcceptClientCertificate*
+  name: AcceptClientCertificate
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptClientCertificate_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.AcceptClientCertificate
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.AcceptClientCertificate
+  nameWithType: SipChannelSettings.AcceptClientCertificate
+- uid: SipLib.Channels.SipChannelSettings.AcceptConnection
+  name: AcceptConnection
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptConnection
+  commentId: P:SipLib.Channels.SipChannelSettings.AcceptConnection
+  fullName: SipLib.Channels.SipChannelSettings.AcceptConnection
+  nameWithType: SipChannelSettings.AcceptConnection
+- uid: SipLib.Channels.SipChannelSettings.AcceptConnection*
+  name: AcceptConnection
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptConnection_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.AcceptConnection
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.AcceptConnection
+  nameWithType: SipChannelSettings.AcceptConnection
+- uid: SipLib.Channels.SipChannelSettings.AcceptServerCertificate
+  name: AcceptServerCertificate
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptServerCertificate
+  commentId: P:SipLib.Channels.SipChannelSettings.AcceptServerCertificate
+  fullName: SipLib.Channels.SipChannelSettings.AcceptServerCertificate
+  nameWithType: SipChannelSettings.AcceptServerCertificate
+- uid: SipLib.Channels.SipChannelSettings.AcceptServerCertificate*
+  name: AcceptServerCertificate
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_AcceptServerCertificate_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.AcceptServerCertificate
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.AcceptServerCertificate
+  nameWithType: SipChannelSettings.AcceptServerCertificate
+- uid: SipLib.Channels.SipChannelSettings.LocalIPv4Address
+  name: LocalIPv4Address
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalIPv4Address
+  commentId: P:SipLib.Channels.SipChannelSettings.LocalIPv4Address
+  fullName: SipLib.Channels.SipChannelSettings.LocalIPv4Address
+  nameWithType: SipChannelSettings.LocalIPv4Address
+- uid: SipLib.Channels.SipChannelSettings.LocalIPv4Address*
+  name: LocalIPv4Address
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalIPv4Address_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.LocalIPv4Address
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.LocalIPv4Address
+  nameWithType: SipChannelSettings.LocalIPv4Address
+- uid: SipLib.Channels.SipChannelSettings.LocalIPv6Address
+  name: LocalIPv6Address
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalIPv6Address
+  commentId: P:SipLib.Channels.SipChannelSettings.LocalIPv6Address
+  fullName: SipLib.Channels.SipChannelSettings.LocalIPv6Address
+  nameWithType: SipChannelSettings.LocalIPv6Address
+- uid: SipLib.Channels.SipChannelSettings.LocalIPv6Address*
+  name: LocalIPv6Address
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalIPv6Address_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.LocalIPv6Address
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.LocalIPv6Address
+  nameWithType: SipChannelSettings.LocalIPv6Address
+- uid: SipLib.Channels.SipChannelSettings.LocalSipPort
+  name: LocalSipPort
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalSipPort
+  commentId: P:SipLib.Channels.SipChannelSettings.LocalSipPort
+  fullName: SipLib.Channels.SipChannelSettings.LocalSipPort
+  nameWithType: SipChannelSettings.LocalSipPort
+- uid: SipLib.Channels.SipChannelSettings.LocalSipPort*
+  name: LocalSipPort
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalSipPort_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.LocalSipPort
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.LocalSipPort
+  nameWithType: SipChannelSettings.LocalSipPort
+- uid: SipLib.Channels.SipChannelSettings.LocalSipsPort
+  name: LocalSipsPort
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalSipsPort
+  commentId: P:SipLib.Channels.SipChannelSettings.LocalSipsPort
+  fullName: SipLib.Channels.SipChannelSettings.LocalSipsPort
+  nameWithType: SipChannelSettings.LocalSipsPort
+- uid: SipLib.Channels.SipChannelSettings.LocalSipsPort*
+  name: LocalSipsPort
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalSipsPort_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.LocalSipsPort
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.LocalSipsPort
+  nameWithType: SipChannelSettings.LocalSipsPort
+- uid: SipLib.Channels.SipChannelSettings.LocalUser
+  name: LocalUser
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalUser
+  commentId: P:SipLib.Channels.SipChannelSettings.LocalUser
+  fullName: SipLib.Channels.SipChannelSettings.LocalUser
+  nameWithType: SipChannelSettings.LocalUser
+- uid: SipLib.Channels.SipChannelSettings.LocalUser*
+  name: LocalUser
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_LocalUser_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.LocalUser
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.LocalUser
+  nameWithType: SipChannelSettings.LocalUser
+- uid: SipLib.Channels.SipChannelSettings.UseMutualAuthentication
+  name: UseMutualAuthentication
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_UseMutualAuthentication
+  commentId: P:SipLib.Channels.SipChannelSettings.UseMutualAuthentication
+  fullName: SipLib.Channels.SipChannelSettings.UseMutualAuthentication
+  nameWithType: SipChannelSettings.UseMutualAuthentication
+- uid: SipLib.Channels.SipChannelSettings.UseMutualAuthentication*
+  name: UseMutualAuthentication
+  href: api/SipLib.Channels.SipChannelSettings.html#SipLib_Channels_SipChannelSettings_UseMutualAuthentication_
+  commentId: Overload:SipLib.Channels.SipChannelSettings.UseMutualAuthentication
+  isSpec: "True"
+  fullName: SipLib.Channels.SipChannelSettings.UseMutualAuthentication
+  nameWithType: SipChannelSettings.UseMutualAuthentication
 - uid: SipLib.Channels.SipConnectionFailedDelegate
   name: SipConnectionFailedDelegate
   href: api/SipLib.Channels.SipConnectionFailedDelegate.html
@@ -12747,6 +12883,12 @@ references:
   commentId: T:SipLib.Media.AudioMediaUtils
   fullName: SipLib.Media.AudioMediaUtils
   nameWithType: AudioMediaUtils
+- uid: SipLib.Media.AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE
+  name: AMRWB_DEFAULT_PAYLOAD_TYPE
+  href: api/SipLib.Media.AudioMediaUtils.html#SipLib_Media_AudioMediaUtils_AMRWB_DEFAULT_PAYLOAD_TYPE
+  commentId: F:SipLib.Media.AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE
+  fullName: SipLib.Media.AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE
+  nameWithType: AudioMediaUtils.AMRWB_DEFAULT_PAYLOAD_TYPE
 - uid: SipLib.Media.AudioMediaUtils.G722_DEFAULT_PAYLOAD_TYPE
   name: G722_DEFAULT_PAYLOAD_TYPE
   href: api/SipLib.Media.AudioMediaUtils.html#SipLib_Media_AudioMediaUtils_G722_DEFAULT_PAYLOAD_TYPE
@@ -12810,6 +12952,12 @@ references:
   isSpec: "True"
   fullName: SipLib.Media.AudioMediaUtils.SupportedAudioCodecs
   nameWithType: AudioMediaUtils.SupportedAudioCodecs
+- uid: SipLib.Media.AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+  name: TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+  href: api/SipLib.Media.AudioMediaUtils.html#SipLib_Media_AudioMediaUtils_TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+  commentId: F:SipLib.Media.AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+  fullName: SipLib.Media.AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
+  nameWithType: AudioMediaUtils.TELEPHONE_EVENT_DEFAULT_PAYLOAD_TYPE
 - uid: SipLib.Media.AudioSampleData
   name: AudioSampleData
   href: api/SipLib.Media.AudioSampleData.html
@@ -17660,6 +17808,30 @@ references:
   isSpec: "True"
   fullName: SipLib.Rtp.RtpChannel.StartListening
   nameWithType: RtpChannel.StartListening
+- uid: SipLib.Rtp.RtpEncryptionTypeEnum
+  name: RtpEncryptionTypeEnum
+  href: api/SipLib.Rtp.RtpEncryptionTypeEnum.html
+  commentId: T:SipLib.Rtp.RtpEncryptionTypeEnum
+  fullName: SipLib.Rtp.RtpEncryptionTypeEnum
+  nameWithType: RtpEncryptionTypeEnum
+- uid: SipLib.Rtp.RtpEncryptionTypeEnum.DTLS_SRTP
+  name: DTLS_SRTP
+  href: api/SipLib.Rtp.RtpEncryptionTypeEnum.html#SipLib_Rtp_RtpEncryptionTypeEnum_DTLS_SRTP
+  commentId: F:SipLib.Rtp.RtpEncryptionTypeEnum.DTLS_SRTP
+  fullName: SipLib.Rtp.RtpEncryptionTypeEnum.DTLS_SRTP
+  nameWithType: RtpEncryptionTypeEnum.DTLS_SRTP
+- uid: SipLib.Rtp.RtpEncryptionTypeEnum.None
+  name: None
+  href: api/SipLib.Rtp.RtpEncryptionTypeEnum.html#SipLib_Rtp_RtpEncryptionTypeEnum_None
+  commentId: F:SipLib.Rtp.RtpEncryptionTypeEnum.None
+  fullName: SipLib.Rtp.RtpEncryptionTypeEnum.None
+  nameWithType: RtpEncryptionTypeEnum.None
+- uid: SipLib.Rtp.RtpEncryptionTypeEnum.SDES_SRTP
+  name: SDES_SRTP
+  href: api/SipLib.Rtp.RtpEncryptionTypeEnum.html#SipLib_Rtp_RtpEncryptionTypeEnum_SDES_SRTP
+  commentId: F:SipLib.Rtp.RtpEncryptionTypeEnum.SDES_SRTP
+  fullName: SipLib.Rtp.RtpEncryptionTypeEnum.SDES_SRTP
+  nameWithType: RtpEncryptionTypeEnum.SDES_SRTP
 - uid: SipLib.Rtp.RtpPacket
   name: RtpPacket
   href: api/SipLib.Rtp.RtpPacket.html
@@ -21021,6 +21193,22 @@ references:
   isSpec: "True"
   fullName: SipLib.Sdp.Sdp.BuildMsrpAnswerMediaDescription
   nameWithType: Sdp.BuildMsrpAnswerMediaDescription
+- uid: SipLib.Sdp.Sdp.BuildOfferSdp(System.Net.IPAddress,SipLib.Sdp.SdpOfferSettings,System.Security.Cryptography.X509Certificates.X509Certificate2)
+  name: BuildOfferSdp(IPAddress, SdpOfferSettings, X509Certificate2?)
+  href: api/SipLib.Sdp.Sdp.html#SipLib_Sdp_Sdp_BuildOfferSdp_System_Net_IPAddress_SipLib_Sdp_SdpOfferSettings_System_Security_Cryptography_X509Certificates_X509Certificate2_
+  commentId: M:SipLib.Sdp.Sdp.BuildOfferSdp(System.Net.IPAddress,SipLib.Sdp.SdpOfferSettings,System.Security.Cryptography.X509Certificates.X509Certificate2)
+  name.vb: BuildOfferSdp(IPAddress, SdpOfferSettings, X509Certificate2)
+  fullName: SipLib.Sdp.Sdp.BuildOfferSdp(System.Net.IPAddress, SipLib.Sdp.SdpOfferSettings, System.Security.Cryptography.X509Certificates.X509Certificate2?)
+  fullName.vb: SipLib.Sdp.Sdp.BuildOfferSdp(System.Net.IPAddress, SipLib.Sdp.SdpOfferSettings, System.Security.Cryptography.X509Certificates.X509Certificate2)
+  nameWithType: Sdp.BuildOfferSdp(IPAddress, SdpOfferSettings, X509Certificate2?)
+  nameWithType.vb: Sdp.BuildOfferSdp(IPAddress, SdpOfferSettings, X509Certificate2)
+- uid: SipLib.Sdp.Sdp.BuildOfferSdp*
+  name: BuildOfferSdp
+  href: api/SipLib.Sdp.Sdp.html#SipLib_Sdp_Sdp_BuildOfferSdp_
+  commentId: Overload:SipLib.Sdp.Sdp.BuildOfferSdp
+  isSpec: "True"
+  fullName: SipLib.Sdp.Sdp.BuildOfferSdp
+  nameWithType: Sdp.BuildOfferSdp
 - uid: SipLib.Sdp.Sdp.BuildReInviteAnswerSdp(SipLib.Sdp.Sdp,System.Net.IPAddress,SipLib.Sdp.SdpAnswerSettings,System.Int32,System.Int32,System.Int32,SipLib.Msrp.MsrpUri)
   name: BuildReInviteAnswerSdp(Sdp, IPAddress, SdpAnswerSettings, int, int, int, MsrpUri?)
   href: api/SipLib.Sdp.Sdp.html#SipLib_Sdp_Sdp_BuildReInviteAnswerSdp_SipLib_Sdp_Sdp_System_Net_IPAddress_SipLib_Sdp_SdpAnswerSettings_System_Int32_System_Int32_System_Int32_SipLib_Msrp_MsrpUri_
@@ -21686,6 +21874,187 @@ references:
   commentId: F:SipLib.Sdp.SdpAttribute.Value
   fullName: SipLib.Sdp.SdpAttribute.Value
   nameWithType: SdpAttribute.Value
+- uid: SipLib.Sdp.SdpOfferSettings
+  name: SdpOfferSettings
+  href: api/SipLib.Sdp.SdpOfferSettings.html
+  commentId: T:SipLib.Sdp.SdpOfferSettings
+  fullName: SipLib.Sdp.SdpOfferSettings
+  nameWithType: SdpOfferSettings
+- uid: SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
+  name: SdpOfferSettings(List<string>, List<string>, string, string, MediaPortManager)
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_MediaPortManager_
+  commentId: M:SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
+  name.vb: New(List(Of String), List(Of String), String, String, MediaPortManager)
+  fullName: SipLib.Sdp.SdpOfferSettings.SdpOfferSettings(System.Collections.Generic.List<string>, System.Collections.Generic.List<string>, string, string, SipLib.Media.MediaPortManager)
+  fullName.vb: SipLib.Sdp.SdpOfferSettings.New(System.Collections.Generic.List(Of String), System.Collections.Generic.List(Of String), String, String, SipLib.Media.MediaPortManager)
+  nameWithType: SdpOfferSettings.SdpOfferSettings(List<string>, List<string>, string, string, MediaPortManager)
+  nameWithType.vb: SdpOfferSettings.New(List(Of String), List(Of String), String, String, MediaPortManager)
+- uid: SipLib.Sdp.SdpOfferSettings.#ctor*
+  name: SdpOfferSettings
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Sdp.SdpOfferSettings.SdpOfferSettings
+  fullName.vb: SipLib.Sdp.SdpOfferSettings.New
+  nameWithType: SdpOfferSettings.SdpOfferSettings
+  nameWithType.vb: SdpOfferSettings.New
+- uid: SipLib.Sdp.SdpOfferSettings.Fingerprint
+  name: Fingerprint
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_Fingerprint
+  commentId: P:SipLib.Sdp.SdpOfferSettings.Fingerprint
+  fullName: SipLib.Sdp.SdpOfferSettings.Fingerprint
+  nameWithType: SdpOfferSettings.Fingerprint
+- uid: SipLib.Sdp.SdpOfferSettings.Fingerprint*
+  name: Fingerprint
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_Fingerprint_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.Fingerprint
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.Fingerprint
+  nameWithType: SdpOfferSettings.Fingerprint
+- uid: SipLib.Sdp.SdpOfferSettings.MsrpSetupType
+  name: MsrpSetupType
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_MsrpSetupType
+  commentId: P:SipLib.Sdp.SdpOfferSettings.MsrpSetupType
+  fullName: SipLib.Sdp.SdpOfferSettings.MsrpSetupType
+  nameWithType: SdpOfferSettings.MsrpSetupType
+- uid: SipLib.Sdp.SdpOfferSettings.MsrpSetupType*
+  name: MsrpSetupType
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_MsrpSetupType_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.MsrpSetupType
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.MsrpSetupType
+  nameWithType: SdpOfferSettings.MsrpSetupType
+- uid: SipLib.Sdp.SdpOfferSettings.OfferAudio
+  name: OfferAudio
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferAudio
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferAudio
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferAudio
+  nameWithType: SdpOfferSettings.OfferAudio
+- uid: SipLib.Sdp.SdpOfferSettings.OfferAudio*
+  name: OfferAudio
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferAudio_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferAudio
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferAudio
+  nameWithType: SdpOfferSettings.OfferAudio
+- uid: SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs
+  name: OfferAudioCodecs
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferAudioCodecs
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs
+  nameWithType: SdpOfferSettings.OfferAudioCodecs
+- uid: SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs*
+  name: OfferAudioCodecs
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferAudioCodecs_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferAudioCodecs
+  nameWithType: SdpOfferSettings.OfferAudioCodecs
+- uid: SipLib.Sdp.SdpOfferSettings.OfferMsrp
+  name: OfferMsrp
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferMsrp
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferMsrp
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferMsrp
+  nameWithType: SdpOfferSettings.OfferMsrp
+- uid: SipLib.Sdp.SdpOfferSettings.OfferMsrp*
+  name: OfferMsrp
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferMsrp_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferMsrp
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferMsrp
+  nameWithType: SdpOfferSettings.OfferMsrp
+- uid: SipLib.Sdp.SdpOfferSettings.OfferRtt
+  name: OfferRtt
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferRtt
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferRtt
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferRtt
+  nameWithType: SdpOfferSettings.OfferRtt
+- uid: SipLib.Sdp.SdpOfferSettings.OfferRtt*
+  name: OfferRtt
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferRtt_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferRtt
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferRtt
+  nameWithType: SdpOfferSettings.OfferRtt
+- uid: SipLib.Sdp.SdpOfferSettings.OfferVideo
+  name: OfferVideo
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferVideo
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferVideo
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferVideo
+  nameWithType: SdpOfferSettings.OfferVideo
+- uid: SipLib.Sdp.SdpOfferSettings.OfferVideo*
+  name: OfferVideo
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferVideo_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferVideo
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferVideo
+  nameWithType: SdpOfferSettings.OfferVideo
+- uid: SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs
+  name: OfferVideoCodecs
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferVideoCodecs
+  commentId: P:SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs
+  nameWithType: SdpOfferSettings.OfferVideoCodecs
+- uid: SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs*
+  name: OfferVideoCodecs
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_OfferVideoCodecs_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.OfferVideoCodecs
+  nameWithType: SdpOfferSettings.OfferVideoCodecs
+- uid: SipLib.Sdp.SdpOfferSettings.PortManager
+  name: PortManager
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_PortManager
+  commentId: P:SipLib.Sdp.SdpOfferSettings.PortManager
+  fullName: SipLib.Sdp.SdpOfferSettings.PortManager
+  nameWithType: SdpOfferSettings.PortManager
+- uid: SipLib.Sdp.SdpOfferSettings.PortManager*
+  name: PortManager
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_PortManager_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.PortManager
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.PortManager
+  nameWithType: SdpOfferSettings.PortManager
+- uid: SipLib.Sdp.SdpOfferSettings.RtpEncryptionType
+  name: RtpEncryptionType
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_RtpEncryptionType
+  commentId: P:SipLib.Sdp.SdpOfferSettings.RtpEncryptionType
+  fullName: SipLib.Sdp.SdpOfferSettings.RtpEncryptionType
+  nameWithType: SdpOfferSettings.RtpEncryptionType
+- uid: SipLib.Sdp.SdpOfferSettings.RtpEncryptionType*
+  name: RtpEncryptionType
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_RtpEncryptionType_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.RtpEncryptionType
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.RtpEncryptionType
+  nameWithType: SdpOfferSettings.RtpEncryptionType
+- uid: SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp
+  name: UseTlsForMsrp
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_UseTlsForMsrp
+  commentId: P:SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp
+  fullName: SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp
+  nameWithType: SdpOfferSettings.UseTlsForMsrp
+- uid: SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp*
+  name: UseTlsForMsrp
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_UseTlsForMsrp_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.UseTlsForMsrp
+  nameWithType: SdpOfferSettings.UseTlsForMsrp
+- uid: SipLib.Sdp.SdpOfferSettings.UserName
+  name: UserName
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_UserName
+  commentId: P:SipLib.Sdp.SdpOfferSettings.UserName
+  fullName: SipLib.Sdp.SdpOfferSettings.UserName
+  nameWithType: SdpOfferSettings.UserName
+- uid: SipLib.Sdp.SdpOfferSettings.UserName*
+  name: UserName
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings_UserName_
+  commentId: Overload:SipLib.Sdp.SdpOfferSettings.UserName
+  isSpec: "True"
+  fullName: SipLib.Sdp.SdpOfferSettings.UserName
+  nameWithType: SdpOfferSettings.UserName
 - uid: SipLib.Sdp.SdpUtils
   name: SdpUtils
   href: api/SipLib.Sdp.SdpUtils.html
@@ -21746,6 +22115,15 @@ references:
   fullName.vb: SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(Integer)
   nameWithType: SdpUtils.CreateAudioMediaDescription(int)
   nameWithType.vb: SdpUtils.CreateAudioMediaDescription(Integer)
+- uid: SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)
+  name: CreateAudioMediaDescription(int, List<string>, RtpEncryptionEnum, string)
+  href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_
+  commentId: M:SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)
+  name.vb: CreateAudioMediaDescription(Integer, List(Of String), RtpEncryptionEnum, String)
+  fullName: SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(int, System.Collections.Generic.List<string>, SipLib.Media.RtpEncryptionEnum, string)
+  fullName.vb: SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(Integer, System.Collections.Generic.List(Of String), SipLib.Media.RtpEncryptionEnum, String)
+  nameWithType: SdpUtils.CreateAudioMediaDescription(int, List<string>, RtpEncryptionEnum, string)
+  nameWithType.vb: SdpUtils.CreateAudioMediaDescription(Integer, List(Of String), RtpEncryptionEnum, String)
 - uid: SipLib.Sdp.SdpUtils.CreateAudioMediaDescription*
   name: CreateAudioMediaDescription
   href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_
@@ -21890,6 +22268,15 @@ references:
   fullName.vb: SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(Integer)
   nameWithType: SdpUtils.CreateVideoMediaDescription(int)
   nameWithType.vb: SdpUtils.CreateVideoMediaDescription(Integer)
+- uid: SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)
+  name: CreateVideoMediaDescription(int, List<string>, RtpEncryptionEnum, string)
+  href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_
+  commentId: M:SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)
+  name.vb: CreateVideoMediaDescription(Integer, List(Of String), RtpEncryptionEnum, String)
+  fullName: SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(int, System.Collections.Generic.List<string>, SipLib.Media.RtpEncryptionEnum, string)
+  fullName.vb: SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(Integer, System.Collections.Generic.List(Of String), SipLib.Media.RtpEncryptionEnum, String)
+  nameWithType: SdpUtils.CreateVideoMediaDescription(int, List<string>, RtpEncryptionEnum, string)
+  nameWithType.vb: SdpUtils.CreateVideoMediaDescription(Integer, List(Of String), RtpEncryptionEnum, String)
 - uid: SipLib.Sdp.SdpUtils.CreateVideoMediaDescription*
   name: CreateVideoMediaDescription
   href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_
@@ -22366,6 +22753,83 @@ references:
   commentId: N:SipLib.Threading
   fullName: SipLib.Threading
   nameWithType: SipLib.Threading
+- uid: SipLib.Threading.QueuedActionThread
+  name: QueuedActionThread
+  href: api/SipLib.Threading.QueuedActionThread.html
+  commentId: T:SipLib.Threading.QueuedActionThread
+  fullName: SipLib.Threading.QueuedActionThread
+  nameWithType: QueuedActionThread
+- uid: SipLib.Threading.QueuedActionThread.#ctor(System.Threading.ThreadPriority,System.Int32)
+  name: QueuedActionThread(ThreadPriority, int)
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread__ctor_System_Threading_ThreadPriority_System_Int32_
+  commentId: M:SipLib.Threading.QueuedActionThread.#ctor(System.Threading.ThreadPriority,System.Int32)
+  name.vb: New(ThreadPriority, Integer)
+  fullName: SipLib.Threading.QueuedActionThread.QueuedActionThread(System.Threading.ThreadPriority, int)
+  fullName.vb: SipLib.Threading.QueuedActionThread.New(System.Threading.ThreadPriority, Integer)
+  nameWithType: QueuedActionThread.QueuedActionThread(ThreadPriority, int)
+  nameWithType.vb: QueuedActionThread.New(ThreadPriority, Integer)
+- uid: SipLib.Threading.QueuedActionThread.#ctor*
+  name: QueuedActionThread
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread__ctor_
+  commentId: Overload:SipLib.Threading.QueuedActionThread.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Threading.QueuedActionThread.QueuedActionThread
+  fullName.vb: SipLib.Threading.QueuedActionThread.New
+  nameWithType: QueuedActionThread.QueuedActionThread
+  nameWithType.vb: QueuedActionThread.New
+- uid: SipLib.Threading.QueuedActionThread.DoTimedEvents
+  name: DoTimedEvents()
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_DoTimedEvents
+  commentId: M:SipLib.Threading.QueuedActionThread.DoTimedEvents
+  fullName: SipLib.Threading.QueuedActionThread.DoTimedEvents()
+  nameWithType: QueuedActionThread.DoTimedEvents()
+- uid: SipLib.Threading.QueuedActionThread.DoTimedEvents*
+  name: DoTimedEvents
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_DoTimedEvents_
+  commentId: Overload:SipLib.Threading.QueuedActionThread.DoTimedEvents
+  isSpec: "True"
+  fullName: SipLib.Threading.QueuedActionThread.DoTimedEvents
+  nameWithType: QueuedActionThread.DoTimedEvents
+- uid: SipLib.Threading.QueuedActionThread.EnqueueWork(System.Action)
+  name: EnqueueWork(Action)
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_EnqueueWork_System_Action_
+  commentId: M:SipLib.Threading.QueuedActionThread.EnqueueWork(System.Action)
+  fullName: SipLib.Threading.QueuedActionThread.EnqueueWork(System.Action)
+  nameWithType: QueuedActionThread.EnqueueWork(Action)
+- uid: SipLib.Threading.QueuedActionThread.EnqueueWork*
+  name: EnqueueWork
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_EnqueueWork_
+  commentId: Overload:SipLib.Threading.QueuedActionThread.EnqueueWork
+  isSpec: "True"
+  fullName: SipLib.Threading.QueuedActionThread.EnqueueWork
+  nameWithType: QueuedActionThread.EnqueueWork
+- uid: SipLib.Threading.QueuedActionThread.Shutdown
+  name: Shutdown()
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_Shutdown
+  commentId: M:SipLib.Threading.QueuedActionThread.Shutdown
+  fullName: SipLib.Threading.QueuedActionThread.Shutdown()
+  nameWithType: QueuedActionThread.Shutdown()
+- uid: SipLib.Threading.QueuedActionThread.Shutdown*
+  name: Shutdown
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_Shutdown_
+  commentId: Overload:SipLib.Threading.QueuedActionThread.Shutdown
+  isSpec: "True"
+  fullName: SipLib.Threading.QueuedActionThread.Shutdown
+  nameWithType: QueuedActionThread.Shutdown
+- uid: SipLib.Threading.QueuedActionThread.Start
+  name: Start()
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_Start
+  commentId: M:SipLib.Threading.QueuedActionThread.Start
+  fullName: SipLib.Threading.QueuedActionThread.Start()
+  nameWithType: QueuedActionThread.Start()
+- uid: SipLib.Threading.QueuedActionThread.Start*
+  name: Start
+  href: api/SipLib.Threading.QueuedActionThread.html#SipLib_Threading_QueuedActionThread_Start_
+  commentId: Overload:SipLib.Threading.QueuedActionThread.Start
+  isSpec: "True"
+  fullName: SipLib.Threading.QueuedActionThread.Start
+  nameWithType: QueuedActionThread.Start
 - uid: SipLib.Threading.QueuedActionWorkerTask
   name: QueuedActionWorkerTask
   href: api/SipLib.Threading.QueuedActionWorkerTask.html
@@ -22925,6 +23389,35 @@ references:
   fullName.vb: SipLib.Transactions.SipTransport.New
   nameWithType: SipTransport.SipTransport
   nameWithType.vb: SipTransport.New
+- uid: SipLib.Transactions.SipTransport.CreateFromRemoteSipUri(SipLib.Core.SIPURI,SipLib.Channels.SipChannelSettings,System.Security.Cryptography.X509Certificates.X509Certificate2)
+  name: CreateFromRemoteSipUri(SIPURI, SipChannelSettings, X509Certificate2)
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_CreateFromRemoteSipUri_SipLib_Core_SIPURI_SipLib_Channels_SipChannelSettings_System_Security_Cryptography_X509Certificates_X509Certificate2_
+  commentId: M:SipLib.Transactions.SipTransport.CreateFromRemoteSipUri(SipLib.Core.SIPURI,SipLib.Channels.SipChannelSettings,System.Security.Cryptography.X509Certificates.X509Certificate2)
+  fullName: SipLib.Transactions.SipTransport.CreateFromRemoteSipUri(SipLib.Core.SIPURI, SipLib.Channels.SipChannelSettings, System.Security.Cryptography.X509Certificates.X509Certificate2)
+  nameWithType: SipTransport.CreateFromRemoteSipUri(SIPURI, SipChannelSettings, X509Certificate2)
+- uid: SipLib.Transactions.SipTransport.CreateFromRemoteSipUri*
+  name: CreateFromRemoteSipUri
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_CreateFromRemoteSipUri_
+  commentId: Overload:SipLib.Transactions.SipTransport.CreateFromRemoteSipUri
+  isSpec: "True"
+  fullName: SipLib.Transactions.SipTransport.CreateFromRemoteSipUri
+  nameWithType: SipTransport.CreateFromRemoteSipUri
+- uid: SipLib.Transactions.SipTransport.FindMatchingSipTransport(SipLib.Core.SIPURI,System.Collections.Generic.List{SipLib.Transactions.SipTransport})
+  name: FindMatchingSipTransport(SIPURI, List<SipTransport>)
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_FindMatchingSipTransport_SipLib_Core_SIPURI_System_Collections_Generic_List_SipLib_Transactions_SipTransport__
+  commentId: M:SipLib.Transactions.SipTransport.FindMatchingSipTransport(SipLib.Core.SIPURI,System.Collections.Generic.List{SipLib.Transactions.SipTransport})
+  name.vb: FindMatchingSipTransport(SIPURI, List(Of SipTransport))
+  fullName: SipLib.Transactions.SipTransport.FindMatchingSipTransport(SipLib.Core.SIPURI, System.Collections.Generic.List<SipLib.Transactions.SipTransport>)
+  fullName.vb: SipLib.Transactions.SipTransport.FindMatchingSipTransport(SipLib.Core.SIPURI, System.Collections.Generic.List(Of SipLib.Transactions.SipTransport))
+  nameWithType: SipTransport.FindMatchingSipTransport(SIPURI, List<SipTransport>)
+  nameWithType.vb: SipTransport.FindMatchingSipTransport(SIPURI, List(Of SipTransport))
+- uid: SipLib.Transactions.SipTransport.FindMatchingSipTransport*
+  name: FindMatchingSipTransport
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_FindMatchingSipTransport_
+  commentId: Overload:SipLib.Transactions.SipTransport.FindMatchingSipTransport
+  isSpec: "True"
+  fullName: SipLib.Transactions.SipTransport.FindMatchingSipTransport
+  nameWithType: SipTransport.FindMatchingSipTransport
 - uid: SipLib.Transactions.SipTransport.LogInvalidSipMessage
   name: LogInvalidSipMessage
   href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_LogInvalidSipMessage
@@ -22943,6 +23436,19 @@ references:
   commentId: E:SipLib.Transactions.SipTransport.LogSipResponse
   fullName: SipLib.Transactions.SipTransport.LogSipResponse
   nameWithType: SipTransport.LogSipResponse
+- uid: SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport(SipLib.Core.SIPURI)
+  name: RemoteSipUriMatchesTransport(SIPURI)
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_RemoteSipUriMatchesTransport_SipLib_Core_SIPURI_
+  commentId: M:SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport(SipLib.Core.SIPURI)
+  fullName: SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport(SipLib.Core.SIPURI)
+  nameWithType: SipTransport.RemoteSipUriMatchesTransport(SIPURI)
+- uid: SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport*
+  name: RemoteSipUriMatchesTransport
+  href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_RemoteSipUriMatchesTransport_
+  commentId: Overload:SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport
+  isSpec: "True"
+  fullName: SipLib.Transactions.SipTransport.RemoteSipUriMatchesTransport
+  nameWithType: SipTransport.RemoteSipUriMatchesTransport
 - uid: SipLib.Transactions.SipTransport.SendSipRequest(SipLib.Core.SIPRequest,System.Net.IPEndPoint)
   name: SendSipRequest(SIPRequest, IPEndPoint)
   href: api/SipLib.Transactions.SipTransport.html#SipLib_Transactions_SipTransport_SendSipRequest_SipLib_Core_SIPRequest_System_Net_IPEndPoint_

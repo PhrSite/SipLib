@@ -1,5 +1,17 @@
 # Version History
 
+## v0.0.5 -- TBD
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Addition | SipLib.Sdp.Sdp class -- Added a new method called BuildOfferSdp(). |
+| NA     | Addition | SipLib.Sdp namespace -- Added a new class called SdpOfferSettings. |
+| NA     | Addition | SipLib.Sdp.SdpUtils class -- Added new CreateAudioMediaDescription and CreateVideoMediaDescription methods |
+| NA     | Addition | SipLib.Channels.SIPChannel class -- Added RemoteSipUriMatchesChannel() |
+| NA     | Addition | SipLib.Transactions.SipTransport class - Added RemoteSipUriMatchesTransport() and FindMatchingSipTransport() |
+| NA     | Addition | SipLib.Channels namespace -- Added the SipChannelSettings class. |
+| NA     | Addition | SipLib.Transactions.SipTransport class -- Added the CreateFromRemoteSipUri() method. |
+
+
 ## v0.0.4 -- 16 Jun 2025
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
