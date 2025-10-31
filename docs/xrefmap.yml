@@ -4273,6 +4273,12 @@ references:
   commentId: F:SipLib.Core.SIPHeader.ReferredBy
   fullName: SipLib.Core.SIPHeader.ReferredBy
   nameWithType: SIPHeader.ReferredBy
+- uid: SipLib.Core.SIPHeader.ReplacesParameter
+  name: ReplacesParameter
+  href: api/SipLib.Core.SIPHeader.html#SipLib_Core_SIPHeader_ReplacesParameter
+  commentId: F:SipLib.Core.SIPHeader.ReplacesParameter
+  fullName: SipLib.Core.SIPHeader.ReplacesParameter
+  nameWithType: SIPHeader.ReplacesParameter
 - uid: SipLib.Core.SIPHeader.ReplyTo
   name: ReplyTo
   href: api/SipLib.Core.SIPHeader.html#SipLib_Core_SIPHeader_ReplyTo
@@ -4789,6 +4795,12 @@ references:
   commentId: F:SipLib.Core.SIPHeaders.SIP_HEADER_REFERTO
   fullName: SipLib.Core.SIPHeaders.SIP_HEADER_REFERTO
   nameWithType: SIPHeaders.SIP_HEADER_REFERTO
+- uid: SipLib.Core.SIPHeaders.SIP_HEADER_REPLACES
+  name: SIP_HEADER_REPLACES
+  href: api/SipLib.Core.SIPHeaders.html#SipLib_Core_SIPHeaders_SIP_HEADER_REPLACES
+  commentId: F:SipLib.Core.SIPHeaders.SIP_HEADER_REPLACES
+  fullName: SipLib.Core.SIPHeaders.SIP_HEADER_REPLACES
+  nameWithType: SIPHeaders.SIP_HEADER_REPLACES
 - uid: SipLib.Core.SIPHeaders.SIP_HEADER_REPLY_TO
   name: SIP_HEADER_REPLY_TO
   href: api/SipLib.Core.SIPHeaders.html#SipLib_Core_SIPHeaders_SIP_HEADER_REPLY_TO
@@ -5674,12 +5686,46 @@ references:
   commentId: T:SipLib.Core.SIPReplacesParameter
   fullName: SipLib.Core.SIPReplacesParameter
   nameWithType: SIPReplacesParameter
+- uid: SipLib.Core.SIPReplacesParameter.#ctor
+  name: SIPReplacesParameter()
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter__ctor
+  commentId: M:SipLib.Core.SIPReplacesParameter.#ctor
+  name.vb: New()
+  fullName: SipLib.Core.SIPReplacesParameter.SIPReplacesParameter()
+  fullName.vb: SipLib.Core.SIPReplacesParameter.New()
+  nameWithType: SIPReplacesParameter.SIPReplacesParameter()
+  nameWithType.vb: SIPReplacesParameter.New()
+- uid: SipLib.Core.SIPReplacesParameter.#ctor(System.String,System.String,System.String)
+  name: SIPReplacesParameter(string, string, string)
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter__ctor_System_String_System_String_System_String_
+  commentId: M:SipLib.Core.SIPReplacesParameter.#ctor(System.String,System.String,System.String)
+  name.vb: New(String, String, String)
+  fullName: SipLib.Core.SIPReplacesParameter.SIPReplacesParameter(string, string, string)
+  fullName.vb: SipLib.Core.SIPReplacesParameter.New(String, String, String)
+  nameWithType: SIPReplacesParameter.SIPReplacesParameter(string, string, string)
+  nameWithType.vb: SIPReplacesParameter.New(String, String, String)
+- uid: SipLib.Core.SIPReplacesParameter.#ctor*
+  name: SIPReplacesParameter
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter__ctor_
+  commentId: Overload:SipLib.Core.SIPReplacesParameter.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Core.SIPReplacesParameter.SIPReplacesParameter
+  fullName.vb: SipLib.Core.SIPReplacesParameter.New
+  nameWithType: SIPReplacesParameter.SIPReplacesParameter
+  nameWithType.vb: SIPReplacesParameter.New
 - uid: SipLib.Core.SIPReplacesParameter.CallID
   name: CallID
   href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_CallID
   commentId: F:SipLib.Core.SIPReplacesParameter.CallID
   fullName: SipLib.Core.SIPReplacesParameter.CallID
   nameWithType: SIPReplacesParameter.CallID
+- uid: SipLib.Core.SIPReplacesParameter.EarlyOnly
+  name: EarlyOnly
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_EarlyOnly
+  commentId: F:SipLib.Core.SIPReplacesParameter.EarlyOnly
+  fullName: SipLib.Core.SIPReplacesParameter.EarlyOnly
+  nameWithType: SIPReplacesParameter.EarlyOnly
 - uid: SipLib.Core.SIPReplacesParameter.FromTag
   name: FromTag
   href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_FromTag
@@ -5702,6 +5748,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Core.SIPReplacesParameter.Parse
   nameWithType: SIPReplacesParameter.Parse
+- uid: SipLib.Core.SIPReplacesParameter.ToString
+  name: ToString()
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_ToString
+  commentId: M:SipLib.Core.SIPReplacesParameter.ToString
+  fullName: SipLib.Core.SIPReplacesParameter.ToString()
+  nameWithType: SIPReplacesParameter.ToString()
+- uid: SipLib.Core.SIPReplacesParameter.ToString*
+  name: ToString
+  href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_ToString_
+  commentId: Overload:SipLib.Core.SIPReplacesParameter.ToString
+  isSpec: "True"
+  fullName: SipLib.Core.SIPReplacesParameter.ToString
+  nameWithType: SIPReplacesParameter.ToString
 - uid: SipLib.Core.SIPReplacesParameter.ToTag
   name: ToTag
   href: api/SipLib.Core.SIPReplacesParameter.html#SipLib_Core_SIPReplacesParameter_ToTag
@@ -16059,6 +16118,32 @@ references:
   commentId: T:SipLib.Network.IpUtils
   fullName: SipLib.Network.IpUtils
   nameWithType: IpUtils
+- uid: SipLib.Network.IpUtils.GetDefaultIPv4Address
+  name: GetDefaultIPv4Address()
+  href: api/SipLib.Network.IpUtils.html#SipLib_Network_IpUtils_GetDefaultIPv4Address
+  commentId: M:SipLib.Network.IpUtils.GetDefaultIPv4Address
+  fullName: SipLib.Network.IpUtils.GetDefaultIPv4Address()
+  nameWithType: IpUtils.GetDefaultIPv4Address()
+- uid: SipLib.Network.IpUtils.GetDefaultIPv4Address*
+  name: GetDefaultIPv4Address
+  href: api/SipLib.Network.IpUtils.html#SipLib_Network_IpUtils_GetDefaultIPv4Address_
+  commentId: Overload:SipLib.Network.IpUtils.GetDefaultIPv4Address
+  isSpec: "True"
+  fullName: SipLib.Network.IpUtils.GetDefaultIPv4Address
+  nameWithType: IpUtils.GetDefaultIPv4Address
+- uid: SipLib.Network.IpUtils.GetDefaultIPv6Address
+  name: GetDefaultIPv6Address()
+  href: api/SipLib.Network.IpUtils.html#SipLib_Network_IpUtils_GetDefaultIPv6Address
+  commentId: M:SipLib.Network.IpUtils.GetDefaultIPv6Address
+  fullName: SipLib.Network.IpUtils.GetDefaultIPv6Address()
+  nameWithType: IpUtils.GetDefaultIPv6Address()
+- uid: SipLib.Network.IpUtils.GetDefaultIPv6Address*
+  name: GetDefaultIPv6Address
+  href: api/SipLib.Network.IpUtils.html#SipLib_Network_IpUtils_GetDefaultIPv6Address_
+  commentId: Overload:SipLib.Network.IpUtils.GetDefaultIPv6Address
+  isSpec: "True"
+  fullName: SipLib.Network.IpUtils.GetDefaultIPv6Address
+  nameWithType: IpUtils.GetDefaultIPv6Address
 - uid: SipLib.Network.IpUtils.GetIPv4Addresses
   name: GetIPv4Addresses()
   href: api/SipLib.Network.IpUtils.html#SipLib_Network_IpUtils_GetIPv4Addresses
@@ -16098,6 +16183,28 @@ references:
   isSpec: "True"
   fullName: SipLib.Network.IpUtils.GetIPv6LocalLinkAddresses
   nameWithType: IpUtils.GetIPv6LocalLinkAddresses
+- uid: SipLib.Network.SipDnsClient
+  name: SipDnsClient
+  href: api/SipLib.Network.SipDnsClient.html
+  commentId: T:SipLib.Network.SipDnsClient
+  fullName: SipLib.Network.SipDnsClient
+  nameWithType: SipDnsClient
+- uid: SipLib.Network.SipDnsClient.ResolveSipServerAsync(SipLib.Core.SIPURI,System.Boolean,System.Boolean,System.Boolean)
+  name: ResolveSipServerAsync(SIPURI, bool, bool, bool)
+  href: api/SipLib.Network.SipDnsClient.html#SipLib_Network_SipDnsClient_ResolveSipServerAsync_SipLib_Core_SIPURI_System_Boolean_System_Boolean_System_Boolean_
+  commentId: M:SipLib.Network.SipDnsClient.ResolveSipServerAsync(SipLib.Core.SIPURI,System.Boolean,System.Boolean,System.Boolean)
+  name.vb: ResolveSipServerAsync(SIPURI, Boolean, Boolean, Boolean)
+  fullName: SipLib.Network.SipDnsClient.ResolveSipServerAsync(SipLib.Core.SIPURI, bool, bool, bool)
+  fullName.vb: SipLib.Network.SipDnsClient.ResolveSipServerAsync(SipLib.Core.SIPURI, Boolean, Boolean, Boolean)
+  nameWithType: SipDnsClient.ResolveSipServerAsync(SIPURI, bool, bool, bool)
+  nameWithType.vb: SipDnsClient.ResolveSipServerAsync(SIPURI, Boolean, Boolean, Boolean)
+- uid: SipLib.Network.SipDnsClient.ResolveSipServerAsync*
+  name: ResolveSipServerAsync
+  href: api/SipLib.Network.SipDnsClient.html#SipLib_Network_SipDnsClient_ResolveSipServerAsync_
+  commentId: Overload:SipLib.Network.SipDnsClient.ResolveSipServerAsync
+  isSpec: "True"
+  fullName: SipLib.Network.SipDnsClient.ResolveSipServerAsync
+  nameWithType: SipDnsClient.ResolveSipServerAsync
 - uid: SipLib.RealTimeText
   name: SipLib.RealTimeText
   href: api/SipLib.RealTimeText.html

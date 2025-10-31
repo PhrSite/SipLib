@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   IpUtils.cs                                              14 Jul 23 PHR
+//
+//  Revised:    27 Oct 25 PHR
+//              -- Added GetDefaultIPv4Address() and GetDefaultIPv6Address().
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -54,6 +57,20 @@ public static class IpUtils
     }
 
     /// <summary>
+    /// Gets the first available IPv4 address.
+    /// </summary>
+    /// <returns>Returns the first available IPv4 address or null if no IPv4 addresses are available.</returns>
+    public static IPAddress? GetDefaultIPv4Address()
+    {
+        IPAddress? defaultIPv4Address = null;
+        List<IPAddress> addresses = GetIPv4Addresses();
+        if (addresses.Count > 0)
+            return addresses[0];
+        else
+            return defaultIPv4Address;
+    }
+
+    /// <summary>
     /// Gets a list of all available IPv6 IP addresses on the local machine. This function does not
     /// include IPv6 local link addresses.
     /// </summary>
@@ -86,6 +103,20 @@ public static class IpUtils
         }
 
         return localAddresses;
+    }
+
+    /// <summary>
+    /// Gets the first available IPv6 address.
+    /// </summary>
+    /// <returns>Returns the first available IPv6 address or null if no IPv6 addresses are available.</returns>
+    public static IPAddress? GetDefaultIPv6Address()
+    {
+        IPAddress? defaultIPv6Address = null;
+        List<IPAddress> addresses = GetIPv6Addresses();
+        if (addresses.Count > 0)
+            return addresses[0];
+        else
+            return defaultIPv6Address;
     }
 
     /// <summary>

@@ -37,6 +37,9 @@
 //	Revised:	7 Nov 22 PHR -- Initial version. Fixed Possible null reference 
 //              warnings and Non-nullable field warnings. Added some documentation
 //              comments.
+//              31 Oct 25 PHR
+//              - Made compliant with RFC 3891 by adding the early-only flag
+//              - Added the ToString() method.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text.RegularExpressions;
@@ -44,26 +47,51 @@ using System.Text.RegularExpressions;
 namespace SipLib.Core;
 
 /// <summary>
-///  Class for the Replaces parameter of a Refer-To header field. The Replaces parameter is used to
-///  identify involved in a transfer operation.
+///  Class for the Replaces parameter of a Replaces header field. See RFC 3891. This class represents the
+///  value parameter of the header.
 /// </summary>
 public class SIPReplacesParameter
 {
     /// <summary>
-    /// SIP Call-ID of the call
+    /// SIP Call-ID of the call dialog being replaced
     /// </summary>
-    /// <value></value>
-    public string? CallID;
+    public string CallID = string.Empty;
     /// <summary>
-    /// Tag from the To header
+    /// Tag from the To header of the call dialog being replaced
     /// </summary>
-    /// <value></value>
-    public string? ToTag;
+    public string ToTag = string.Empty;
     /// <summary>
-    /// Tag from the From header
+    /// Tag from the From header of the call being replaced
     /// </summary>
-    /// <value></value>
-    public string? FromTag;
+    public string FromTag = string.Empty;
+
+    /// <summary>
+    /// If true, then the early-only flag is present. If true for a UAS then the UAS must reject the INVITE
+    /// request that contains a Replaces header with a 486 Busy Here response if the INVITE dialog is already
+    /// established. A UAC can set this flag to true if it only wants to replace an early dialog. The default
+    /// is false.
+    /// </summary>
+    public bool EarlyOnly = false;
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="callID">SIP Call-ID of the call dialog being replaced</param>
+    /// <param name="toTag">Tag from the From header of the call being replaced</param>
+    /// <param name="fromTag">Tag from the From header of the call being replaced</param>
+    public SIPReplacesParameter(string callID, string toTag, string fromTag)
+    {
+        CallID = callID;
+        ToTag = toTag;
+        FromTag = fromTag;
+    }
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public SIPReplacesParameter()
+    {
+    }
 
     /// <summary>
     /// Parses a string into a SIPReplacesParameter
@@ -76,8 +104,7 @@ public class SIPReplacesParameter
         if (replaces.IndexOf(';') != -1)
         {
             Match toTagMatch = Regex.Match(replaces, "to-tag=(?<totag>.*?)(;|$)", RegexOptions.IgnoreCase);
-            Match fromTagMatch = Regex.Match(replaces, "from-tag=(?<fromtag>.*?)(;|$)", RegexOptions.
-                IgnoreCase);
+            Match fromTagMatch = Regex.Match(replaces, "from-tag=(?<fromtag>.*?)(;|$)", RegexOptions.IgnoreCase);
 
             if (toTagMatch.Success && fromTagMatch.Success)
             {
@@ -86,10 +113,26 @@ public class SIPReplacesParameter
                 replacesParam.ToTag = toTagMatch.Result("${totag}");
                 replacesParam.FromTag = fromTagMatch.Result("${fromtag}");
 
+                if (replaces.IndexOf("early-only") > 0)
+                    replacesParam.EarlyOnly = true;
+
                 return replacesParam;
             }
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Converts this object to a string to use as the value of a Replaces SIP header.
+    /// </summary>
+    /// <returns>Returns a formatted string for the Replaces header value.</returns>
+    public override string ToString()
+    {
+        string headerValue = $"{CallID};from-tag={FromTag};to-tag={ToTag}";
+        if (EarlyOnly == true)
+            headerValue += ";early-only";
+
+        return headerValue;
     }
 }

@@ -507,6 +507,12 @@ public class SIPHeaders
     /// </summary>
     /// <value></value>
     public const string SIP_HEADER_REFERTO = "Refer-To";
+
+    /// <summary>
+    /// Replaces header. See RFC 3891.
+    /// </summary>
+    public const string SIP_HEADER_REPLACES = "Replaces";
+
     /// <value></value>
     public const string SIP_HEADER_REPLY_TO = "Reply-To";
     /// <value></value>

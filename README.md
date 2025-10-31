@@ -51,10 +51,11 @@ Or, you can install it from the Visual Studio GUI.
 3. Search for SipLib
 4. Click on Install
 
-# External Dependancies
+# External Dependencies
 The SipLib class library uses the following NuGet packages.
-1. Portable.BouncyCastle
+1. Portable.BouncyCastle (1.9.0)
 2. Microsoft.Extensions.Logging
+3. DnsClient (1.8.0)
 
 # Project Structure
 

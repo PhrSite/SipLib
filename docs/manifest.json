@@ -932,7 +932,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Core.SIPReplacesParameter",
-      "Summary": "<p sourcefile=\"api/SipLib.Core.SIPReplacesParameter.yml\" sourcestartlinenumber=\"1\">Class for the Replaces parameter of a Refer-To header field. The Replaces parameter is used to\nidentify involved in a transfer operation.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Core.SIPReplacesParameter.yml\" sourcestartlinenumber=\"1\">Class for the Replaces parameter of a Replaces header field. See RFC 3891. This class represents the\nvalue parameter of the header.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2403,6 +2403,20 @@
       "IsMRef": true,
       "Title": "SipLib.Network.IpUtils",
       "Summary": "<p sourcefile=\"api/SipLib.Network.IpUtils.yml\" sourcestartlinenumber=\"1\">Static class that contains various utility functions relating to IP addresses.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Network.SipDnsClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Network.SipDnsClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Network.SipDnsClient",
+      "Summary": "<p sourcefile=\"api/SipLib.Network.SipDnsClient.yml\" sourcestartlinenumber=\"1\">Class for doing DNS server lookups for SIP.</p>\n<p>This class uses the LookupClient class of the DnsClient class library.</p>\n<p>It uses a single instance of the LookupClient class per application so that features such as the results \ncache and connection pooling are used. The LookupCLient class is thread-safe and so is this class.</p>\n"
     },
     {
       "type": "ManagedReference",

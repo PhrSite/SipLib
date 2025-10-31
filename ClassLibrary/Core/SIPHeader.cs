@@ -43,6 +43,8 @@
 //              -- Added parsing code for the Server header in ParseSIPHeaders()
 //              -- Moved the classes for SIP Headers to individual files.
 //              -- Added documentation comments.
+//              31 Oct 31 PHR
+//              -- Added support for the SIP Replaces header per RFC 3891.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -287,6 +289,13 @@ public class SIPHeader
     /// Reply-To header field. See Section 20.31 of RFC 3261.
     /// </summary>
     /// <value></value>
+     
+    // 31 Oct 25 PHR
+    /// <summary>
+    /// Parameter value for the Replaces header. See RFC 3891.
+    /// </summary>
+    public SIPReplacesParameter? ReplacesParameter = null;
+
     public string? ReplyTo = null;
     /// <summary>
     /// Require header field. See Section 20.32 of RFC 3261.
@@ -680,6 +689,11 @@ public class SIPHeader
                 }
                 else if (headerNameLower == SIPHeaders.SIP_HEADER_REFERREDBY.ToLower())
                     sipHeader.ReferredBy = headerValue;
+
+                // 31 Oct 25 PHR
+                else if (headerNameLower == SIPHeaders.SIP_HEADER_REPLACES.ToLower())
+                    sipHeader.ReplacesParameter = SIPReplacesParameter.Parse(headerValue);
+
                 else if (headerNameLower == SIPHeaders.SIP_HEADER_REQUIRE.ToLower())
                     sipHeader.Require = headerValue;
                 else if (headerNameLower == SIPHeaders.SIP_HEADER_RESOURCE_PRIORITY.ToLower())
@@ -1006,10 +1020,13 @@ public class SIPHeader
                 SIP_HEADER_REFERSUB + ": " + ReferSub + CRLF : null);
             headersBuilder.Append((ReferTo != null) ? SIPHeaders.
                 SIP_HEADER_REFERTO + ": " + ReferTo + CRLF : null);
-            headersBuilder.Append((ReferredBy != null) ? SIPHeaders.
-                SIP_HEADER_REFERREDBY + ": " + ReferredBy + CRLF : null);
-            headersBuilder.Append((Reason != null) ? SIPHeaders.
-                SIP_HEADER_REASON + ": " + Reason + CRLF : null);
+            headersBuilder.Append((ReferredBy != null) ? SIPHeaders.SIP_HEADER_REFERREDBY + ": " + ReferredBy + CRLF : null);
+
+            // 31 Oct 25 PHR
+            if (ReplacesParameter != null)
+                headersBuilder.Append(SIPHeaders.SIP_HEADER_REPLACES + ": " + ReplacesParameter.ToString() + CRLF);
+
+            headersBuilder.Append((Reason != null) ? SIPHeaders.SIP_HEADER_REASON + ": " + Reason + CRLF : null);
             
             return headersBuilder.ToString();
         }

@@ -10,6 +10,11 @@
 | NA     | Addition | SipLib.Transactions.SipTransport class - Added RemoteSipUriMatchesTransport() and FindMatchingSipTransport() |
 | NA     | Addition | SipLib.Channels namespace -- Added the SipChannelSettings class. |
 | NA     | Addition | SipLib.Transactions.SipTransport class -- Added the CreateFromRemoteSipUri() method. |
+| NA     | Addition | SipLib.Network namespace -- Added the SipDnsClient class |
+| NA     | Addition | SipLib.Network.IpUtils class -- Added the GetDefaultIPv4Address() and GetDefaultIPv6Address() methods. |
+| NA     | Addition | Added the DnsClient NuGet package (verion 1.8.0) to the project dependencies |
+| NA     | Addition | Completed implementation of the SIPReplacesParameter for use in the Replaces SIP header in compliance with RFC 3891. |
+| NA     | Addition | SipLib.Core.SIPHeader class -- added support for the Replaces header. |
 
 
 ## v0.0.4 -- 16 Jun 2025
