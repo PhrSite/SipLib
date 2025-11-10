@@ -4954,6 +4954,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Core.SIPMessage.GetContentsOfType
   nameWithType: SIPMessage.GetContentsOfType
+- uid: SipLib.Core.SIPMessage.GetSdpContents
+  name: GetSdpContents()
+  href: api/SipLib.Core.SIPMessage.html#SipLib_Core_SIPMessage_GetSdpContents
+  commentId: M:SipLib.Core.SIPMessage.GetSdpContents
+  fullName: SipLib.Core.SIPMessage.GetSdpContents()
+  nameWithType: SIPMessage.GetSdpContents()
+- uid: SipLib.Core.SIPMessage.GetSdpContents*
+  name: GetSdpContents
+  href: api/SipLib.Core.SIPMessage.html#SipLib_Core_SIPMessage_GetSdpContents_
+  commentId: Overload:SipLib.Core.SIPMessage.GetSdpContents
+  isSpec: "True"
+  fullName: SipLib.Core.SIPMessage.GetSdpContents
+  nameWithType: SIPMessage.GetSdpContents
 - uid: SipLib.Core.SIPMessage.HasBody
   name: HasBody
   href: api/SipLib.Core.SIPMessage.html#SipLib_Core_SIPMessage_HasBody

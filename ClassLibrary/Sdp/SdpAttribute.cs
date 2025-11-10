@@ -1,5 +1,15 @@
 ﻿//////////////////////////////////////////////////////////////////////////////////////
 //	File:	SdpAttribute.cs                                          20 Nov 22 PHR
+//
+//  Revised:    9 Nov 25 PHR
+//              -- Fixed the ParseSdpAttribute() method so that it correctly handles
+//                 the case where multiple attribute parameters are delimited with a
+//                 ';' character with no space between parameters.
+//                 For example: fmtp: 97 profile-level-id=42e01f;packetization-mode=1.
+//              -- Fixed the ToString() method to use ";" as the delimiter for fmtp
+//                 attributes with multiple name=value style attribute parameters.
+//              -- Fixed the ToString() method to properly insert spaces between
+//                 attribute parameters that have no value.
 //////////////////////////////////////////////////////////////////////////////////////
 
 using System.Text;
@@ -31,11 +41,24 @@ public class SdpAttribute
     public Dictionary<string, string> Params = new Dictionary<string, string>();
 
     /// <summary>
-    /// Constructs a new, empty SdpAttribute object. Use this constructor when for attribute objects for
-    /// SDP contents of a new SIP message.
+    /// Constructs a new, empty SdpAttribute object.
     /// </summary>
     public SdpAttribute()
     {
+    }
+
+    /// <summary>
+    /// Constructs a new SdpAttribute given the attribute name and the value.
+    /// </summary>
+    /// <param name="AttrName">Name of the attribute.</param>
+    /// <param name="AttrValue">Value of the attribute. If the this argument includes attribute parameters then
+    /// those parameters are treated as part of the SdpAttribute.Value field. If there are attribute parameters
+    /// and there is a need to parse them out, then use the ParseSdpAttribute() method to create a new
+    /// SdpAttribute object.</param>
+    public SdpAttribute(string AttrName, string? AttrValue)
+    {
+        Attribute = AttrName;
+        Value = AttrValue;
     }
 
     /// <summary>
@@ -78,10 +101,14 @@ public class SdpAttribute
                     return RetVal;     // No parameters
 
                 strTemp = strTemp.Substring(StartIdx);
-                char[] Delim2 = { ' ' };
 
-                string[] ParamStrs = strTemp.Split(Delim2, StringSplitOptions.
-                    RemoveEmptyEntries);
+                char[] Delim2 = { ' ' };    // Default delimiter for attribute parameters
+                // 9 Nov 25 PHR
+                if (strTemp.Contains(";") == true)
+                    // The delimiter is ; but may also contain spaces
+                    Delim2 = new char[] { ';', ' ' };
+
+                string[] ParamStrs = strTemp.Split(Delim2, StringSplitOptions.RemoveEmptyEntries);
                 string strParamName, strParamValue;
                 Delim[0] = '=';
                 int SubLen = 0;
@@ -90,15 +117,13 @@ public class SdpAttribute
                     Idx = strParam.IndexOf("=");
                     if (Idx > 0)
                     {
-                        Fields = strParam.Split(Delim, StringSplitOptions.
-                            RemoveEmptyEntries);
+                        Fields = strParam.Split(Delim, StringSplitOptions.RemoveEmptyEntries);
                         if (Fields.Length == 2)
                         {
                             strParamName = Fields[0];
                             SubLen = strParam.Length - (Idx + 1);
                             if (SubLen > 0)
-                                strParamValue = strParam.Substring(Idx + 1,
-                                    SubLen);
+                                strParamValue = strParam.Substring(Idx + 1, SubLen);
                             else
                                 strParamValue = Fields[1];
                         }
@@ -128,17 +153,6 @@ public class SdpAttribute
     }
 
     /// <summary>
-    /// Constructs a new SdpAttribute given the attribute name and the value.
-    /// </summary>
-    /// <param name="AttrName">Name of the attribute.</param>
-    /// <param name="AttrValue">Value of the attribute</param>
-    public SdpAttribute(string AttrName, string? AttrValue)
-    {
-        Attribute = AttrName;
-        Value = AttrValue;
-    }
-
-    /// <summary>
     /// Creates a copy of this object.
     /// </summary>
     /// <returns>A new object with a copy of each member variable.</returns>
@@ -156,17 +170,21 @@ public class SdpAttribute
     /// <summary>
     /// Converts the SdpAttribute object to a string.
     /// </summary>
-    /// <returns>The format is either "a=Attribute:Value\r\n" or
-    /// "a=Attribute\r\n".</returns>
+    /// <returns>The format is either "a=Attribute:Value\r\n" or "a=Attribute\r\n".</returns>
     public override string ToString()
     {
         string strReturnValue;
+
+        // 9 Nov 25 PHR
+        string defaultParameterDelimiter = " ";
+        if (Attribute == "fmtp")
+            defaultParameterDelimiter = ";";
+
         if (string.IsNullOrEmpty(Value) == false)
         {	// There is a value, there may also be parameters so add them.
             if (Params.Count == 0)
             {	// No parameters
-                strReturnValue = string.Format("a={0}:{1}\r\n", Attribute,
-                    Value);
+                strReturnValue = string.Format("a={0}:{1}\r\n", Attribute, Value);
             }
             else
             {
@@ -175,14 +193,20 @@ public class SdpAttribute
                 int Cnt = 1;
                 foreach (KeyValuePair<string, string> Kvp in Params)
                 {
-                    if (Kvp.Value == null || Kvp.Value.Length == 0)
-                        Sb.Append(Kvp.Key);
+                    if (string.IsNullOrEmpty(Kvp.Value) == true)
+                    {   // The parameter has a name (the Key) but no value.
+                        // 9 Nov 25 PHR
+                        if (Cnt == 1)
+                            Sb.Append(Kvp.Key);
+                        else
+                            Sb.Append($" {Kvp.Key}");
+                    }
                     else
                     {
                         if (Cnt == 1)
                             Sb.AppendFormat("{0}={1}", Kvp.Key, Kvp.Value);
                         else
-                            Sb.AppendFormat(" {0}={1}", Kvp.Key, Kvp.Value);
+                            Sb.AppendFormat("{0}{1}={2}", defaultParameterDelimiter, Kvp.Key, Kvp.Value);
                     }
 
                     Cnt += 1;

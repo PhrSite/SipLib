@@ -53,6 +53,7 @@ using System.Text;
 using SipLib.Body;
 
 namespace SipLib.Core;
+using SipLib.Sdp;
 
 // <bnf>
 // generic-message  =  start-line
@@ -276,6 +277,29 @@ public class SIPMessage
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Gets the SDP from the message body if present.
+    /// </summary>
+    /// <returns>Returns a parsed Sdp object if there is an SDP block in the body of this SIPMessage or null if
+    /// there is no SDP body or the SDP is not valid.</returns>
+    public Sdp? GetSdpContents()
+    {
+        string? strSdp = GetContentsOfType(ContentTypes.Sdp);
+        if (strSdp == null)
+            return null;
+
+        Sdp? sdp = null;
+        try
+        {
+            sdp = Sdp.ParseSDP(strSdp);
+        }
+        catch (Exception)
+        {
+        }
+
+        return sdp;
     }
 
     /// <summary>
