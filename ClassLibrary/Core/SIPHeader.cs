@@ -124,7 +124,7 @@ public class SIPHeader
     public List<SIPCallInfoHeader> CallInfo = new List<SIPCallInfoHeader>();
     /// <summary>
     /// Contact header field. See Section 20.10 of RFC 3261.
-    /// An empty list indicates that there are no Contact header fiels.
+    /// An empty list indicates that there are no Contact header fields.
     /// </summary>
     /// <value></value>
     public List<SIPContactHeader>? Contact = new List<SIPContactHeader>();
@@ -406,8 +406,7 @@ public class SIPHeader
     /// <param name="callId">Call-ID header field value.</param>
     /// <exception cref="ApplicationException">Thrown if the fromHeader, toHeader or callId parameters
     /// are null or empty.</exception>
-    public SIPHeader(string fromHeader, string toHeader, string contactHeader, 
-        int cseq, string callId)
+    public SIPHeader(string fromHeader, string toHeader, string contactHeader, int cseq, string callId)
     {
         SIPFromHeader from = SIPFromHeader.ParseFromHeader(fromHeader);
         SIPToHeader to = SIPToHeader.ParseToHeader(toHeader);
