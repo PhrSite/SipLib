@@ -1,6 +1,6 @@
 # Version History
 
-## v0.0.5 -- TBD
+## v0.0.5 -- 6 Dec 2025
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Addition | SipLib.Sdp.Sdp class -- Added a new method called BuildOfferSdp(). |
@@ -16,7 +16,7 @@
 | NA     | Addition | Completed implementation of the SIPReplacesParameter for use in the Replaces SIP header in compliance with RFC 3891. |
 | NA     | Addition | SipLib.Core.SIPHeader class -- added support for the Replaces header. |
 | NA     | Addition | SipLib.Core.SIPMessage class -- added the GetSdpContents() method. |
-| NA     | Fix      | SipLib.Sdp.SdpAttribute class -- Fixed problems handling delimiters of ; and space beteen attribute parameters. |
+| NA     | Fix      | SipLib.Sdp.SdpAttribute class -- Fixed problems handling delimiters of ; and space between attribute parameters. |
 
 ## v0.0.4 -- 16 Jun 2025
 | Issue No. | Change Type | Description |
