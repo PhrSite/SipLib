@@ -55,4 +55,9 @@ public enum TransactionTerminationReasonEnum
     /// A final response was sent to an INVITE request. Used for a ServerInviteTransaction.
     /// </summary>
     FinalResponseSent,
+
+    /// <summary>
+    /// Indicates that the client requested cancellation of an INVITE request.
+    /// </summary>
+    CancelledByClient,
 }

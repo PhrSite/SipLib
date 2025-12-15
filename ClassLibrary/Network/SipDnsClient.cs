@@ -88,7 +88,16 @@ public static class SipDnsClient
         // ignores the preference for IPv6 for simplicity.
         if (addresses.Count == 0 && useHostsFile)
         {
-            IPHostEntry iph = Dns.GetHostEntry(server);
+            IPHostEntry iph;
+            try
+            {
+                iph = Dns.GetHostEntry(server);
+            }
+            catch
+            {
+                return null;
+            }
+
             foreach (IPAddress ip in iph.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetworkV6)

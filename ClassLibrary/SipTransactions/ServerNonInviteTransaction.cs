@@ -53,8 +53,11 @@ public class ServerNonInviteTransaction : SipTransactionBase
                 State = TransactionStateEnum.Proceeding;
             }
             else
-                // A final response was sent
+            {   // A final response was sent
                 Terminated = EnterCompletedOrTerminateState();
+                if (Terminated == true)
+                    TransactionComplete?.Invoke(Request, LastSipResponseSent, RemoteEndPoint, TransportManager, this);
+            }
         }
 
         return Terminated;

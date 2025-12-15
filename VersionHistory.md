@@ -1,5 +1,15 @@
 # Version History
 
+## v0.0.6 -- TBD
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Fix    | SipLib.Network.SipDnsClient class -- modified the ResolveSipServerAsync() function so that it catches exceptions thrown by the Dns.GetHostEntry() function. |
+| NA     | Fix    | SipLib.Transactions.ServerNonInviteTransaction class -- was not calling the TransactionComplete callback function when the transaction was completed. |
+| NA     | Fix    | SipLib.Transactions.ClientInviteTransaction class -- Fixed a bug in the handling of the completion of a CANCEL transaction that prevented sending the ACK request for a 487 Request Terminated response. |
+| NA     | Change | SipLib.Transactions.ClientInviteTransaction class -- Modified to forcibly terminate the transaction and notify the transaction user if the call state is not in the Proceeding state when the CancelInvite() method is called.  |
+| NA     | Addition | SipLib.Transactions.TransactionTerminationReasonEnum -- added a new token called CancelledByClient.  |
+
+
 ## v0.0.5 -- 6 Dec 2025
 | Issue No. | Change Type | Description |
 |--------|--------|-------|

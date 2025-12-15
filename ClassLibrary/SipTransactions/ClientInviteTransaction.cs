@@ -180,6 +180,7 @@ public class ClientInviteTransaction : SipTransactionBase
         bool Result = false;
         lock (StateLockObj)
         {
+            TerminationReason = TransactionTerminationReasonEnum.CancelledByClient;     // 14 Dec 25 PHR
             if (State == TransactionStateEnum.Proceeding)
             {   // See Section 9.1 of RFC 3261. If a provisional response has been received then its
                 // OK to send a CANCEL request. 
@@ -189,7 +190,11 @@ public class ClientInviteTransaction : SipTransactionBase
                 TransportManager.StartClientNonInviteTransaction(cancelRequest, RemoteEndPoint, 
                     OnCancelTransactionComplete, 500);
             }
-            // For any other state of the client INVITE transaction, a CANCEL request must not be sent.
+            else  // 14 Dec 25 PHR
+            {   // For any other state of the client INVITE transaction, a CANCEL request must not be sent.
+                ForceTerminateTransacton();
+                NotifyTransactionUser(Request, null, RemoteEndPoint);
+            }
         }
 
         return Result;
@@ -207,7 +212,8 @@ public class ClientInviteTransaction : SipTransactionBase
     private void OnCancelTransactionComplete(SIPRequest sipRequest, SIPResponse? sipResponse,
         IPEndPoint remoteEndPoint, SipTransport sipTransport, SipTransactionBase Transaction)
     {
-        if (sipResponse  == null)
+        // if (sipResponse == null)
+        if (sipResponse != null)        // 14 Dec 25 PHR
         {
             if (sipResponse.Status == SIPResponseStatusCodesEnum.Ok)
             {   // The CANCEL transaction was successful. The server should send a 487 Request Terminated
@@ -215,12 +221,12 @@ public class ClientInviteTransaction : SipTransactionBase
                 // No action is required here.
             }
             else
-            {
+            {   // Not expected so terminate the call.
                 ForceTerminateTransacton();
             }    
         }
         else
-        {   // The transaction for the CANCEL request failed
+        {   // The transaction for the CANCEL request failed because no response was received.
             ForceTerminateTransacton();
         }
     }
