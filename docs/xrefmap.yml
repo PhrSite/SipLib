@@ -23823,6 +23823,12 @@ references:
   commentId: F:SipLib.Transactions.TransactionTerminationReasonEnum.CancelRequestFailed
   fullName: SipLib.Transactions.TransactionTerminationReasonEnum.CancelRequestFailed
   nameWithType: TransactionTerminationReasonEnum.CancelRequestFailed
+- uid: SipLib.Transactions.TransactionTerminationReasonEnum.CancelledByClient
+  name: CancelledByClient
+  href: api/SipLib.Transactions.TransactionTerminationReasonEnum.html#SipLib_Transactions_TransactionTerminationReasonEnum_CancelledByClient
+  commentId: F:SipLib.Transactions.TransactionTerminationReasonEnum.CancelledByClient
+  fullName: SipLib.Transactions.TransactionTerminationReasonEnum.CancelledByClient
+  nameWithType: TransactionTerminationReasonEnum.CancelledByClient
 - uid: SipLib.Transactions.TransactionTerminationReasonEnum.ConnectionFailure
   name: ConnectionFailure
   href: api/SipLib.Transactions.TransactionTerminationReasonEnum.html#SipLib_Transactions_TransactionTerminationReasonEnum_ConnectionFailure

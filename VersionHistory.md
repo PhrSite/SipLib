@@ -1,6 +1,6 @@
 # Version History
 
-## v0.0.6 -- TBD
+## v0.0.6 -- 20 Jan 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Fix    | SipLib.Network.SipDnsClient class -- modified the ResolveSipServerAsync() function so that it catches exceptions thrown by the Dns.GetHostEntry() function. |

@@ -20,7 +20,7 @@ The primary focus of this project is to provide protocol support for developing 
 
 As a basic protocol class library, this project does not provide implementation of SIP user agents or device specific media endpoints as these components are very application specific.
 
-This class library, incombination with the following NG9-1-1 related class library projects may be used to build a variety of NG9-1-1 applications.
+This class library, in combination with the following NG9-1-1 related class library projects may be used to build a variety of NG9-1-1 applications.
 1. [Ng911Lib](https://github.com/PhrSite/Ng911Lib)
 2. [EidoLib](https://github.com/PhrSite/EidoLib)
 3. [Ng911CadIfLib](https://github.com/PhrSite/Ng911CadIfLib)
