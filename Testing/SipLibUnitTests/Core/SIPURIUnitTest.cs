@@ -17,10 +17,13 @@
 //             have some kind of scheme (sip, urn, https, ...)
 //          -- Enabled the unit tests containing IPv6 IP addresses
 //          -- Added unit tests for https, wss, etc...
+//      5 Feb 26 PHR
+//          -- Added more tests for parsing tel URIs and for using ToString() with tel URIs
 
 using SipLib.Core;
 
 namespace SipLibUnitTests.Core;
+
 using System.Net;
 
 [Trait("Category", "unit")]
@@ -50,7 +53,7 @@ public class SIPURIUnitTest
         SIPURI urnUri = SIPURI.ParseSIPURI(strUrn);
         Assert.NotNull(urnUri);
         Assert.True(urnUri.Scheme == SIPSchemesEnum.urn);
-        Assert.True(urnUri.Host == "nena:uid:callid:e3e1b72433674313b4bcb4801183acb6:PsapSimulator.NgTest.net", 
+        Assert.True(urnUri.Host == "nena:uid:callid:e3e1b72433674313b4bcb4801183acb6:PsapSimulator.NgTest.net",
             "The host portion is wrong");
     }
 
@@ -93,6 +96,33 @@ public class SIPURIUnitTest
         Assert.NotNull(telUri);
         Assert.True(telUri.Scheme == SIPSchemesEnum.tel);
         Assert.True(telUri.User == "8185553333");
+    }
+
+    // 5 Feb 26 PHR
+    [Fact]
+    public void TelUriToString()
+    {
+        SIPURI telUri = SIPURI.ParseSIPURI("tel:+18185553333");
+        string strTelUri = telUri.ToString();
+        Assert.True(strTelUri == "tel:+18185553333");
+    }
+
+    // 5 Feb 26 PHR
+    [Fact]
+    public void TelUriWithSpacesToString()
+    {
+        SIPURI telUri = SIPURI.ParseSIPURI("tel:+1 818 555 3333");
+        string strTelUri = telUri.ToString();
+        Assert.True(strTelUri == "tel:+18185553333");
+    }
+
+    // 5 Feb 26 PHR
+    [Fact]
+    public void TelUriWithDashesAndSpacesToString()
+    {
+        SIPURI telUri = SIPURI.ParseSIPURI("tel:+1 818-555-3333");
+        string strTelUri = telUri.ToString();
+        Assert.True(strTelUri == "tel:+18185553333");
     }
 
     // 16 Nov 22 PHR

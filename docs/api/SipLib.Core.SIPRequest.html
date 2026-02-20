@@ -1164,7 +1164,7 @@
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_Copy.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.Copy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L284">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L326">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_Copy_" data-uid="SipLib.Core.SIPRequest.Copy*"></a>
   <h4 id="SipLib_Core_SIPRequest_Copy" data-uid="SipLib.Core.SIPRequest.Copy">Copy()</h4>
@@ -1196,12 +1196,16 @@
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_CreateBasicRequest_SipLib_Core_SIPMethodsEnum_SipLib_Core_SIPURI_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.CreateBasicRequest(SipLib.Core.SIPMethodsEnum%2CSipLib.Core.SIPURI%2CSipLib.Core.SIPURI%2CSystem.String%2CSipLib.Core.SIPURI%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L141">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L145">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_CreateBasicRequest_" data-uid="SipLib.Core.SIPRequest.CreateBasicRequest*"></a>
   <h4 id="SipLib_Core_SIPRequest_CreateBasicRequest_SipLib_Core_SIPMethodsEnum_SipLib_Core_SIPURI_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_System_String_" data-uid="SipLib.Core.SIPRequest.CreateBasicRequest(SipLib.Core.SIPMethodsEnum,SipLib.Core.SIPURI,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI,System.String)">CreateBasicRequest(SIPMethodsEnum, SIPURI, SIPURI, string?, SIPURI, string?)</h4>
   <div class="markdown level1 summary"><p>Creates a new SIPRequest containing all the basic headers: From, To, Via, Contact, Call-ID,
 Max-Forwards, Content-Length and CSeq.</p>
+<p>
+This method sets the Contact header value equal to the From header value. If the The From
+header must be different than the Contact header, then use the CreateRequest() method instead.
+</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1245,7 +1249,7 @@ Max-Forwards, Content-Length and CSeq.</p>
       <tr>
         <td><a class="xref" href="SipLib.Core.SIPURI.html">SIPURI</a></td>
         <td><span class="parametername">FromSipUri</span></td>
-        <td><p>From URI. A From-Tag is automatically created</p>
+        <td><p>From URI. This SIPURI must be a SIP or a SIPS URI. A From-Tag is automatically created</p>
 </td>
       </tr>
       <tr>
@@ -1274,10 +1278,97 @@ Max-Forwards, Content-Length and CSeq.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_CreateRequest_SipLib_Core_SIPMethodsEnum_SipLib_Core_SIPURI_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum%2CSipLib.Core.SIPURI%2CSipLib.Core.SIPURI%2CSystem.String%2CSipLib.Core.SIPURI%2CSystem.String%2CSipLib.Core.SIPURI)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L181">View Source</a>
+  </span>
+  <a id="SipLib_Core_SIPRequest_CreateRequest_" data-uid="SipLib.Core.SIPRequest.CreateRequest*"></a>
+  <h4 id="SipLib_Core_SIPRequest_CreateRequest_SipLib_Core_SIPMethodsEnum_SipLib_Core_SIPURI_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_" data-uid="SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum,SipLib.Core.SIPURI,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI)">CreateRequest(SIPMethodsEnum, SIPURI, SIPURI, string?, SIPURI, string?, SIPURI)</h4>
+  <div class="markdown level1 summary"><p>Creates a new SIPRequest containing all the basic headers: From, To, Via, Contact, Call-ID,
+Max-Forwards, Content-Length and CSeq.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SIPRequest CreateRequest(SIPMethodsEnum Method, SIPURI reqUri, SIPURI ToSipUri, string? ToDisplayName, SIPURI FromUri, string? FromDisplayName, SIPURI contactSipUri)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPMethodsEnum.html">SIPMethodsEnum</a></td>
+        <td><span class="parametername">Method</span></td>
+        <td><p>SIP method of the request.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPURI.html">SIPURI</a></td>
+        <td><span class="parametername">reqUri</span></td>
+        <td><p>Request URI. May be the same as the ToSipUri or it may be different.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPURI.html">SIPURI</a></td>
+        <td><span class="parametername">ToSipUri</span></td>
+        <td><p>To SIP URI.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">ToDisplayName</span></td>
+        <td><p>Display name for the To header. Optional, may be null.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPURI.html">SIPURI</a></td>
+        <td><span class="parametername">FromUri</span></td>
+        <td><p>From URI. This SIPURI may be a sip, sips or a tel URI.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">FromDisplayName</span></td>
+        <td><p>Display name for the From header. Optional, may be null.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPURI.html">SIPURI</a></td>
+        <td><span class="parametername">contactSipUri</span></td>
+        <td><p>SIPURI to use for the Contact header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="SipLib.Core.SIPRequest.html">SIPRequest</a></td>
+        <td><p>Returns a new SIPRequest object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_GetQueueUri.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.GetQueueUri%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L394">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L436">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_GetQueueUri_" data-uid="SipLib.Core.SIPRequest.GetQueueUri*"></a>
   <h4 id="SipLib_Core_SIPRequest_GetQueueUri" data-uid="SipLib.Core.SIPRequest.GetQueueUri">GetQueueUri()</h4>
@@ -1311,7 +1402,7 @@ Route headers.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_IsValid_SipLib_Core_SIPValidationFieldsEnum__System_String__.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.IsValid(SipLib.Core.SIPValidationFieldsEnum%40%2CSystem.String%40)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L295">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L337">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_IsValid_" data-uid="SipLib.Core.SIPRequest.IsValid*"></a>
   <h4 id="SipLib_Core_SIPRequest_IsValid_SipLib_Core_SIPValidationFieldsEnum__System_String__" data-uid="SipLib.Core.SIPRequest.IsValid(SipLib.Core.SIPValidationFieldsEnum@,System.String@)">IsValid(out SIPValidationFieldsEnum, out string?)</h4>
@@ -1367,7 +1458,7 @@ Route headers.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_ParseSIPRequest_SipLib_Core_SIPMessage_.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.ParseSIPRequest(SipLib.Core.SIPMessage)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L172">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L214">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_ParseSIPRequest_" data-uid="SipLib.Core.SIPRequest.ParseSIPRequest*"></a>
   <h4 id="SipLib_Core_SIPRequest_ParseSIPRequest_SipLib_Core_SIPMessage_" data-uid="SipLib.Core.SIPRequest.ParseSIPRequest(SipLib.Core.SIPMessage)">ParseSIPRequest(SIPMessage)</h4>
@@ -1434,7 +1525,7 @@ SIPRequest object.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_ParseSIPRequest_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.ParseSIPRequest(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L226">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L268">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_ParseSIPRequest_" data-uid="SipLib.Core.SIPRequest.ParseSIPRequest*"></a>
   <h4 id="SipLib_Core_SIPRequest_ParseSIPRequest_System_String_" data-uid="SipLib.Core.SIPRequest.ParseSIPRequest(System.String)">ParseSIPRequest(string)</h4>
@@ -1500,7 +1591,7 @@ SIPRequest object.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_ToByteArray.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.ToByteArray%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L274">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L316">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_ToByteArray_" data-uid="SipLib.Core.SIPRequest.ToByteArray*"></a>
   <h4 id="SipLib_Core_SIPRequest_ToByteArray" data-uid="SipLib.Core.SIPRequest.ToByteArray">ToByteArray()</h4>
@@ -1532,7 +1623,7 @@ SIPRequest object.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Core_SIPRequest_ToString.md&amp;value=---%0Auid%3A%20SipLib.Core.SIPRequest.ToString%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L248">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Core/SIPRequest.cs/#L290">View Source</a>
   </span>
   <a id="SipLib_Core_SIPRequest_ToString_" data-uid="SipLib.Core.SIPRequest.ToString*"></a>
   <h4 id="SipLib_Core_SIPRequest_ToString" data-uid="SipLib.Core.SIPRequest.ToString">ToString()</h4>

@@ -55,8 +55,10 @@ public class ServerNonInviteTransaction : SipTransactionBase
             else
             {   // A final response was sent
                 Terminated = EnterCompletedOrTerminateState();
-                if (Terminated == true)
-                    TransactionComplete?.Invoke(Request, LastSipResponseSent, RemoteEndPoint, TransportManager, this);
+                //if (Terminated == true)
+                // 1 Feb 26 PHR
+                // Notify the transaction user for terminated or completed
+                TransactionComplete?.Invoke(Request, LastSipResponseSent, RemoteEndPoint, TransportManager, this);
             }
         }
 

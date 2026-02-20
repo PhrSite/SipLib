@@ -130,12 +130,16 @@ public class SIPRequest : SIPMessage
     /// <summary>
     /// Creates a new SIPRequest containing all the basic headers: From, To, Via, Contact, Call-ID,
     /// Max-Forwards, Content-Length and CSeq.
+    /// <para>
+    /// This method sets the Contact header value equal to the From header value. If the The From
+    /// header must be different than the Contact header, then use the CreateRequest() method instead.
+    /// </para>
     /// </summary>
     /// <param name="Method">SIP method of the request.</param>
     /// <param name="reqUri">Request URI. May be the same as the ToSipUri or it may be different.</param>
     /// <param name="ToSipUri">To URI.</param>
     /// <param name="ToDisplayName">Display name for the To header. Optional, may be null.</param>
-    /// <param name="FromSipUri">From URI. A From-Tag is automatically created</param>
+    /// <param name="FromSipUri">From URI. This SIPURI must be a SIP or a SIPS URI. A From-Tag is automatically created</param>
     /// <param name="FromDisplayName">Display name for the From header. Optional, may be null.</param>
     /// <returns>Returns a new SIPRequest object.</returns>
     public static SIPRequest CreateBasicRequest(SIPMethodsEnum Method, SIPURI reqUri, SIPURI ToSipUri,
@@ -160,6 +164,44 @@ public class SIPRequest : SIPMessage
         Header.Vias.PushViaHeader(ViaHeader);
 
         return Req;
+    }
+
+    /// <summary>
+    /// Creates a new SIPRequest containing all the basic headers: From, To, Via, Contact, Call-ID,
+    /// Max-Forwards, Content-Length and CSeq.
+    /// </summary>
+    /// <param name="Method">SIP method of the request.</param>
+    /// <param name="reqUri">Request URI. May be the same as the ToSipUri or it may be different.</param>
+    /// <param name="ToSipUri">To SIP URI.</param>
+    /// <param name="ToDisplayName">Display name for the To header. Optional, may be null.</param>
+    /// <param name="FromUri">From URI. This SIPURI may be a sip, sips or a tel URI.</param>
+    /// <param name="FromDisplayName">Display name for the From header. Optional, may be null.</param>
+    /// <param name="contactSipUri">SIPURI to use for the Contact header.</param>
+    /// <returns>Returns a new SIPRequest object.</returns>
+    public static SIPRequest CreateRequest(SIPMethodsEnum Method, SIPURI reqUri, SIPURI ToSipUri,
+        string? ToDisplayName, SIPURI FromUri, string? FromDisplayName, SIPURI contactSipUri)
+    {
+        SIPRequest request = new SIPRequest(Method, reqUri);
+        SIPToHeader To = new SIPToHeader(ToDisplayName, ToSipUri, null);
+        SIPFromHeader From = new SIPFromHeader(FromDisplayName, FromUri, CallProperties.CreateNewTag());
+
+        SIPURI contactUri = contactSipUri.CopyOf();
+        
+        request.LocalSIPEndPoint = contactUri.ToSIPEndPoint();
+        SIPHeader Header = new SIPHeader(From, To, Crypto.GetRandomInt(100, int.MaxValue / 2),
+            CallProperties.CreateNewCallId());
+        Header.From.FromTag = CallProperties.CreateNewTag();
+
+        Header.Contact = new List<SIPContactHeader>();
+        Header.Contact.Add(new SIPContactHeader(contactUri.User, contactUri));
+        Header.CSeqMethod = Method;
+        request.Header = Header;
+
+        SIPViaHeader ViaHeader = new SIPViaHeader(contactUri.ToSIPEndPoint().GetIPEndPoint(), CallProperties.
+            CreateBranchId(), FromUri.Protocol);
+        Header.Vias.PushViaHeader(ViaHeader);
+
+        return request;
     }
 
     /// <summary>

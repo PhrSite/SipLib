@@ -5843,6 +5843,22 @@ references:
   isSpec: "True"
   fullName: SipLib.Core.SIPRequest.CreateBasicRequest
   nameWithType: SIPRequest.CreateBasicRequest
+- uid: SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum,SipLib.Core.SIPURI,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI)
+  name: CreateRequest(SIPMethodsEnum, SIPURI, SIPURI, string?, SIPURI, string?, SIPURI)
+  href: api/SipLib.Core.SIPRequest.html#SipLib_Core_SIPRequest_CreateRequest_SipLib_Core_SIPMethodsEnum_SipLib_Core_SIPURI_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_System_String_SipLib_Core_SIPURI_
+  commentId: M:SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum,SipLib.Core.SIPURI,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI,System.String,SipLib.Core.SIPURI)
+  name.vb: CreateRequest(SIPMethodsEnum, SIPURI, SIPURI, String, SIPURI, String, SIPURI)
+  fullName: SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum, SipLib.Core.SIPURI, SipLib.Core.SIPURI, string?, SipLib.Core.SIPURI, string?, SipLib.Core.SIPURI)
+  fullName.vb: SipLib.Core.SIPRequest.CreateRequest(SipLib.Core.SIPMethodsEnum, SipLib.Core.SIPURI, SipLib.Core.SIPURI, String, SipLib.Core.SIPURI, String, SipLib.Core.SIPURI)
+  nameWithType: SIPRequest.CreateRequest(SIPMethodsEnum, SIPURI, SIPURI, string?, SIPURI, string?, SIPURI)
+  nameWithType.vb: SIPRequest.CreateRequest(SIPMethodsEnum, SIPURI, SIPURI, String, SIPURI, String, SIPURI)
+- uid: SipLib.Core.SIPRequest.CreateRequest*
+  name: CreateRequest
+  href: api/SipLib.Core.SIPRequest.html#SipLib_Core_SIPRequest_CreateRequest_
+  commentId: Overload:SipLib.Core.SIPRequest.CreateRequest
+  isSpec: "True"
+  fullName: SipLib.Core.SIPRequest.CreateRequest
+  nameWithType: SIPRequest.CreateRequest
 - uid: SipLib.Core.SIPRequest.GetQueueUri
   name: GetQueueUri()
   href: api/SipLib.Core.SIPRequest.html#SipLib_Core_SIPRequest_GetQueueUri

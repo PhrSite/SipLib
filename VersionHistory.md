@@ -1,10 +1,17 @@
 # Version History
 
+## v1.0.0 -- 19 Feb 2026
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Fix    | SipLib.Transactions.ServerNonInviteTransaction class -- was not calling the TransactionComplete callback function when the transaction was completed for UDP. |
+| NA     | Fix    | Fixed a bug in the SIPURI.ToString() method that caused tel style URIs to be incorrectly converted to a string. |
+| NA     | Addition | Added a new method to the SIPRequest class called CreateRequest(). |
+
 ## v0.0.6 -- 20 Jan 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Fix    | SipLib.Network.SipDnsClient class -- modified the ResolveSipServerAsync() function so that it catches exceptions thrown by the Dns.GetHostEntry() function. |
-| NA     | Fix    | SipLib.Transactions.ServerNonInviteTransaction class -- was not calling the TransactionComplete callback function when the transaction was completed. |
+| NA     | Fix    | SipLib.Transactions.ServerNonInviteTransaction class -- was not calling the TransactionComplete callback function when the transaction was completed for TCP and TLS. |
 | NA     | Fix    | SipLib.Transactions.ClientInviteTransaction class -- Fixed a bug in the handling of the completion of a CANCEL transaction that prevented sending the ACK request for a 487 Request Terminated response. |
 | NA     | Change | SipLib.Transactions.ClientInviteTransaction class -- Modified to forcibly terminate the transaction and notify the transaction user if the call state is not in the Proceeding state when the CancelInvite() method is called.  |
 | NA     | Addition | SipLib.Transactions.TransactionTerminationReasonEnum -- added a new token called CancelledByClient.  |

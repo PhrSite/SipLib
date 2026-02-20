@@ -18,10 +18,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Various additions, changes and fixes. See VersionHistory.md</PackageReleaseNotes>
     <PackageOutputPath>\_MyProjects\NuGetPackages</PackageOutputPath>
-    <AssemblyVersion>0.0.6</AssemblyVersion>
-    <FileVersion>0.0.6</FileVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <Version>0.0.6</Version>
+    <Version>1.0.0</Version>
     <PackageTags>SIP;NG9-1-1</PackageTags>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>

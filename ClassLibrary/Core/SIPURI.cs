@@ -345,7 +345,7 @@ public class SIPURI
         {
             SIPURI sipURI = new SIPURI();
 
-            if (String.IsNullOrEmpty(uri))
+            if (string.IsNullOrEmpty(uri))
             {
                 throw new SIPValidationException(SIPValidationFieldsEnum.URI, 
                     "A SIP URI cannot be parsed from an empty string.");
@@ -502,6 +502,16 @@ public class SIPURI
         try
         {
             string uriStr = Scheme.ToString() + SCHEME_ADDR_SEPARATOR;
+
+            // 5 Feb 26 PHR
+            if (Scheme == SIPSchemesEnum.tel)
+            {
+                if (User is null)
+                    return uriStr + "+1000000000";
+                else
+                    return uriStr + "+1" + User;
+            }
+
             // 21 Jul 23 PHR
             if (Scheme == SIPSchemesEnum.http || Scheme == SIPSchemesEnum.https || Scheme ==
                 SIPSchemesEnum.msrp || Scheme == SIPSchemesEnum.msrps || Scheme == SIPSchemesEnum.ws ||
