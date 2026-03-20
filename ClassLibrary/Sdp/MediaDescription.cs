@@ -6,9 +6,12 @@
 //             -- Added RtpMapAttribute GetRtpMapForCodecType(string strCodecName)
 //           7 Aug 24 PHR
 //             -- Changed fields to properties.
+//           18 Mar 26 PHR
+//             -- Added the AreEqual() static method.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.RtpCrypto;
+using System.Net;
 using System.Text;
 
 namespace SipLib.Sdp;
@@ -378,7 +381,7 @@ public class MediaDescription
     }
 
     /// <summary>
-    /// Returns true if this MediaDescription object call for DTLS-SRTP or SDES-SRTP encryption of false if
+    /// Returns true if this MediaDescription object calls for DTLS-SRTP or SDES-SRTP encryption or false if
     /// it does not.
     /// </summary>
     public bool UsingEncryption
@@ -680,4 +683,112 @@ public class MediaDescription
             return GetAttributeValue(LabelAttributeName);
         }
     }
+
+    /// <summary>
+    /// Compares two MediaDescription objects to determine if they are equal.
+    /// </summary>
+    /// <param name="sdp1">The Sdp object that contains the first MediaDescription object (md1).</param>
+    /// <param name="md1">The first MediaDescription object. Must be contained in sdp1.</param>
+    /// <param name="sdp2">The Sdp object that contains the second MediaDescription object (md2).</param>
+    /// <param name="md2">The second MediaDescription object. Must be contained in sdp2.</param>
+    /// <returns>Returns true if the two MediaDescription objects are equal.</returns>
+    /// <remarks>This method uses the two Sdp objects because the connection information (c=) may be 
+    /// in the session level (i.e., in the Sdp object) or media description level (i.e., in the MediaDescription object).
+    /// <para>The two MediaDescription objects must be for the same type of media.</para></remarks>
+    public static bool AreEqual(Sdp sdp1, MediaDescription md1, Sdp sdp2, MediaDescription md2)
+    {
+        IPEndPoint? ep1 = Sdp.GetMediaEndPoint(sdp1, md1);
+        IPEndPoint? ep2 = Sdp.GetMediaEndPoint(sdp2, md2);
+
+        if (ep1 == null || ep2 == null)
+            // This is actually a serious protocol error as connection information must be provided.
+            // Perhaps the application can recover from this error so don't throw an exception.
+            return false;
+
+        if (md1.MediaType != md2.MediaType)
+            return false;   
+
+        if (ep1.Equals(ep2) == false)
+            return false;
+
+        // Note: Don't want to do a simple string comparison of the two MediaDescription objects because the
+        // string versions of the objects may not necessarily be equal, but the two objects could describe the
+        // same media session
+
+        if (md1.Transport != md2.Transport)
+            return false;
+
+        if (md1.PayloadTypes.Count != md2.PayloadTypes.Count)
+            return false;
+
+        foreach (int pt in md1.PayloadTypes)
+        {
+            RtpMapAttribute? rma1 = md1.GetRtpMapForPayloadType(pt);
+            RtpMapAttribute? rma2 = md2.GetRtpMapForPayloadType (pt);
+
+            if (rma1 == null || rma2 == null)
+                // Allow this to pass because in some cases a rtpmap is not provided because wellknown payload types
+                // are assumed
+                continue;
+
+            if (rma1.EncodingName != rma2.EncodingName)
+                return false;
+        }
+
+        if (md1.Label != md2.Label)
+            return false;
+
+        if (md1.UsingEncryption != md2.UsingEncryption)
+            return false;
+
+        if (md1.UsingEncryption == true)
+        {
+            if (md1.UsingSdesSrtp() != md2.UsingSdesSrtp())
+                return false;
+
+            if (md1.UsingSdesSrtp() == true)
+            {
+                List<CryptoAttribute> cra1List = md1.GetCryptoAttributes();
+                List<CryptoAttribute> cra2List = md2.GetCryptoAttributes();
+                if (cra1List.Count == 0 || cra2List.Count == 0)
+                    return false;
+
+                CryptoAttribute ca1 = cra1List[0];
+                CryptoAttribute ca2 = cra2List[0];
+
+                if (ca1.Tag != ca2.Tag || ca1.CryptoSuite != ca2.CryptoSuite) 
+                    return false;
+
+                List<InlineParams> ilp1List = ca1.InlineParameters;
+                List<InlineParams> ilp2List = ca2.InlineParameters;
+                if (ilp1List.Count == 0 || ilp2List.Count == 0)
+                    return false;
+
+                // Test the master key and master salt of only the first inline parameter.
+                InlineParams ilp1 = ilp1List[0];
+                InlineParams ilp2 = ilp2List[0];
+                if (ilp1.MasterKey.SequenceEqual(ilp2.MasterKey) == false)
+                    return false;
+
+                if (ilp2.MasterSalt.SequenceEqual(ilp1.MasterSalt) == false)
+                    return false;
+            }
+            else
+            {   // It must be DTLS-SRTP and the crypto suite and encryption keys are negotiated using DTLS.
+                // Just check the fingerprint attributes if they are available
+                SdpAttribute? fpattr1 = md1.GetNamedAttribute("fingerprint");
+                SdpAttribute? fpattr2 = md2.GetNamedAttribute("fingerprint");
+                if (fpattr1 != null && fpattr2 != null)
+                {
+                    if (fpattr1.ToString() != fpattr2.ToString())
+                        return false;
+                }
+                else if ((fpattr1 == null && fpattr2 != null) || (fpattr1 != null && fpattr2 == null))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
 }

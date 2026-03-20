@@ -2,11 +2,13 @@
 //  File: SdpMediaDescriptionUnitTests.cs                           19 Nov 22 PHR
 //////////////////////////////////////////////////////////////////////////////////////
 
+namespace SipLibUnitTests.Sdp;
 using SipLib.Media;
 using SipLib.Sdp;
+using System;
 using System.Net;
-
-namespace SipLibUnitTests.Sdp;
+using System.Runtime.Intrinsics.Arm;
+using static System.Net.WebRequestMethods;
 
 [Trait("Category", "unit")]
 public class SdpMediaDescriptionUnitTests
@@ -191,7 +193,7 @@ public class SdpMediaDescriptionUnitTests
     }
 
     [Fact]
-    public void TestNoLable()
+    public void TestNoLabel()
     {
         string strMediaBlock =
             "m=audio 49230 RTP/AVP 96 97 98\r\n" +
@@ -230,4 +232,314 @@ public class SdpMediaDescriptionUnitTests
         RtpMapAttribute AnsTelEventRtpMap = AnsAudioMd.GetRtpMapForPayloadType(101);
         Assert.True(AnsTelEventRtpMap != null, "The answered RtpMapAttribute for payload type 101 is null");
     }
+
+    private const string CRLF = "\r\n";
+
+    [Fact]
+    public void AreEqual_True_Simple1()
+    {
+        string str_sdp1 =
+            "v=0" + CRLF +
+            "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+            "s=SDP Seminar" + CRLF +
+            "c=IN IP4 224.2.17.12" + CRLF +
+            "t=2873397496 2873404696" + CRLF +
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000" + CRLF +
+            "m=video 51372 RTP/AVP 99" + CRLF +
+            "a=rtpmap:99 H264/90000" + CRLF;
+
+        string str_md1 =
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000\r\n";
+
+        string str_sdp2 =
+            "v=0" + CRLF +
+            "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+            "s=SDP Seminar" + CRLF +
+            "c=IN IP4 224.2.17.12" + CRLF +
+            "t=2873397496 2873404696" + CRLF +
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000" + CRLF +
+            "m=video 51372 RTP/AVP 99" + CRLF +
+            "a=rtpmap:99 H264/90000" + CRLF;
+
+        string str_md2 =
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        Assert.True(MediaDescription.AreEqual(sdp1, md1, sdp2, md2) == true, "AreEqual() returned false");
+    }
+
+    [Fact]
+    public void AreEqual_EndPoint_Changed()
+    {
+        string str_sdp1 =
+            "v=0" + CRLF +
+            "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+            "s=SDP Seminar" + CRLF +
+            "c=IN IP4 224.2.17.12" + CRLF +
+            "t=2873397496 2873404696" + CRLF +
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000" + CRLF +
+            "m=video 51372 RTP/AVP 99" + CRLF +
+            "a=rtpmap:99 H264/90000" + CRLF;
+
+        string str_md1 =
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000\r\n";
+
+        string str_sdp2 =
+            "v=0" + CRLF +
+            "o=jdoe 2890844526 1 IN IP4 10.47.16.5" + CRLF +
+            "s=SDP Seminar" + CRLF +
+            "c=IN IP4 224.2.17.12" + CRLF +
+            "t=2873397496 2873404696" + CRLF +
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "a=rtpmap: 0 PCMU/8000" + CRLF +
+            "c=IN IP4 192.168.1.100" + CRLF +   // Change the IPEndPoint for audio
+            "m=video 51372 RTP/AVP 99" + CRLF +
+            "a=rtpmap:99 H264/90000" + CRLF;
+
+        string str_md2 =
+            "m=audio 49170 RTP/AVP 0" + CRLF +
+            "c=IN IP4 192.168.1.100" + CRLF +   // Change the IPEndPoint for audio
+            "a=rtpmap: 0 PCMU/8000\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        // Expect AreEqual() to return false because the IPEndPoint changed
+        Assert.True(MediaDescription.AreEqual(sdp1, md1, sdp2, md2) == false, "AreEqual() returned true");
+    }
+
+    [Fact]
+    public void AreEqual_True_SDESSRTP_Simple1()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+    
+        string str_md1 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_md2 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        Assert.True(MediaDescription.AreEqual(sdp1, md1, sdp2, md2) == true, "AreEqual() returned false");
+    }
+
+    [Fact]
+    public void AreEqual_False_SDESSRTP_Simple1()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_md1 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            // Change the crypto suite
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_md2 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            // Change the crypto suite
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        // Expect failure because the crypto suite changed
+        Assert.True(MediaDescription.AreEqual(sdp1, md1, sdp2, md2) == false, "AreEqual() returned true");
+    }
+
+    [Fact]
+    public void AreEqual_False_SDESSRTP_InLineChanged()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_md1 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:NzB4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=jdoe 2890844526 2890842807 IN IP4 10.47.16.5\r\n" +
+            "s=SDP Seminar\r\n" +
+            "c=IN IP4 161.44.17.12\r\n" +
+            "t=2873397496 2873404696\r\n" +
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            // Change the inline
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:abc4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        string str_md2 =
+            "m=audio 49170 RTP/SAVP 0\r\n" +
+            "a=rtpmap:0 PCMU/8000\r\n" +
+            // Change the inline
+            "a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:abc4d1BINUAvLEw6UzF3WSJ+PSdFcGdUJShpX1Zj|2^20|1:32\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        // Expect failure because the inline changed
+        Assert.True(MediaDescription.AreEqual(sdp1, md1, sdp2, md2) == false, "AreEqual() returned true");
+    }
+
+    [Fact]
+    public void AreEqual_True_DTLSSRTP_Simple1()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=jdoe 6418913922105372816 2105372818 IN IP4 192.168.1.100\r\n" +
+            "s=example2\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t=0 0\r\n" +
+            "a=setup:active\r\n" +
+            "a=fingerprint: SHA-1 FF:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n" +
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n";
+
+        string str_md1 =
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n" +
+            "a=setup:active\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=jdoe 6418913922105372816 2105372818 IN IP4 192.168.1.100\r\n" +
+            "s=example2\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t=0 0\r\n" +
+            "a=setup:active\r\n" +
+            "a=fingerprint: SHA-1 FF:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n" +
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n";
+
+        string str_md2 =
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        bool result = MediaDescription.AreEqual(sdp1, md1, sdp2, md2);
+        Assert.True(result == true, "AreEqual() returned false");
+    }
+
+    [Fact]
+    public void AreEqual_False_DTLSSRTP_FingerPringChanged()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=jdoe 6418913922105372816 2105372818 IN IP4 192.168.1.100\r\n" +
+            "s=example2\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t=0 0\r\n" +
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n" +
+            "a=setup:active\r\n" +
+            "a=fingerprint: SHA-1 FF:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+
+        string str_md1 =
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n" +
+            "a=setup:active\r\n" +
+            "a=fingerprint: SHA-1 FF:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=jdoe 6418913922105372816 2105372818 IN IP4 192.168.1.100\r\n" +
+            "s=example2\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t=0 0\r\n" +
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n" +
+            "a=setup:active\r\n" +
+            // Change the fingerprint
+            "a=fingerprint: SHA-1 00:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+
+        string str_md2 =
+            "m=audio 12000 UDP/TLS/RTP/SAVP 0\r\n" +
+            "a=setup:active\r\n" +
+            // Change the fingerprint
+            "a=fingerprint: SHA-1 00:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        bool result = MediaDescription.AreEqual(sdp1, md1, sdp2, md2);
+        Assert.True(result == false, "AreEqual() returned true");
+    }
+
 }

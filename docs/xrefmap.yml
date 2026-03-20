@@ -20600,6 +20600,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Sdp.MediaDescription.AddSetupAttribute
   nameWithType: MediaDescription.AddSetupAttribute
+- uid: SipLib.Sdp.MediaDescription.AreEqual(SipLib.Sdp.Sdp,SipLib.Sdp.MediaDescription,SipLib.Sdp.Sdp,SipLib.Sdp.MediaDescription)
+  name: AreEqual(Sdp, MediaDescription, Sdp, MediaDescription)
+  href: api/SipLib.Sdp.MediaDescription.html#SipLib_Sdp_MediaDescription_AreEqual_SipLib_Sdp_Sdp_SipLib_Sdp_MediaDescription_SipLib_Sdp_Sdp_SipLib_Sdp_MediaDescription_
+  commentId: M:SipLib.Sdp.MediaDescription.AreEqual(SipLib.Sdp.Sdp,SipLib.Sdp.MediaDescription,SipLib.Sdp.Sdp,SipLib.Sdp.MediaDescription)
+  fullName: SipLib.Sdp.MediaDescription.AreEqual(SipLib.Sdp.Sdp, SipLib.Sdp.MediaDescription, SipLib.Sdp.Sdp, SipLib.Sdp.MediaDescription)
+  nameWithType: MediaDescription.AreEqual(Sdp, MediaDescription, Sdp, MediaDescription)
+- uid: SipLib.Sdp.MediaDescription.AreEqual*
+  name: AreEqual
+  href: api/SipLib.Sdp.MediaDescription.html#SipLib_Sdp_MediaDescription_AreEqual_
+  commentId: Overload:SipLib.Sdp.MediaDescription.AreEqual
+  isSpec: "True"
+  fullName: SipLib.Sdp.MediaDescription.AreEqual
+  nameWithType: MediaDescription.AreEqual
 - uid: SipLib.Sdp.MediaDescription.Attributes
   name: Attributes
   href: api/SipLib.Sdp.MediaDescription.html#SipLib_Sdp_MediaDescription_Attributes
