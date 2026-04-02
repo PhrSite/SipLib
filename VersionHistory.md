@@ -1,6 +1,6 @@
 # Version History
 
-## v1.0.1 -- TBD
+## v1.0.1 -- 2 Apr 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Addition | Added a static method called AreEqual() to the SipLib.Sdp.MediaDescription class. |

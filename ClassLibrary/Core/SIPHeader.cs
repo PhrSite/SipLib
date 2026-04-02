@@ -285,10 +285,6 @@ public class SIPHeader
     /// </summary>
     /// <value></value>
     public string? ReferTo = null;
-    /// <summary>
-    /// Reply-To header field. See Section 20.31 of RFC 3261.
-    /// </summary>
-    /// <value></value>
      
     // 31 Oct 25 PHR
     /// <summary>
@@ -296,7 +292,12 @@ public class SIPHeader
     /// </summary>
     public SIPReplacesParameter? ReplacesParameter = null;
 
+    /// <summary>
+    /// Reply-To header field. See Section 20.31 of RFC 3261.
+    /// </summary>
+    /// <value></value>
     public string? ReplyTo = null;
+
     /// <summary>
     /// Require header field. See Section 20.32 of RFC 3261.
     /// </summary>

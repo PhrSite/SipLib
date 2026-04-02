@@ -3,11 +3,15 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLibUnitTests.Sdp;
+
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using SipLib.Media;
 using SipLib.Sdp;
 using System;
+using System.IO;
 using System.Net;
 using System.Runtime.Intrinsics.Arm;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Net.WebRequestMethods;
 
 [Trait("Category", "unit")]
@@ -530,6 +534,94 @@ public class SdpMediaDescriptionUnitTests
             "a=setup:active\r\n" +
             // Change the fingerprint
             "a=fingerprint: SHA-1 00:FF:FF:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        bool result = MediaDescription.AreEqual(sdp1, md1, sdp2, md2);
+        Assert.True(result == false, "AreEqual() returned true");
+    }
+
+    [Fact]
+    public void AreEqual_True_Msrp_Simple1()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=alice 2890844526 2890844527 IN IP4 192.168.1.100\r\n" +
+            "s=-\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t= 0 0\r\n" +
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_md1 =
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=alice 2890844526 2890844527 IN IP4 192.168.1.100\r\n" +
+            "s=-\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t= 0 0\r\n" +
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_md2 =
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
+        Assert.True(sdp1 != null, "sdp1 failed to parse");
+        MediaDescription md1 = MediaDescription.ParseMediaDescriptionString(str_md1);
+        Sdp sdp2 = Sdp.ParseSDP(str_sdp2);
+        Assert.True(sdp2 != null, "sdp2 failed to parse");
+        MediaDescription md2 = MediaDescription.ParseMediaDescriptionString(str_md2);
+
+        bool result = MediaDescription.AreEqual(sdp1, md1, sdp2, md2);
+        Assert.True(result == true, "AreEqual() returned false");
+    }
+
+    [Fact]
+    public void AreEqual_False_Msrp_Simple1()
+    {
+        string str_sdp1 =
+            "v=0\r\n" +
+            "o=alice 2890844526 2890844527 IN IP4 192.168.1.100\r\n" +
+            "s=-\r\n" +
+            "c=IN IP4 192.168.1.100\r\n" +
+            "t= 0 0\r\n" +
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_md1 =
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.100:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_sdp2 =
+            "v=0\r\n" +
+            "o=alice 2890844526 2890844527 IN IP4 192.168.1.100\r\n" +
+            "s=-\r\n" +
+            "c=IN IP4 192.168.1.101\r\n" +
+            "t= 0 0\r\n" +
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.101:7394/2s93i9ek2a;tcp\r\n";
+
+        string str_md2 =
+            "m=message 7394 TCP/MSRP *\r\n" +
+            "a=accept-types:text/plain\r\n" +
+            "a=path:msrp://192.168.1.101:7394/2s93i9ek2a;tcp\r\n";
 
         Sdp sdp1 = Sdp.ParseSDP(str_sdp1);
         Assert.True(sdp1 != null, "sdp1 failed to parse");

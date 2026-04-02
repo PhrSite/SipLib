@@ -10,6 +10,8 @@
 //             -- Added the AreEqual() static method.
 /////////////////////////////////////////////////////////////////////////////////////
 
+using SipLib.Media;
+using SipLib.Msrp;
 using SipLib.RtpCrypto;
 using System.Net;
 using System.Text;
@@ -711,12 +713,26 @@ public class MediaDescription
         if (ep1.Equals(ep2) == false)
             return false;
 
+        if (md1.Transport != md2.Transport)
+            return false;
+
+        // Treat MSRP media as a special case
+        if (md1.MediaType == MediaTypes.MSRP)
+        {
+            MsrpUri? msrpUri1 = MsrpConnection.GetPathMsrpUri(md1);
+            MsrpUri? msrpUri2 = MsrpConnection.GetPathMsrpUri(md2);
+            if (msrpUri1 == null || msrpUri2 == null)
+                return false;
+
+            if (msrpUri1.uri == msrpUri2.uri && msrpUri1.Transport == msrpUri2.Transport)
+                return true;
+            else
+                return false;
+        }
+
         // Note: Don't want to do a simple string comparison of the two MediaDescription objects because the
         // string versions of the objects may not necessarily be equal, but the two objects could describe the
         // same media session
-
-        if (md1.Transport != md2.Transport)
-            return false;
 
         if (md1.PayloadTypes.Count != md2.PayloadTypes.Count)
             return false;
