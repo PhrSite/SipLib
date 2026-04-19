@@ -1,10 +1,14 @@
 # Version History
 
+## v1.0.2 -- TBD
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Addition | SipLib.Channels.SIPTLSChannel class -- Added the public SwapCertificate() method and the ServerCertificate and the CertificateCollection private properties to allow an outside object to change the X.509 certificate in a thread-safe manner without affecting existing TLS connections. |
+
 ## v1.0.1 -- 2 Apr 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Addition | Added a static method called AreEqual() to the SipLib.Sdp.MediaDescription class. |
-
 
 ## v1.0.0 -- 19 Feb 2026
 | Issue No. | Change Type | Description |

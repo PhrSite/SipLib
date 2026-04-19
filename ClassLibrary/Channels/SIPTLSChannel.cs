@@ -83,10 +83,15 @@
 //             delegates.
 //          -- Removed the outer try/catch block around the while loop in the
 //             AcceptConnections() function because it is not needed.
-//          -- Modified EneAuthenticateAsServer() to check for the presence of a
+//          -- Modified EndAuthenticateAsServer() to check for the presence of a
 //             remote client certificate when mutual authentication is enabled. If
 //             a remote client certificate is missing the the connection is rejected.
 //          -- Removed MAX_TLS_CONNECTIONS from the call to TcpListener.Start().
+//          18 Apr 26 PHR
+//          -- Added the public SwapCertificate() method and the ServerCertificate and
+//             the CertificateCollection private properties to allow an outside object to
+//             change the X.509 certificate in a thread-safe manner without affecting
+//             existing TLS connections.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -117,6 +122,9 @@ public class SIPTLSChannel : SIPChannel
     private Thread? m_ListenerThread = null;
     private X509CertificateCollection m_CertCollection;
     private bool m_UseMutualAuth;
+
+    // 18 Apr 26 PHR
+    private readonly object m_CertificateLock = new object();
 
     /// <summary>
     /// Fired if the TCP connection request to a remote endpoint failed.
@@ -209,6 +217,72 @@ public class SIPTLSChannel : SIPChannel
         Initialise();
     }
 
+    // 18 Apr 26 PHR
+    private X509Certificate2 ServerCertificate
+    {
+        get
+        {
+            X509Certificate2 certificate;
+            lock (m_CertificateLock)
+            {
+                certificate = m_serverCertificate;
+            }
+
+            return certificate;
+        }
+    }
+
+    // 18 Apr 26 PHR
+    private X509CertificateCollection CertificateCollection
+    {
+        get
+        {
+            X509CertificateCollection collection;
+            lock (m_CertificateLock)
+            {
+                collection = m_CertCollection;
+            }
+            
+            return collection;
+        }
+    }
+
+    // 18 Apr 26 PHR -- From Simon
+    /// <summary>
+    /// Atomically replaces the server X.509 certificate used for new TLS handshakes.
+    /// Existing connections are unaffected — they continue with their already-negotiated
+    /// TLS session. New inbound handshakes (and new outbound mutual-auth handshakes,
+    /// if <c>UseMutualAuth</c> is enabled) will present the new certificate.
+    /// </summary>
+    /// <param name="newCertificate">
+    /// Replacement certificate. Must have an accessible private key.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="newCertificate"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown if the certificate has no private key.</exception>
+    public void SwapCertificate(X509Certificate2 newCertificate)
+    {
+        if (newCertificate is null)
+            throw new ArgumentNullException(nameof(newCertificate));
+
+        if (newCertificate.HasPrivateKey == false)
+            throw new ArgumentException(
+                "Certificate must have an accessible private key to be used for TLS.",
+                nameof(newCertificate));
+
+        X509CertificateCollection newCollection = new X509CertificateCollection(new[] { newCertificate });
+
+        // Holding a dedicated lock here (not m_CollectionLock) keeps this swap
+        // independent of the m_connectedSockets critical section. The fields are
+        // reference types on .NET, so the writes themselves are atomic, but both
+        // fields must be replaced together to stay consistent for a mutual-auth
+        // reader that touches both during a single handshake path.
+        lock (m_CertificateLock)
+        {
+            m_serverCertificate = newCertificate;
+            m_CertCollection = newCollection;
+        }
+    }
+
     private object m_CollectionLock = new object();
 
     private void LockCollections()
@@ -283,9 +357,9 @@ public class SIPTLSChannel : SIPChannel
                     remoteEndPoint, SIPProtocolsEnum.tls, SIPConnectionsEnum.Listener);
 
                 if (m_UseMutualAuth == false)
-                    sslStream.BeginAuthenticateAsServer(m_serverCertificate, EndAuthenticateAsServer, sipTLSConnection);
+                    sslStream.BeginAuthenticateAsServer(ServerCertificate, EndAuthenticateAsServer, sipTLSConnection);
                 else
-                    sslStream.BeginAuthenticateAsServer(m_serverCertificate, true, System.Security.Authentication.SslProtocols.None,
+                    sslStream.BeginAuthenticateAsServer(ServerCertificate, true, System.Security.Authentication.SslProtocols.None,
                         false, EndAuthenticateAsServer, sipTLSConnection);
             }
             catch (Exception)
@@ -524,7 +598,7 @@ public class SIPTLSChannel : SIPChannel
                     sslStream.BeginAuthenticateAsClient(serverCN, EndAuthenticateAsClient, new object[]
                        { tcpClient, dstEndPoint, buffer, callerConnection });
                 else
-                    sslStream.BeginAuthenticateAsClient(serverCN, m_CertCollection,
+                    sslStream.BeginAuthenticateAsClient(serverCN, CertificateCollection,
                        System.Security.Authentication.SslProtocols.None, false, EndAuthenticateAsClient,
                        new object[] { tcpClient, dstEndPoint, buffer, callerConnection });
             }
