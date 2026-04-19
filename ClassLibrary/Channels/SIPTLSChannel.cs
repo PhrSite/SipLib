@@ -259,7 +259,7 @@ public class SIPTLSChannel : SIPChannel
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="newCertificate"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown if the certificate has no private key.</exception>
-    public void SwapCertificate(X509Certificate2 newCertificate)
+    public override void SwapCertificate(X509Certificate2 newCertificate)
     {
         if (newCertificate is null)
             throw new ArgumentNullException(nameof(newCertificate));

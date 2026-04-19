@@ -40,12 +40,13 @@
 //              5 Nov 24 PHR
 //              -- Changed LocalSIPEndPoint, SIPChannelEndPoint, SIPChannelContactURI,
 //                 and SipUri to non-nullable types and assigned default values.
+//              19 Apr 26 PHR
+//              -- Added the virtual method called SwapCertificate.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
-
 using SipLib.Core;
 
 namespace SipLib.Channels;
@@ -344,5 +345,14 @@ public abstract class SIPChannel
     public virtual X509Certificate? GetRemoteCertificate(string strRemoteEp)
     {
         return null;
+    }
+
+    /// <summary>
+    /// This is the base class implementation of SwapCertificate that does nothing. Only SIPTLSChannel
+    /// needs to override this method.
+    /// </summary>
+    /// <param name="newCertificate"></param>
+    public virtual void SwapCertificate(X509Certificate2 newCertificate)
+    {
     }
 }

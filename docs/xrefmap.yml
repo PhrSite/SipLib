@@ -991,6 +991,19 @@ references:
   commentId: F:SipLib.Channels.SIPChannel.SipUri
   fullName: SipLib.Channels.SIPChannel.SipUri
   nameWithType: SIPChannel.SipUri
+- uid: SipLib.Channels.SIPChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  name: SwapCertificate(X509Certificate2)
+  href: api/SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_SwapCertificate_System_Security_Cryptography_X509Certificates_X509Certificate2_
+  commentId: M:SipLib.Channels.SIPChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  fullName: SipLib.Channels.SIPChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  nameWithType: SIPChannel.SwapCertificate(X509Certificate2)
+- uid: SipLib.Channels.SIPChannel.SwapCertificate*
+  name: SwapCertificate
+  href: api/SipLib.Channels.SIPChannel.html#SipLib_Channels_SIPChannel_SwapCertificate_
+  commentId: Overload:SipLib.Channels.SIPChannel.SwapCertificate
+  isSpec: "True"
+  fullName: SipLib.Channels.SIPChannel.SwapCertificate
+  nameWithType: SIPChannel.SwapCertificate
 - uid: SipLib.Channels.SIPConnection
   name: SIPConnection
   href: api/SipLib.Channels.SIPConnection.html
@@ -1347,6 +1360,19 @@ references:
   isSpec: "True"
   fullName: SipLib.Channels.SIPTLSChannel.Send
   nameWithType: SIPTLSChannel.Send
+- uid: SipLib.Channels.SIPTLSChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  name: SwapCertificate(X509Certificate2)
+  href: api/SipLib.Channels.SIPTLSChannel.html#SipLib_Channels_SIPTLSChannel_SwapCertificate_System_Security_Cryptography_X509Certificates_X509Certificate2_
+  commentId: M:SipLib.Channels.SIPTLSChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  fullName: SipLib.Channels.SIPTLSChannel.SwapCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)
+  nameWithType: SIPTLSChannel.SwapCertificate(X509Certificate2)
+- uid: SipLib.Channels.SIPTLSChannel.SwapCertificate*
+  name: SwapCertificate
+  href: api/SipLib.Channels.SIPTLSChannel.html#SipLib_Channels_SIPTLSChannel_SwapCertificate_
+  commentId: Overload:SipLib.Channels.SIPTLSChannel.SwapCertificate
+  isSpec: "True"
+  fullName: SipLib.Channels.SIPTLSChannel.SwapCertificate
+  nameWithType: SIPTLSChannel.SwapCertificate
 - uid: SipLib.Channels.SIPUDPChannel
   name: SIPUDPChannel
   href: api/SipLib.Channels.SIPUDPChannel.html

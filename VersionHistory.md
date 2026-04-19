@@ -1,8 +1,9 @@
 # Version History
 
-## v1.0.2 -- TBD
+## v1.0.2 -- 19 Apr 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
+| NA     | Addition | SipLib.Channels.SIPChannel class -- Added the virtual public SwapCertificate() method. This base class implementation does nothing. |
 | NA     | Addition | SipLib.Channels.SIPTLSChannel class -- Added the public SwapCertificate() method and the ServerCertificate and the CertificateCollection private properties to allow an outside object to change the X.509 certificate in a thread-safe manner without affecting existing TLS connections. |
 
 ## v1.0.1 -- 2 Apr 2026
