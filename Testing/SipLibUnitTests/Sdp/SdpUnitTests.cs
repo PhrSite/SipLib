@@ -4,6 +4,7 @@
 
 namespace SipLibUnitTests.Sdp; 
 using SipLib.Media;
+using SipLib.Msrp;
 using SipLib.Rtp;
 using SipLib.Sdp;
 using System.Net;
@@ -357,4 +358,31 @@ public class SdpUnitTests
         Assert.True(msrpMd.GetSetupTypeAttributeValue() == SetupType.active, "msrpMd SetupType is wrong");
     }
 
+    // 3 May 26 PHR
+    [Fact]
+    public void BuildMsrpAnswerMediaDescription()
+    {
+        string strOfferedMsrpMd =
+            "m=message 9000 TCP/MSRP *\r\n" +
+            "a=accept-types:message/CPIM text/plain\r\n" +
+            "a=setup:active\r\n" +
+            "a=path:msrp://OspSimulator@192.168.1.64:9000/7dec8nz3wn;tcp";
+
+        MediaDescription offeredMd = MediaDescription.ParseMediaDescriptionString(strOfferedMsrpMd);
+        Assert.True(offeredMd != null, "Failed to parse offeredMd");
+
+        SdpAnswerSettings sdpAnswerSettings = new SdpAnswerSettings(AudioMediaUtils.SupportedAudioCodecs,
+            new List<string>(), "TestUser", RtpChannel.CertificateFingerprint!,
+            new MediaPortManager(new MediaPortSettings()));
+
+        MsrpUri localMsrpUri = MsrpUri.ParseMsrpUri("msrp://PsapSimulator@192.168.1.76:7303/ot402qqk5x;tcp");
+        Assert.True(localMsrpUri != null, "Failed to parse localMsrpUri");
+
+        MediaDescription answerMd = Sdp.BuildMsrpAnswerMediaDescription(offeredMd, IPAddress.Parse("192.168.1.76"),
+            sdpAnswerSettings, localMsrpUri);
+
+        string strAnswerMd = answerMd.ToString();
+        string[] mdLines = strAnswerMd.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+        Assert.True(mdLines[0].Contains("*") == true, "Error: * not used for the payload type");
+    }
 }

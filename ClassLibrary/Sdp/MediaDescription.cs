@@ -8,6 +8,10 @@
 //             -- Changed fields to properties.
 //           18 Mar 26 PHR
 //             -- Added the AreEqual() static method.
+//           3 May 27 PHR
+//             -- Modified the constructor of MediaDescription to not default the
+//                payload types list to contain a value of 0 if the input payload types
+//                list is empty and the media type is message (MSRP).
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Media;
@@ -39,7 +43,8 @@ public class MediaDescription
     /// <value></value>
     public string Transport { get; set; } = "";
     /// <summary>
-    /// Contains a list of payload types for the m= line.
+    /// Contains a list of payload types for the m= line. If this list is empty as in the case of MSRP
+    /// then a "*" will be used for the payload types list in the m= line when ToString() is called.
     /// </summary>
     /// <value></value>
     public List<int> PayloadTypes { get; set; } = new List<int>();
@@ -225,14 +230,15 @@ public class MediaDescription
     /// </summary>
     /// <param name="strMediaType">Media type. Ex: "audio" or "video"</param>
     /// <param name="iPort">Port number that the session will occur on.</param>
-    /// <param name="payloadTypes">Media payload types.</param>
+    /// <param name="payloadTypes">Media payload types. If this list is empty as in the case of MSRP
+    /// then a "*" will be used for the payload types list in the m= line when ToString() is called.</param>
     public MediaDescription(string strMediaType, int iPort, List<int> payloadTypes)
     {
         MediaType = strMediaType;
         Port = iPort;
         Transport = "RTP/AVP";
 
-        if (payloadTypes.Count == 0)
+        if (payloadTypes.Count == 0 && strMediaType != MediaTypes.MSRP)
         {	// Error, but default to something
             PayloadTypes.Add(0);
             return;

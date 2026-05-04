@@ -16,12 +16,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/phrsite/SipLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Minor additions. See VersionHistory.md</PackageReleaseNotes>
+    <PackageReleaseNotes>Minor fix. See VersionHistory.md</PackageReleaseNotes>
     <PackageOutputPath>\_MyProjects\NuGetPackages</PackageOutputPath>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
+    <AssemblyVersion>1.0.3</AssemblyVersion>
+    <FileVersion>1.0.3</FileVersion>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <PackageTags>SIP;NG9-1-1</PackageTags>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
