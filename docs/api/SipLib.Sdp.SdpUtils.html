@@ -967,19 +967,19 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_SipLib_Sdp_SetupType_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription%2CSystem.String%2CSipLib.Sdp.SetupType)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L154">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L162">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_AddDtlsSrtp_" data-uid="SipLib.Sdp.SdpUtils.AddDtlsSrtp*"></a>
-  <h4 id="SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_" data-uid="SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String)">AddDtlsSrtp(MediaDescription, string)</h4>
+  <h4 id="SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_SipLib_Sdp_SetupType_" data-uid="SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String,SipLib.Sdp.SetupType)">AddDtlsSrtp(MediaDescription, string, SetupType)</h4>
   <div class="markdown level1 summary"><p>Adds DTLS-SRTP attributes to a MediaDescription object that will be sent out as part of an SDP offer.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void AddDtlsSrtp(MediaDescription mediaDescription, string fingerPrintAttribute)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void AddDtlsSrtp(MediaDescription mediaDescription, string fingerPrintAttribute, SetupType setupType = SetupType.actpass)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -1004,6 +1004,12 @@
 &quot;SHA-256 4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB&quot;</p>
 </td>
       </tr>
+      <tr>
+        <td><a class="xref" href="SipLib.Sdp.SetupType.html">SetupType</a></td>
+        <td><span class="parametername">setupType</span></td>
+        <td><p>Specifies the setup attribute. Defaults to SetupType.actpass.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
@@ -1011,7 +1017,7 @@
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_AddSdesSrtpEncryption_SipLib_Sdp_MediaDescription_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.AddSdesSrtpEncryption(SipLib.Sdp.MediaDescription)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L167">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L177">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_AddSdesSrtpEncryption_" data-uid="SipLib.Sdp.SdpUtils.AddSdesSrtpEncryption*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_AddSdesSrtpEncryption_SipLib_Sdp_MediaDescription_" data-uid="SipLib.Sdp.SdpUtils.AddSdesSrtpEncryption(SipLib.Sdp.MediaDescription)">AddSdesSrtpEncryption(MediaDescription)</h4>
@@ -1045,7 +1051,7 @@
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_BuildSimpleAudioSdp_System_Net_IPAddress_System_Int32_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.BuildSimpleAudioSdp(System.Net.IPAddress%2CSystem.Int32%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L29">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L36">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_BuildSimpleAudioSdp_" data-uid="SipLib.Sdp.SdpUtils.BuildSimpleAudioSdp*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_BuildSimpleAudioSdp_System_Net_IPAddress_System_Int32_System_String_" data-uid="SipLib.Sdp.SdpUtils.BuildSimpleAudioSdp(System.Net.IPAddress,System.Int32,System.String)">BuildSimpleAudioSdp(IPAddress, int, string)</h4>
@@ -1109,7 +1115,7 @@ a unique name for the audio session.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L42">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L49">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateAudioMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32)">CreateAudioMediaDescription(int)</h4>
@@ -1159,11 +1165,11 @@ a unique name for the audio session.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32%2CSystem.Collections.Generic.List%7BSystem.String%7D%2CSipLib.Media.RtpEncryptionEnum%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L65">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L72">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateAudioMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateAudioMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateAudioMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)">CreateAudioMediaDescription(int, List&lt;string&gt;, RtpEncryptionEnum, string)</h4>
-  <div class="markdown level1 summary"><p>Creates a MediaDescriptionobject for offerring multiple audio codecs.</p>
+  <div class="markdown level1 summary"><p>Creates a MediaDescription object for offerring multiple audio codecs.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1228,7 +1234,7 @@ It is best to pass in RtpChannel.CertificateFingerprint.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateDtlsSrtpAudioMediaDescription_System_Int32_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateDtlsSrtpAudioMediaDescription(System.Int32%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L141">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L148">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpAudioMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpAudioMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpAudioMediaDescription_System_Int32_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpAudioMediaDescription(System.Int32,System.String)">CreateDtlsSrtpAudioMediaDescription(int, string)</h4>
@@ -1286,7 +1292,7 @@ encrypted using DTLS-SRTP. See RFC 5763, RFC 5764 and RFC 3711.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateDtlsSrtpRttMediaDescription_System_Int32_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateDtlsSrtpRttMediaDescription(System.Int32%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L367">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L377">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpRttMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpRttMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpRttMediaDescription_System_Int32_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpRttMediaDescription(System.Int32,System.String)">CreateDtlsSrtpRttMediaDescription(int, string)</h4>
@@ -1344,7 +1350,7 @@ encrypted using DTLS-SRTP. See RFC 5763, RFC 5764 and RFC 3711.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateDtlsSrtpVideoMediaDescription_System_Int32_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateDtlsSrtpVideoMediaDescription(System.Int32%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L262">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L272">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpVideoMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpVideoMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateDtlsSrtpVideoMediaDescription_System_Int32_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateDtlsSrtpVideoMediaDescription(System.Int32,System.String)">CreateDtlsSrtpVideoMediaDescription(int, string)</h4>
@@ -1402,7 +1408,7 @@ profile that will be encrypted using DTLS-SRTP. See RFC 5763, RFC 5764 and RFC 3
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateMsrpMediaDescription_System_Net_IPAddress_System_Int32_System_Boolean_SipLib_Sdp_SetupType_System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateMsrpMediaDescription(System.Net.IPAddress%2CSystem.Int32%2CSystem.Boolean%2CSipLib.Sdp.SetupType%2CSystem.Security.Cryptography.X509Certificates.X509Certificate2%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L310">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L320">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateMsrpMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateMsrpMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateMsrpMediaDescription_System_Net_IPAddress_System_Int32_System_Boolean_SipLib_Sdp_SetupType_System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateMsrpMediaDescription(System.Net.IPAddress,System.Int32,System.Boolean,SipLib.Sdp.SetupType,System.Security.Cryptography.X509Certificates.X509Certificate2,System.String)">CreateMsrpMediaDescription(IPAddress, int, bool, SetupType, X509Certificate2?, string?)</h4>
@@ -1504,7 +1510,7 @@ actpass</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateRttMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateRttMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L274">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L284">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateRttMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateRttMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateRttMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateRttMediaDescription(System.Int32)">CreateRttMediaDescription(int)</h4>
@@ -1554,7 +1560,7 @@ actpass</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateSdesSrtpAudioMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateSdesSrtpAudioMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L126">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L133">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateSdesSrtpAudioMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpAudioMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateSdesSrtpAudioMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpAudioMediaDescription(System.Int32)">CreateSdesSrtpAudioMediaDescription(int)</h4>
@@ -1605,7 +1611,7 @@ encrypted using SDES-SRTP. See RFC 4568, RFC 3711 and RFC 6188.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateSdesSrtpRttMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateSdesSrtpRttMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L352">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L362">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateSdesSrtpRttMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpRttMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateSdesSrtpRttMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpRttMediaDescription(System.Int32)">CreateSdesSrtpRttMediaDescription(int)</h4>
@@ -1656,7 +1662,7 @@ encrypted using SDES-SRTP. See RFC 4568, RFC 3711 and RFC 6188.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateSdesSrtpVideoMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateSdesSrtpVideoMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L247">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L257">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateSdesSrtpVideoMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpVideoMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateSdesSrtpVideoMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateSdesSrtpVideoMediaDescription(System.Int32)">CreateSdesSrtpVideoMediaDescription(int)</h4>
@@ -1707,7 +1713,7 @@ profile that will be encrypted using SDES-SRTP. See RFC 4568, RFC 3711 and RFC 6
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L191">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L201">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateVideoMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_System_Int32_" data-uid="SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32)">CreateVideoMediaDescription(int)</h4>
@@ -1758,7 +1764,7 @@ profile.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32%2CSystem.Collections.Generic.List%7BSystem.String%7D%2CSipLib.Media.RtpEncryptionEnum%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L209">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L219">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_" data-uid="SipLib.Sdp.SdpUtils.CreateVideoMediaDescription*"></a>
   <h4 id="SipLib_Sdp_SdpUtils_CreateVideoMediaDescription_System_Int32_System_Collections_Generic_List_System_String__SipLib_Media_RtpEncryptionEnum_System_String_" data-uid="SipLib.Sdp.SdpUtils.CreateVideoMediaDescription(System.Int32,System.Collections.Generic.List{System.String},SipLib.Media.RtpEncryptionEnum,System.String)">CreateVideoMediaDescription(int, List&lt;string&gt;, RtpEncryptionEnum, string)</h4>
@@ -1834,7 +1840,7 @@ It is best to pass in RtpChannel.CertificateFingerprint.</p>
                     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpUtils.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpUtils%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L18" class="contribution-link">View Source</a>
+                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpUtils.cs/#L25" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

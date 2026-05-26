@@ -8,6 +8,9 @@
 //              -- Made the following static methods public:
 //                 BuildAudioAnswerMediaDescription, BuildVideoAnswerMediaDescription,
 //                 BuildRttAnswerMediaDescription, BuildMsrpAnswerMediaDescription
+//           20 May 25 PHR
+//              -- Modified HandleOfferedEncryption() to call AddDtlsSrtp() with the
+//                 computed SetupType returned by MediaDescription.UsingDtlsSrtp().
 /////////////////////////////////////////////////////////////////////////////////////
 
 // RFC 8866 describes the Session Description Protocol (SDP). RFC 8866 obsoletes RFC 4566.
@@ -719,7 +722,7 @@ public class Sdp
             if (offerSettings.RtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
                 SdpUtils.AddSdesSrtpEncryption(rttMediaDescription);
             else if (offerSettings.RtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
-                SdpUtils.AddDtlsSrtp(rttMediaDescription, offerSettings.Fingerprint);
+                SdpUtils.AddDtlsSrtp(rttMediaDescription, offerSettings.Fingerprint, SetupType.active);
 
             offerSdp.Media.Add(rttMediaDescription);
         }
@@ -1123,15 +1126,7 @@ public class Sdp
     {
         if (OfferedMediaDescription.UsingDtlsSrtp(out SetupType Setup) == true)
         {
-            SdpUtils.AddDtlsSrtp(AnswerMediaDescription, Settings.Fingerprint);
-            SetupType AnsSetup;
-            if (Setup == SetupType.passive)
-                AnsSetup = SetupType.active;
-            else if (Setup == SetupType.active)
-                AnsSetup = SetupType.passive;
-            else
-                AnsSetup = SetupType.active;
-            AnswerMediaDescription.AddSetupAttribute(AnsSetup);
+            SdpUtils.AddDtlsSrtp(AnswerMediaDescription, Settings.Fingerprint, Setup);
         }
         else if (OfferedMediaDescription.UsingSdesSrtp() == true)
         {   // Negotiate the crypto suite to answer with

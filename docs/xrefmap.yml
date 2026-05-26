@@ -10682,6 +10682,22 @@ references:
   isSpec: "True"
   fullName: SipLib.Dtls.DtlsUtils.LoadSignerCredentials
   nameWithType: DtlsUtils.LoadSignerCredentials
+- uid: SipLib.Dtls.DtlsUtils.PacketIsForDtls(System.Byte[])
+  name: PacketIsForDtls(byte[])
+  href: api/SipLib.Dtls.DtlsUtils.html#SipLib_Dtls_DtlsUtils_PacketIsForDtls_System_Byte___
+  commentId: M:SipLib.Dtls.DtlsUtils.PacketIsForDtls(System.Byte[])
+  name.vb: PacketIsForDtls(Byte())
+  fullName: SipLib.Dtls.DtlsUtils.PacketIsForDtls(byte[])
+  fullName.vb: SipLib.Dtls.DtlsUtils.PacketIsForDtls(Byte())
+  nameWithType: DtlsUtils.PacketIsForDtls(byte[])
+  nameWithType.vb: DtlsUtils.PacketIsForDtls(Byte())
+- uid: SipLib.Dtls.DtlsUtils.PacketIsForDtls*
+  name: PacketIsForDtls
+  href: api/SipLib.Dtls.DtlsUtils.html#SipLib_Dtls_DtlsUtils_PacketIsForDtls_
+  commentId: Overload:SipLib.Dtls.DtlsUtils.PacketIsForDtls
+  isSpec: "True"
+  fullName: SipLib.Dtls.DtlsUtils.PacketIsForDtls
+  nameWithType: DtlsUtils.PacketIsForDtls
 - uid: SipLib.Dtls.DtlsUtils.ToRSA(Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters)
   name: ToRSA(RsaPrivateCrtKeyParameters)
   href: api/SipLib.Dtls.DtlsUtils.html#SipLib_Dtls_DtlsUtils_ToRSA_Org_BouncyCastle_Crypto_Parameters_RsaPrivateCrtKeyParameters_
@@ -22236,15 +22252,15 @@ references:
   commentId: T:SipLib.Sdp.SdpUtils
   fullName: SipLib.Sdp.SdpUtils
   nameWithType: SdpUtils
-- uid: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String)
-  name: AddDtlsSrtp(MediaDescription, string)
-  href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_
-  commentId: M:SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String)
-  name.vb: AddDtlsSrtp(MediaDescription, String)
-  fullName: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription, string)
-  fullName.vb: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription, String)
-  nameWithType: SdpUtils.AddDtlsSrtp(MediaDescription, string)
-  nameWithType.vb: SdpUtils.AddDtlsSrtp(MediaDescription, String)
+- uid: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String,SipLib.Sdp.SetupType)
+  name: AddDtlsSrtp(MediaDescription, string, SetupType)
+  href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_AddDtlsSrtp_SipLib_Sdp_MediaDescription_System_String_SipLib_Sdp_SetupType_
+  commentId: M:SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription,System.String,SipLib.Sdp.SetupType)
+  name.vb: AddDtlsSrtp(MediaDescription, String, SetupType)
+  fullName: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription, string, SipLib.Sdp.SetupType)
+  fullName.vb: SipLib.Sdp.SdpUtils.AddDtlsSrtp(SipLib.Sdp.MediaDescription, String, SipLib.Sdp.SetupType)
+  nameWithType: SdpUtils.AddDtlsSrtp(MediaDescription, string, SetupType)
+  nameWithType.vb: SdpUtils.AddDtlsSrtp(MediaDescription, String, SetupType)
 - uid: SipLib.Sdp.SdpUtils.AddDtlsSrtp*
   name: AddDtlsSrtp
   href: api/SipLib.Sdp.SdpUtils.html#SipLib_Sdp_SdpUtils_AddDtlsSrtp_

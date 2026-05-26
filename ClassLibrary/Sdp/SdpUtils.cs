@@ -1,5 +1,12 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   SdpUtils.cs                                             12 Sep 23 PHR
+//  Revised: 20 May 26 PHR
+//      -- Added the setupType parameter to SdpUtils.AddDtlsSrtp(), the default value is
+//         SetupType.actpass.
+//      -- SdpUtils.CreateAudioMediaDescription() - specify SetupType.active for the
+//         setupType parameter in the call to AddDtlsSrtp().
+//      -- SdpUtils.CreateVideoMediaDescription() - specify SetupType.active for the
+//         parameter in the call to AddDtlsSrtp().
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Sdp;
@@ -54,7 +61,7 @@ public static class SdpUtils
     }
 
     /// <summary>
-    /// Creates a MediaDescriptionobject for offerring multiple audio codecs.
+    /// Creates a MediaDescription object for offerring multiple audio codecs.
     /// </summary>
     /// <param name="port">Port number to used for audio media.</param>
     /// <param name="OfferAudioCodecs">List of audio codecs to offer.</param>
@@ -112,7 +119,7 @@ public static class SdpUtils
         if (rtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
             AddSdesSrtpEncryption(audioMediaDescription);
         else if (rtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
-            AddDtlsSrtp(audioMediaDescription, fingerprint);
+            AddDtlsSrtp(audioMediaDescription, fingerprint, SetupType.active);
 
         return audioMediaDescription;
     }
@@ -151,13 +158,16 @@ public static class SdpUtils
     /// <param name="mediaDescription">Input MediaDescription to modify</param>
     /// <param name="fingerPrintAttribute">Fingerprint from the X.509 certificate. For example:
     /// "SHA-256 4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB"</param>
-    public static void AddDtlsSrtp(MediaDescription mediaDescription, string fingerPrintAttribute)
+    /// <param name="setupType">Specifies the setup attribute. Defaults to SetupType.actpass.</param>
+    public static void AddDtlsSrtp(MediaDescription mediaDescription, string fingerPrintAttribute,
+        SetupType setupType = SetupType.actpass)
     {
-        if (mediaDescription.MediaType == "message")
+        if (mediaDescription.MediaType == MediaTypes.MSRP)
             return;     // Cannot use DTLS-SRTP with MSRP
 
         mediaDescription.Transport = "UDP/TLS/RTP/SAVP";
         mediaDescription.Attributes.Add(new SdpAttribute("fingerprint", fingerPrintAttribute.ToUpper()));
+        mediaDescription.AddSetupAttribute(setupType);
     }
 
     /// <summary>
@@ -233,7 +243,7 @@ public static class SdpUtils
         if (rtpEncryptionType == RtpEncryptionEnum.SdesSrtp)
             AddSdesSrtpEncryption(videoMediaDescription);
         else if (rtpEncryptionType == RtpEncryptionEnum.DtlsSrtp)
-            AddDtlsSrtp(videoMediaDescription, fingerprint);
+            AddDtlsSrtp(videoMediaDescription, fingerprint, SetupType.active);
 
         return videoMediaDescription;
     }

@@ -1,4 +1,5 @@
-﻿//-----------------------------------------------------------------------------
+﻿#region License
+//-----------------------------------------------------------------------------
 // Filename: DtlsSrtpTransport.cs
 //
 // Description: This class represents the DTLS SRTP transport connection to use 
@@ -15,15 +16,21 @@
 // License:
 // BSD 3-Clause "New" or "Revised" License, see included LICENSE.md file.
 //-----------------------------------------------------------------------------
+#endregion
 
 //  Revised: 18 Nov 23 PHR
 //      -- Changed namespace to SipLib.Dtls from SIPSorcery.Net
 //      -- Added documentation comments and code cleanup
 //      -- Changed the public declaration of the constant values to private
+//  Revised: 18 May 26 PHR
+//      -- Deleted previously commented out code
+//      -- Added calls to SipLogger.LogWarning if the DTLS handshake failed
+
 
 using System.Collections.Concurrent;
 using Org.BouncyCastle.Crypto.Tls;
 using Org.BouncyCastle.Security;
+using SipLib.Logging;
 
 namespace SipLib.Dtls;
 
@@ -221,8 +228,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     {
         handshakeError = null;
 
-        //logger.LogDebug("DTLS commencing handshake as client.");
-
         if (!_handshaking && !_handshakeComplete)
         {
             this._waitMillis = RetransmissionMilliseconds;
@@ -236,8 +241,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                 // Perform the handshake in a non-blocking fashion
                 Transport = clientProtocol.Connect(client, this);
 
-                // Prepare the shared key to be used in RTP streaming
-                //client.PrepareSrtpSharedSecret();
                 // Generate encoders for DTLS traffic
                 if (client.GetSrtpPolicy() != null)
                 {
@@ -250,16 +253,13 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                 _handshakeComplete = true;
                 _handshakeFailed = false;
                 _handshaking = false;
-                // Warn listeners handshake completed
-                //UnityEngine.Debug.Log("DTLS Handshake Completed");
-
                 return true;
             }
             catch (System.Exception excp)
             {
                 if (excp.InnerException is TimeoutException)
                 {
-                    //logger.LogWarning(excp, $"DTLS handshake as client timed out waiting for handshake to complete.");
+                    SipLogger.LogWarning(excp, "DTLS handshake as client timed out waiting for handshake to complete.");
                     handshakeError = "timeout";
                 }
                 else
@@ -270,15 +270,13 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                         handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)!.Message;
                     }
 
-                    //logger.LogWarning(excp, $"DTLS handshake as client failed. {excp.Message}");
+                    SipLogger.LogWarning(excp, $"DTLS handshake as client failed. {excp.Message}");
                 }
 
                 // Declare handshake as failed
                 _handshakeComplete = false;
                 _handshakeFailed = true;
                 _handshaking = false;
-                // Warn listeners handshake completed
-                //UnityEngine.Debug.Log("DTLS Handshake failed\n" + e);
             }
         }
         return false;
@@ -287,8 +285,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
     private bool DoHandshakeAsServer(out string? handshakeError)
     {
         handshakeError = null;
-
-        //logger.LogDebug("DTLS commencing handshake as server.");
 
         if (!_handshaking && !_handshakeComplete)
         {
@@ -303,8 +299,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
 
                 // Perform the handshake in a non-blocking fashion
                 Transport = serverProtocol.Accept(server, this);
-                // Prepare the shared key to be used in RTP streaming
-                //server.PrepareSrtpSharedSecret();
                 // Generate encoders for DTLS traffic
                 if (server.GetSrtpPolicy() != null)
                 {
@@ -313,19 +307,18 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                     srtcpDecoder = GenerateRtcpDecoder();
                     srtcpEncoder = GenerateRtcpEncoder();
                 }
+
                 // Declare handshake as complete
                 _handshakeComplete = true;
                 _handshakeFailed = false;
                 _handshaking = false;
-                // Warn listeners handshake completed
-                //UnityEngine.Debug.Log("DTLS Handshake Completed");
                 return true;
             }
             catch (System.Exception excp)
             {
                 if (excp.InnerException is TimeoutException)
                 {
-                    //logger.LogWarning(excp, $"DTLS handshake as server timed out waiting for handshake to complete.");
+                    SipLogger.LogWarning(excp, $"DTLS handshake as server timed out waiting for handshake to complete.");
                     handshakeError = "timeout";
                 }
                 else
@@ -336,15 +329,13 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
                         handshakeError = (excp as Org.BouncyCastle.Crypto.Tls.TlsFatalAlert)!.Message;
                     }
 
-                    //logger.LogWarning(excp, $"DTLS handshake as server failed. {excp.Message}");
+                    SipLogger.LogWarning(excp, $"DTLS handshake as server failed. {excp.Message}");
                 }
 
                 // Declare handshake as failed
                 _handshakeComplete = false;
                 _handshakeFailed = true;
                 _handshaking = false;
-                // Warn listeners handshake completed
-                //UnityEngine.Debug.Log("DTLS Handshake failed\n"+ e);
             }
         }
         return false;
@@ -594,7 +585,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             if(_isClosed)
             {
                 throw new System.Net.Sockets.SocketException((int)System.Net.Sockets.SocketError.NotConnected);
-                //return DTLS_RECEIVE_ERROR_CODE;
             }
             else if (_chunks.TryTake(out var item, timeout))
             {
@@ -635,7 +625,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
 
             if (millisecondsRemaining <= 0)
             {
-                //logger.LogWarning($"DTLS transport timed out after {TimeoutMilliseconds}ms waiting for handshake from remote {(connection.IsClient() ? "server" : "client")}.");
                 throw new TimeoutException();
             }
             else if (!_isClosed)
@@ -659,7 +648,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
             else
             {
                 throw new System.Net.Sockets.SocketException((int)System.Net.Sockets.SocketError.NotConnected);
-                //return DTLS_RECEIVE_ERROR_CODE;
             }
         }
         else if (!_isClosed)
@@ -668,7 +656,6 @@ public class DtlsSrtpTransport : DatagramTransport, IDisposable
         }
         else
         {
-            //throw new System.Net.Sockets.SocketException((int)System.Net.Sockets.SocketError.NotConnected);
             return DTLS_RECEIVE_ERROR_CODE;
         }
     }

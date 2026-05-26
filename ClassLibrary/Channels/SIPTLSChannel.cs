@@ -92,6 +92,9 @@
 //             the CertificateCollection private properties to allow an outside object to
 //             change the X.509 certificate in a thread-safe manner without affecting
 //             existing TLS connections.
+//          18 May 26 PHR
+//          -- Deleted previously commented out code.
+//          -- Added additional calls to SipLogger.LogError()
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -100,6 +103,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SipLib.Core;
+using SipLib.Logging;
 
 namespace SipLib.Channels;
 
@@ -549,8 +553,8 @@ public class SIPTLSChannel : SIPChannel
         }
         catch (Exception)
         {
-            // TODO: Log this exception
-
+            // Don't need to log anything here because either a request or a response is being sent and
+            // the failure will be handled at a higher protocol layer.
         }
         finally
         {
@@ -624,9 +628,7 @@ public class SIPTLSChannel : SIPChannel
         }
 
         if (Excpt != null)
-        {
-            // TODO: Log this exception
-        }
+            SipLogger.LogError(Excpt, $"Failed to connect to remote endpoint = {dstEndPoint}");
     }
 
     private void EndAuthenticateAsClient(IAsyncResult ar)
@@ -654,16 +656,12 @@ public class SIPTLSChannel : SIPChannel
                 callerConnection.SIPMessageReceived += SIPTLSMessageReceived;
 
                 callerConnection.StartSynchronousRead();
-                //callerConnection.SIPStream.BeginRead(callerConnection.
-                //    SocketBuffer, 0, MaxSIPTCPMessageSize, new AsyncCallback(
-                //    ReceiveCallback), callerConnection);
-
                 callerConnection.SIPStream.BeginWrite(buffer, 0, buffer.Length, EndSend, callerConnection);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // TODO: Log this exception
+            SipLogger.LogError(ex, $"TLS client-side handshake failed");
         }
         finally
         {

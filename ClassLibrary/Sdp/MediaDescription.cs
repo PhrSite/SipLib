@@ -349,7 +349,8 @@ public class MediaDescription
     }
 
     /// <summary>
-    /// Determines if its necessary to use DTLS-SRTP to negotiate encryption keys and algorithms.
+    /// Determines if its necessary to use DTLS-SRTP to negotiate encryption keys and algorithms. The
+    /// SetType output parameter is the SetupType to use in the answer to the offered SetupType.
     /// </summary>
     /// <param name="SetType">SetupType to use in the answer to the offered SetupType.</param>
     /// <returns>Returns true if DTLS-SRTP is required.</returns>
@@ -357,15 +358,16 @@ public class MediaDescription
     {
         bool IsDtlsSrtp = false;
         SetType = SetupType.active;
-        if (Transport != null && Transport.ToUpper().IndexOf("UDP/TLS") >= 0 ||
-            (Transport.ToUpper().IndexOf("RTP/SAVP") >= 0 && GetNamedAttribute("fingerprint") != null))
+        if (Transport != null && Transport.ToUpper().IndexOf("UDP/TLS/RTP") >= 0)
         {   // Encryption using DTLS-SRTP has been offerred.
             IsDtlsSrtp = true;
             SdpAttribute SetupAttr = GetNamedAttribute("setup");
 
             if (SetupAttr != null)
             {
-                if (SetupAttr.Value == "actpass" || SetupAttr.Value == "passive")
+                if (SetupAttr.Value == "actpass")
+                    SetType = SetupType.passive;    // 21 May 26 PHR
+                else if (SetupAttr.Value == "passive")
                     // Become the active element
                     SetType = SetupType.active;
                 else
@@ -379,10 +381,11 @@ public class MediaDescription
     /// <summary>
     /// Returns true if this MediaDescription object is for SDES-SRTP media encryption.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if using SDES-SRTP or false if not using SDES-SRTP.</returns>
     public bool UsingSdesSrtp()
     {
         if (GetNamedAttribute("crypto") != null)
+            // There must be at least one a=crypto attribute if using SDES-SRTP
             return true;
         else
             return false;
@@ -410,7 +413,7 @@ public class MediaDescription
     /// <param name="SetType">Specifies the role (active, passive, etc.)</param>
     public void AddSetupAttribute(SetupType SetType)
     {
-        SdpAttribute Sa = GetNamedAttribute("setup");
+        SdpAttribute? Sa = GetNamedAttribute("setup");
         if (Sa != null)
             Sa.Value = SetType.ToString();
         else

@@ -45,11 +45,13 @@
 //      -- Added documentation comments and code cleanup
 //      -- Added CreateCertificateFromPfxFile()
 //      -- Added CreateSelfSignedEcdsaTlsCert(), CreateSelfSignedBouncyCastleEcdsaCert(), CreateEcdsaPrivateKeyResource()
-// Revised: 7 Mar 25 PHR
+//  Revised: 7 Mar 25 PHR
 //      -- Modified DtlsUtils.CreateSelfSignedCert() to use X509CertificateLoader.LoadCertificate() instead of using
 //         the X509Certificate2 constructor to load the X.509 certificate because this constructor is obsolete in .NET 9.
 //      -- Modified DtlsUtils.ConvertBouncyCert() to use X509CertificateLoader.LoadPkcs12() instead of using the 
 //         of X509Certificate constructor to load the X.509 certificate because this construtor is obsolete in .NET 9.
+//  Revised: 21 May 26 PHR
+//      -- Added the PacketIsForDtls() method
 
 using System.Collections;
 using System.Security.Cryptography;
@@ -994,5 +996,27 @@ public class DtlsUtils
             default:
                 return false;
         }
+    }
+
+    private const byte MINIMUM_DTLS_BYTE_VALUE = 20;
+    private const byte MAXIMUM_DTLS_BYTE_VALUE = 63;
+
+    /// <summary>
+    /// Determines if a byte array is a DTLS handshake packet by looking at the first byte. See Section 5.1.2 of
+    /// RFC 5764.
+    /// </summary>
+    /// <param name="data">Input datagram to check.</param>
+    /// <returns>Returns true if the datagram is a DTLS handshake packet or false if it is not.</returns>
+    public static bool PacketIsForDtls(byte[] data)
+    {
+        if (data.Length >= 1)
+        {
+            if (data[0] >= MINIMUM_DTLS_BYTE_VALUE && data[0] <= MAXIMUM_DTLS_BYTE_VALUE)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
     }
 }

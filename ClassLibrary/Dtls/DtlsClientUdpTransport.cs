@@ -1,5 +1,9 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   DtlsClientUdpTransport.cs                               14 Nov 23 PHR
+//
+//  Revised: 21 May 26 PHR
+//      -- Modified the ReceiveThread() method to filter out non-DTLS handshake packets by
+//         calling DtlsUtils.PacketIfForDtls().
 /////////////////////////////////////////////////////////////////////////////////////
 
 using System.Net;
@@ -71,7 +75,8 @@ public class DtlsClientUdpTransport
                 byte[] buf = m_UdpClient.Receive(ref Ipe);
                 if (buf != null && buf.Length > 0)
                 {
-                    m_dtlsClientTransport.WriteToRecvStream(buf);
+                    if (DtlsUtils.PacketIsForDtls(buf) == true)
+                        m_dtlsClientTransport.WriteToRecvStream(buf);
                 }
             }
         }

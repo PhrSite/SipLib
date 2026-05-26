@@ -101,7 +101,11 @@ public class RtpChannel
     private bool m_IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     private SrtpEncryptor? m_srtpEncryptor = null;
     private SrtpDecryptor? m_srtpDecryptor = null;
+    /// <summary>
+    /// Determines the setup type for the DTLS handshake when the channel starts.
+    /// </summary>
     private bool m_IsDtlsSrtp = false;
+    private SetupType m_DtlsSetupType = SetupType.passive;
     private bool m_IsSdesSrtp = false;
 
     private RtpReceiveStatisticsManager? m_RtpReceiveStaticsManager = null;
@@ -323,22 +327,36 @@ public class RtpChannel
         rtpChannel.m_localRtcpEndPoint = rtpChannel.GetRtcpEndPoint(LocalMd, localRtpEndPoint);
         rtpChannel.m_remoteRtcpEndpoint = rtpChannel.GetRtcpEndPoint(RemoteMd, remoteRtpEndPoint);
 
-        if (AnsweredMd.Transport.IndexOf("SAVP") >= 0)
-        {   // Using the Secure Audio Video Profile (SAVP) for either SDES-SRTP or DTLS-SRTP. Figure out 
+        if (AnsweredMd.Transport.ToLower().IndexOf("savp") >= 0)
+        {   // Using the Secure Audio Video Profile (SAVP or SAVPF) for either SDES-SRTP or DTLS-SRTP. Figure out 
             // which one.
-
-            // The fingerprint attribute can be in the session level or in the media level. If its present
-            // in either then use DTLS-SRTP
-            if (AnsweredSdp.GetNamedAttribute("fingerprint") != null || AnsweredMd.GetNamedAttribute(
-                "fingerprint") != null)
+            if (AnsweredMd.UsingDtlsSrtp(out SetupType setup) == true)
             {
                 rtpChannel.m_IsDtlsSrtp = true;
-
+                if (rtpChannel.m_Incoming == true)
+                    // The answered media description by this endpoint determines the setup type to use.
+                    rtpChannel.m_DtlsSetupType = AnsweredMd.GetSetupTypeAttributeValue();
+                else
+                {   // For an outgoing call, the remote endpoint answers the offered setup type and
+                    // therefore determines the setup type. Must use the opposite setup type of what the
+                    // remote endpoint answered with.
+                    SetupType remoteSetupType = RemoteMd.GetSetupTypeAttributeValue();
+                    if (remoteSetupType == SetupType.active)
+                        rtpChannel.m_DtlsSetupType = SetupType.passive;
+                    else if (remoteSetupType == SetupType.passive)
+                        rtpChannel.m_DtlsSetupType = SetupType.active;
+                    else
+                    {   // Else its actpass, which is a protocol violation
+                        SipLogger.LogWarning($"The remote client: {rtpChannel.m_remoteRtpEndpoint} " +
+                            $"answered with a SetupType of actpass for the DTLS handshake. Assuming that " +
+                            "this endpoint is active. DTLS handshaking may not be successful.");
+                        rtpChannel.m_DtlsSetupType = SetupType.active;
+                    }
+                }
             }
             else
             {   // If its SDES-SRTP then there must be at least one crypto attribute in the answered media
-                // description
-
+                // description.
                 // Set up the encryptor and the decryptor based on the answered crypto suite.
                 List<CryptoAttribute> AnsweredCryptoAttributes = GetCryptoAttributes(AnsweredMd);
                 List<CryptoAttribute> OfferedCryptoAttributes = GetCryptoAttributes(OfferedMd);
@@ -484,10 +502,29 @@ public class RtpChannel
     {
         Thread HandshakeThread;
 
-        if (m_Incoming == true)
-            HandshakeThread = new Thread(DtlsServerHandshakeThread);
+        // 18 May 26 PHR
+        // Create the UdpClient used for the DTLS handshake here instead of in the DtlsServerHandshakeThread
+        // or the DtlsClientHandshakeThread.
+        UdpClient udpClient;
+        try
+        {
+            udpClient = new UdpClient(m_localRtpEndPoint!);
+            if (m_IsWindows == true)
+                SIPUDPChannel.DisableConnectionReset(udpClient);
+        }
+        catch (Exception ex)
+        {
+            SipLogger.LogError(ex, $"Failed to bind the DTLS-SRTP media socket on " +
+                $"{m_localRtpEndPoint}; cannot start the {(m_Incoming ? "server" : "client")} " +
+                $"handshake. No encrypted media will be recorded for this stream.");
+                DtlsHandshakeFailed?.Invoke(m_Incoming, m_remoteRtpEndpoint);
+                return;
+        }
+
+        if (m_DtlsSetupType == SetupType.active)
+            HandshakeThread = new Thread(() => DtlsClientHandshakeThread(udpClient));
         else
-            HandshakeThread = new Thread(DtlsClientHandshakeThread);
+            HandshakeThread = new Thread(() => DtlsServerHandshakeThread(udpClient));
 
         HandshakeThread.IsBackground = true;
         HandshakeThread.Priority = ThreadPriority.Highest;
@@ -495,13 +532,14 @@ public class RtpChannel
     }
 
     private DtlsSrtpTransport? m_DtlsTransport = null;
+    // 20 May 26 PHR
+    private const int DTLS_HANDSHAKE_TIMEOUT_MS = 2000;
 
-    private void DtlsClientHandshakeThread()
+    private void DtlsClientHandshakeThread(UdpClient udpClient)
     {
         DtlsSrtpClient dtlsClient = new DtlsSrtpClient(m_SelfSigned, m_AsymmetricKeyParameter);
         DtlsSrtpTransport dtlsClientTransport = new DtlsSrtpTransport(dtlsClient);
-        dtlsClientTransport.TimeoutMilliseconds = 1000;
-        UdpClient udpClient = new UdpClient(m_localRtpEndPoint!);
+        dtlsClientTransport.TimeoutMilliseconds = DTLS_HANDSHAKE_TIMEOUT_MS;
         DtlsClientUdpTransport dtlsClientUdpTransport = new DtlsClientUdpTransport(udpClient, m_remoteRtpEndpoint!,
             dtlsClientTransport);
         Task<bool> clientTask = Task.Run<bool>(() => dtlsClientTransport.DoHandshake(out _));
@@ -518,12 +556,11 @@ public class RtpChannel
             DtlsHandshakeFailed?.Invoke(false, m_remoteRtpEndpoint);
     }
 
-    private void DtlsServerHandshakeThread()
+    private void DtlsServerHandshakeThread(UdpClient udpClient)
     {
         DtlsSrtpServer dtlsSrtpServer = new DtlsSrtpServer(m_SelfSigned, m_AsymmetricKeyParameter);
         DtlsSrtpTransport dtlsServerTransport = new DtlsSrtpTransport(dtlsSrtpServer);
-        dtlsServerTransport.TimeoutMilliseconds = 1000;
-        UdpClient udpClient = new UdpClient(m_localRtpEndPoint);
+        dtlsServerTransport.TimeoutMilliseconds = DTLS_HANDSHAKE_TIMEOUT_MS;
         DtlsServerUdpTransport dtlsServerUdpTransport = new DtlsServerUdpTransport(udpClient, m_remoteRtpEndpoint,
             dtlsServerTransport);
         Task<bool> serverTask = Task.Run<bool>(() => dtlsServerTransport.DoHandshake(out _));

@@ -1,5 +1,17 @@
 # Version History
 
+## v1.1.0 -- 26 May 2026
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Change | RtpChannel class -- Modified the StartDtlsHandshake() method to create the UdpClient used for the DTLS handshake and pass that UdpClient to the threads for doing the client or server DTLS handshake. Also now call the SIPUDPChannel.DisableConnectionReset() method if operating in a Windows environment. This prevents a SocketException from occuring if the remote party does not have its socket open when the DTLS ClientHello message is sent. |
+| NA     | Change | RtpChannel class -- Changed the DTLS timeout from 1000 ms to 2000 ms. |
+| NA     | Fix    | The RtpChannel class was using the call direction (incoming or outgoing) instead of the negotiated setup attribute to determine whether to be active or passive in the DTLS handshake. |
+| NA     | Fix    | Was not sending a setup attribute in the media description when offering DTLS-SRTP encryption. |
+| NA     | Change | Added several logging messages for DTLS-SRTP hanshaking failure conditions. |
+| NA     | Fix    | Fixed Sdp.HandleOfferedEncryption() to use the computed SetupType output returned by the call to OfferedMediaDescription.UsingDtlsSrtp(). |
+| NA     | Addition | Added the PacketIsForDtls() method to the DtlsUtils class. |
+| NA     | Change | Modified DtlsServerUdpTransport.ReceiveThread() and DtlsClientUdpTransport.ReceiveThread() to ignore non-DTLS datagrams by calling DtlsUtils.PacketIsForDtls(). |
+
 ## v1.0.3 -- 3 May 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
