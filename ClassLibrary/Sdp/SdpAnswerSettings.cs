@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   SdpAnswerSettings.cs                                    27 Feb 24 PHR
+//
+//  Revised:    11 Jun 26 PHR
+//              -- Changed to use IMediaPortManager instead of MediaPortManager.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Media;
@@ -70,7 +73,7 @@ public class SdpAnswerSettings
     /// MediaPortManager to use for allocation of media ports.
     /// </summary>
     /// <value></value>
-    public MediaPortManager PortManager { get; set; }
+    public IMediaPortManager PortManager { get; set; }
 
     /// <summary>
     /// Constructor.
@@ -82,7 +85,7 @@ public class SdpAnswerSettings
     /// material negotiation</param>
     /// <param name="portManager">MediaPortManager to use use for allocation of media ports.</param>
     public SdpAnswerSettings(List<string> AudioCodecs, List<string> VideoCodecs, string userName, string fingerprint, 
-        MediaPortManager portManager)
+        IMediaPortManager portManager)
     {
         SupportedAudioCodecs = AudioCodecs;
         SupportedVideoCodecs = VideoCodecs;

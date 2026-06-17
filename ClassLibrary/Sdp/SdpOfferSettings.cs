@@ -1,7 +1,11 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   SdpOfferSettings.cs                                     14 Oct 25 PHR
+//
+//  Revised:    11 Jun 26 PHR
+//              -- Changed to use IMediaPortManager instead of MediaPortManager.
 /////////////////////////////////////////////////////////////////////////////////////
 
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using SipLib.Media;
 using SipLib.Rtp;
 using System.Text.Json.Serialization;
@@ -61,7 +65,7 @@ public class SdpOfferSettings
     /// MediaPortManager to use for allocation of media ports.
     /// </summary>
     /// <value></value>
-    public MediaPortManager PortManager { get; set; }
+    public IMediaPortManager PortManager { get; set; } = new MediaPortManager(new MediaPortSettings());
 
     /// <summary>
     /// Specifies the type of media encryption to use for RTP type media (Audio, Video and RTT).
@@ -79,6 +83,13 @@ public class SdpOfferSettings
     public SetupType MsrpSetupType { get; set; } = SetupType.active;
 
     /// <summary>
+    /// Default constructor
+    /// </summary>
+    public SdpOfferSettings()
+    {
+    }
+
+    /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="AudioCodecs">List of audio codecs to offer.</param>
@@ -88,7 +99,7 @@ public class SdpOfferSettings
     /// material negotiation</param>
     /// <param name="portManager">MediaPortManager to use use for allocation of media ports.</param>
     public SdpOfferSettings(List<string> AudioCodecs, List<string> VideoCodecs, string userName, string fingerprint,
-        MediaPortManager portManager)
+        IMediaPortManager portManager)
     {
         OfferAudioCodecs = AudioCodecs;
         OfferVideoCodecs = VideoCodecs;

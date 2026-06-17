@@ -1748,6 +1748,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.CallPortAllocations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.CallPortAllocations.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.CallPortAllocations",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.CallPortAllocations.yml\" sourcestartlinenumber=\"1\">This class assists user agents in managing media ports that have been allocated for a call object.</p>\n<p>\nThis method should be used if a user agent is using the MediaPortListManager class to allocate\nmedia ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager\nclass to allocate media ports.\n</p>\n<p>\nTo use this class, construct an instance of this class and save it with the call object. Then call\nthe AddAllocatedPortsFromSdp() method when the user agent constructs an Sdp object for that call. If\nthe user agent adds media to the call then it must call the AddAllocatedPortsFromMediaDescription() method for\neach media being added to the call. When the call ends, the user agent must call the FreeAllocatedPorts() method.\n</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.DtmfDigitReceivedDelegate.yml",
       "output": {
         ".html": {
@@ -1944,6 +1958,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.IMediaPortManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.IMediaPortManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.IMediaPortManager",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.IMediaPortManager.yml\" sourcestartlinenumber=\"1\">Interface for classes that manage the allocation and de-allocation of media ports for RTP\nmedia (voice, video and RTT) and MSRP media.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.Ld8k.yml",
       "output": {
         ".html": {
@@ -1958,6 +1986,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SipLib.Media.MediaPortListManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SipLib.Media.MediaPortListManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SipLib.Media.MediaPortListManager",
+      "Summary": "<p sourcefile=\"api/SipLib.Media.MediaPortListManager.yml\" sourcestartlinenumber=\"1\">Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media. This class\nallocates ports from a list of available ports and frees the allocated ports by returning them to\nthe list when a call ends.</p>\n<p>\nUser agents that use this class are responsible for freeing allocated ports by calling one of the \nFree*() methods.\n</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SipLib.Media.MediaPortManager.yml",
       "output": {
         ".html": {
@@ -1968,7 +2010,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SipLib.Media.MediaPortManager",
-      "Summary": "<p sourcefile=\"api/SipLib.Media.MediaPortManager.yml\" sourcestartlinenumber=\"1\">Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media.</p>\n"
+      "Summary": "<p sourcefile=\"api/SipLib.Media.MediaPortManager.yml\" sourcestartlinenumber=\"1\">Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media.</p>\n<p>\nThis class increments port numbers within a specified range of ports. When the last port in a\nrange is allocated, this class wraps around to the starting port number.\n</p>\n<p>\nThere is no need for the user agent using this class to free ports that have been used for a call.\n</p>\n"
     },
     {
       "type": "ManagedReference",

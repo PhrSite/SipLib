@@ -8103,6 +8103,22 @@ references:
   commentId: T:SipLib.Core.SipUtils
   fullName: SipLib.Core.SipUtils
   nameWithType: SipUtils
+- uid: SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders(SipLib.Core.SIPRequest,System.String)
+  name: AddEmergencyCallInfoHeaders(SIPRequest, string)
+  href: api/SipLib.Core.SipUtils.html#SipLib_Core_SipUtils_AddEmergencyCallInfoHeaders_SipLib_Core_SIPRequest_System_String_
+  commentId: M:SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders(SipLib.Core.SIPRequest,System.String)
+  name.vb: AddEmergencyCallInfoHeaders(SIPRequest, String)
+  fullName: SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders(SipLib.Core.SIPRequest, string)
+  fullName.vb: SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders(SipLib.Core.SIPRequest, String)
+  nameWithType: SipUtils.AddEmergencyCallInfoHeaders(SIPRequest, string)
+  nameWithType.vb: SipUtils.AddEmergencyCallInfoHeaders(SIPRequest, String)
+- uid: SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders*
+  name: AddEmergencyCallInfoHeaders
+  href: api/SipLib.Core.SipUtils.html#SipLib_Core_SipUtils_AddEmergencyCallInfoHeaders_
+  commentId: Overload:SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders
+  isSpec: "True"
+  fullName: SipLib.Core.SipUtils.AddEmergencyCallInfoHeaders
+  nameWithType: SipUtils.AddEmergencyCallInfoHeaders
 - uid: SipLib.Core.SipUtils.AddEmergencyIdUrnCallInfoHeader(SipLib.Core.SIPRequest,System.String,System.String)
   name: AddEmergencyIdUrnCallInfoHeader(SIPRequest, string, string)
   href: api/SipLib.Core.SipUtils.html#SipLib_Core_SipUtils_AddEmergencyIdUrnCallInfoHeader_SipLib_Core_SIPRequest_System_String_System_String_
@@ -13493,6 +13509,70 @@ references:
   commentId: F:SipLib.Media.Band.sz
   fullName: SipLib.Media.Band.sz
   nameWithType: Band.sz
+- uid: SipLib.Media.CallPortAllocations
+  name: CallPortAllocations
+  href: api/SipLib.Media.CallPortAllocations.html
+  commentId: T:SipLib.Media.CallPortAllocations
+  fullName: SipLib.Media.CallPortAllocations
+  nameWithType: CallPortAllocations
+- uid: SipLib.Media.CallPortAllocations.#ctor(SipLib.Media.IMediaPortManager)
+  name: CallPortAllocations(IMediaPortManager)
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations__ctor_SipLib_Media_IMediaPortManager_
+  commentId: M:SipLib.Media.CallPortAllocations.#ctor(SipLib.Media.IMediaPortManager)
+  name.vb: New(IMediaPortManager)
+  fullName: SipLib.Media.CallPortAllocations.CallPortAllocations(SipLib.Media.IMediaPortManager)
+  fullName.vb: SipLib.Media.CallPortAllocations.New(SipLib.Media.IMediaPortManager)
+  nameWithType: CallPortAllocations.CallPortAllocations(IMediaPortManager)
+  nameWithType.vb: CallPortAllocations.New(IMediaPortManager)
+- uid: SipLib.Media.CallPortAllocations.#ctor*
+  name: CallPortAllocations
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations__ctor_
+  commentId: Overload:SipLib.Media.CallPortAllocations.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Media.CallPortAllocations.CallPortAllocations
+  fullName.vb: SipLib.Media.CallPortAllocations.New
+  nameWithType: CallPortAllocations.CallPortAllocations
+  nameWithType.vb: CallPortAllocations.New
+- uid: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription(SipLib.Sdp.MediaDescription)
+  name: AddAllocatedPortsFromMediaDescription(MediaDescription)
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_AddAllocatedPortsFromMediaDescription_SipLib_Sdp_MediaDescription_
+  commentId: M:SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription(SipLib.Sdp.MediaDescription)
+  fullName: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription(SipLib.Sdp.MediaDescription)
+  nameWithType: CallPortAllocations.AddAllocatedPortsFromMediaDescription(MediaDescription)
+- uid: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription*
+  name: AddAllocatedPortsFromMediaDescription
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_AddAllocatedPortsFromMediaDescription_
+  commentId: Overload:SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription
+  isSpec: "True"
+  fullName: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromMediaDescription
+  nameWithType: CallPortAllocations.AddAllocatedPortsFromMediaDescription
+- uid: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp(SipLib.Sdp.Sdp)
+  name: AddAllocatedPortsFromSdp(Sdp)
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_AddAllocatedPortsFromSdp_SipLib_Sdp_Sdp_
+  commentId: M:SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp(SipLib.Sdp.Sdp)
+  fullName: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp(SipLib.Sdp.Sdp)
+  nameWithType: CallPortAllocations.AddAllocatedPortsFromSdp(Sdp)
+- uid: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp*
+  name: AddAllocatedPortsFromSdp
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_AddAllocatedPortsFromSdp_
+  commentId: Overload:SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp
+  isSpec: "True"
+  fullName: SipLib.Media.CallPortAllocations.AddAllocatedPortsFromSdp
+  nameWithType: CallPortAllocations.AddAllocatedPortsFromSdp
+- uid: SipLib.Media.CallPortAllocations.FreeAllocatedPorts
+  name: FreeAllocatedPorts()
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_FreeAllocatedPorts
+  commentId: M:SipLib.Media.CallPortAllocations.FreeAllocatedPorts
+  fullName: SipLib.Media.CallPortAllocations.FreeAllocatedPorts()
+  nameWithType: CallPortAllocations.FreeAllocatedPorts()
+- uid: SipLib.Media.CallPortAllocations.FreeAllocatedPorts*
+  name: FreeAllocatedPorts
+  href: api/SipLib.Media.CallPortAllocations.html#SipLib_Media_CallPortAllocations_FreeAllocatedPorts_
+  commentId: Overload:SipLib.Media.CallPortAllocations.FreeAllocatedPorts
+  isSpec: "True"
+  fullName: SipLib.Media.CallPortAllocations.FreeAllocatedPorts
+  nameWithType: CallPortAllocations.FreeAllocatedPorts
 - uid: SipLib.Media.DtmfDigitReceivedDelegate
   name: DtmfDigitReceivedDelegate
   href: api/SipLib.Media.DtmfDigitReceivedDelegate.html
@@ -14342,6 +14422,144 @@ references:
   isSpec: "True"
   fullName: SipLib.Media.IAudioSampleSource.Stop
   nameWithType: IAudioSampleSource.Stop
+- uid: SipLib.Media.IMediaPortManager
+  name: IMediaPortManager
+  href: api/SipLib.Media.IMediaPortManager.html
+  commentId: T:SipLib.Media.IMediaPortManager
+  fullName: SipLib.Media.IMediaPortManager
+  nameWithType: IMediaPortManager
+- uid: SipLib.Media.IMediaPortManager.FreeAudioPort(System.Int32)
+  name: FreeAudioPort(int)
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeAudioPort_System_Int32_
+  commentId: M:SipLib.Media.IMediaPortManager.FreeAudioPort(System.Int32)
+  name.vb: FreeAudioPort(Integer)
+  fullName: SipLib.Media.IMediaPortManager.FreeAudioPort(int)
+  fullName.vb: SipLib.Media.IMediaPortManager.FreeAudioPort(Integer)
+  nameWithType: IMediaPortManager.FreeAudioPort(int)
+  nameWithType.vb: IMediaPortManager.FreeAudioPort(Integer)
+- uid: SipLib.Media.IMediaPortManager.FreeAudioPort*
+  name: FreeAudioPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeAudioPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.FreeAudioPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.FreeAudioPort
+  nameWithType: IMediaPortManager.FreeAudioPort
+- uid: SipLib.Media.IMediaPortManager.FreeMediaPort(System.String,System.Int32)
+  name: FreeMediaPort(string, int)
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeMediaPort_System_String_System_Int32_
+  commentId: M:SipLib.Media.IMediaPortManager.FreeMediaPort(System.String,System.Int32)
+  name.vb: FreeMediaPort(String, Integer)
+  fullName: SipLib.Media.IMediaPortManager.FreeMediaPort(string, int)
+  fullName.vb: SipLib.Media.IMediaPortManager.FreeMediaPort(String, Integer)
+  nameWithType: IMediaPortManager.FreeMediaPort(string, int)
+  nameWithType.vb: IMediaPortManager.FreeMediaPort(String, Integer)
+- uid: SipLib.Media.IMediaPortManager.FreeMediaPort*
+  name: FreeMediaPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeMediaPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.FreeMediaPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.FreeMediaPort
+  nameWithType: IMediaPortManager.FreeMediaPort
+- uid: SipLib.Media.IMediaPortManager.FreeMsrpPort(System.Int32)
+  name: FreeMsrpPort(int)
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeMsrpPort_System_Int32_
+  commentId: M:SipLib.Media.IMediaPortManager.FreeMsrpPort(System.Int32)
+  name.vb: FreeMsrpPort(Integer)
+  fullName: SipLib.Media.IMediaPortManager.FreeMsrpPort(int)
+  fullName.vb: SipLib.Media.IMediaPortManager.FreeMsrpPort(Integer)
+  nameWithType: IMediaPortManager.FreeMsrpPort(int)
+  nameWithType.vb: IMediaPortManager.FreeMsrpPort(Integer)
+- uid: SipLib.Media.IMediaPortManager.FreeMsrpPort*
+  name: FreeMsrpPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeMsrpPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.FreeMsrpPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.FreeMsrpPort
+  nameWithType: IMediaPortManager.FreeMsrpPort
+- uid: SipLib.Media.IMediaPortManager.FreeRttPort(System.Int32)
+  name: FreeRttPort(int)
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeRttPort_System_Int32_
+  commentId: M:SipLib.Media.IMediaPortManager.FreeRttPort(System.Int32)
+  name.vb: FreeRttPort(Integer)
+  fullName: SipLib.Media.IMediaPortManager.FreeRttPort(int)
+  fullName.vb: SipLib.Media.IMediaPortManager.FreeRttPort(Integer)
+  nameWithType: IMediaPortManager.FreeRttPort(int)
+  nameWithType.vb: IMediaPortManager.FreeRttPort(Integer)
+- uid: SipLib.Media.IMediaPortManager.FreeRttPort*
+  name: FreeRttPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeRttPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.FreeRttPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.FreeRttPort
+  nameWithType: IMediaPortManager.FreeRttPort
+- uid: SipLib.Media.IMediaPortManager.FreeVideoPort(System.Int32)
+  name: FreeVideoPort(int)
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeVideoPort_System_Int32_
+  commentId: M:SipLib.Media.IMediaPortManager.FreeVideoPort(System.Int32)
+  name.vb: FreeVideoPort(Integer)
+  fullName: SipLib.Media.IMediaPortManager.FreeVideoPort(int)
+  fullName.vb: SipLib.Media.IMediaPortManager.FreeVideoPort(Integer)
+  nameWithType: IMediaPortManager.FreeVideoPort(int)
+  nameWithType.vb: IMediaPortManager.FreeVideoPort(Integer)
+- uid: SipLib.Media.IMediaPortManager.FreeVideoPort*
+  name: FreeVideoPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_FreeVideoPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.FreeVideoPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.FreeVideoPort
+  nameWithType: IMediaPortManager.FreeVideoPort
+- uid: SipLib.Media.IMediaPortManager.NextAudioPort
+  name: NextAudioPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextAudioPort
+  commentId: P:SipLib.Media.IMediaPortManager.NextAudioPort
+  fullName: SipLib.Media.IMediaPortManager.NextAudioPort
+  nameWithType: IMediaPortManager.NextAudioPort
+- uid: SipLib.Media.IMediaPortManager.NextAudioPort*
+  name: NextAudioPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextAudioPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.NextAudioPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.NextAudioPort
+  nameWithType: IMediaPortManager.NextAudioPort
+- uid: SipLib.Media.IMediaPortManager.NextMsrpPort
+  name: NextMsrpPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextMsrpPort
+  commentId: P:SipLib.Media.IMediaPortManager.NextMsrpPort
+  fullName: SipLib.Media.IMediaPortManager.NextMsrpPort
+  nameWithType: IMediaPortManager.NextMsrpPort
+- uid: SipLib.Media.IMediaPortManager.NextMsrpPort*
+  name: NextMsrpPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextMsrpPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.NextMsrpPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.NextMsrpPort
+  nameWithType: IMediaPortManager.NextMsrpPort
+- uid: SipLib.Media.IMediaPortManager.NextRttPort
+  name: NextRttPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextRttPort
+  commentId: P:SipLib.Media.IMediaPortManager.NextRttPort
+  fullName: SipLib.Media.IMediaPortManager.NextRttPort
+  nameWithType: IMediaPortManager.NextRttPort
+- uid: SipLib.Media.IMediaPortManager.NextRttPort*
+  name: NextRttPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextRttPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.NextRttPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.NextRttPort
+  nameWithType: IMediaPortManager.NextRttPort
+- uid: SipLib.Media.IMediaPortManager.NextVideoPort
+  name: NextVideoPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextVideoPort
+  commentId: P:SipLib.Media.IMediaPortManager.NextVideoPort
+  fullName: SipLib.Media.IMediaPortManager.NextVideoPort
+  nameWithType: IMediaPortManager.NextVideoPort
+- uid: SipLib.Media.IMediaPortManager.NextVideoPort*
+  name: NextVideoPort
+  href: api/SipLib.Media.IMediaPortManager.html#SipLib_Media_IMediaPortManager_NextVideoPort_
+  commentId: Overload:SipLib.Media.IMediaPortManager.NextVideoPort
+  isSpec: "True"
+  fullName: SipLib.Media.IMediaPortManager.NextVideoPort
+  nameWithType: IMediaPortManager.NextVideoPort
 - uid: SipLib.Media.Ld8k
   name: Ld8k
   href: api/SipLib.Media.Ld8k.html
@@ -14390,6 +14608,179 @@ references:
   commentId: F:SipLib.Media.Ld8k.CONST12
   fullName: SipLib.Media.Ld8k.CONST12
   nameWithType: Ld8k.CONST12
+- uid: SipLib.Media.MediaPortListManager
+  name: MediaPortListManager
+  href: api/SipLib.Media.MediaPortListManager.html
+  commentId: T:SipLib.Media.MediaPortListManager
+  fullName: SipLib.Media.MediaPortListManager
+  nameWithType: MediaPortListManager
+- uid: SipLib.Media.MediaPortListManager.#ctor(SipLib.Media.MediaPortSettings)
+  name: MediaPortListManager(MediaPortSettings)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager__ctor_SipLib_Media_MediaPortSettings_
+  commentId: M:SipLib.Media.MediaPortListManager.#ctor(SipLib.Media.MediaPortSettings)
+  name.vb: New(MediaPortSettings)
+  fullName: SipLib.Media.MediaPortListManager.MediaPortListManager(SipLib.Media.MediaPortSettings)
+  fullName.vb: SipLib.Media.MediaPortListManager.New(SipLib.Media.MediaPortSettings)
+  nameWithType: MediaPortListManager.MediaPortListManager(MediaPortSettings)
+  nameWithType.vb: MediaPortListManager.New(MediaPortSettings)
+- uid: SipLib.Media.MediaPortListManager.#ctor*
+  name: MediaPortListManager
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager__ctor_
+  commentId: Overload:SipLib.Media.MediaPortListManager.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: SipLib.Media.MediaPortListManager.MediaPortListManager
+  fullName.vb: SipLib.Media.MediaPortListManager.New
+  nameWithType: MediaPortListManager.MediaPortListManager
+  nameWithType.vb: MediaPortListManager.New
+- uid: SipLib.Media.MediaPortListManager.FreeAudioPort(System.Int32)
+  name: FreeAudioPort(int)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeAudioPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortListManager.FreeAudioPort(System.Int32)
+  name.vb: FreeAudioPort(Integer)
+  fullName: SipLib.Media.MediaPortListManager.FreeAudioPort(int)
+  fullName.vb: SipLib.Media.MediaPortListManager.FreeAudioPort(Integer)
+  nameWithType: MediaPortListManager.FreeAudioPort(int)
+  nameWithType.vb: MediaPortListManager.FreeAudioPort(Integer)
+- uid: SipLib.Media.MediaPortListManager.FreeAudioPort*
+  name: FreeAudioPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeAudioPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.FreeAudioPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.FreeAudioPort
+  nameWithType: MediaPortListManager.FreeAudioPort
+- uid: SipLib.Media.MediaPortListManager.FreeMediaPort(System.String,System.Int32)
+  name: FreeMediaPort(string, int)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeMediaPort_System_String_System_Int32_
+  commentId: M:SipLib.Media.MediaPortListManager.FreeMediaPort(System.String,System.Int32)
+  name.vb: FreeMediaPort(String, Integer)
+  fullName: SipLib.Media.MediaPortListManager.FreeMediaPort(string, int)
+  fullName.vb: SipLib.Media.MediaPortListManager.FreeMediaPort(String, Integer)
+  nameWithType: MediaPortListManager.FreeMediaPort(string, int)
+  nameWithType.vb: MediaPortListManager.FreeMediaPort(String, Integer)
+- uid: SipLib.Media.MediaPortListManager.FreeMediaPort*
+  name: FreeMediaPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeMediaPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.FreeMediaPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.FreeMediaPort
+  nameWithType: MediaPortListManager.FreeMediaPort
+- uid: SipLib.Media.MediaPortListManager.FreeMsrpPort(System.Int32)
+  name: FreeMsrpPort(int)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeMsrpPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortListManager.FreeMsrpPort(System.Int32)
+  name.vb: FreeMsrpPort(Integer)
+  fullName: SipLib.Media.MediaPortListManager.FreeMsrpPort(int)
+  fullName.vb: SipLib.Media.MediaPortListManager.FreeMsrpPort(Integer)
+  nameWithType: MediaPortListManager.FreeMsrpPort(int)
+  nameWithType.vb: MediaPortListManager.FreeMsrpPort(Integer)
+- uid: SipLib.Media.MediaPortListManager.FreeMsrpPort*
+  name: FreeMsrpPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeMsrpPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.FreeMsrpPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.FreeMsrpPort
+  nameWithType: MediaPortListManager.FreeMsrpPort
+- uid: SipLib.Media.MediaPortListManager.FreeRttPort(System.Int32)
+  name: FreeRttPort(int)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeRttPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortListManager.FreeRttPort(System.Int32)
+  name.vb: FreeRttPort(Integer)
+  fullName: SipLib.Media.MediaPortListManager.FreeRttPort(int)
+  fullName.vb: SipLib.Media.MediaPortListManager.FreeRttPort(Integer)
+  nameWithType: MediaPortListManager.FreeRttPort(int)
+  nameWithType.vb: MediaPortListManager.FreeRttPort(Integer)
+- uid: SipLib.Media.MediaPortListManager.FreeRttPort*
+  name: FreeRttPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeRttPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.FreeRttPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.FreeRttPort
+  nameWithType: MediaPortListManager.FreeRttPort
+- uid: SipLib.Media.MediaPortListManager.FreeVideoPort(System.Int32)
+  name: FreeVideoPort(int)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeVideoPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortListManager.FreeVideoPort(System.Int32)
+  name.vb: FreeVideoPort(Integer)
+  fullName: SipLib.Media.MediaPortListManager.FreeVideoPort(int)
+  fullName.vb: SipLib.Media.MediaPortListManager.FreeVideoPort(Integer)
+  nameWithType: MediaPortListManager.FreeVideoPort(int)
+  nameWithType.vb: MediaPortListManager.FreeVideoPort(Integer)
+- uid: SipLib.Media.MediaPortListManager.FreeVideoPort*
+  name: FreeVideoPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_FreeVideoPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.FreeVideoPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.FreeVideoPort
+  nameWithType: MediaPortListManager.FreeVideoPort
+- uid: SipLib.Media.MediaPortListManager.GetFreePortCount(System.String)
+  name: GetFreePortCount(string)
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_GetFreePortCount_System_String_
+  commentId: M:SipLib.Media.MediaPortListManager.GetFreePortCount(System.String)
+  name.vb: GetFreePortCount(String)
+  fullName: SipLib.Media.MediaPortListManager.GetFreePortCount(string)
+  fullName.vb: SipLib.Media.MediaPortListManager.GetFreePortCount(String)
+  nameWithType: MediaPortListManager.GetFreePortCount(string)
+  nameWithType.vb: MediaPortListManager.GetFreePortCount(String)
+- uid: SipLib.Media.MediaPortListManager.GetFreePortCount*
+  name: GetFreePortCount
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_GetFreePortCount_
+  commentId: Overload:SipLib.Media.MediaPortListManager.GetFreePortCount
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.GetFreePortCount
+  nameWithType: MediaPortListManager.GetFreePortCount
+- uid: SipLib.Media.MediaPortListManager.NextAudioPort
+  name: NextAudioPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextAudioPort
+  commentId: P:SipLib.Media.MediaPortListManager.NextAudioPort
+  fullName: SipLib.Media.MediaPortListManager.NextAudioPort
+  nameWithType: MediaPortListManager.NextAudioPort
+- uid: SipLib.Media.MediaPortListManager.NextAudioPort*
+  name: NextAudioPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextAudioPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.NextAudioPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.NextAudioPort
+  nameWithType: MediaPortListManager.NextAudioPort
+- uid: SipLib.Media.MediaPortListManager.NextMsrpPort
+  name: NextMsrpPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextMsrpPort
+  commentId: P:SipLib.Media.MediaPortListManager.NextMsrpPort
+  fullName: SipLib.Media.MediaPortListManager.NextMsrpPort
+  nameWithType: MediaPortListManager.NextMsrpPort
+- uid: SipLib.Media.MediaPortListManager.NextMsrpPort*
+  name: NextMsrpPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextMsrpPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.NextMsrpPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.NextMsrpPort
+  nameWithType: MediaPortListManager.NextMsrpPort
+- uid: SipLib.Media.MediaPortListManager.NextRttPort
+  name: NextRttPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextRttPort
+  commentId: P:SipLib.Media.MediaPortListManager.NextRttPort
+  fullName: SipLib.Media.MediaPortListManager.NextRttPort
+  nameWithType: MediaPortListManager.NextRttPort
+- uid: SipLib.Media.MediaPortListManager.NextRttPort*
+  name: NextRttPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextRttPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.NextRttPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.NextRttPort
+  nameWithType: MediaPortListManager.NextRttPort
+- uid: SipLib.Media.MediaPortListManager.NextVideoPort
+  name: NextVideoPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextVideoPort
+  commentId: P:SipLib.Media.MediaPortListManager.NextVideoPort
+  fullName: SipLib.Media.MediaPortListManager.NextVideoPort
+  nameWithType: MediaPortListManager.NextVideoPort
+- uid: SipLib.Media.MediaPortListManager.NextVideoPort*
+  name: NextVideoPort
+  href: api/SipLib.Media.MediaPortListManager.html#SipLib_Media_MediaPortListManager_NextVideoPort_
+  commentId: Overload:SipLib.Media.MediaPortListManager.NextVideoPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortListManager.NextVideoPort
+  nameWithType: MediaPortListManager.NextVideoPort
 - uid: SipLib.Media.MediaPortManager
   name: MediaPortManager
   href: api/SipLib.Media.MediaPortManager.html
@@ -14415,6 +14806,86 @@ references:
   fullName.vb: SipLib.Media.MediaPortManager.New
   nameWithType: MediaPortManager.MediaPortManager
   nameWithType.vb: MediaPortManager.New
+- uid: SipLib.Media.MediaPortManager.FreeAudioPort(System.Int32)
+  name: FreeAudioPort(int)
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeAudioPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortManager.FreeAudioPort(System.Int32)
+  name.vb: FreeAudioPort(Integer)
+  fullName: SipLib.Media.MediaPortManager.FreeAudioPort(int)
+  fullName.vb: SipLib.Media.MediaPortManager.FreeAudioPort(Integer)
+  nameWithType: MediaPortManager.FreeAudioPort(int)
+  nameWithType.vb: MediaPortManager.FreeAudioPort(Integer)
+- uid: SipLib.Media.MediaPortManager.FreeAudioPort*
+  name: FreeAudioPort
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeAudioPort_
+  commentId: Overload:SipLib.Media.MediaPortManager.FreeAudioPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortManager.FreeAudioPort
+  nameWithType: MediaPortManager.FreeAudioPort
+- uid: SipLib.Media.MediaPortManager.FreeMediaPort(System.String,System.Int32)
+  name: FreeMediaPort(string, int)
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeMediaPort_System_String_System_Int32_
+  commentId: M:SipLib.Media.MediaPortManager.FreeMediaPort(System.String,System.Int32)
+  name.vb: FreeMediaPort(String, Integer)
+  fullName: SipLib.Media.MediaPortManager.FreeMediaPort(string, int)
+  fullName.vb: SipLib.Media.MediaPortManager.FreeMediaPort(String, Integer)
+  nameWithType: MediaPortManager.FreeMediaPort(string, int)
+  nameWithType.vb: MediaPortManager.FreeMediaPort(String, Integer)
+- uid: SipLib.Media.MediaPortManager.FreeMediaPort*
+  name: FreeMediaPort
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeMediaPort_
+  commentId: Overload:SipLib.Media.MediaPortManager.FreeMediaPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortManager.FreeMediaPort
+  nameWithType: MediaPortManager.FreeMediaPort
+- uid: SipLib.Media.MediaPortManager.FreeMsrpPort(System.Int32)
+  name: FreeMsrpPort(int)
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeMsrpPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortManager.FreeMsrpPort(System.Int32)
+  name.vb: FreeMsrpPort(Integer)
+  fullName: SipLib.Media.MediaPortManager.FreeMsrpPort(int)
+  fullName.vb: SipLib.Media.MediaPortManager.FreeMsrpPort(Integer)
+  nameWithType: MediaPortManager.FreeMsrpPort(int)
+  nameWithType.vb: MediaPortManager.FreeMsrpPort(Integer)
+- uid: SipLib.Media.MediaPortManager.FreeMsrpPort*
+  name: FreeMsrpPort
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeMsrpPort_
+  commentId: Overload:SipLib.Media.MediaPortManager.FreeMsrpPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortManager.FreeMsrpPort
+  nameWithType: MediaPortManager.FreeMsrpPort
+- uid: SipLib.Media.MediaPortManager.FreeRttPort(System.Int32)
+  name: FreeRttPort(int)
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeRttPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortManager.FreeRttPort(System.Int32)
+  name.vb: FreeRttPort(Integer)
+  fullName: SipLib.Media.MediaPortManager.FreeRttPort(int)
+  fullName.vb: SipLib.Media.MediaPortManager.FreeRttPort(Integer)
+  nameWithType: MediaPortManager.FreeRttPort(int)
+  nameWithType.vb: MediaPortManager.FreeRttPort(Integer)
+- uid: SipLib.Media.MediaPortManager.FreeRttPort*
+  name: FreeRttPort
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeRttPort_
+  commentId: Overload:SipLib.Media.MediaPortManager.FreeRttPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortManager.FreeRttPort
+  nameWithType: MediaPortManager.FreeRttPort
+- uid: SipLib.Media.MediaPortManager.FreeVideoPort(System.Int32)
+  name: FreeVideoPort(int)
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeVideoPort_System_Int32_
+  commentId: M:SipLib.Media.MediaPortManager.FreeVideoPort(System.Int32)
+  name.vb: FreeVideoPort(Integer)
+  fullName: SipLib.Media.MediaPortManager.FreeVideoPort(int)
+  fullName.vb: SipLib.Media.MediaPortManager.FreeVideoPort(Integer)
+  nameWithType: MediaPortManager.FreeVideoPort(int)
+  nameWithType.vb: MediaPortManager.FreeVideoPort(Integer)
+- uid: SipLib.Media.MediaPortManager.FreeVideoPort*
+  name: FreeVideoPort
+  href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_FreeVideoPort_
+  commentId: Overload:SipLib.Media.MediaPortManager.FreeVideoPort
+  isSpec: "True"
+  fullName: SipLib.Media.MediaPortManager.FreeVideoPort
+  nameWithType: MediaPortManager.FreeVideoPort
 - uid: SipLib.Media.MediaPortManager.NextAudioPort
   name: NextAudioPort
   href: api/SipLib.Media.MediaPortManager.html#SipLib_Media_MediaPortManager_NextAudioPort
@@ -21819,15 +22290,15 @@ references:
   commentId: T:SipLib.Sdp.SdpAnswerSettings
   fullName: SipLib.Sdp.SdpAnswerSettings
   nameWithType: SdpAnswerSettings
-- uid: SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
-  name: SdpAnswerSettings(List<string>, List<string>, string, string, MediaPortManager)
-  href: api/SipLib.Sdp.SdpAnswerSettings.html#SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_MediaPortManager_
-  commentId: M:SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
-  name.vb: New(List(Of String), List(Of String), String, String, MediaPortManager)
-  fullName: SipLib.Sdp.SdpAnswerSettings.SdpAnswerSettings(System.Collections.Generic.List<string>, System.Collections.Generic.List<string>, string, string, SipLib.Media.MediaPortManager)
-  fullName.vb: SipLib.Sdp.SdpAnswerSettings.New(System.Collections.Generic.List(Of String), System.Collections.Generic.List(Of String), String, String, SipLib.Media.MediaPortManager)
-  nameWithType: SdpAnswerSettings.SdpAnswerSettings(List<string>, List<string>, string, string, MediaPortManager)
-  nameWithType.vb: SdpAnswerSettings.New(List(Of String), List(Of String), String, String, MediaPortManager)
+- uid: SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)
+  name: SdpAnswerSettings(List<string>, List<string>, string, string, IMediaPortManager)
+  href: api/SipLib.Sdp.SdpAnswerSettings.html#SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_
+  commentId: M:SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)
+  name.vb: New(List(Of String), List(Of String), String, String, IMediaPortManager)
+  fullName: SipLib.Sdp.SdpAnswerSettings.SdpAnswerSettings(System.Collections.Generic.List<string>, System.Collections.Generic.List<string>, string, string, SipLib.Media.IMediaPortManager)
+  fullName.vb: SipLib.Sdp.SdpAnswerSettings.New(System.Collections.Generic.List(Of String), System.Collections.Generic.List(Of String), String, String, SipLib.Media.IMediaPortManager)
+  nameWithType: SdpAnswerSettings.SdpAnswerSettings(List<string>, List<string>, string, string, IMediaPortManager)
+  nameWithType.vb: SdpAnswerSettings.New(List(Of String), List(Of String), String, String, IMediaPortManager)
 - uid: SipLib.Sdp.SdpAnswerSettings.#ctor*
   name: SdpAnswerSettings
   href: api/SipLib.Sdp.SdpAnswerSettings.html#SipLib_Sdp_SdpAnswerSettings__ctor_
@@ -22071,15 +22542,24 @@ references:
   commentId: T:SipLib.Sdp.SdpOfferSettings
   fullName: SipLib.Sdp.SdpOfferSettings
   nameWithType: SdpOfferSettings
-- uid: SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
-  name: SdpOfferSettings(List<string>, List<string>, string, string, MediaPortManager)
-  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_MediaPortManager_
-  commentId: M:SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)
-  name.vb: New(List(Of String), List(Of String), String, String, MediaPortManager)
-  fullName: SipLib.Sdp.SdpOfferSettings.SdpOfferSettings(System.Collections.Generic.List<string>, System.Collections.Generic.List<string>, string, string, SipLib.Media.MediaPortManager)
-  fullName.vb: SipLib.Sdp.SdpOfferSettings.New(System.Collections.Generic.List(Of String), System.Collections.Generic.List(Of String), String, String, SipLib.Media.MediaPortManager)
-  nameWithType: SdpOfferSettings.SdpOfferSettings(List<string>, List<string>, string, string, MediaPortManager)
-  nameWithType.vb: SdpOfferSettings.New(List(Of String), List(Of String), String, String, MediaPortManager)
+- uid: SipLib.Sdp.SdpOfferSettings.#ctor
+  name: SdpOfferSettings()
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor
+  commentId: M:SipLib.Sdp.SdpOfferSettings.#ctor
+  name.vb: New()
+  fullName: SipLib.Sdp.SdpOfferSettings.SdpOfferSettings()
+  fullName.vb: SipLib.Sdp.SdpOfferSettings.New()
+  nameWithType: SdpOfferSettings.SdpOfferSettings()
+  nameWithType.vb: SdpOfferSettings.New()
+- uid: SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)
+  name: SdpOfferSettings(List<string>, List<string>, string, string, IMediaPortManager)
+  href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_
+  commentId: M:SipLib.Sdp.SdpOfferSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)
+  name.vb: New(List(Of String), List(Of String), String, String, IMediaPortManager)
+  fullName: SipLib.Sdp.SdpOfferSettings.SdpOfferSettings(System.Collections.Generic.List<string>, System.Collections.Generic.List<string>, string, string, SipLib.Media.IMediaPortManager)
+  fullName.vb: SipLib.Sdp.SdpOfferSettings.New(System.Collections.Generic.List(Of String), System.Collections.Generic.List(Of String), String, String, SipLib.Media.IMediaPortManager)
+  nameWithType: SdpOfferSettings.SdpOfferSettings(List<string>, List<string>, string, string, IMediaPortManager)
+  nameWithType.vb: SdpOfferSettings.New(List(Of String), List(Of String), String, String, IMediaPortManager)
 - uid: SipLib.Sdp.SdpOfferSettings.#ctor*
   name: SdpOfferSettings
   href: api/SipLib.Sdp.SdpOfferSettings.html#SipLib_Sdp_SdpOfferSettings__ctor_

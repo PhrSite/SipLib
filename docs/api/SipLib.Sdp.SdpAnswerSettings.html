@@ -445,6 +445,9 @@
                             <a href="SipLib.Media.AudioSource.html" title="AudioSource" class="">AudioSource</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Media.CallPortAllocations.html" title="CallPortAllocations" class="">CallPortAllocations</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Media.DtmfDigitReceivedDelegate.html" title="DtmfDigitReceivedDelegate" class="">DtmfDigitReceivedDelegate</a>
                           </li>
                           <li class="">
@@ -478,7 +481,13 @@
                             <a href="SipLib.Media.IAudioSampleSource.html" title="IAudioSampleSource" class="">IAudioSampleSource</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Media.IMediaPortManager.html" title="IMediaPortManager" class="">IMediaPortManager</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Media.Ld8k.html" title="Ld8k" class="">Ld8k</a>
+                          </li>
+                          <li class="">
+                            <a href="SipLib.Media.MediaPortListManager.html" title="MediaPortListManager" class="">MediaPortListManager</a>
                           </li>
                           <li class="">
                             <a href="SipLib.Media.MediaPortManager.html" title="MediaPortManager" class="">MediaPortManager</a>
@@ -968,19 +977,19 @@ offered SDP</p>
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_MediaPortManager_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.%23ctor(System.Collections.Generic.List%7BSystem.String%7D%2CSystem.Collections.Generic.List%7BSystem.String%7D%2CSystem.String%2CSystem.String%2CSipLib.Media.MediaPortManager)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.%23ctor(System.Collections.Generic.List%7BSystem.String%7D%2CSystem.Collections.Generic.List%7BSystem.String%7D%2CSystem.String%2CSystem.String%2CSipLib.Media.IMediaPortManager)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L84">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L87">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings__ctor_" data-uid="SipLib.Sdp.SdpAnswerSettings.#ctor*"></a>
-  <h4 id="SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_MediaPortManager_" data-uid="SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.MediaPortManager)">SdpAnswerSettings(List&lt;string&gt;, List&lt;string&gt;, string, string, MediaPortManager)</h4>
+  <h4 id="SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_" data-uid="SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)">SdpAnswerSettings(List&lt;string&gt;, List&lt;string&gt;, string, string, IMediaPortManager)</h4>
   <div class="markdown level1 summary"><p>Constructor.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SdpAnswerSettings(List&lt;string&gt; AudioCodecs, List&lt;string&gt; VideoCodecs, string userName, string fingerprint, MediaPortManager portManager)</code></pre>
+    <pre><code class="lang-csharp hljs">public SdpAnswerSettings(List&lt;string&gt; AudioCodecs, List&lt;string&gt; VideoCodecs, string userName, string fingerprint, IMediaPortManager portManager)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -1018,7 +1027,7 @@ material negotiation</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="SipLib.Media.MediaPortManager.html">MediaPortManager</a></td>
+        <td><a class="xref" href="SipLib.Media.IMediaPortManager.html">IMediaPortManager</a></td>
         <td><span class="parametername">portManager</span></td>
         <td><p>MediaPortManager to use use for allocation of media ports.</p>
 </td>
@@ -1032,7 +1041,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_EnableAudio.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.EnableAudio%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L21">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L24">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_EnableAudio_" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableAudio*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_EnableAudio" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableAudio">EnableAudio</h4>
@@ -1064,7 +1073,7 @@ the audio media.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_EnableMsrp.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.EnableMsrp%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L42">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L45">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_EnableMsrp_" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableMsrp*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_EnableMsrp" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableMsrp">EnableMsrp</h4>
@@ -1096,7 +1105,7 @@ the MSRP media.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_EnableRtt.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.EnableRtt%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L35">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L38">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_EnableRtt_" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableRtt*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_EnableRtt" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableRtt">EnableRtt</h4>
@@ -1128,7 +1137,7 @@ the RTT media.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_EnableVideo.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.EnableVideo%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L28">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L31">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_EnableVideo_" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableVideo*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_EnableVideo" data-uid="SipLib.Sdp.SdpAnswerSettings.EnableVideo">EnableVideo</h4>
@@ -1160,7 +1169,7 @@ the video media.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_Fingerprint.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.Fingerprint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L67">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L70">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_Fingerprint_" data-uid="SipLib.Sdp.SdpAnswerSettings.Fingerprint*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_Fingerprint" data-uid="SipLib.Sdp.SdpAnswerSettings.Fingerprint">Fingerprint</h4>
@@ -1192,7 +1201,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_PortManager.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.PortManager%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L73">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L76">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_PortManager_" data-uid="SipLib.Sdp.SdpAnswerSettings.PortManager*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_PortManager" data-uid="SipLib.Sdp.SdpAnswerSettings.PortManager">PortManager</h4>
@@ -1201,7 +1210,7 @@ material negotiation</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MediaPortManager PortManager { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IMediaPortManager PortManager { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-condensed">
@@ -1213,7 +1222,7 @@ material negotiation</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="SipLib.Media.MediaPortManager.html">MediaPortManager</a></td>
+        <td><a class="xref" href="SipLib.Media.IMediaPortManager.html">IMediaPortManager</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1223,7 +1232,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_SupportedAudioCodecs.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.SupportedAudioCodecs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L48">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L51">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_SupportedAudioCodecs_" data-uid="SipLib.Sdp.SdpAnswerSettings.SupportedAudioCodecs*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_SupportedAudioCodecs" data-uid="SipLib.Sdp.SdpAnswerSettings.SupportedAudioCodecs">SupportedAudioCodecs</h4>
@@ -1254,7 +1263,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_SupportedVideoCodecs.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.SupportedVideoCodecs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L54">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L57">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_SupportedVideoCodecs_" data-uid="SipLib.Sdp.SdpAnswerSettings.SupportedVideoCodecs*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_SupportedVideoCodecs" data-uid="SipLib.Sdp.SdpAnswerSettings.SupportedVideoCodecs">SupportedVideoCodecs</h4>
@@ -1285,7 +1294,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_UserName.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.UserName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L60">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L63">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_UserName_" data-uid="SipLib.Sdp.SdpAnswerSettings.UserName*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_UserName" data-uid="SipLib.Sdp.SdpAnswerSettings.UserName">UserName</h4>
@@ -1323,7 +1332,7 @@ material negotiation</p>
                     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L14" class="contribution-link">View Source</a>
+                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L17" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

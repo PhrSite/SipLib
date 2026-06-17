@@ -445,6 +445,9 @@
                             <a href="SipLib.Media.AudioSource.html" title="AudioSource" class="">AudioSource</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Media.CallPortAllocations.html" title="CallPortAllocations" class="">CallPortAllocations</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Media.DtmfDigitReceivedDelegate.html" title="DtmfDigitReceivedDelegate" class="">DtmfDigitReceivedDelegate</a>
                           </li>
                           <li class="">
@@ -478,7 +481,13 @@
                             <a href="SipLib.Media.IAudioSampleSource.html" title="IAudioSampleSource" class="">IAudioSampleSource</a>
                           </li>
                           <li class="">
+                            <a href="SipLib.Media.IMediaPortManager.html" title="IMediaPortManager" class="">IMediaPortManager</a>
+                          </li>
+                          <li class="">
                             <a href="SipLib.Media.Ld8k.html" title="Ld8k" class="">Ld8k</a>
+                          </li>
+                          <li class="">
+                            <a href="SipLib.Media.MediaPortListManager.html" title="MediaPortListManager" class="">MediaPortListManager</a>
                           </li>
                           <li class="">
                             <a href="SipLib.Media.MediaPortManager.html" title="MediaPortManager" class="">MediaPortManager</a>
@@ -960,6 +969,20 @@ Refer to <a href="../articles/SipLibMedia.html#AudioSourceClass">The AudioSource
 this class.
 </p>
 </section>
+      <h4><a class="xref" href="SipLib.Media.CallPortAllocations.html">CallPortAllocations</a></h4>
+      <section><p>This class assists user agents in managing media ports that have been allocated for a call object.</p>
+<p>
+This method should be used if a user agent is using the MediaPortListManager class to allocate
+media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager
+class to allocate media ports.
+</p>
+<p>
+To use this class, construct an instance of this class and save it with the call object. Then call
+the AddAllocatedPortsFromSdp() method when the user agent constructs an Sdp object for that call. If
+the user agent adds media to the call then it must call the AddAllocatedPortsFromMediaDescription() method for
+each media being added to the call. When the call ends, the user agent must call the FreeAllocatedPorts() method.
+</p>
+</section>
       <h4><a class="xref" href="SipLib.Media.FileAudioSource.html">FileAudioSource</a></h4>
       <section><p>Class for sending audio samples that have been read from a wave file. This class loops the audio continuously until the
 Stop() method is called.</p>
@@ -987,8 +1010,24 @@ for multiple media sources.</p>
       <section><p>This is the base class for the G729Encoder and G729Decoder classes. This class only contains definitions of constants
 used for encoding and decoding G.729 audio data.</p>
 </section>
+      <h4><a class="xref" href="SipLib.Media.MediaPortListManager.html">MediaPortListManager</a></h4>
+      <section><p>Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media. This class
+allocates ports from a list of available ports and frees the allocated ports by returning them to
+the list when a call ends.</p>
+<p>
+User agents that use this class are responsible for freeing allocated ports by calling one of the 
+Free*() methods.
+</p>
+</section>
       <h4><a class="xref" href="SipLib.Media.MediaPortManager.html">MediaPortManager</a></h4>
       <section><p>Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media.</p>
+<p>
+This class increments port numbers within a specified range of ports. When the last port in a
+range is allocated, this class wraps around to the starting port number.
+</p>
+<p>
+There is no need for the user agent using this class to free ports that have been used for a call.
+</p>
 </section>
       <h4><a class="xref" href="SipLib.Media.MediaPortSettings.html">MediaPortSettings</a></h4>
       <section><p>Stores the media port ranges for each media type.</p>
@@ -1035,6 +1074,10 @@ Interfaces
 </section>
       <h4><a class="xref" href="SipLib.Media.IAudioSampleSource.html">IAudioSampleSource</a></h4>
       <section><p>Interface that must be implemented for each type of an audio sample source.</p>
+</section>
+      <h4><a class="xref" href="SipLib.Media.IMediaPortManager.html">IMediaPortManager</a></h4>
+      <section><p>Interface for classes that manage the allocation and de-allocation of media ports for RTP
+media (voice, video and RTT) and MSRP media.</p>
 </section>
     <h3 id="enums">
 Enums

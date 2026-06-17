@@ -1,13 +1,24 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   MediaPortManager.cs                                     25 Feb 24 PHR
+//
+//  Revised:    11 Jun 26 PHR
+//              -- Revised to implement the IMediaPortManager interface. This is not
+//                 a breaking change.
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Media;
 
 /// <summary>
 /// Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media.
+/// <para>
+/// This class increments port numbers within a specified range of ports. When the last port in a
+/// range is allocated, this class wraps around to the starting port number.
+/// </para>
+/// <para>
+/// There is no need for the user agent using this class to free ports that have been used for a call.
+/// </para>
 /// </summary>
-public class MediaPortManager
+public class MediaPortManager : IMediaPortManager
 {
     private MediaPortSettings m_Settings;
     private object m_Lock = new object();
@@ -95,6 +106,49 @@ public class MediaPortManager
 
         return Port;
     }
+
+    /// <summary>
+    /// Frees a media port for the specified media type.
+    /// </summary>
+    /// <param name="mediaType">Media type that the port was allocated for. Must be equal to one of
+    /// the value specified in the MediaTypes class.</param>
+    /// <param name="port">Port that was allocated for the specified media type.</param>
+    public void FreeMediaPort(string mediaType, int port)
+    {
+    }
+
+    /// <summary>
+    /// Frees an audio port.
+    /// </summary>
+    /// <param name="port">Port that was allocated for audio.</param>
+    public void FreeAudioPort(int port)
+    {
+    }
+
+    /// <summary>
+    /// Frees a video port.
+    /// </summary>
+    /// <param name="port">Port that was allocated for video.</param>
+    public void FreeVideoPort(int port)
+    {
+    }
+
+    /// <summary>
+    /// Frees a RTT port.
+    /// </summary>
+    /// <param name="port">Port that was allocated for RTT.</param>
+    public void FreeRttPort(int port)
+    {
+    }
+
+    /// <summary>
+    /// Frees a MSRP port.
+    /// </summary>
+    /// <param name="port">Port that was </param>
+    public void FreeMsrpPort(int port)
+    {
+    }
+
 
 }
 

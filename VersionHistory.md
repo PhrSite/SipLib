@@ -1,5 +1,13 @@
 # Version History
 
+## v1.2.0 -- TBD
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Addition | SipLib.Media -- Added the IMediaPortManager interface, the MediaPortListManager and the CallPortAllocations classes. |
+| NA     | Change   | SipLib.Media -- Modified the MediaPortManager class to implement the IMediaPortManager interface. This is a non-breaking change. |
+| NA     | Change   | SipLib.Sdp -- Modified the SdpOfferSettings and the SdpAnswerSettings classes to use the IMediaPortManager interface instead of the MediaPortManager class. This is a non-breaking change. |
+| NA     | Addition | SipLib.Core -- Added the AddEmergencyCallInfoHeaders() method to the SipUtils class. |
+
 ## v1.1.0 -- 26 May 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|

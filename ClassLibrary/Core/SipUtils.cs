@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   SipUtils.cs                                             24 Aug 23 PHR
+//
+//  Revised:    16 Jun 26 PHR
+//              -- Added the AddEmergencyCallInfoHeaders() method.
 /////////////////////////////////////////////////////////////////////////////////////
 
 using SipLib.Channels;
@@ -783,7 +786,7 @@ public static class SipUtils
 
     /// <summary>
     /// Adds a Call-Info header to a SIP request containing a purpose parameter
-    /// of emergency-IncidentId or emergency-CallId. See Sectionss 2.1.6 and 2.1.7 of NENA-STA-010.3.
+    /// of emergency-IncidentId or emergency-CallId. See Sections 2.1.6 and 2.1.7 of NENA-STA-010.3.
     /// </summary>
     /// <param name="Req">SIPRequest to add the Call-Info header to.</param>
     /// <param name="strIdUrn">String containing the Emergency ID URN built using the BuildEmergencyIdUrn()
@@ -795,6 +798,20 @@ public static class SipUtils
         SIPURI Suri = SIPURI.ParseSIPURI(strIdUrn);
         SIPCallInfoHeader Cih = new SIPCallInfoHeader(Suri, PurposeParam);
         Req.Header.CallInfo.Add(Cih);
+    }
+
+    /// <summary>
+    /// Adds the Call-Info headers for the NG9-1-1 emergency-CallId and emergency-IncidentId to a SIP
+    /// request. See Sections 2.1.6 and 2.1.7 of NENA-STA-010.3.
+    /// </summary>
+    /// <param name="request">Request to add the headers to.</param>
+    /// <param name="ElementId">Element ID to use to build the Emergency ID URN from.</param>
+    public static void AddEmergencyCallInfoHeaders(SIPRequest request, string ElementId)
+    {
+        string EmergencyCallIdentifier = SipUtils.BuildEmergencyIdUrn("callid", ElementId);
+        string EmergencyIncidentIdentifier = SipUtils.BuildEmergencyIdUrn("incidentid", ElementId);
+        SipUtils.AddEmergencyIdUrnCallInfoHeader(request, EmergencyCallIdentifier, "emergency-CallId");
+        SipUtils.AddEmergencyIdUrnCallInfoHeader(request, EmergencyIncidentIdentifier, "emergency-IncidentId");
     }
 
     /// <summary>
