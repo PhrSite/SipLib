@@ -1,5 +1,8 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 //  File:   MeanOpinionScore.cs                                     15 Dec 23 PHR
+//  Revised:    12 Jul 26 PHR
+//              -- Modified the calculation of the MOS score to ignore the estimated
+//                 network delay.
 /////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -51,11 +54,16 @@ public class MeanOpinionScore
     /// the network delay in milliseconds using the algorithm described in "EMOS - Estimated Mean Opinion"
     /// Score. See https://arimas.com/2017/09/12/emos-estimated-mean-opinion-score/.
     /// </summary>
-    /// <param name="PacketLossPercent"></param>
-    /// <param name="Jitter"></param>
-    /// <param name="DelayInMs"></param>
+    /// <param name="PacketLossPercent">Percent of the packets that were lost in the time interval</param>
+    /// <param name="Jitter">Packet jitter in milliseconds</param>
+    /// <param name="DelayInMs">Estimated network delay in milliseconds. Note: this parameter is ignored.</param>
     public MeanOpinionScore(double PacketLossPercent, int Jitter, int DelayInMs)
     {
+        // 12 Jul 26 PHR
+        // Ingore the network delay in the calculaton of the MOS because this number is often not
+        // accurate because the remote endpoints clock is not syncronized with the networks NTP server.
+        DelayInMs = 0;
+
         // EL = Effective Latency
         double El = DelayInMs + Jitter * 2 + 10;
 

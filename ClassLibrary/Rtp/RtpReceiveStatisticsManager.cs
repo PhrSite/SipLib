@@ -225,4 +225,27 @@ internal class RtpReceiveStatisticsManager
             return Current;
         }
     }
+
+    // 12 Jul 26 PHR
+    /// <summary>
+    /// Processes a received RTCP compound packet to calculate the estimated network delay.
+    /// </summary>
+    /// <param name="packet">Received RTCP packet</param>
+    public void ProcessRtcpCompoundPacket(RtcpCompoundPacket packet)
+    {
+        if (packet.SenderReports.Count > 0)
+        {   // Just use the first sender report
+            SenderReport senderReport = packet.SenderReports[0];
+            if (senderReport.SenderInfo != null && senderReport.SenderInfo.NTP != DateTime.MinValue)
+            {
+                TimeSpan timeSpan = DateTime.UtcNow - senderReport.SenderInfo.NTP;
+                if (timeSpan.TotalMilliseconds < int.MinValue)
+                    m_Delay = int.MinValue + 1;
+                else if (timeSpan.TotalMilliseconds > int.MaxValue)
+                    m_Delay = int.MaxValue - 1;
+                else
+                    m_Delay = (int) Math.Abs(timeSpan.TotalMilliseconds);
+            }
+        }
+    }
 }

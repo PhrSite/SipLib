@@ -7,6 +7,9 @@
 | NA     | Change   | SipLib.Media -- Modified the MediaPortManager class to implement the IMediaPortManager interface. This is a non-breaking change. |
 | NA     | Change   | SipLib.Sdp -- Modified the SdpOfferSettings and the SdpAnswerSettings classes to use the IMediaPortManager interface instead of the MediaPortManager class. This is a non-breaking change. |
 | NA     | Addition | SipLib.Core -- Added the AddEmergencyCallInfoHeaders() method to the SipUtils class. |
+| NA     | Change   | SipLib.Rtp.RtpChannel class -- Modified to call the ProcessRtcpCompoundPacket() method of the RtpReceiveStatisticsManager object when an RTCP packet is received. |
+| NA     | Change   | SipLib.Rtp.MeanOpinionScore class -- Modified the calculation of the MOS score to ignore the estimated network delay.  |
+| NA     | Addition | SipLib.Rtp.RtpReceiveStatisticsManager class -- Added the ProcessRtcpCompoundPacket() method to calculate the estimated network delay in milliseconds. |
 
 ## v1.1.0 -- 26 May 2026
 | Issue No. | Change Type | Description |

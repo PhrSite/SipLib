@@ -3,6 +3,9 @@
 //
 //  Revised: 25 Jan 25 PHR
 //           -- Added PacketIsRtp() to verify that a packet is actually an RTP packet.
+//           12 Jul 26 PHR
+//           -- Modified to call the ProcessRtcpCompoundPacket() method of the
+//              RtpReceiveStatisticsManager object when an RTCP packet is received.
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
@@ -868,7 +871,13 @@ public class RtpChannel
 
         RtcpCompoundPacket rtcpCompoundPacket = RtcpCompoundPacket.Parse(decryptedPckt);
         if (rtcpCompoundPacket != null)
+        {
             RtcpPacketReceived?.Invoke(rtcpCompoundPacket);
+
+            // 12 Jul 26 PHR
+            if (m_RtpReceiveStaticsManager != null)
+                m_RtpReceiveStaticsManager.ProcessRtcpCompoundPacket(rtcpCompoundPacket);
+        }
     }
 
     /// <summary>
