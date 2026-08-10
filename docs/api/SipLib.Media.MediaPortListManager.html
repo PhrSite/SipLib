@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class MediaPortListManager ">
     
-    <meta name="description" content="Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media. This class allocates ports from a list of available ports and frees the allocated ports by returning them to the list when a call ends.  User agents that use this class are responsible for freeing allocated ports by calling one of the  Free*() methods.">
+    <meta name="description" content="Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media. This class allocates ports from a list of available ports and frees the allocated ports by returning them to the list when a call ends.  User agents that use this class are responsible for freeing allocated ports by calling one of the  Free*() methods.   All of the public methods and properties of this class are thread-safe.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -941,6 +941,9 @@ the list when a call ends.</p>
 User agents that use this class are responsible for freeing allocated ports by calling one of the 
 Free*() methods.
 </p>
+<p>
+All of the public methods and properties of this class are thread-safe.
+</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -989,7 +992,7 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager__ctor_SipLib_Media_MediaPortSettings_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.%23ctor(SipLib.Media.MediaPortSettings)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L30">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L33">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager__ctor_" data-uid="SipLib.Media.MediaPortListManager.#ctor*"></a>
   <h4 id="SipLib_Media_MediaPortListManager__ctor_SipLib_Media_MediaPortSettings_" data-uid="SipLib.Media.MediaPortListManager.#ctor(SipLib.Media.MediaPortSettings)">MediaPortListManager(MediaPortSettings)</h4>
@@ -1025,11 +1028,13 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_NextAudioPort.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.NextAudioPort%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L56">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L61">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_NextAudioPort_" data-uid="SipLib.Media.MediaPortListManager.NextAudioPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_NextAudioPort" data-uid="SipLib.Media.MediaPortListManager.NextAudioPort">NextAudioPort</h4>
   <div class="markdown level1 summary"><p>Gets the next available port for video media.</p>
+<p>Always returns an even port number. The odd port number can be used for RTCP.</p>
+<p>Returns 0 if there are no free audio ports available.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1056,11 +1061,12 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_NextMsrpPort.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.NextMsrpPort%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L119">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L129">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_NextMsrpPort_" data-uid="SipLib.Media.MediaPortListManager.NextMsrpPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_NextMsrpPort" data-uid="SipLib.Media.MediaPortListManager.NextMsrpPort">NextMsrpPort</h4>
   <div class="markdown level1 summary"><p>Gets the next available port for MSRP media.</p>
+<p>Returns 0 if there are no free MSRP ports available.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1087,11 +1093,13 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_NextRttPort.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.NextRttPort%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L102">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L111">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_NextRttPort_" data-uid="SipLib.Media.MediaPortListManager.NextRttPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_NextRttPort" data-uid="SipLib.Media.MediaPortListManager.NextRttPort">NextRttPort</h4>
   <div class="markdown level1 summary"><p>Gets the next available port for RTT media.</p>
+<p>Always returns an even port number. The odd port number can be used for RTCP.</p>
+<p>Returns 0 if there are no free RTT ports available.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1118,11 +1126,13 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_NextVideoPort.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.NextVideoPort%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L85">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L92">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_NextVideoPort_" data-uid="SipLib.Media.MediaPortListManager.NextVideoPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_NextVideoPort" data-uid="SipLib.Media.MediaPortListManager.NextVideoPort">NextVideoPort</h4>
   <div class="markdown level1 summary"><p>Gets the next available port for video media.</p>
+<p>Always returns an even port number. The odd port number can be used for RTCP.</p>
+<p>Returns 0 if there are no free video ports available.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1151,7 +1161,7 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_FreeAudioPort_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.FreeAudioPort(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L137">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L147">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_FreeAudioPort_" data-uid="SipLib.Media.MediaPortListManager.FreeAudioPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_FreeAudioPort_System_Int32_" data-uid="SipLib.Media.MediaPortListManager.FreeAudioPort(System.Int32)">FreeAudioPort(int)</h4>
@@ -1185,7 +1195,7 @@ Free*() methods.
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_FreeMediaPort_System_String_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.FreeMediaPort(System.String%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L193">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L203">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_FreeMediaPort_" data-uid="SipLib.Media.MediaPortListManager.FreeMediaPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_FreeMediaPort_System_String_System_Int32_" data-uid="SipLib.Media.MediaPortListManager.FreeMediaPort(System.String,System.Int32)">FreeMediaPort(string, int)</h4>
@@ -1226,7 +1236,7 @@ the value specified in the MediaTypes class.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_FreeMsrpPort_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.FreeMsrpPort(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L179">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L189">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_FreeMsrpPort_" data-uid="SipLib.Media.MediaPortListManager.FreeMsrpPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_FreeMsrpPort_System_Int32_" data-uid="SipLib.Media.MediaPortListManager.FreeMsrpPort(System.Int32)">FreeMsrpPort(int)</h4>
@@ -1260,7 +1270,7 @@ the value specified in the MediaTypes class.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_FreeRttPort_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.FreeRttPort(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L167">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L177">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_FreeRttPort_" data-uid="SipLib.Media.MediaPortListManager.FreeRttPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_FreeRttPort_System_Int32_" data-uid="SipLib.Media.MediaPortListManager.FreeRttPort(System.Int32)">FreeRttPort(int)</h4>
@@ -1294,7 +1304,7 @@ the value specified in the MediaTypes class.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_FreeVideoPort_System_Int32_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.FreeVideoPort(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L155">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L165">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_FreeVideoPort_" data-uid="SipLib.Media.MediaPortListManager.FreeVideoPort*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_FreeVideoPort_System_Int32_" data-uid="SipLib.Media.MediaPortListManager.FreeVideoPort(System.Int32)">FreeVideoPort(int)</h4>
@@ -1328,7 +1338,7 @@ the value specified in the MediaTypes class.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager_GetFreePortCount_System_String_.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager.GetFreePortCount(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L217">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L227">View Source</a>
   </span>
   <a id="SipLib_Media_MediaPortListManager_GetFreePortCount_" data-uid="SipLib.Media.MediaPortListManager.GetFreePortCount*"></a>
   <h4 id="SipLib_Media_MediaPortListManager_GetFreePortCount_System_String_" data-uid="SipLib.Media.MediaPortListManager.GetFreePortCount(System.String)">GetFreePortCount(string)</h4>
@@ -1389,7 +1399,7 @@ the value specified in the MediaTypes class.</p>
                     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Media_MediaPortListManager.md&amp;value=---%0Auid%3A%20SipLib.Media.MediaPortListManager%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L16" class="contribution-link">View Source</a>
+                    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Media/MediaPortListManager.cs/#L19" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

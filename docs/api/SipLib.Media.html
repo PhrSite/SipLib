@@ -972,7 +972,7 @@ this class.
       <h4><a class="xref" href="SipLib.Media.CallPortAllocations.html">CallPortAllocations</a></h4>
       <section><p>This class assists user agents in managing media ports that have been allocated for a call object.</p>
 <p>
-This method should be used if a user agent is using the MediaPortListManager class to allocate
+This class should be used if a user agent is using the MediaPortListManager class to allocate
 media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager
 class to allocate media ports.
 </p>
@@ -1018,6 +1018,9 @@ the list when a call ends.</p>
 User agents that use this class are responsible for freeing allocated ports by calling one of the 
 Free*() methods.
 </p>
+<p>
+All of the public methods and properties of this class are thread-safe.
+</p>
 </section>
       <h4><a class="xref" href="SipLib.Media.MediaPortManager.html">MediaPortManager</a></h4>
       <section><p>Class for managing allocation of UDP and TCP ports for audio, video, RTT and MSRP media.</p>
@@ -1027,6 +1030,9 @@ range is allocated, this class wraps around to the starting port number.
 </p>
 <p>
 There is no need for the user agent using this class to free ports that have been used for a call.
+</p>
+<p>
+All of the public methods and properties of this class are thread-safe.
 </p>
 </section>
       <h4><a class="xref" href="SipLib.Media.MediaPortSettings.html">MediaPortSettings</a></h4>

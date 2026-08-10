@@ -11,17 +11,17 @@
     <Authors>Philip Reichl</Authors>
     <Company>Philip Reichl</Company>
     <Description>A .NET SIP Library</Description>
-    <Copyright>Copyright (c) 2025 Philip Reichl</Copyright>
+    <Copyright>Copyright (c) 2026 Philip Reichl</Copyright>
     <PackageProjectUrl>https://phrsite.github.io/SipLib</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/phrsite/SipLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Various changes and fixes. See VersionHistory.md</PackageReleaseNotes>
     <PackageOutputPath>\_MyProjects\NuGetPackages</PackageOutputPath>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageTags>SIP;NG9-1-1</PackageTags>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>

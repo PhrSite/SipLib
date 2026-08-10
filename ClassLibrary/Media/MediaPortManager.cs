@@ -17,6 +17,9 @@ namespace SipLib.Media;
 /// <para>
 /// There is no need for the user agent using this class to free ports that have been used for a call.
 /// </para>
+/// <para>
+/// All of the public methods and properties of this class are thread-safe.
+/// </para>
 /// </summary>
 public class MediaPortManager : IMediaPortManager
 {

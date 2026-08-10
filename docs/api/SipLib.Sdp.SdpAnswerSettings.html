@@ -980,7 +980,7 @@ offered SDP</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.%23ctor(System.Collections.Generic.List%7BSystem.String%7D%2CSystem.Collections.Generic.List%7BSystem.String%7D%2CSystem.String%2CSystem.String%2CSipLib.Media.IMediaPortManager)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L87">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L95">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings__ctor_" data-uid="SipLib.Sdp.SdpAnswerSettings.#ctor*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings__ctor_System_Collections_Generic_List_System_String__System_Collections_Generic_List_System_String__System_String_System_String_SipLib_Media_IMediaPortManager_" data-uid="SipLib.Sdp.SdpAnswerSettings.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String,SipLib.Media.IMediaPortManager)">SdpAnswerSettings(List&lt;string&gt;, List&lt;string&gt;, string, string, IMediaPortManager)</h4>
@@ -1023,7 +1023,9 @@ offered SDP</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">fingerprint</span></td>
         <td><p>Fingerprint of the self-signed X.509 certificate that will be used for DTLS-SDES keying
-material negotiation</p>
+material negotiation. The RtpChannel class automatically creates a static X.509 certificate object that it will use for the
+DTLS handshake if a media channel uses DTLS-SRTP encryption. It is best to pass the static RtpChannel.CertificateFingerprint property
+for this parameter.</p>
 </td>
       </tr>
       <tr>
@@ -1169,12 +1171,17 @@ the video media.</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_Fingerprint.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.Fingerprint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L70">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L75">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_Fingerprint_" data-uid="SipLib.Sdp.SdpAnswerSettings.Fingerprint*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_Fingerprint" data-uid="SipLib.Sdp.SdpAnswerSettings.Fingerprint">Fingerprint</h4>
-  <div class="markdown level1 summary"><p>Fingerprint of the self-signed X.509 certificate that that will be used for DTLS-SDES keying
-material negotiation</p>
+  <div class="markdown level1 summary"><p>Fingerprint of the self-signed X.509 certificate that that will be used for DTLS-SRTP keying
+material negotiation.</p>
+<p>
+The RtpChannel class automatically creates a static X.509 certificate object that it will use for the
+DTLS handshake if a media channel uses DTLS-SRTP encryption. It is best to pass the static RtpChannel.CertificateFingerprint property
+for this property.
+</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1201,7 +1208,7 @@ material negotiation</p>
     <a href="https://github.com/PhrSite/SipLib/new/master/apiSpec/new?filename=SipLib_Sdp_SdpAnswerSettings_PortManager.md&amp;value=---%0Auid%3A%20SipLib.Sdp.SdpAnswerSettings.PortManager%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L76">View Source</a>
+    <a href="https://github.com/PhrSite/SipLib/blob/master/ClassLibrary/Sdp/SdpAnswerSettings.cs/#L81">View Source</a>
   </span>
   <a id="SipLib_Sdp_SdpAnswerSettings_PortManager_" data-uid="SipLib.Sdp.SdpAnswerSettings.PortManager*"></a>
   <h4 id="SipLib_Sdp_SdpAnswerSettings_PortManager" data-uid="SipLib.Sdp.SdpAnswerSettings.PortManager">PortManager</h4>

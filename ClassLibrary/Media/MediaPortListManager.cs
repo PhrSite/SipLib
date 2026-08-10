@@ -12,6 +12,9 @@ namespace SipLib.Media;
 /// User agents that use this class are responsible for freeing allocated ports by calling one of the 
 /// Free*() methods.
 /// </para>
+/// <para>
+/// All of the public methods and properties of this class are thread-safe.
+/// </para>
 /// </summary>
 public class MediaPortListManager : IMediaPortManager
 {
@@ -51,7 +54,9 @@ public class MediaPortListManager : IMediaPortManager
     }
 
     /// <summary>
-    /// Gets the next available port for video media.
+    /// Gets the next available port for video media. 
+    /// <para>Always returns an even port number. The odd port number can be used for RTCP.</para>
+    /// <para>Returns 0 if there are no free audio ports available.</para>
     /// </summary>
     public int NextAudioPort
     {
@@ -81,6 +86,8 @@ public class MediaPortListManager : IMediaPortManager
 
     /// <summary>
     /// Gets the next available port for video media.
+    /// <para>Always returns an even port number. The odd port number can be used for RTCP.</para>
+    /// <para>Returns 0 if there are no free video ports available.</para>
     /// </summary>
     public int NextVideoPort
     {
@@ -98,6 +105,8 @@ public class MediaPortListManager : IMediaPortManager
 
     /// <summary>
     /// Gets the next available port for RTT media.
+    /// <para>Always returns an even port number. The odd port number can be used for RTCP.</para>
+    /// <para>Returns 0 if there are no free RTT ports available.</para>
     /// </summary>
     public int NextRttPort
     {
@@ -115,6 +124,7 @@ public class MediaPortListManager : IMediaPortManager
 
     /// <summary>
     /// Gets the next available port for MSRP media.
+    /// <para>Returns 0 if there are no free MSRP ports available.</para>
     /// </summary>
     public int NextMsrpPort
     {

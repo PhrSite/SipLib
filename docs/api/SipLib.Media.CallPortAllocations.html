@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class CallPortAllocations ">
     
-    <meta name="description" content="This class assists user agents in managing media ports that have been allocated for a call object.  This method should be used if a user agent is using the MediaPortListManager class to allocate media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager class to allocate media ports.   To use this class, construct an instance of this class and save it with the call object. Then call the AddAllocatedPortsFromSdp() method when the user agent constructs an Sdp object for that call. If the user agent adds media to the call then it must call the AddAllocatedPortsFromMediaDescription() method for each media being added to the call. When the call ends, the user agent must call the FreeAllocatedPorts() method.">
+    <meta name="description" content="This class assists user agents in managing media ports that have been allocated for a call object.  This class should be used if a user agent is using the MediaPortListManager class to allocate media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager class to allocate media ports.   To use this class, construct an instance of this class and save it with the call object. Then call the AddAllocatedPortsFromSdp() method when the user agent constructs an Sdp object for that call. If the user agent adds media to the call then it must call the AddAllocatedPortsFromMediaDescription() method for each media being added to the call. When the call ends, the user agent must call the FreeAllocatedPorts() method.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -936,7 +936,7 @@
   <h1 id="SipLib_Media_CallPortAllocations" data-uid="SipLib.Media.CallPortAllocations" class="text-break">Class CallPortAllocations</h1>
   <div class="markdown level0 summary"><p>This class assists user agents in managing media ports that have been allocated for a call object.</p>
 <p>
-This method should be used if a user agent is using the MediaPortListManager class to allocate
+This class should be used if a user agent is using the MediaPortListManager class to allocate
 media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager
 class to allocate media ports.
 </p>

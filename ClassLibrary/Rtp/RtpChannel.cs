@@ -6,6 +6,11 @@
 //           12 Jul 26 PHR
 //           -- Modified to call the ProcessRtcpCompoundPacket() method of the
 //              RtpReceiveStatisticsManager object when an RTCP packet is received.
+//           16 Jul 26 PHR
+//           -- Modified CreateUdpEndPoints() to catch a SocketException and return
+//              false. Modified InternalStartListenting() to test the return value
+//              of CreateUdpEndPoints() and to not start the RTP and RTCP listener
+//              threads if an error occured.
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace SipLib.Rtp;
@@ -465,21 +470,41 @@ public class RtpChannel
         return new IPEndPoint(iPAddress!, port);
     }
 
-    private void CreateUdpEndPoints()
+    private bool CreateUdpEndPoints()
     {
-        m_RtpUdpClient = new UdpClient(m_localRtpEndPoint!);
+        try
+        {
+            m_RtpUdpClient = new UdpClient(m_localRtpEndPoint!);
+        }
+        catch (SocketException se)
+        {
+            SipLogger.LogError(se, $"m_LocalRtpEndPoint = {m_localRtpEndPoint!.ToString()}");
+            return false;
+        }
+
         if (m_IsWindows == true)
             SIPUDPChannel.DisableConnectionReset(m_RtpUdpClient);
 
         m_RtpQos = new Qos();
         m_RtpQos.SetUdpDscp(m_RtpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType!));
 
-        m_RtcpUdpClient = new UdpClient(m_localRtcpEndPoint!);
+        try
+        {
+            m_RtcpUdpClient = new UdpClient(m_localRtcpEndPoint!);
+        }
+        catch (SocketException se)
+        {
+            SipLogger.LogError(se, $"m_localRtcpEndPoint = {m_localRtcpEndPoint!.ToString()}");
+            return false;
+        }
+
         if (m_IsWindows == true)
             SIPUDPChannel.DisableConnectionReset(m_RtcpUdpClient);
 
         m_RtcpQos = new Qos();
         m_RtcpQos.SetUdpDscp(m_RtcpUdpClient, DscpSettings.GetDscpForMediaType(m_mediaType!));
+
+        return true;
     }
 
     private bool m_IsListening = false;
@@ -585,7 +610,12 @@ public class RtpChannel
         if (m_IsListening == true || m_ThreadsEnding == true)
             return;
 
-        CreateUdpEndPoints();
+        bool Success = CreateUdpEndPoints();
+        // 16 Jul 26 PHR
+        if (Success == false)
+        {   // Errors already logged
+            return;
+        }
 
         m_RtpListenerThread = new Thread(RtpListenerThread);
         m_RtpListenerThread.Priority = ThreadPriority.Highest;
@@ -709,17 +739,37 @@ public class RtpChannel
         // Closing the UdpClient objects will cause the threads to terminate
         if (m_RtpUdpClient != null)
         {
-            m_RtpQos.Shutdown();
+            if (m_RtpQos != null)
+            {
+                m_RtpQos.Shutdown();
+                m_RtpQos = null;
+            }
+
             m_RtpUdpClient.Close();
-            m_RtpListenerThread.Join();
+            if (m_RtpListenerThread != null)
+            {
+                m_RtpListenerThread.Join();
+                m_RtpListenerThread = null;
+            }
+
             m_RtpUdpClient = null;
         }
 
         if (m_RtcpUdpClient != null)
         {
-            m_RtcpQos.Shutdown();
+            if (m_RtcpQos != null)
+            {
+                m_RtcpQos.Shutdown();
+                m_RtcpQos = null;
+            }
+
             m_RtcpUdpClient.Close();
-            m_RtcpListenerThread.Join();
+            if (m_RtcpListenerThread != null)
+            {
+                m_RtcpListenerThread.Join();
+                m_RtcpListenerThread = null;
+            }
+
             m_RtcpUdpClient = null;
         }
     }

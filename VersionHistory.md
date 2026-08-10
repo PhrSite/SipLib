@@ -1,6 +1,6 @@
 # Version History
 
-## v1.2.0 -- TBD
+## v1.2.0 -- 10 Aug 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|
 | NA     | Addition | SipLib.Media -- Added the IMediaPortManager interface, the MediaPortListManager and the CallPortAllocations classes. |

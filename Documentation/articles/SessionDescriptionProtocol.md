@@ -51,17 +51,34 @@ c=IN IP4 192.168.1.100
 t=0 0
 m=audio 7000 RTP/AVP 0 101
 a=rtpmap:0 PCMU/8000
-a=rtpmap:101 telephone-event/8000
+a=rtpmap:101 telephone-event
 a=fmtp:101 0-15
 ```
 
-## Helper Functions for Build SDP Offers
+## Sdp Helper Functions for Building SDP Offers
+The [Sdp](~/api/SipLib.Sdp.Sdp.yml) class has a static helper function called BuildOfferSdp that can be used to build an Sdp object that can be added to an outgoing INVITE request.
+
+The declaration of this method is:
+
+```
+public static Sdp BuildOfferSdp(IPAddress address, SdpOfferSettings offerSettings,
+    X509Certificate2? msrpCert);
+```
+The address parameter is the IP address (IPv4 or IPv6) that the application wishes to use for receiving and sending media.
+
+This function sets the IP address in a c= parameter at the session level when it builds the answer SDP. This behavior can be overridden as described in [Media Level Connection Information](#MediaLevelConnectionInfo).
+
+The msrpCert is the X509Certificate2 object to use for MSRP over TLS (MSRPS). This may be null if not offering MSRP. It must be non-null if offering MSRP and the offerSettings.MsrpSetupType is not active.
+
+The offerSettings parameter is an [SdpOfferSettings](~/api/SipLib.Sdp.SdpOfferSettings.yml) object that provides configuration settings that tell the BuildOfferSdp() method how to build the Sdp object. 
+
+## SdpUtils Helper Functions for Building SDP Offers
 The [SdpUtils](~/api/SipLib.Sdp.SdpUtils.yml) class contains helper functions that can be used to simplify the process of building an SDP offer. For example, the code in the code sample shown in the previous section could be replaced with the following code.
 ```
 Sdp sdp = SdpUtils.BuildSimpleAudioSdp(IPAddress.Parse("192.168.1.100"), 7000,
 	"MySession");
 ```
-The SdpUtils class provides the following static functions for creating audio, Real Time Text (RTT) and video MediaDescription objects to assist in building an SDP offer.
+The SdpUtils class provides the following static functions for creating audio, Real Time Text (RTT), Message Session Relay Protocol (MSRP) and video MediaDescription objects to assist in building an SDP offer.
 
 | Function Name | Description |
 |--------|--------|
@@ -183,10 +200,10 @@ public static Sdp BuildAnswerSdp(Sdp OfferedSdp, IPAddress address,
 ```
 The OfferedSdp parameter is the SDP that was received in an INVITE request. The address parameter is the IP address (IPv4 or IPv6) that the application wishes to use for receiving and sending media. This function sets the IP address in a c= parameter at the session level when it builds the answer SDP. This behavior can be overridden as described in [Media Level Connection Information](#MediaLevelConnectionInfo) above.
 
-The [SdpAnswerSettings](~/api/SipLib.Sdp.SdpAnswerSettings.yml) class contains various properties that specify how to answer an offered SDP. The application can construct an instance of this class and modify the properties according to how it wants to handle media. It then uses the instance of the SdpAnswerSetting class each time it needs to answer a call. The declaration of the constructor of this class is:
+The [SdpAnswerSettings](~/api/SipLib.Sdp.SdpAnswerSettings.yml) class contains various properties that specify how to answer an offered SDP. The application can construct an instance of this class and modify the properties according to how it wants to handle media. It then uses the instance of the SdpAnswerSettings class each time it needs to answer a call. The declaration of the constructor of this class is:
 ```
 public SdpAnswerSettings(List<string> AudioCodecs, List<string> VideoCodecs,
-    string userName, string fingerprint, MediaPortManager portManager)
+    string userName, string fingerprint, IMediaPortManager portManager)
 ```
 The following code sample shows how to construct an SdpAnswerSettings object with some commonly used settings.
 ```
@@ -195,9 +212,11 @@ SdpAnswerSettings Sas = new SdpAnswerSettings(new List<string> { "PCMU", "PCMA" 
     new MediaPortManager(new MediaPortSettings()));
 ```
 
-The BuildAnswerSdp() method uses a [MediaPortManager](~/api/SipLib.Media.MediaPortManager.yml) class object to assign unique UDP ports for each media type for each call. The reason for this is to easily allow a server to handle media for multiple calls simultaneously.
+The BuildAnswerSdp() method uses a [IMediaPortManager](~/api/SipLib.Media.IMediaPortManager.yml) interface to assign unique UDP ports for each media type for each call. The reason for this is to easily allow a server to handle media for multiple calls simultaneously.
 
-The MediaPortManager class increments the port number by 2 for audio, video and RTT media to allow the application to use the RTCP on odd port numbers. The MediaPortManager class increments the port number by 1 for MSRP because RTCP is not used for MSRP media.
+The SipLib.Media namespace contains two classes that implement the IMediaPortManager interface. The above code snippet shows how to use the MediaPortManager class. The MediaPortListManager class also implements the IMediaPortManager interface and it may be used instead of using the MediaPortManager class. Both of these classes take a MediaPortSettings object in their constructors.
+
+See the [Media Port Management](#MediaPortManagement) section below for a description of the media port manager classes. 
 
 The default constructor of the [MediaPortSettings](~/api/SipLib.Media.MediaPortSettings.yml) class assigns the port settings for the different types of media as follows.
 
@@ -209,6 +228,48 @@ The default constructor of the [MediaPortSettings](~/api/SipLib.Media.MediaPortS
 | message (MSRP) | 9000 | 1000 |
 
 The application can alter the port ranges for each media type by using the properties of the MediaPortSettings class.
+
+# <a name="MediaPortManagement">Media Port Management for SDP Offer/Answer Negotiation</a>
+Applications that handle media must ensure that the ports that they use for media on each IP address are unique for each call and that those ports are not used by other applications that may be running on the same computer.
+
+Port range assignments can be used to constrain port assignments for each media type.
+
+Each media type for each IP address must be assigned a port range that does not overlap the port range of the other media types.
+
+The [SdpOfferSettings](~/api/SipLib.Sdp.SdpOfferSettings.yml) and the [SdpAnswerSettings](~/api/SipLib.Sdp.SdpAnswerSettings.yml) classes use an [IMediaPortManager](~/api/SipLib.Media.IMediaPortManager.yml) interface to dynamically allocate UDP ports (for audio, video and RTT) and TCP ports (for MSRP) within configured port ranges for each type of media.
+
+If an application handles media on multiple IP addresses then it can use an different instance of the IMediaPortManager interface for each IP address.
+
+The SipLib.Media namespace provides two classes that implement the IMediaPortManager interface. The following subsections describe these two classes.
+
+Both of these classes allocate even port numbers for RTP type media (audio, video and RTT). This means that the number of calls that can be handled is equal to 1/2 of the number of ports in a port ranges for each media type. The event port number is used for the media itself and the odd port number can be used for the RTCP socket for that media. For example if 100 ports are allocated for audio, then only 50 audio calls can be handled at any given time.
+
+Both classes allocate all port numbers within the port range for MSRP media because MSRP does not use RTCP. For example, if the port range for MSRP media contains 100 ports, then 100 MSRP calls can be handled simutaneously.
+
+## MediaPortManager Class
+
+The MediaPortManager wraps around to the starting port number when the number of ports allocated exceeds the port number range. For example, assume the starting port number in a port range is 6000 and the number of ports is 100. If the last port used was 6048, then the next port allocated will be 6000. This means a port assignment collision will occur if the call that is using port 6000 has not ended when a wrap-around conditions occurs.
+
+The disadvantage of the MediaPortManager class is that there is no way to determine the number of ports that are currently available within each media type port range.
+
+The advantage of the MediaPortManager class is its simplicity. There is no need to manage the deallocation of ports used for each call.
+
+## MediaPortListManager Class
+The [MediaPortListManager](~/api/SipLib.Media.MediaPortListManager.yml) class provides a more robust and reliable implementation of the IMediaPortManager interface.
+
+This class creates a list of available ports from the ports within the configured port range for each media type. When a port is allocated for a call by calling one of the NextXXXPort() methods, a port is removed from the head of the list. When a port is deallocated by calling the FreeMediaPort() method, the port that was allocated for the call is added to the end of the list of available ports.
+
+Prior to accepting or creating a new call, the call's user agent can check to see if there are sufficient ports by testing the return value of the NextXXXPort() method. If the NextXXXPort() method returns a value of 0 then there are insufficient ports available to handle the call.
+
+The user agent object that manages a call is responsible for allocating and deallocating (i.e. freeing) media ports for the call. In order to deallocate ports that have been allocated for a call, the user agent must keep track of which ports have been allocated for the call.
+
+User agents can use the [CallPortAllocations](~/api/SipLib.Media.CallPortAllocations.yml) class to assist in media port deallocation.
+
+The procedure for using the CallPortAllocations class is as follows.
+- Create an instance of the CallPortAllocations and save it in the call class.
+- When the user agent for the call creates a new Sdp object for the call then it must call the AddAllocatedPortsFromSdp() method of the CallPortAllocations instance for the call.
+- When the user agent adds new media to the call then it must call the AddAllocatedPortsFromMediaDescription() method of the call's CallPortAllocations object.
+- When the call has ended, the user agent for the call must call the FreeAllocatedPorts() method of the call's CallPortAllocations object.
 
 # RFC 8866 Support Level
 

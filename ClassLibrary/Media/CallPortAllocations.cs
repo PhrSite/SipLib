@@ -9,7 +9,7 @@ using SipLib.Sdp;
 /// <summary>
 /// This class assists user agents in managing media ports that have been allocated for a call object.
 /// <para>
-/// This method should be used if a user agent is using the MediaPortListManager class to allocate
+/// This class should be used if a user agent is using the MediaPortListManager class to allocate
 /// media ports for a call. It is not necessary to use this class if the user agent uses the MediaPortManager
 /// class to allocate media ports.
 /// </para>

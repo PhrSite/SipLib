@@ -54,8 +54,13 @@ public class SdpOfferSettings
     public string UserName { get; set; } = "DefaultUser";
 
     /// <summary>
-    /// Fingerprint of the self-signed X.509 certificate that that will be used for DTLS-SDES keying
+    /// Fingerprint of the self-signed X.509 certificate that that will be used for DTLS-SRTP keying
     /// material negotiation.
+    /// <para>
+    /// The RtpChannel class automatically creates a static X.509 certificate object that it will use for the
+    /// DTLS handshake if a media channel uses DTLS-SRTP encryption. It is best to pass the static RtpChannel.CertificateFingerprint property
+    /// for this property.
+    /// </para>
     /// </summary>
     /// <value></value>
     [JsonIgnore]
@@ -96,8 +101,11 @@ public class SdpOfferSettings
     /// <param name="VideoCodecs">List of video codecs to offer.</param>
     /// <param name="userName">User name to use for the session owner and MSRP URI in the media descriptions</param>
     /// <param name="fingerprint">Fingerprint of the self-signed X.509 certificate that will be used for DTLS-SDES keying
-    /// material negotiation</param>
-    /// <param name="portManager">MediaPortManager to use use for allocation of media ports.</param>
+    /// material negotiation. The RtpChannel class automatically creates a static X.509 certificate object that it will use for the
+    /// DTLS handshake if a media channel uses DTLS-SRTP encryption. It is best to pass the static RtpChannel.CertificateFingerprint property
+    /// for this parameter.
+    /// </param>
+    /// <param name="portManager">MediaPortManager to use for allocation of media ports.</param>
     public SdpOfferSettings(List<string> AudioCodecs, List<string> VideoCodecs, string userName, string fingerprint,
         IMediaPortManager portManager)
     {
