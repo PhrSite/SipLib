@@ -1,5 +1,10 @@
 # Version History
 
+## v1.2.1 -- 6 Sep 2026
+| Issue No. | Change Type | Description |
+|--------|--------|-------|
+| NA     | Change | SipLib.Rtp.RtpRxReceiveStatisticsManager class -- Use the absolute value of the packet loss percentage in case the number of received RTP packets is greater than the number of expected RTP packets. |
+
 ## v1.2.0 -- 10 Aug 2026
 | Issue No. | Change Type | Description |
 |--------|--------|-------|

@@ -207,8 +207,9 @@ internal class RtpReceiveStatisticsManager
             Current.DelayInMilliseconds = m_Delay;
 
             // Calculate the rtpPacket loss percentage
-            double PlPer = (1.0 - ((double)Current.PacketsReceived /
-                (double)Current.PacketsExpected)) * 100.0;
+            double PlPer = (1.0 - ((double)Current.PacketsReceived / (double)Current.PacketsExpected)) * 100.0;
+            // 4 Sep 26 PHR -- In case PacketsReceived is greater than PacketsExpected.
+            PlPer = Math.Abs(PlPer);
 
             if (m_MediaType == "audio")
             {

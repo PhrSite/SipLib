@@ -60,8 +60,8 @@ public class MeanOpinionScore
     public MeanOpinionScore(double PacketLossPercent, int Jitter, int DelayInMs)
     {
         // 12 Jul 26 PHR
-        // Ingore the network delay in the calculaton of the MOS because this number is often not
-        // accurate because the remote endpoints clock is not syncronized with the networks NTP server.
+        // Ingore the network delay in the calculation of the MOS because this number is often not
+        // accurate because the remote endpoint's clock is not syncronized with the network's NTP server.
         DelayInMs = 0;
 
         // EL = Effective Latency
@@ -82,6 +82,8 @@ public class MeanOpinionScore
         if (R < 0.0)
             mos = 1.0;
         else if (R >= 0.0 && R <= 100.0)
+            // Note: The equation in step 4 of the EMOS article is incorrect. This equation is the correct
+            // one per Equation B-4 of Annex B of the ITU-T G.107 standard.
             mos = 1.0 + 0.035 * R + R * (R - 60) * (100.0 - R) * 7.0e-6;
         else
             mos = 4.5;
